@@ -349,12 +349,12 @@ bool HueTemperatureLight::alertTemperature(unsigned int mired)
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+		std::this_thread::sleep_for(std::chrono::milliseconds(110));
 		if (!alert())
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1300));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 		if (!on)
 		{
 			return OffNoRefresh(1);
@@ -668,12 +668,12 @@ bool HueColorLight::alertHueSaturation(uint16_t hue, uint8_t sat)
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(300));
+		std::this_thread::sleep_for(std::chrono::milliseconds(110));
 		if (!alert())
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::seconds(2));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 		if (!on)
 		{
 			return OffNoRefresh();
@@ -687,17 +687,24 @@ bool HueColorLight::alertHueSaturation(uint16_t hue, uint8_t sat)
 	{
 		float oldX = state["state"]["xy"][0].asFloat();
 		float oldY = state["state"]["xy"][1].asFloat();
-		if (!setColorHueSaturation(hue, sat))
+		if (!setColorHueSaturation(hue, sat, 1))
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(300));
+		std::this_thread::sleep_for(std::chrono::milliseconds(110));
 		if (!alert())
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::seconds(2));
-		return setColorXY(oldX, oldY);
+		std::this_thread::sleep_for(std::chrono::smilliseconds(1500));
+		if (!on)
+		{
+			return OffNoRefresh(1);
+		}
+		else
+		{
+			return return setColorXY(oldX, oldY, 1);
+		}
 	}
 	else
 	{
@@ -944,12 +951,12 @@ bool HueExtendedColorLight::alertTemperature(unsigned int mired)
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+		std::this_thread::sleep_for(std::chrono::milliseconds(110));
 		if (!alert())
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1300));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 		if (!on)
 		{
 			return OffNoRefresh(1);
@@ -1023,12 +1030,12 @@ bool HueExtendedColorLight::alertHueSaturation(uint16_t hue, uint8_t sat)
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+		std::this_thread::sleep_for(std::chrono::milliseconds(110));
 		if (!alert())
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1300));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 		if (!on)
 		{
 			return OffNoRefresh(1);
@@ -1102,12 +1109,12 @@ bool HueExtendedColorLight::alertXY(float x, float y)
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+		std::this_thread::sleep_for(std::chrono::milliseconds(110));
 		if (!alert())
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1300));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 		if (!on)
 		{
 			return OffNoRefresh(1);
@@ -1181,12 +1188,12 @@ bool HueExtendedColorLight::alertRGB(uint8_t r, uint8_t g, uint8_t b)
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+		std::this_thread::sleep_for(std::chrono::milliseconds(110));
 		if (!alert())
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1300));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 		if (!on)
 		{
 			return OffNoRefresh(1);
