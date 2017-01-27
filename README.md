@@ -24,7 +24,7 @@ if (bridges.empty())
 
 ### Using Bridges
 If you have found the Bridge you were looking for, you can then move on with the authentication process.
-To get a new username from the Bridge (for now) you simply call GetBridge(bridges[<index>]), 
+To get a new username from the Bridge (for now) you simply call GetBridge(bridges[\<index\>]), 
 where index is your preferred Bridge from the part [Finding Bridges](#findingBridges).
 ```C++
 Hue bridge = finder.GetBridge(bridges[0]);
@@ -44,7 +44,7 @@ You can choose from
 * HueTemperatureLight
 * HueColorLight
 * HueExtendedColorLight
-Then call getLight(<id>) from you bridge object to get the specific light, where id
+Then call getLight(\<id\>) from you bridge object to get the specific light, where id
 is the id of the light set internally by the Hue Bridge.
 ```C++
 HueExtendedColorLight* lamp1 = static_cast<HueExtendedColorLight*>(bridge.getLight(1));
