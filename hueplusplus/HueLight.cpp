@@ -664,7 +664,7 @@ bool HueColorLight::alertHueSaturation(uint16_t hue, uint8_t sat)
 	{
 		uint16_t oldHue = state["state"]["hue"].asUInt();
 		uint8_t oldSat = state["state"]["sat"].asUInt();
-		if (!setColorHueSaturation(hue, sat))
+		if (!setColorHueSaturation(hue, sat, 1))
 		{
 			return false;
 		}
@@ -676,11 +676,11 @@ bool HueColorLight::alertHueSaturation(uint16_t hue, uint8_t sat)
 		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 		if (!on)
 		{
-			return OffNoRefresh();
+			return OffNoRefresh(1);
 		}
 		else
 		{
-			return setColorHueSaturation(oldHue, oldSat);
+			return setColorHueSaturation(oldHue, oldSat, 1);
 		}
 	}
 	else if (cType == "xy")
