@@ -44,6 +44,7 @@ You can choose from
 * HueTemperatureLight
 * HueColorLight
 * HueExtendedColorLight
+
 Then call getLight(\<id\>) from you bridge object to get the specific light, where id
 is the id of the light set internally by the Hue Bridge.
 ```C++
@@ -60,8 +61,3 @@ lamp1->setColorRGB(255, 128, 0);
 
 ## Copyright
 Copyright (c) 2017 Jan Rogall & Moritz Wirger. See LICENSE for further details.
-
-
-```C++
-
-```
