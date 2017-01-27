@@ -11,7 +11,7 @@ A simple and easy to use library for Philips Hue Lights
 ## How to use
 ### <a name="findingBridges"></a>Finding Bridges
 If you want to find a Hue Bridge make a HueFinder object and call FindBridges()
-it will return a vector containing the ip and mac adress of all found Bridges.
+it will return a vector containing the ip and mac address of all found Bridges.
 If no Bridges were found the vector is empty, so make sure that in that case you provide an ip and mac address.
 ```C++
 HueFinder finder;
@@ -25,7 +25,7 @@ if (bridges.empty())
 ### Using Bridges
 If you have found the Bridge you were looking for, you can then move on with the authentication process.
 To get a new username from the Bridge (for now) you simply call GetBridge(bridges[<index>]), 
-where index is your preferred Bridge from the part [Finding Bridges](findingBridges).
+where index is your preferred Bridge from the part [Finding Bridges](#findingBridges).
 ```C++
 Hue bridge = finder.GetBridge(bridges[0]);
 ```
