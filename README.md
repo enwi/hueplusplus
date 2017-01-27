@@ -59,5 +59,9 @@ lamp1->setColorLoop(true);
 lamp1->setColorRGB(255, 128, 0);
 ```
 
+### Further reading
+If you want to know more about all functions just look inside the doxygen description, 
+which for now can be found in the regarding sourcecode file.
+
 ## Copyright
 Copyright (c) 2017 Jan Rogall & Moritz Wirger. See LICENSE for further details.
