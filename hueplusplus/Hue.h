@@ -25,6 +25,7 @@
 #include "json/json.h"
 
 #include <map>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -103,7 +104,7 @@ public:
 	//! Function that returns a \HueLight of specified \ref id
 	//! \param id Integer that specifies the ID of a Hue light
 	//! \return \ref HueLight that can be controlled
-	HueLight* getLight(int id);
+	std::unique_ptr<HueLight> getLight(int id);
 
 private:
 	//! Function that refreshes the local \ref state of the Hue bridge

@@ -48,15 +48,16 @@ You can choose from
 Then call getLight(\<id\>) from you bridge object to get the specific light, where id
 is the id of the light set internally by the Hue Bridge.
 ```C++
-HueExtendedColorLight* lamp1 = static_cast<HueExtendedColorLight*>(bridge.getLight(1));
+std::unique_ptr<HueLight> pLamp1 = bridge.getLight(1);
+HueExtendedColorLight& lamp1 = dynamic_cast<HueExtendedColorLight&>(*pLamp1);
 ```
 If you now want to control the light you just call the specific function of the light.
 ```C++
-lamp1->On();
-lamp1->setBrightness(120);
-lamp1->alertHueSaturation(25500, 255);
-lamp1->setColorLoop(true);
-lamp1->setColorRGB(255, 128, 0);
+lamp1.On();
+lamp1.setBrightness(120);
+lamp1.alertHueSaturation(25500, 255);
+lamp1.setColorLoop(true);
+lamp1.setColorRGB(255, 128, 0);
 ```
 
 ### Further reading
