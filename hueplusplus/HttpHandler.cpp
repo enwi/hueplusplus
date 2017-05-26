@@ -17,7 +17,7 @@
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **/
 
-#include "HttpHandler.h"
+#include "include/HttpHandler.h"
 #include <iostream>
 #include <stdexcept>
 #include <stdio.h>		// printf, sprintf
@@ -120,7 +120,7 @@ std::string HttpHandler::sendRequest(const std::string & msg, const std::string 
 std::string HttpHandler::sendRequestGetBody(const std::string & msg, const std::string & adr, int port)
 {
 	std::string response = sendRequest(msg, adr, port);
-	unsigned int start = response.find("\r\n\r\n");
+	size_t start = response.find("\r\n\r\n");
 	if (start == std::string::npos)
 	{
 		std::cerr << "Failed to find body in response\n";
@@ -194,7 +194,7 @@ std::vector<std::string> HttpHandler::sendMulticast(const std::string & msg, con
 
 	// construct return vector
 	std::vector<std::string> returnString;
-	unsigned int pos = response.find("\r\n\r\n");
+	size_t pos = response.find("\r\n\r\n");
 	unsigned int prevpos = 0;
 	while (pos != std::string::npos)
 	{

@@ -17,11 +17,15 @@
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **/
 
-#include "Hue.h"
+#include "include/Hue.h"
+#include "include/HueLight.h"
+#include "include/HueColorLight.h"
+#include "include/HueDimmableLight.h"
+#include "include/HueExtendedColorLight.h"
+#include "include/HueTemperatureLight.h"
 
-#include "HttpHandler.h"
-#include "json/json.h"
-#include "UPnP.h"
+#include "include/HttpHandler.h"
+#include "include/UPnP.h"
 
 #include <chrono>
 #include <iostream>
@@ -44,7 +48,7 @@ std::vector<HueFinder::HueIdentification> HueFinder::FindBridges() const
 	std::vector<HueIdentification> foundBridges;
 	for (const std::pair<std::string, std::string> &p : foundDevices)
 	{
-		unsigned int found = p.second.find("IpBridge");
+		size_t found = p.second.find("IpBridge");
 		if (found != std::string::npos)
 		{
 			HueIdentification bridge;
