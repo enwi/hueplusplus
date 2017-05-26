@@ -696,14 +696,14 @@ bool HueColorLight::alertHueSaturation(uint16_t hue, uint8_t sat)
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::smilliseconds(1500));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 		if (!on)
 		{
 			return OffNoRefresh(1);
 		}
 		else
 		{
-			return return setColorXY(oldX, oldY, 1);
+			return setColorXY(oldX, oldY, 1);
 		}
 	}
 	else

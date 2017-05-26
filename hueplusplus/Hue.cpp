@@ -243,35 +243,35 @@ std::unique_ptr<HueLight> Hue::getLight(int id)
 	if (type == "LCT001" || type == "LCT002" || type == "LCT003" || type == "LCT007" || type == "LLM001")
 	{
 		// HueExtendedColorLight Gamut B
-		std::unique_ptr<HueLight> light = new HueExtendedColorLight(ip, username, id);
+		std::unique_ptr<HueLight> light(new HueExtendedColorLight(ip, username, id));
 		light->colorType = ColorType::GAMUT_B;
 		return light;
 	}
 	else if (type == "LCT010" || type == "LCT011" || type == "LCT014" || type == "LLC020" || type == "LST002")
 	{
 		// HueExtendedColorLight Gamut C
-		std::unique_ptr<HueLight> light = new HueExtendedColorLight(ip, username, id);
+		std::unique_ptr<HueLight> light(new HueExtendedColorLight(ip, username, id));
 		light->colorType = ColorType::GAMUT_C;
 		return light;
 	}
 	else if (type == "LST001" || type == "LLC006" || type == "LLC007" || type == "LLC010" || type == "LLC011" || type == "LLC012" || type == "LLC013")
 	{
 		// HueColorLight Gamut A
-		std::unique_ptr<HueLight> light = new HueColorLight(ip, username, id);
+		std::unique_ptr<HueLight> light(new HueColorLight(ip, username, id));
 		light->colorType = ColorType::GAMUT_A;
 		return light;
 	}
 	else if (type == "LWB004" || type == "LWB006" || type == "LWB007" || type == "LWB010" || type == "LWB014")
 	{
 		// HueDimmableLight No Color Type
-		std::unique_ptr<HueLight> light = new HueDimmableLight(ip, username, id);
+		std::unique_ptr<HueLight> light(new HueDimmableLight(ip, username, id));
 		light->colorType = ColorType::NONE;
 		return light;
 	}
 	else if (type == "LLM010" || type == "LLM011" || type == "LLM012" || type == "LTW001" || type == "LTW004" || type == "LTW013" || type == "LTW014")
 	{
 		// HueTemperatureLight
-		std::unique_ptr<HueLight> light = new HueTemperatureLight(ip, username, id);
+		std::unique_ptr<HueLight> light(new HueTemperatureLight(ip, username, id));
 		light->colorType = ColorType::TEMPERATURE;
 		return light;
 	}
