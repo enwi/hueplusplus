@@ -283,6 +283,72 @@ std::unique_ptr<HueLight> Hue::getLight(int id)
 	throw(std::runtime_error("Could not determine HueLight type!"));
 }
 
+const std::map<uint8_t, ColorType>& Hue::getAllLightTypes()
+{
+	refreshState();
+	for (const auto& name : state["lights"].getMemberNames())
+	{
+		std::string type = state["lights"][name]["modelid"].asString();
+		int id = std::stoi(name);
+
+		if (type == "LCT001" || type == "LCT002" || type == "LCT003" || type == "LCT007" || type == "LLM001")
+		{
+			// HueExtendedColorLight Gamut B
+			lights[id] = ColorType::GAMUT_B;
+		}
+		else if (type == "LCT010" || type == "LCT011" || type == "LCT014" || type == "LLC020" || type == "LST002")
+		{
+			// HueExtendedColorLight Gamut C
+			lights[id] = ColorType::GAMUT_C;
+		}
+		else if (type == "LST001" || type == "LLC006" || type == "LLC007" || type == "LLC010" || type == "LLC011" || type == "LLC012" || type == "LLC013")
+		{
+			// HueColorLight Gamut A
+			lights[id] = ColorType::GAMUT_A;
+		}
+		else if (type == "LWB004" || type == "LWB006" || type == "LWB007" || type == "LWB010" || type == "LWB014")
+		{
+			// HueDimmableLight No Color Type
+			lights[id] = ColorType::NONE;
+		}
+		else if (type == "LLM010" || type == "LLM011" || type == "LLM012" || type == "LTW001" || type == "LTW004" || type == "LTW013" || type == "LTW014")
+		{
+			// HueTemperatureLight
+			lights[id] = ColorType::TEMPERATURE;
+		}
+	}
+	return lights;
+}
+
+
+std::vector<std::unique_ptr<HueLight>> Hue::getAllLights()
+{
+	std::vector<std::unique_ptr<HueLight>> result;
+	const std::map<uint8_t, ColorType>& lightTypes = getAllLightTypes();
+	for (const auto& entry : lightTypes)
+	{
+		switch (entry.second)
+		{
+		case ColorType::GAMUT_B:
+		case ColorType::GAMUT_C:
+			result.emplace_back(new HueExtendedColorLight(ip, username, entry.first));
+			break;
+		case ColorType::GAMUT_A:
+			result.emplace_back(new HueColorLight(ip, username, entry.first));
+			break;
+		case ColorType::NONE:
+			result.emplace_back(new HueDimmableLight(ip, username, entry.first));
+			break;
+		case ColorType::TEMPERATURE:
+			result.emplace_back(new HueTemperatureLight(ip, username, entry.first));
+			break;
+		default:
+			break;
+		}
+	}
+	return result;
+}
+
 void Hue::refreshState()
 {
 	if (username.empty())

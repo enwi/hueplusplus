@@ -106,6 +106,14 @@ public:
 	//! \return \ref HueLight that can be controlled
 	std::unique_ptr<HueLight> getLight(int id);
 
+	//! Function that returns all light types that are associated with this bridge
+	//! \return A map mapping light id's to light types for every light
+	const std::map<uint8_t, ColorType>& getAllLightTypes();
+
+	//! Function that returns all lights that are associated with this bridge
+	//! \return A vector containing pointers pointing to every HueLight
+	std::vector<std::unique_ptr<HueLight>> getAllLights();
+
 private:
 	//! Function that refreshes the local \ref state of the Hue bridge
 	void refreshState();
@@ -114,6 +122,7 @@ private:
 	std::string ip;
 	std::string username;
 	Json::Value state;
+	std::map<uint8_t, ColorType> lights;
 };
 
 #endif
