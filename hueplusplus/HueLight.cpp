@@ -47,6 +47,11 @@ std::string HueLight::getName()
 	return state["name"].asString();
 }
 
+ColorType HueLight::getCoorType()
+{
+	return colorType;
+}
+
 unsigned int HueLight::KelvinToMired(unsigned int kelvin)
 {
 	return int(0.5f + (1000000 / kelvin));

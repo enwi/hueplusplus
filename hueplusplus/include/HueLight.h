@@ -110,6 +110,10 @@ public:
 	//! \return String containig the name of the light
 	std::string getName();
 
+	//! F\unction that returns the color type of the light.
+	//! \return ColorType containig the color type of the light
+	ColorType getCoorType();
+
 	//! Function that converts Kelvin to Mired.
 	//! \param kelvin Unsigned integer value in Kelvin
 	//! \return Unsigned integer value in Mired
