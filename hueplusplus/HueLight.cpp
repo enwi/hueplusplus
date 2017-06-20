@@ -47,7 +47,7 @@ std::string HueLight::getName()
 	return state["name"].asString();
 }
 
-ColorType HueLight::getCoorType()
+ColorType HueLight::getColorType()
 {
 	return colorType;
 }
