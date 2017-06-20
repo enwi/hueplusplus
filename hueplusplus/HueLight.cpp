@@ -27,18 +27,34 @@
 #include <iostream>
 #include <thread>
 
-bool HueLight::On(uint8_t transistion)
+bool HueLight::On(uint8_t transition)
 {
 	std::cout << "Turning lamp with id: " << id << " on\n";
 	refreshState();
-	return OnNoRefresh(transistion);
+	return OnNoRefresh(transition);
 }
 
-bool HueLight::Off(uint8_t transistion)
+bool HueLight::Off(uint8_t transition)
 {
 	std::cout << "Turning lamp with id: " << id << " off\n";
 	refreshState();
-	return OffNoRefresh(transistion);
+	return OffNoRefresh(transition);
+}
+
+std::string HueLight::getName()
+{
+	refreshState();
+	return state["name"].asString();
+}
+
+unsigned int HueLight::KelvinToMired(unsigned int kelvin)
+{
+	return int(0.5f + (1000000 / kelvin));
+}
+
+unsigned int HueLight::MiredToKelvin(unsigned int mired)
+{
+	return int(0.5f + (1000000 / mired));
 }
 
 bool HueLight::alert()
@@ -58,42 +74,31 @@ bool HueLight::alert()
 	return false;
 }
 
-std::string HueLight::getName()
-{
-	refreshState();
-	return state["name"].asString();
-}
-
-unsigned int HueLight::KelvinToMired(unsigned int kelvin)
-{
-	return int(0.5f + (1000000 / kelvin));
-}
-
-unsigned int HueLight::MiredToKelvin(unsigned int mired)
-{
-	return int(0.5f + (1000000 / mired));
-}
-
-
-HueLight::HueLight(const std::string& ip, const std::string& username, int id) : ip(ip), username(username), id(id)
+HueLight::HueLight(const std::string& ip, const std::string& username, int id) : 
+ip(ip), 
+username(username), 
+id(id),
+_brightnessStrategy(nullptr),
+_colorTemperatureStrategy(nullptr),
+_colorHueStategy(nullptr)
 {
 	refreshState();
 }
 
-bool HueLight::OnNoRefresh(uint8_t transistion)
+bool HueLight::OnNoRefresh(uint8_t transition)
 {
 	std::cout << "\tOnNoRefresh()\n";
 	Json::Value request(Json::objectValue);
-	if (transistion != 4)
+	if (transition != 4)
 	{
-		request["transistiontime"] = transistion;
+		request["transitiontime"] = transition;
 	}
 	if (state["state"]["on"].asBool() != true)
 	{
 		request["on"] = true;
 	}
 
-	if (!request.isMember("on") && !request.isMember("transistiontime"))
+	if (!request.isMember("on") && !request.isMember("transitiontime"))
 	{
 		//Nothing needs to be changed
 		return true;
@@ -105,10 +110,10 @@ bool HueLight::OnNoRefresh(uint8_t transistion)
 	std::string path = "/lights/" + std::to_string(id) + "/state/";
 	bool success = true;
 	int i = 0;
-	if (success && request.isMember("transistiontime"))
+	if (success && request.isMember("transitiontime"))
 	{
 		//Check if success was sent and the value was changed
-		success = !reply[i].isNull() && reply[i].isMember("success") && reply[i]["success"][path + "transistiontime"].asUInt() == request["transistiontime"].asUInt();
+		success = !reply[i].isNull() && reply[i].isMember("success") && reply[i]["success"][path + "transitiontime"].asUInt() == request["transitiontime"].asUInt();
 		++i;
 	}
 	if (success && request.isMember("on"))
@@ -119,20 +124,20 @@ bool HueLight::OnNoRefresh(uint8_t transistion)
 	return success;
 }
 
-bool HueLight::OffNoRefresh(uint8_t transistion)
+bool HueLight::OffNoRefresh(uint8_t transition)
 {
 	std::cout << "\tOffNoRefresh()\n";
 	Json::Value request(Json::objectValue);
-	if (transistion != 4)
+	if (transition != 4)
 	{
-		request["transistiontime"] = transistion;
+		request["transitiontime"] = transition;
 	}
 	if (state["state"]["on"].asBool() != false)
 	{
 		request["on"] = false;
 	}
 
-	if (!request.isMember("on") && !request.isMember("transistiontime"))
+	if (!request.isMember("on") && !request.isMember("transitiontime"))
 	{
 		//Nothing needs to be changed
 		return true;
@@ -144,10 +149,10 @@ bool HueLight::OffNoRefresh(uint8_t transistion)
 	std::string path = "/lights/" + std::to_string(id) + "/state/";
 	bool success = true;
 	int i = 0;
-	if (success && request.isMember("transistiontime"))
+	if (success && request.isMember("transitiontime"))
 	{
 		//Check if success was sent and the value was changed
-		success = !reply[i].isNull() && reply[i].isMember("success") && reply[i]["success"][path + "transistiontime"].asUInt() == request["transistiontime"].asUInt();
+		success = !reply[i].isNull() && reply[i].isMember("success") && reply[i]["success"][path + "transitiontime"].asUInt() == request["transitiontime"].asUInt();
 		++i;
 	}
 	if (success && request.isMember("on"))

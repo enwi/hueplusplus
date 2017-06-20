@@ -20,7 +20,12 @@
 #ifndef _HUE_LIGHT_H
 #define _HUE_LIGHT_H
 
+#include <memory>
+
 #include "json/json.h"
+#include "BrightnessStrategy.h"
+#include "ColorHueStrategy.h"
+#include "ColorTemperatureStrategy.h"
 
 /*enum ModelType
 {
@@ -78,32 +83,32 @@ enum ColorType
 	GAMUT_C_TEMPERATURE
 };
 
-// supports groups, scenes and on/off control
 class HueLight
 {
 	friend class Hue;
+	friend class SimpleBrightnessStrategy;
+	friend class SimpleColorHueStrategy;
+	friend class ExtendedColorHueStrategy;
+	friend class SimpleColorTemperatureStrategy;
+	friend class ExtendedColorTemperatureStrategy;
 
 public:
-	//! virtual std dtor
-	virtual ~HueLight() = default;
+	//! std dtor
+	~HueLight() = default;
 
-	//! virtual function that turns the light on.
-	//! \param transistion Optional parameter to set the transition from current state to new standard is 4 = 400ms
+	//! Function that turns the light on.
+	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
 	//! \return Bool that is true on success
-	virtual bool On(uint8_t transistion = 4);
+	bool On(uint8_t transition = 4);
 
-	//! virtual function that turns the light off.
-	//! \param transistion Optional parameter to set the transition from current state to new standard is 4 = 400ms
+	//! Function that turns the light off.
+	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
 	//! \return Bool that is true on success
-	virtual bool Off(uint8_t transistion = 4);
+	bool Off(uint8_t transition = 4);
 
-	//! Function that lets the light perform one breath cycle.
-	//! \return Bool that is true on success
-	virtual bool alert();
-
-	//! virtual function that returns the name of the light.
+	//! F\unction that returns the name of the light.
 	//! \return String containig the name of the light
-	virtual std::string getName();
+	std::string getName();
 
 	//! Function that converts Kelvin to Mired.
 	//! \param kelvin Unsigned integer value in Kelvin
@@ -115,6 +120,186 @@ public:
 	//! \return Unsigned integer value in Kelvin
 	unsigned int MiredToKelvin(unsigned int mired);
 
+	//! Function that sets the brightness of this light if the 
+	//! light has a reference to a specific \ref BrightnessStrategy.
+	//! The brightness can range from 0=off to 255=fully on.
+	//! \param bri Unsigned int that specifies the brightness
+	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
+	//! \return Bool that is true on success
+	bool setBrightness(unsigned int bri, uint8_t transition = 4) 
+	{ 
+		if (_brightnessStrategy) 
+		{
+			return (*_brightnessStrategy).setBrightness(bri, transition, *this);
+	 	}
+	};
+
+	//! Fucntion that sets the color temperature of this light in mired if the 
+	//! light has a reference to a specific \ref ColorTemperatureStrategy.
+	//! The color temperature can range from 153 to 500.
+	//! \param mired Unsigned int that specifies the color temperature in Mired
+	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
+	//! \return Bool that is true on success
+	bool setColorTemperature(unsigned int mired, uint8_t transition = 4)
+	{ 
+		if (_colorTemperatureStrategy)
+		{ 
+			return (*_colorTemperatureStrategy).setColorTemperature(mired, transition, *this); 
+		}
+	};
+
+	//! Function to set the color of this light with specified hue if the
+	//! light has a reference to a specific \ref ColorHueStrategy.
+	//! The hue can range from 0 to 65535, whereas 65535 and 0 are red, 25500 is green and 46920 is blue.
+	//! \param hue uint16_t that specifies the hue
+	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
+	//! \return Bool that is true on success
+	bool setColorHue(uint16_t hue, uint8_t transition = 4)
+	{
+		if(_colorHueStategy)
+		{
+			return (*_colorHueStategy).setColorHue(hue, transition, *this);
+		}
+	};
+
+	//! Function to set the saturation of color of this light with specified saturation if the
+	//! light has a reference to a specific \ref ColorHueStrategy.
+	//! The saturation can range from 0 to 254, whereas 0 is least saturated (white) and 254 is most saturated.
+	//! \param sat uint8_t that specifies the saturation
+	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
+	//! \return Bool that is true on success
+	bool setColorSaturation(uint8_t sat, uint8_t transition = 4)
+	{
+		if(_colorHueStategy)
+		{
+			return (*_colorHueStategy).setColorSaturation(sat, transition, *this);
+		}
+	};
+
+	//! Function to set the color of this light with specified hue and saturation if the
+	//! light has a reference to a specific \ref ColorHueStrategy.
+	//! \param hue uint16_t that specifies the hue
+	//! \param sat uint8_t that specifies the saturation
+	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms.
+	//! \return Bool that is true on success
+	bool setColorHueSaturation(uint16_t hue, uint8_t sat, uint8_t transition = 4)
+	{
+		if(_colorHueStategy)
+		{
+			return (*_colorHueStategy).setColorHueSaturation(hue, sat, transition, *this);
+		}
+	};
+
+	//! Function to set the color of this light in CIE with specified x y if the
+	//! light has a reference to a specific \ref ColorHueStrategy.
+	//! The values of x and y are ranging from 0 to 1.
+	//! \param x float that specifies the x coordinate in CIE
+	//! \param y float that specifies the y coordinate in CIE
+	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
+	//! \return Bool that is true on success
+	bool setColorXY(float x, float y, uint8_t transition = 4)
+	{
+		if(_colorHueStategy)
+		{
+			return (*_colorHueStategy).setColorXY(x, y, transition, *this);
+		}
+	};
+
+	//! Function to set the color of this light with red green and blue values if the
+	//! light has a reference to a specific \ref ColorHueStrategy. 
+	//! The values of red, green and blue are ranging from 0 to 255.
+	//! \param r uint8_t that specifies the red color value
+	//! \param g uint8_t that specifies the green color value
+	//! \param b uint8_t that specifies the blue color value
+	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
+	//! \return Bool that is true on success
+	bool setColorRGB(uint8_t r, uint8_t g, uint8_t b, uint8_t transition = 4)
+	{
+		if(_colorHueStategy)
+		{
+			return (*_colorHueStategy).setColorRGB(r, g, b, transition, *this);
+		}
+	};
+
+	//! Function that lets the light perform one breath cycle.
+	//! \return bool that is true on success
+	virtual bool alert();
+
+	//! Function that lets the light perform one breath cycle in specified color temperature
+	//! if the light has a reference to a specific \ref ColorTemperatureStrategy.
+	//! It uses this_thread::sleep_for to accomodate for the time an \ref alert() needs.
+	//! \param mired Color temperature in mired
+	//! \return Bool that is true on success
+	bool alertTemperature(unsigned int mired)
+	{
+		if(_colorTemperatureStrategy)
+		{
+			return (*_colorTemperatureStrategy).alertTemperature(mired, *this);
+		}
+	};
+
+	//! Function that lets the light perform one breath cycle in specified color if the
+	//! light has a reference to a specific \ref ColorHueStrategy. 
+	//! It uses this_thread::sleep_for to accomodate for the time an \ref alert() needs
+	//! \param hue uint16_t that specifies the hue
+	//! \param sat uint8_t that specifies the saturation
+	//! \return Bool that is true on success
+	bool alertHueSaturation(uint16_t hue, uint8_t sat)
+	{
+		if(_colorHueStategy)
+		{
+			return (*_colorHueStategy).alertHueSaturation(hue, sat, *this);
+		}
+	};
+
+	//! Function that lets the light perform one breath cycle in specified color if the
+	//! light has a reference to a specific \ref ColorHueStrategy. 
+	//! The values of x and y are ranging from 0 to 1.
+	//! It uses this_thread::sleep_for to accomodate for the time an \ref alert() needs
+	//! \param x float that specifies the x coordinate in CIE
+	//! \param y float that specifies the y coordinate in CIE
+	//! \return Bool that is true on success
+	bool alertXY(float x, float y)
+	{
+		if(_colorHueStategy)
+		{
+			return (*_colorHueStategy).alertXY(x, y, *this);
+		}
+	};
+
+	//! Function that lets the light perform one breath cycle in specified color if the
+	//! light has a reference to a specific \ref ColorHueStrategy. 
+	//! The values of red, green and blue are ranging from 0 to 255.
+	//! It uses this_thread::sleep_for to accomodate for the time an \ref alert() needs
+	//! \param r uint8_t that specifies the red color value
+	//! \param g uint8_t that specifies the green color value
+	//! \param b uint8_t that specifies the blue color value
+	//! \return Bool that is true on success
+	bool alertRGB(uint8_t r, uint8_t g, uint8_t b)
+	{
+		if(_colorHueStategy)
+		{
+			return (*_colorHueStategy).alertRGB(r, g, b, *this);
+		}
+	};
+
+	//! Function to enable colorloop effect if the
+	//! light has a reference to a specific \ref ColorHueStrategy. 
+	//! The colorloop effect will loop through all colors on current hue and saturation levels.
+	//! Notice that none of the setter functions check whether this feature is enabled and 
+	//! the colorloop can only be disabled with this function or by simply calling Off()/OffNoRefresh() 
+	//! and then On()/OnNoRefresh(), so you could alternatively call Off() and 
+	//! then use any of the setter functions.
+	//! \param on bool that enables this feature when true and disables it when false
+	//! \return Bool that is true on success
+	bool setColorLoop(bool on)
+	{
+		if(_colorHueStategy)
+		{
+			return (*_colorHueStategy).setColorLoop(on, *this);
+		}
+	};
+
 protected:
 	//! protected ctor that is used by \ref Hue class.
 	//! \param ip String that specifies the ip of the Hue bridge
@@ -122,15 +307,30 @@ protected:
 	//! \param id Integer that specifies the id of this light
 	HueLight(const std::string& ip, const std::string& username, int id);
 
-	//! virtual function that turns the light on without refreshing its state.
-	//! \param transistion Optional parameter to set the transition from current state to new standard is 4 = 400ms
-	//! \return Bool that is true on success
-	virtual bool OnNoRefresh(uint8_t transistion = 4);
+	//! protected function that sets the brightness strategy which defines how
+	//! specific commands that deal with brightness control are executed
+	//! \param strat a strategy of type \ref BrightnessStrategy
+	void setBrightnessStrategy(std::shared_ptr<BrightnessStrategy> strat)  { _brightnessStrategy = strat; };
 
-	//! virtual function that turns the light off without refreshing its state.
-	//! \param transistion Optional parameter to set the transition from current state to new standard is 4 = 400ms
+	//! protected function that sets the colorTemperature strategy which defines how
+	//! specific commands that deal with colortemperature control are executed
+	//! \param strat a strategy of type \ref ColorTemperatureStrategy
+	void setColorTemperatureStrategy(std::shared_ptr<ColorTemperatureStrategy> strat)  { _colorTemperatureStrategy = strat; };
+
+	//! protected function that sets the colorHue strategy which defines how
+	//! specific commands that deal with color control are executed
+	//! \param strat a strategy of type \ref ColorHueStrategy
+	void setColorHueStrategy(std::shared_ptr<ColorHueStrategy> strat)  { _colorHueStategy = strat; };
+
+	//! Function that turns the light on without refreshing its state.
+	//! \param transition Optional parameter to set the transition from current state to new standard is 4 = 400ms
 	//! \return Bool that is true on success
-	virtual bool OffNoRefresh(uint8_t transistion = 4);
+	bool OnNoRefresh(uint8_t transition = 4);
+
+	//! Function that turns the light off without refreshing its state.
+	//! \param transition Optional parameter to set the transition from current state to new standard is 4 = 400ms
+	//! \return Bool that is true on success
+	bool OffNoRefresh(uint8_t transition = 4);
 
 	//! utility function to send a put request to the light.
 	//! \throws std::runtime_error if the reply could not be parsed
@@ -146,12 +346,10 @@ protected:
 	int id;					//!< holds the id of the light
 	Json::Value state;		//!< holds the current state of the light updated by \ref refreshState
 	ColorType colorType;	//!< holds the \ref ColorType of the light
+
+	std::shared_ptr<BrightnessStrategy>			_brightnessStrategy;		//!< holds a reference to the strategy that handles brighntess commands
+	std::shared_ptr<ColorTemperatureStrategy> 	_colorTemperatureStrategy;	//!< holds a reference to the strategy that handles colortemperature commands
+	std::shared_ptr<ColorHueStrategy>			_colorHueStategy;			//!< holds a reference to the strategy that handles all color commands
 };
-
-
-
-
-
-
 
 #endif

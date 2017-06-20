@@ -1,5 +1,5 @@
 /**
-	\file HueTemperatureLight.cpp
+	\file SimpleColorTemperatureStrategy.cpp
 	Copyright Notice\n
 	Copyright (C) 2017  Jan Rogall		- developer\n
 	Copyright (C) 2017  Moritz Wirger	- developer\n
@@ -17,26 +17,26 @@
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **/
 
-#include "include/HueTemperatureLight.h"
+#include "include/SimpleColorTemperatureStrategy.h"
 
 #include <cmath>
 #include <iostream>
 #include <thread>
 
 
-bool HueTemperatureLight::setColorTemperature(unsigned int mired, uint8_t transistion)
+bool SimpleColorTemperatureStrategy::setColorTemperature(unsigned int mired, uint8_t transition, HueLight& light) const
 {
-	refreshState();
+	light.refreshState();
 	Json::Value request(Json::objectValue);
-	if (transistion != 4)
+	if (transition != 4)
 	{
-		request["transistiontime"] = transistion;
+		request["transitiontime"] = transition;
 	}
-	if (state["state"]["on"].asBool() != true)
+	if (light.state["state"]["on"].asBool() != true)
 	{
 		request["on"] = true;
 	}
-	if (state["state"]["ct"].asUInt() != mired)
+	if (light.state["state"]["ct"].asUInt() != mired)
 	{
 		if (mired > 500)
 		{
@@ -55,16 +55,16 @@ bool HueTemperatureLight::setColorTemperature(unsigned int mired, uint8_t transi
 		return true;
 	}
 
-	Json::Value reply = SendPutRequest(request);
+	Json::Value reply = light.SendPutRequest(request);
 
 	//Check whether request was successful
-	std::string path = "/lights/" + std::to_string(id) + "/state/";
+	std::string path = "/lights/" + std::to_string(light.id) + "/state/";
 	bool success = true;
 	int i = 0;
-	if (success && request.isMember("transistiontime"))
+	if (success && request.isMember("transitiontime"))
 	{
 		//Check if success was sent and the value was changed
-		success = !reply[i].isNull() && reply[i].isMember("success") && reply[i]["success"][path + "transistiontime"].asUInt() == request["transistiontime"].asUInt();
+		success = !reply[i].isNull() && reply[i].isMember("success") && reply[i]["success"][path + "transitiontime"].asUInt() == request["transitiontime"].asUInt();
 		++i;
 	}
 	if (success && request.isMember("on"))
@@ -81,31 +81,31 @@ bool HueTemperatureLight::setColorTemperature(unsigned int mired, uint8_t transi
 	return success;
 }
 
-bool HueTemperatureLight::alertTemperature(unsigned int mired)
+bool SimpleColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLight& light) const
 {
-	refreshState();
-	std::string cType = state["state"]["colormode"].asString();
-	bool on = state["state"]["on"].asBool();
+	light.refreshState();
+	std::string cType = light.state["state"]["colormode"].asString();
+	bool on = light.state["state"]["on"].asBool();
 	if (cType == "ct")
 	{
-		uint16_t oldCT = state["state"]["ct"].asUInt();
-		if (!setColorTemperature(mired, 1))
+		uint16_t oldCT = light.state["state"]["ct"].asUInt();
+		if (!light.setColorTemperature(mired, 1))
 		{
 			return false;
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(110));
-		if (!alert())
+		if (!light.alert())
 		{
 			return false;
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 		if (!on)
 		{
-			return OffNoRefresh(1);
+			return light.OffNoRefresh(1);
 		}
 		else
 		{
-			return setColorTemperature(oldCT, 1);
+			return light.setColorTemperature(oldCT, 1);
 		}
 	}
 	else

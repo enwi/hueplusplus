@@ -19,10 +19,11 @@
 
 #include "include/Hue.h"
 #include "include/HueLight.h"
-#include "include/HueColorLight.h"
-#include "include/HueDimmableLight.h"
-#include "include/HueExtendedColorLight.h"
-#include "include/HueTemperatureLight.h"
+#include "include/SimpleBrightnessStrategy.h"
+#include "include/SimpleColorHueStrategy.h"
+#include "include/ExtendedColorHueStrategy.h"
+#include "include/SimpleColorTemperatureStrategy.h"
+#include "include/ExtendedColorTemperatureStrategy.h"
 
 #include "include/HttpHandler.h"
 #include "include/UPnP.h"
@@ -147,6 +148,7 @@ std::string HueFinder::RequestUsername(const std::string & ip) const
 			{
 				// [{"success":{"username": "83b7780291a6ceffbe0bd049104df"}}]
 				std::cout << "Success! Link button was pressed!\n";
+				std::cout << "Username is \"" << answer[0]["success"]["username"].asString() << "\"\n";;
 				return answer[0]["success"]["username"].asString();
 			}
 			if (answer[0]["error"] != Json::nullValue)
@@ -159,8 +161,15 @@ std::string HueFinder::RequestUsername(const std::string & ip) const
 }
 
 
-Hue::Hue(const std::string& ip, const std::string& username) : ip(ip), username(username)
+Hue::Hue(const std::string& ip, const std::string& username) : 
+ip(ip), 
+username(username)
 {
+	_simpleBrightnessStrategy = std::shared_ptr<BrightnessStrategy>( new SimpleBrightnessStrategy );
+	_simpleColorHueStrategy = std::shared_ptr<ColorHueStrategy>( new SimpleColorHueStrategy );
+	_extendedColorHueStrategy = std::shared_ptr<ColorHueStrategy>( new ExtendedColorHueStrategy );
+	_simpleColorTemperatureStrategy = std::shared_ptr<ColorTemperatureStrategy>( new SimpleColorTemperatureStrategy );
+	_extendedColorTemperatureStrategy = std::shared_ptr<ColorTemperatureStrategy>( new ExtendedColorTemperatureStrategy );
 }
 
 std::string Hue::getBridgeIP()
@@ -233,54 +242,135 @@ void Hue::setIP(const std::string ip)
 	this->ip = ip;
 }
 
-std::unique_ptr<HueLight> Hue::getLight(int id)
+const HueLight& Hue::getLight(int id)
 {
+	if(lights.count(id) > 0)
+	{
+		return lights.find(id)->second;
+	}
 	refreshState();
 	if (state["lights"][std::to_string(id)] == Json::nullValue)
 	{
 		std::cout << "Error in Hue getLight(): light with id " << id << " is not valid\n";
 		throw(std::runtime_error("Error in Hue getLight(): light id is not valid"));
 	}
-	std::cout << state["lights"][std::to_string(id)] << std::endl;
+	//std::cout << state["lights"][std::to_string(id)] << std::endl;
 	std::string type = state["lights"][std::to_string(id)]["modelid"].asString();
-	std::cout << type << std::endl;
+	//std::cout << type << std::endl;
 	if (type == "LCT001" || type == "LCT002" || type == "LCT003" || type == "LCT007" || type == "LLM001")
 	{
 		// HueExtendedColorLight Gamut B
-		std::unique_ptr<HueLight> light(new HueExtendedColorLight(ip, username, id));
-		light->colorType = ColorType::GAMUT_B;
-		return light;
+		HueLight light = HueLight(ip, username, id);
+		light.setBrightnessStrategy(_simpleBrightnessStrategy);
+		light.setColorHueStrategy(_extendedColorHueStrategy);
+		light.setColorTemperatureStrategy(_extendedColorTemperatureStrategy);
+		light.colorType = ColorType::GAMUT_B;
+		lights.emplace(id, light);
+		return lights.find(id)->second;
 	}
 	else if (type == "LCT010" || type == "LCT011" || type == "LCT014" || type == "LLC020" || type == "LST002")
 	{
 		// HueExtendedColorLight Gamut C
-		std::unique_ptr<HueLight> light(new HueExtendedColorLight(ip, username, id));
-		light->colorType = ColorType::GAMUT_C;
-		return light;
+		HueLight light = HueLight(ip, username, id);
+		light.setBrightnessStrategy(_simpleBrightnessStrategy);
+		light.setColorHueStrategy(_extendedColorHueStrategy);
+		light.setColorTemperatureStrategy(_extendedColorTemperatureStrategy);
+		light.colorType = ColorType::GAMUT_C;
+		lights.emplace(id, light);
+		return lights.find(id)->second;
 	}
 	else if (type == "LST001" || type == "LLC006" || type == "LLC007" || type == "LLC010" || type == "LLC011" || type == "LLC012" || type == "LLC013")
 	{
 		// HueColorLight Gamut A
-		std::unique_ptr<HueLight> light(new HueColorLight(ip, username, id));
-		light->colorType = ColorType::GAMUT_A;
-		return light;
+		HueLight light = HueLight(ip, username, id);
+		light.setBrightnessStrategy(_simpleBrightnessStrategy);
+		light.setColorHueStrategy(_simpleColorHueStrategy);
+		light.setColorTemperatureStrategy(_simpleColorTemperatureStrategy);
+		light.colorType = ColorType::GAMUT_A;
+		lights.emplace(id, light);
+		return lights.find(id)->second;
 	}
 	else if (type == "LWB004" || type == "LWB006" || type == "LWB007" || type == "LWB010" || type == "LWB014")
 	{
 		// HueDimmableLight No Color Type
-		std::unique_ptr<HueLight> light(new HueDimmableLight(ip, username, id));
-		light->colorType = ColorType::NONE;
-		return light;
+		HueLight light = HueLight(ip, username, id);
+		light.setBrightnessStrategy(_simpleBrightnessStrategy);
+		//light.setColorHueStrategy();
+		//light.setColorTemperatureStrategy();
+		light.colorType = ColorType::NONE;
+		lights.emplace(id, light);
+		return lights.find(id)->second;
 	}
 	else if (type == "LLM010" || type == "LLM011" || type == "LLM012" || type == "LTW001" || type == "LTW004" || type == "LTW013" || type == "LTW014")
 	{
 		// HueTemperatureLight
-		std::unique_ptr<HueLight> light(new HueTemperatureLight(ip, username, id));
-		light->colorType = ColorType::TEMPERATURE;
-		return light;
+		HueLight light = HueLight(ip, username, id);
+		light.setBrightnessStrategy(_simpleBrightnessStrategy);
+		//light.setColorHueStrategy();
+		light.setColorTemperatureStrategy(_simpleColorTemperatureStrategy);
+		light.colorType = ColorType::TEMPERATURE;
+		lights.emplace(id, light);
+		return lights.find(id)->second;
 	}
 	std::cout << "Could not determine HueLight type!\n";
 	throw(std::runtime_error("Could not determine HueLight type!"));
+}
+
+/*const std::map<uint8_t, ColorType>& Hue::getAllLightTypes()
+{
+	refreshState();
+	for (const auto& name : state["lights"].getMemberNames())
+	{
+		std::string type = state["lights"][name]["modelid"].asString();
+		int id = std::stoi(name);
+
+		if (type == "LCT001" || type == "LCT002" || type == "LCT003" || type == "LCT007" || type == "LLM001")
+		{
+			// HueExtendedColorLight Gamut B
+			lights[id].second = ColorType::GAMUT_B;
+		}
+		else if (type == "LCT010" || type == "LCT011" || type == "LCT014" || type == "LLC020" || type == "LST002")
+		{
+			// HueExtendedColorLight Gamut C
+			lights[id].second = ColorType::GAMUT_C;
+		}
+		else if (type == "LST001" || type == "LLC006" || type == "LLC007" || type == "LLC010" || type == "LLC011" || type == "LLC012" || type == "LLC013")
+		{
+			// HueColorLight Gamut A
+			lights[id].second = ColorType::GAMUT_A;
+		}
+		else if (type == "LWB004" || type == "LWB006" || type == "LWB007" || type == "LWB010" || type == "LWB014")
+		{
+			// HueDimmableLight No Color Type
+			lights[id].second = ColorType::NONE;
+		}
+		else if (type == "LLM010" || type == "LLM011" || type == "LLM012" || type == "LTW001" || type == "LTW004" || type == "LTW013" || type == "LTW014")
+		{
+			// HueTemperatureLight
+			lights[id].second = ColorType::TEMPERATURE;
+		}
+	}
+	return lights;
+}*/
+
+
+std::vector<std::reference_wrapper<const HueLight>> Hue::getAllLights()
+{
+	refreshState();
+	for (const auto& name : state["lights"].getMemberNames())
+	{
+		uint8_t id = std::stoi(name);
+		if(lights.count(id)<=0)
+		{
+			getLight(id);
+		}
+	}
+	std::vector<std::reference_wrapper<const HueLight>> result;
+	for (const auto& entry : lights)
+	{
+		result.emplace_back(entry.second);
+	}
+	return result;
 }
 
 void Hue::refreshState()
@@ -301,13 +391,13 @@ void Hue::refreshState()
 
 	Json::Value answer;
 	std::string postAnswer = HttpHandler().sendRequestGetBody(get.c_str(), ip, 80);
-	std::cout <<"\""<< postAnswer << "\"\n" << std::endl;
+	//std::cout <<"\""<< postAnswer << "\"\n" << std::endl;
 	if (!reader->parse(postAnswer.c_str(), postAnswer.c_str() + postAnswer.length(), &answer, &error))
 	{
 		std::cout << "Error while parsing JSON in refreshState of Hue: " << error << std::endl;
 		throw(std::runtime_error("Error while parsing JSON in refreshState of Hue"));
 	}
-	if (answer["lights"] != Json::nullValue)
+	if (answer.isMember("lights"))
 	{
 		state = answer;
 	}
