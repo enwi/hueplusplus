@@ -106,13 +106,13 @@ public:
 	//! \return Bool that is true on success
 	bool Off(uint8_t transition = 4);
 
-	//! F\unction that returns the name of the light.
+	//! Function that returns the name of the light.
 	//! \return String containig the name of the light
 	std::string getName();
 
-	//! F\unction that returns the color type of the light.
+	//! Function that returns the color type of the light.
 	//! \return ColorType containig the color type of the light
-	ColorType getCoorType();
+	ColorType getColorType();
 
 	//! Function that converts Kelvin to Mired.
 	//! \param kelvin Unsigned integer value in Kelvin
