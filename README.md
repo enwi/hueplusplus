@@ -36,33 +36,32 @@ Hue bridge = finder.GetBridge(bridges[0]);
 ```
 
 ### Controlling lights
-If you have your Bridge all set up now you can get and control its lights.
-For that create a pointer of the specific light type you want to use.
-You can choose from 
-* HueLight
-* HueDimmableLight
-* HueTemperatureLight
-* HueColorLight
-* HueExtendedColorLight
-
-Then call getLight(\<id\>) from you bridge object to get the specific light, where id
+If you have your Bridge all set up now you can control its lights.
+For that create a new HueLight and call getLight(\<id\>) from you bridge object to get a reference to a specific light, where id
 is the id of the light set internally by the Hue Bridge.
 ```C++
-std::unique_ptr<HueLight> pLamp1 = bridge.getLight(1);
-HueExtendedColorLight& lamp1 = dynamic_cast<HueExtendedColorLight&>(*pLamp1);
+HueLight light1 = bridge.getLight(1);
 ```
 If you now want to control the light you just call the specific function of the light.
 ```C++
-lamp1.On();
-lamp1.setBrightness(120);
-lamp1.alertHueSaturation(25500, 255);
-lamp1.setColorLoop(true);
-lamp1.setColorRGB(255, 128, 0);
+light1.On();
+light1.setBrightness(120);
+light1.alertHueSaturation(25500, 255);
+light1.setColorLoop(true);
+light1.setColorRGB(255, 128, 0);
+```
+But keep in mind that some light types do not have all functions available. So you might call a 
+specific function, but nothing will happen. For that you might want to check beforehand what type 
+of a lamp you are controlling. For that you can call the function getColorType(), which will return 
+a ColorType.
+```C++
+ColorType type1 = light1.getColorType();
 ```
 
 ### Further reading
 If you want to know more about all functions just look inside the doxygen description, 
-which for now can be found in the regarding sourcecode file.
+which for now can be found in the regarding sourcecode file or create the documentation
+with the provided Doxyfile yourself.
 
 ## Copyright
 Copyright (c) 2017 Jan Rogall & Moritz Wirger. See LICENSE for further details.
