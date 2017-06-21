@@ -249,7 +249,7 @@ const HueLight& Hue::getLight(int id)
 		return lights.find(id)->second;
 	}
 	refreshState();
-	if (state["lights"][std::to_string(id)] == Json::nullValue)
+	if (!state["lights"].isMember(std::to_string(id)))
 	{
 		std::cout << "Error in Hue getLight(): light with id " << id << " is not valid\n";
 		throw(std::runtime_error("Error in Hue getLight(): light id is not valid"));

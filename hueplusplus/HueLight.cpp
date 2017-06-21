@@ -19,7 +19,6 @@
 
 #include "include/HueLight.h"
 
-
 #include "include/HttpHandler.h"
 #include "include/json/json.h"
 
