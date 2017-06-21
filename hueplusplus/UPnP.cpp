@@ -34,15 +34,17 @@ std::vector<std::pair<std::string, std::string>> UPnP::getDevices()
 	{
 		std::pair<std::string, std::string> device;
 		int start = s.find("LOCATION:") + 10;
-		std::cout << "Found \"LOCATION:\" at " << start << std::endl;
 		device.first = s.substr(start, s.find("\r\n", start)-start);
 		start = s.find("SERVER:") + 8;
 		device.second = s.substr(start, s.find("\r\n", start) - start);
-		devices.push_back(device);
+		if(std::find_if(devices.begin(), devices.end(), [&](const std::pair<std::string, std::string> &item){return item.first == device.first;}) == devices.end())
+		{
+			devices.push_back(device);
+
+			//std::cout << "Device: \t" << device.first << std::endl;
+			//std::cout << "        \t" << device.second << std::endl;
+		}
 	}
-
-	// remove duplicates -> maybe include this in device filtering without the need of unique and stuff?
-	devices.erase(std::unique(devices.begin(), devices.end()), devices.end());
-
 	return devices;
 }
+
