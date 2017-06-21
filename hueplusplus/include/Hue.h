@@ -114,16 +114,8 @@ public:
 	//const std::map<uint8_t, ColorType>& getAllLightTypes();
 
 	//! Function that returns all lights that are associated with this bridge
-	//! \return A vector containing pointers pointing to every HueLight
+	//! \return A vector containing references to every HueLight
 	std::vector<std::reference_wrapper<const HueLight>> getAllLights();
-
-	//! Function that returns all light types that are associated with this bridge
-	//! \return A map mapping light id's to light types for every light
-	const std::map<uint8_t, ColorType>& getAllLightTypes();
-
-	//! Function that returns all lights that are associated with this bridge
-	//! \return A vector containing pointers pointing to every HueLight
-	std::vector<std::unique_ptr<HueLight>> getAllLights();
 
 private:
 	//! Function that refreshes the local \ref state of the Hue bridge
