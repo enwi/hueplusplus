@@ -36,7 +36,9 @@
 // forward declarations
 class Hue;
 
+//!
 //! Class to find all Hue bridges on the network and create usernames for them.
+//!
 class HueFinder
 {
 public:
@@ -56,7 +58,7 @@ public:
 	//! \return \ref Hue class object
 	Hue GetBridge(const HueIdentification& identification);
 
-	//! Function that adds a \ref username to the \ref usernames map
+	//! Function that adds a username to the \ref usernames map
 	//! \param mac MAC address of Hue bridge
 	//! \param username Username that is used to control the Hue bridge
 	void AddUsername(const std::string& mac, const std::string& username);
@@ -107,7 +109,7 @@ public:
 	//! Function that returns a \HueLight of specified \ref id
 	//! \param id Integer that specifies the ID of a Hue light
 	//! \return \ref HueLight that can be controlled
-	const HueLight& getLight(int id);
+	HueLight& getLight(int id);
 
 	//! Function that returns all light types that are associated with this bridge
 	//! \return A map mapping light id's to light types for every light
@@ -115,7 +117,7 @@ public:
 
 	//! Function that returns all lights that are associated with this bridge
 	//! \return A vector containing references to every HueLight
-	std::vector<std::reference_wrapper<const HueLight>> getAllLights();
+	std::vector<std::reference_wrapper<HueLight>> getAllLights();
 
 private:
 	//! Function that refreshes the local \ref state of the Hue bridge
@@ -127,11 +129,11 @@ private:
 	Json::Value state;
 	std::map< uint8_t, HueLight > lights;
 
-	std::shared_ptr<BrightnessStrategy>			_simpleBrightnessStrategy;
-	std::shared_ptr<ColorHueStrategy> 			_simpleColorHueStrategy;
-	std::shared_ptr<ColorHueStrategy>			_extendedColorHueStrategy;
-	std::shared_ptr<ColorTemperatureStrategy>	_simpleColorTemperatureStrategy;
-	std::shared_ptr<ColorTemperatureStrategy>	_extendedColorTemperatureStrategy;
+	std::shared_ptr<BrightnessStrategy>			simpleBrightnessStrategy;
+	std::shared_ptr<ColorHueStrategy> 			simpleColorHueStrategy;
+	std::shared_ptr<ColorHueStrategy>			extendedColorHueStrategy;
+	std::shared_ptr<ColorTemperatureStrategy>	simpleColorTemperatureStrategy;
+	std::shared_ptr<ColorTemperatureStrategy>	extendedColorTemperatureStrategy;
 };
 
 #endif
