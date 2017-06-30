@@ -248,9 +248,9 @@ bool SimpleColorHueStrategy::setColorXY(float x, float y, uint8_t transistion, H
 
 bool SimpleColorHueStrategy::setColorRGB(uint8_t r, uint8_t g, uint8_t b, uint8_t transistion, HueLight& light) const
 {
-	float red = r / 255;
-	float green = g / 255;
-	float blue = b / 255;
+	float red = float(r) / 255;
+	float green = float(g) / 255;
+	float blue = float(b) / 255;
 
 	// gamma correction
 	red = (red > 0.04045f) ? pow((red + 0.055f) / (1.0f + 0.055f), 2.4f) : (red / 12.92f);
