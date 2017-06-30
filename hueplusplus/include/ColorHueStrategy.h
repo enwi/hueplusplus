@@ -36,7 +36,7 @@ class ColorHueStrategy
         virtual bool alertHueSaturation(uint16_t hue, uint8_t sat, HueLight& light) const = 0;
         virtual bool alertXY(float x, float y, HueLight& light) const = 0;
         virtual bool alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLight& light) const = 0;
-        virtual ~ColorHueStrategy() {}
+        virtual ~ColorHueStrategy() = default;
 };
 
 #endif

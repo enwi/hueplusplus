@@ -28,7 +28,7 @@ class BrightnessStrategy
 {
     public:
         virtual bool setBrightness(unsigned int bri, uint8_t transition, HueLight& light) const = 0;
-        virtual ~BrightnessStrategy() {}
+        virtual ~BrightnessStrategy() = default;
 };
 
 #endif

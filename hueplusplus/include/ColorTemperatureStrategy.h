@@ -29,7 +29,7 @@ class ColorTemperatureStrategy
     public:
         virtual bool setColorTemperature(unsigned int mired, uint8_t transition, HueLight& light) const = 0;
 		virtual bool alertTemperature(unsigned int mired, HueLight& light) const = 0;
-        virtual ~ColorTemperatureStrategy() {}
+        virtual ~ColorTemperatureStrategy() = default;
 };
 
 #endif
