@@ -49,7 +49,7 @@ std::vector<HueFinder::HueIdentification> HueFinder::FindBridges() const
 	std::vector<HueIdentification> foundBridges;
 	for (const std::pair<std::string, std::string> &p : foundDevices)
 	{
-		size_t found = p.second.find("IpBridge");
+		unsigned int found = p.second.find("IpBridge");
 		if (found != std::string::npos)
 		{
 			HueIdentification bridge;
@@ -165,11 +165,11 @@ Hue::Hue(const std::string& ip, const std::string& username) :
 ip(ip), 
 username(username)
 {
-	_simpleBrightnessStrategy = std::shared_ptr<BrightnessStrategy>( new SimpleBrightnessStrategy );
-	_simpleColorHueStrategy = std::shared_ptr<ColorHueStrategy>( new SimpleColorHueStrategy );
-	_extendedColorHueStrategy = std::shared_ptr<ColorHueStrategy>( new ExtendedColorHueStrategy );
-	_simpleColorTemperatureStrategy = std::shared_ptr<ColorTemperatureStrategy>( new SimpleColorTemperatureStrategy );
-	_extendedColorTemperatureStrategy = std::shared_ptr<ColorTemperatureStrategy>( new ExtendedColorTemperatureStrategy );
+	simpleBrightnessStrategy = std::make_shared<SimpleBrightnessStrategy>();
+	simpleColorHueStrategy = std::make_shared<SimpleColorHueStrategy>();
+	extendedColorHueStrategy = std::make_shared<ExtendedColorHueStrategy>();
+	simpleColorTemperatureStrategy = std::make_shared<SimpleColorTemperatureStrategy>();
+	extendedColorTemperatureStrategy = std::make_shared<ExtendedColorTemperatureStrategy>();
 }
 
 std::string Hue::getBridgeIP()
@@ -242,7 +242,7 @@ void Hue::setIP(const std::string ip)
 	this->ip = ip;
 }
 
-const HueLight& Hue::getLight(int id)
+HueLight& Hue::getLight(int id)
 {
 	if(lights.count(id) > 0)
 	{
@@ -260,10 +260,7 @@ const HueLight& Hue::getLight(int id)
 	if (type == "LCT001" || type == "LCT002" || type == "LCT003" || type == "LCT007" || type == "LLM001")
 	{
 		// HueExtendedColorLight Gamut B
-		HueLight light = HueLight(ip, username, id);
-		light.setBrightnessStrategy(_simpleBrightnessStrategy);
-		light.setColorHueStrategy(_extendedColorHueStrategy);
-		light.setColorTemperatureStrategy(_extendedColorTemperatureStrategy);
+		HueLight light = HueLight(ip, username, id, simpleBrightnessStrategy, extendedColorTemperatureStrategy, extendedColorHueStrategy);
 		light.colorType = ColorType::GAMUT_B;
 		lights.emplace(id, light);
 		return lights.find(id)->second;
@@ -271,10 +268,7 @@ const HueLight& Hue::getLight(int id)
 	else if (type == "LCT010" || type == "LCT011" || type == "LCT014" || type == "LLC020" || type == "LST002")
 	{
 		// HueExtendedColorLight Gamut C
-		HueLight light = HueLight(ip, username, id);
-		light.setBrightnessStrategy(_simpleBrightnessStrategy);
-		light.setColorHueStrategy(_extendedColorHueStrategy);
-		light.setColorTemperatureStrategy(_extendedColorTemperatureStrategy);
+		HueLight light = HueLight(ip, username, id, simpleBrightnessStrategy, extendedColorTemperatureStrategy, extendedColorHueStrategy);
 		light.colorType = ColorType::GAMUT_C;
 		lights.emplace(id, light);
 		return lights.find(id)->second;
@@ -282,10 +276,7 @@ const HueLight& Hue::getLight(int id)
 	else if (type == "LST001" || type == "LLC006" || type == "LLC007" || type == "LLC010" || type == "LLC011" || type == "LLC012" || type == "LLC013")
 	{
 		// HueColorLight Gamut A
-		HueLight light = HueLight(ip, username, id);
-		light.setBrightnessStrategy(_simpleBrightnessStrategy);
-		light.setColorHueStrategy(_simpleColorHueStrategy);
-		light.setColorTemperatureStrategy(_simpleColorTemperatureStrategy);
+		HueLight light = HueLight(ip, username, id, simpleBrightnessStrategy, simpleColorTemperatureStrategy, simpleColorHueStrategy);
 		light.colorType = ColorType::GAMUT_A;
 		lights.emplace(id, light);
 		return lights.find(id)->second;
@@ -293,10 +284,7 @@ const HueLight& Hue::getLight(int id)
 	else if (type == "LWB004" || type == "LWB006" || type == "LWB007" || type == "LWB010" || type == "LWB014")
 	{
 		// HueDimmableLight No Color Type
-		HueLight light = HueLight(ip, username, id);
-		light.setBrightnessStrategy(_simpleBrightnessStrategy);
-		//light.setColorHueStrategy();
-		//light.setColorTemperatureStrategy();
+		HueLight light = HueLight(ip, username, id, simpleBrightnessStrategy, nullptr, nullptr);
 		light.colorType = ColorType::NONE;
 		lights.emplace(id, light);
 		return lights.find(id)->second;
@@ -304,10 +292,7 @@ const HueLight& Hue::getLight(int id)
 	else if (type == "LLM010" || type == "LLM011" || type == "LLM012" || type == "LTW001" || type == "LTW004" || type == "LTW013" || type == "LTW014")
 	{
 		// HueTemperatureLight
-		HueLight light = HueLight(ip, username, id);
-		light.setBrightnessStrategy(_simpleBrightnessStrategy);
-		//light.setColorHueStrategy();
-		light.setColorTemperatureStrategy(_simpleColorTemperatureStrategy);
+		HueLight light = HueLight(ip, username, id, simpleBrightnessStrategy, simpleColorTemperatureStrategy, nullptr);
 		light.colorType = ColorType::TEMPERATURE;
 		lights.emplace(id, light);
 		return lights.find(id)->second;
@@ -316,45 +301,7 @@ const HueLight& Hue::getLight(int id)
 	throw(std::runtime_error("Could not determine HueLight type!"));
 }
 
-/*const std::map<uint8_t, ColorType>& Hue::getAllLightTypes()
-{
-	refreshState();
-	for (const auto& name : state["lights"].getMemberNames())
-	{
-		std::string type = state["lights"][name]["modelid"].asString();
-		int id = std::stoi(name);
-
-		if (type == "LCT001" || type == "LCT002" || type == "LCT003" || type == "LCT007" || type == "LLM001")
-		{
-			// HueExtendedColorLight Gamut B
-			lights[id].second = ColorType::GAMUT_B;
-		}
-		else if (type == "LCT010" || type == "LCT011" || type == "LCT014" || type == "LLC020" || type == "LST002")
-		{
-			// HueExtendedColorLight Gamut C
-			lights[id].second = ColorType::GAMUT_C;
-		}
-		else if (type == "LST001" || type == "LLC006" || type == "LLC007" || type == "LLC010" || type == "LLC011" || type == "LLC012" || type == "LLC013")
-		{
-			// HueColorLight Gamut A
-			lights[id].second = ColorType::GAMUT_A;
-		}
-		else if (type == "LWB004" || type == "LWB006" || type == "LWB007" || type == "LWB010" || type == "LWB014")
-		{
-			// HueDimmableLight No Color Type
-			lights[id].second = ColorType::NONE;
-		}
-		else if (type == "LLM010" || type == "LLM011" || type == "LLM012" || type == "LTW001" || type == "LTW004" || type == "LTW013" || type == "LTW014")
-		{
-			// HueTemperatureLight
-			lights[id].second = ColorType::TEMPERATURE;
-		}
-	}
-	return lights;
-}*/
-
-
-std::vector<std::reference_wrapper<const HueLight>> Hue::getAllLights()
+std::vector<std::reference_wrapper<HueLight>> Hue::getAllLights()
 {
 	refreshState();
 	for (const auto& name : state["lights"].getMemberNames())
@@ -365,8 +312,8 @@ std::vector<std::reference_wrapper<const HueLight>> Hue::getAllLights()
 			getLight(id);
 		}
 	}
-	std::vector<std::reference_wrapper<const HueLight>> result;
-	for (const auto& entry : lights)
+	std::vector<std::reference_wrapper<HueLight>> result;
+	for (auto& entry : lights)
 	{
 		result.emplace_back(entry.second);
 	}
