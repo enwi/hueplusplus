@@ -78,13 +78,17 @@ bool HueLight::alert()
 	return false;
 }
 
-HueLight::HueLight(const std::string& ip, const std::string& username, int id) : 
-ip(ip), 
-username(username), 
-id(id),
-_brightnessStrategy(nullptr),
-_colorTemperatureStrategy(nullptr),
-_colorHueStategy(nullptr)
+HueLight::HueLight(const std::string& ip, const std::string& username, int id) 
+	: HueLight(ip,  username, id, nullptr, nullptr, nullptr)
+{}
+
+HueLight::HueLight(const std::string& ip, const std::string& username, int id, std::shared_ptr<const BrightnessStrategy> brightnessStrategy, std::shared_ptr<const ColorTemperatureStrategy> colorTempStrategy, std::shared_ptr<const ColorHueStrategy> colorHueStrategy)
+	: ip(ip),
+	username(username),
+	id(id),
+	brightnessStrategy(std::move(brightnessStrategy)),
+	colorTemperatureStrategy(std::move(colorTempStrategy)),
+	colorHueStrategy(std::move(colorHueStrategy))
 {
 	refreshState();
 }

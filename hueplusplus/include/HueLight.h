@@ -83,6 +83,9 @@ enum ColorType
 	GAMUT_C_TEMPERATURE
 };
 
+//!
+//! Class for Hue Light fixtures
+//!
 class HueLight
 {
 	friend class Hue;
@@ -132,10 +135,11 @@ public:
 	//! \return Bool that is true on success
 	bool setBrightness(unsigned int bri, uint8_t transition = 4) 
 	{ 
-		if (_brightnessStrategy) 
+		if (brightnessStrategy) 
 		{
-			return (*_brightnessStrategy).setBrightness(bri, transition, *this);
+			return brightnessStrategy->setBrightness(bri, transition, *this);
 	 	}
+		return false;
 	};
 
 	//! Fucntion that sets the color temperature of this light in mired if the 
@@ -146,10 +150,11 @@ public:
 	//! \return Bool that is true on success
 	bool setColorTemperature(unsigned int mired, uint8_t transition = 4)
 	{ 
-		if (_colorTemperatureStrategy)
+		if (colorTemperatureStrategy)
 		{ 
-			return (*_colorTemperatureStrategy).setColorTemperature(mired, transition, *this); 
+			return colorTemperatureStrategy->setColorTemperature(mired, transition, *this); 
 		}
+		return false;
 	};
 
 	//! Function to set the color of this light with specified hue if the
@@ -160,10 +165,11 @@ public:
 	//! \return Bool that is true on success
 	bool setColorHue(uint16_t hue, uint8_t transition = 4)
 	{
-		if(_colorHueStategy)
+		if(colorHueStrategy)
 		{
-			return (*_colorHueStategy).setColorHue(hue, transition, *this);
+			return colorHueStrategy->setColorHue(hue, transition, *this);
 		}
+		return false;
 	};
 
 	//! Function to set the saturation of color of this light with specified saturation if the
@@ -174,10 +180,11 @@ public:
 	//! \return Bool that is true on success
 	bool setColorSaturation(uint8_t sat, uint8_t transition = 4)
 	{
-		if(_colorHueStategy)
+		if(colorHueStrategy)
 		{
-			return (*_colorHueStategy).setColorSaturation(sat, transition, *this);
+			return colorHueStrategy->setColorSaturation(sat, transition, *this);
 		}
+		return false;
 	};
 
 	//! Function to set the color of this light with specified hue and saturation if the
@@ -188,10 +195,11 @@ public:
 	//! \return Bool that is true on success
 	bool setColorHueSaturation(uint16_t hue, uint8_t sat, uint8_t transition = 4)
 	{
-		if(_colorHueStategy)
+		if(colorHueStrategy)
 		{
-			return (*_colorHueStategy).setColorHueSaturation(hue, sat, transition, *this);
+			return colorHueStrategy->setColorHueSaturation(hue, sat, transition, *this);
 		}
+		return false;
 	};
 
 	//! Function to set the color of this light in CIE with specified x y if the
@@ -203,10 +211,11 @@ public:
 	//! \return Bool that is true on success
 	bool setColorXY(float x, float y, uint8_t transition = 4)
 	{
-		if(_colorHueStategy)
+		if(colorHueStrategy)
 		{
-			return (*_colorHueStategy).setColorXY(x, y, transition, *this);
+			return colorHueStrategy->setColorXY(x, y, transition, *this);
 		}
+		return false;
 	};
 
 	//! Function to set the color of this light with red green and blue values if the
@@ -219,10 +228,11 @@ public:
 	//! \return Bool that is true on success
 	bool setColorRGB(uint8_t r, uint8_t g, uint8_t b, uint8_t transition = 4)
 	{
-		if(_colorHueStategy)
+		if(colorHueStrategy)
 		{
-			return (*_colorHueStategy).setColorRGB(r, g, b, transition, *this);
+			return colorHueStrategy->setColorRGB(r, g, b, transition, *this);
 		}
+		return false;
 	};
 
 	//! Function that lets the light perform one breath cycle.
@@ -236,10 +246,11 @@ public:
 	//! \return Bool that is true on success
 	bool alertTemperature(unsigned int mired)
 	{
-		if(_colorTemperatureStrategy)
+		if(colorTemperatureStrategy)
 		{
-			return (*_colorTemperatureStrategy).alertTemperature(mired, *this);
+			return colorTemperatureStrategy->alertTemperature(mired, *this);
 		}
+		return false;
 	};
 
 	//! Function that lets the light perform one breath cycle in specified color if the
@@ -250,10 +261,11 @@ public:
 	//! \return Bool that is true on success
 	bool alertHueSaturation(uint16_t hue, uint8_t sat)
 	{
-		if(_colorHueStategy)
+		if(colorHueStrategy)
 		{
-			return (*_colorHueStategy).alertHueSaturation(hue, sat, *this);
+			return colorHueStrategy->alertHueSaturation(hue, sat, *this);
 		}
+		return false;
 	};
 
 	//! Function that lets the light perform one breath cycle in specified color if the
@@ -265,10 +277,11 @@ public:
 	//! \return Bool that is true on success
 	bool alertXY(float x, float y)
 	{
-		if(_colorHueStategy)
+		if(colorHueStrategy)
 		{
-			return (*_colorHueStategy).alertXY(x, y, *this);
+			return colorHueStrategy->alertXY(x, y, *this);
 		}
+		return false;
 	};
 
 	//! Function that lets the light perform one breath cycle in specified color if the
@@ -281,10 +294,11 @@ public:
 	//! \return Bool that is true on success
 	bool alertRGB(uint8_t r, uint8_t g, uint8_t b)
 	{
-		if(_colorHueStategy)
+		if(colorHueStrategy)
 		{
-			return (*_colorHueStategy).alertRGB(r, g, b, *this);
+			return colorHueStrategy->alertRGB(r, g, b, *this);
 		}
+		return false;
 	};
 
 	//! Function to enable colorloop effect if the
@@ -298,10 +312,11 @@ public:
 	//! \return Bool that is true on success
 	bool setColorLoop(bool on)
 	{
-		if(_colorHueStategy)
+		if(colorHueStrategy)
 		{
-			return (*_colorHueStategy).setColorLoop(on, *this);
+			return colorHueStrategy->setColorLoop(on, *this);
 		}
+		return false;
 	};
 
 protected:
@@ -309,22 +324,33 @@ protected:
 	//! \param ip String that specifies the ip of the Hue bridge
 	//! \param username String that specifies the username used to control the bridge
 	//! \param id Integer that specifies the id of this light
+	//!
+	//! leaves strategies unset
 	HueLight(const std::string& ip, const std::string& username, int id);
+	
+	//! protected ctor that is used by \ref Hue class, also sets strategies.
+	//! \param ip String that specifies the ip of the Hue bridge
+	//! \param username String that specifies the username used to control the bridge
+	//! \param id Integer that specifies the id of this light
+	//! \param brightnessStrategy Strategy for brightness. May be nullptr.
+	//! \param colorTempStrategy Strategy for color temperature. May be nullptr.
+	//! \param colorHueStrategy Strategy for color hue/saturation. May be nullptr.
+	HueLight(const std::string& ip, const std::string& username, int id, std::shared_ptr<const BrightnessStrategy> brightnessStrategy, std::shared_ptr<const ColorTemperatureStrategy> colorTempStrategy, std::shared_ptr<const ColorHueStrategy> colorHueStrategy);
 
 	//! protected function that sets the brightness strategy which defines how
 	//! specific commands that deal with brightness control are executed
 	//! \param strat a strategy of type \ref BrightnessStrategy
-	void setBrightnessStrategy(std::shared_ptr<BrightnessStrategy> strat)  { _brightnessStrategy = strat; };
+	void setBrightnessStrategy(std::shared_ptr<const BrightnessStrategy> strat)  { brightnessStrategy = std::move(strat); };
 
 	//! protected function that sets the colorTemperature strategy which defines how
 	//! specific commands that deal with colortemperature control are executed
 	//! \param strat a strategy of type \ref ColorTemperatureStrategy
-	void setColorTemperatureStrategy(std::shared_ptr<ColorTemperatureStrategy> strat)  { _colorTemperatureStrategy = strat; };
+	void setColorTemperatureStrategy(std::shared_ptr<const ColorTemperatureStrategy> strat)  { colorTemperatureStrategy = std::move(strat); };
 
 	//! protected function that sets the colorHue strategy which defines how
 	//! specific commands that deal with color control are executed
 	//! \param strat a strategy of type \ref ColorHueStrategy
-	void setColorHueStrategy(std::shared_ptr<ColorHueStrategy> strat)  { _colorHueStategy = strat; };
+	void setColorHueStrategy(std::shared_ptr<const ColorHueStrategy> strat)  { colorHueStrategy = std::move(strat); };
 
 	//! Function that turns the light on without refreshing its state.
 	//! \param transition Optional parameter to set the transition from current state to new standard is 4 = 400ms
@@ -351,9 +377,9 @@ protected:
 	Json::Value state;		//!< holds the current state of the light updated by \ref refreshState
 	ColorType colorType;	//!< holds the \ref ColorType of the light
 
-	std::shared_ptr<BrightnessStrategy>			_brightnessStrategy;		//!< holds a reference to the strategy that handles brighntess commands
-	std::shared_ptr<ColorTemperatureStrategy> 	_colorTemperatureStrategy;	//!< holds a reference to the strategy that handles colortemperature commands
-	std::shared_ptr<ColorHueStrategy>			_colorHueStategy;			//!< holds a reference to the strategy that handles all color commands
+	std::shared_ptr<const BrightnessStrategy>		brightnessStrategy;			//!< holds a reference to the strategy that handles brightness commands
+	std::shared_ptr<const ColorTemperatureStrategy> colorTemperatureStrategy;	//!< holds a reference to the strategy that handles colortemperature commands
+	std::shared_ptr<const ColorHueStrategy>			colorHueStrategy;			//!< holds a reference to the strategy that handles all color commands
 };
 
 #endif
