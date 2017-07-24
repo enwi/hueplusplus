@@ -344,7 +344,7 @@ void Hue::refreshState()
 		std::cout << "Error while parsing JSON in refreshState of Hue: " << error << std::endl;
 		throw(std::runtime_error("Error while parsing JSON in refreshState of Hue"));
 	}
-	if (answer.isMember("lights"))
+	if (answer.isObject() && answer.isMember("lights"))
 	{
 		state = answer;
 	}
