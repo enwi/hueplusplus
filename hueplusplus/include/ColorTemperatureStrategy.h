@@ -24,11 +24,24 @@
 
 class HueLight;
 
+//! Virtual base class for all ColorTemperatureStrategys
 class ColorTemperatureStrategy
 {
     public:
+        //! \brief Virtual function for changing a lights color temperature in mired with a specified transition.
+        //!
+        //! The color temperature in mired ranges from 153 to 500 whereas 153 is cold and 500 is warm.
+        //! \param mired The color temperature in mired
+        //! \param transition The time it takes to fade to the new color in multiples of 100ms, 4 = 400ms and should be seen as the default
+        //! \param light A reference of the light
         virtual bool setColorTemperature(unsigned int mired, uint8_t transition, HueLight& light) const = 0;
-		virtual bool alertTemperature(unsigned int mired, HueLight& light) const = 0;
+        //! \brief Virtual function that lets the light perform one breath cycle in the specified color.
+        //!
+        //! The color temperature in mired ranges from 153 to 500 whereas 153 is cold and 500 is warm.
+        //! \param mired The color temperature in mired
+        //! \param light A reference of the light
+		    virtual bool alertTemperature(unsigned int mired, HueLight& light) const = 0;
+        //! \brief Virtual dtor
         virtual ~ColorTemperatureStrategy() = default;
 };
 

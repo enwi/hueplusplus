@@ -18,15 +18,28 @@
 **/
 
 #ifndef _EXTENDED_COLOR_TEMPERATURE_STRATEGY_H
-#define _EXTENDED_COLOR_TEMPERATURE_STRATEGY_H 
+#define _EXTENDED_COLOR_TEMPERATURE_STRATEGY_H
 
 #include "ColorTemperatureStrategy.h"
 #include "HueLight.h"
 
+//! Class implementing the functions of ColorTemperatureStrategy
 class ExtendedColorTemperatureStrategy : public ColorTemperatureStrategy
 {
     public:
+        //! \brief Function for changing a lights color temperature in mired with a specified transition.
+        //!
+        //! The color temperature in mired ranges from 153 to 500 whereas 153 is cold and 500 is warm.
+        //! \param mired The color temperature in mired
+        //! \param transition The time it takes to fade to the new color in multiples of 100ms, 4 = 400ms and should be seen as the default
+        //! \param light A reference of the light
         bool setColorTemperature(unsigned int mired, uint8_t transition, HueLight& light) const;
+        //! \brief Function that lets the light perform one breath cycle in the specified color.
+        //!
+        //! It uses this_thread::sleep_for to accomodate for the time an \ref HueLight::alert() needs
+        //! The color temperature in mired ranges from 153 to 500 whereas 153 is cold and 500 is warm.
+        //! \param mired The color temperature in mired
+        //! \param light A reference of the light
         bool alertTemperature(unsigned int mired, HueLight& light) const;
 };
 

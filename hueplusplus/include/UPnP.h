@@ -20,12 +20,18 @@
 #ifndef _UPNP_H
 #define _UPNP_H
 
-#include <string> 
+#include <string>
 #include <vector>
 
+//! Class that looks for UPnP devices using an m-search package
 class UPnP
 {
 public:
+	//! \brief Function that searches for UPnP devices and returns all found ones.
+	//!
+	//! It does it by sending an m-search packet and waits for all responses.
+	//! Since responses can be received multiple times this function conveniently removes all duplicates.
+	//! \return A vector containing pairs of address and name of all found devices
 	std::vector<std::pair<std::string, std::string>> getDevices();
 };
 
