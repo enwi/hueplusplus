@@ -30,10 +30,15 @@
 #include <string.h>
 #include <chrono>
 
+class SocketCloser {
+	public: SocketCloser(int sockFd) :s(sockFd) {}
+	~SocketCloser() { close(s); }
+	private: int s;
+};
+
 std::string HttpHandler::sendRequest(const std::string & msg, const std::string & adr, int port)
 {
 	// create socket
-	class SocketCloser { public: SocketCloser(int sockFd) :s(sockFd) {} ~SocketCloser() { close(s); } private: int s; };
 	int socketFD = socket(AF_INET, SOCK_STREAM, 0);
 
 	SocketCloser closeMySocket(socketFD);
@@ -48,7 +53,7 @@ std::string HttpHandler::sendRequest(const std::string & msg, const std::string 
 	server = gethostbyname(adr.c_str());
 	if (server == NULL)
 	{
-		std::cerr << "Failed to find host with address "<<adr<<"\n";
+		std::cerr << "Failed to find host with address " << adr << "\n";
 		throw(std::runtime_error("Failed to find host"));
 	}
 
@@ -67,11 +72,11 @@ std::string HttpHandler::sendRequest(const std::string & msg, const std::string 
 	}
 
 	// send the request
-	int total = msg.length();
-	int sent = 0;
+	size_t total = msg.length();
+	ssize_t sent = 0;
 	do
 	{
-		int bytes = write(socketFD, msg.c_str() + sent, total - sent);
+		ssize_t bytes = write(socketFD, msg.c_str() + sent, total - sent);
 		if (bytes < 0)
 		{
 			std::cerr << "Failed to write message to socket\n";
@@ -81,7 +86,10 @@ std::string HttpHandler::sendRequest(const std::string & msg, const std::string 
 		{
 			break;
 		}
-		sent += bytes;
+		if (bytes)
+		{
+			sent += bytes;
+		}
 	} while (sent < total);
 
 	// receive the response
@@ -91,7 +99,7 @@ std::string HttpHandler::sendRequest(const std::string & msg, const std::string 
 	char buffer[128] = {};
 	do
 	{
-		int bytes = read(socketFD, buffer, 127);
+		ssize_t bytes = read(socketFD, buffer, 127);
 		if (bytes < 0)
 		{
 			std::cerr << "Failed to read response from socket: " << errno << std::endl;
@@ -101,8 +109,11 @@ std::string HttpHandler::sendRequest(const std::string & msg, const std::string 
 		{
 			break;
 		}
-		received += bytes;
-		response.append(buffer, bytes);
+		if (bytes)
+		{
+			received += bytes;
+			response.append(buffer, bytes);
+		}
 	} while (true);
 
 	if (received == total)
@@ -110,9 +121,6 @@ std::string HttpHandler::sendRequest(const std::string & msg, const std::string 
 		std::cerr << "Failed to store complete response from socket\n";
 		throw(std::runtime_error("Failed to store complete response from socket"));
 	}
-
-	// close the socket -> automated by socketCloser
-	//close(sockfd);
 
 	return response;
 }
@@ -132,7 +140,7 @@ std::string HttpHandler::sendRequestGetBody(const std::string & msg, const std::
 
 std::vector<std::string> HttpHandler::sendMulticast(const std::string & msg, const std::string & adr, int port, int timeout)
 {
-	hostent *server;			// host information 
+	hostent *server;			// host information
 	sockaddr_in server_addr;	// server address
 
 	//fill in the server's address and data
@@ -152,7 +160,6 @@ std::vector<std::string> HttpHandler::sendMulticast(const std::string & msg, con
 	memcpy( (void *)&server_addr.sin_addr, server->h_addr_list[0], server->h_length );
 
 	// create the socket
-	class SocketCloser { public: SocketCloser(int sockFd) :s(sockFd) {} ~SocketCloser() { close(s); } private: int s; };
 	int socketFD = socket(AF_INET, SOCK_DGRAM, 0);
 	SocketCloser closeMySendSocket(socketFD);
 	if (socketFD < 0)
@@ -170,7 +177,7 @@ std::vector<std::string> HttpHandler::sendMulticast(const std::string & msg, con
 
 	std::string response;
 	char buffer[2048] = {};		// receive buffer
-	int bytesReceived = 0;
+	ssize_t bytesReceived = 0;
 
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 	while (std::chrono::steady_clock::now() - start < std::chrono::seconds(timeout))
@@ -189,13 +196,16 @@ std::vector<std::string> HttpHandler::sendMulticast(const std::string & msg, con
 		{
 			break;
 		}
-		response.append(buffer, bytesReceived);
+		if (bytesReceived)
+		{
+			response.append(buffer, bytesReceived);
+		}
 	}
 
 	// construct return vector
 	std::vector<std::string> returnString;
 	size_t pos = response.find("\r\n\r\n");
-	unsigned int prevpos = 0;
+	size_t prevpos = 0;
 	while (pos != std::string::npos)
 	{
 		returnString.push_back(response.substr(prevpos, pos-prevpos));
