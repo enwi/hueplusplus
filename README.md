@@ -46,7 +46,7 @@ If you don't know the id of a specific light or want to get an overview over all
 ```C++
 std::vector<std::reference_wrapper<HueLight>> lights = bridge.getAllLights();
 ```
-If you now want to control a light, call a specific function of the it.
+If you now want to control a light, call a specific function of it.
 ```C++
 light1.On();
 light1.setBrightness(120);
