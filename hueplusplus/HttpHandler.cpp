@@ -270,8 +270,8 @@ Json::Value HttpHandler::GETJson(std::string uri, const Json::Value& body, const
 	std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
 	if (!reader->parse(response.c_str(), response.c_str() + response.length(), &result, &error))
 	{
-		std::cout << "Error while parsing JSON in function SendRequest() of HueLight: " << error << std::endl;
-		throw(std::runtime_error("Error while parsing JSON in function SendRequest() of HueLight"));
+		std::cout << "Error while parsing JSON in function GETJson() of HttpHandler: " << error << std::endl;
+		throw(std::runtime_error("Error while parsing JSON in function GETJson() of HttpHandler"));
 	}
 	return result;
 }
@@ -287,8 +287,8 @@ Json::Value HttpHandler::POSTJson(std::string uri, const Json::Value& body, cons
 	std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
 	if (!reader->parse(response.c_str(), response.c_str() + response.length(), &result, &error))
 	{
-		std::cout << "Error while parsing JSON in function SendRequest() of HueLight: " << error << std::endl;
-		throw(std::runtime_error("Error while parsing JSON in function SendRequest() of HueLight"));
+		std::cout << "Error while parsing JSON in function POSTJson() of HttpHandler: " << error << std::endl;
+		throw(std::runtime_error("Error while parsing JSON in function POSTJson() of HttpHandler"));
 	}
 	return result;
 }
@@ -304,8 +304,8 @@ Json::Value HttpHandler::PUTJson(std::string uri, const Json::Value& body, const
 	std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
 	if (!reader->parse(response.c_str(), response.c_str() + response.length(), &result, &error))
 	{
-		std::cout << "Error while parsing JSON in function SendRequest() of HueLight: " << error << std::endl;
-		throw(std::runtime_error("Error while parsing JSON in function SendRequest() of HueLight"));
+		std::cout << "Error while parsing JSON in function PUTJson() of HttpHandler: " << error << std::endl;
+		throw(std::runtime_error("Error while parsing JSON in function PUTJson() of HttpHandler"));
 	}
 	return result;
 }

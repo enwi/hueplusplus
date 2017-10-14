@@ -291,6 +291,6 @@ void Hue::refreshState()
 	}
 	else
 	{
-		std::cout << "Answer in refreshState() of HttpHandler().sendGetHTTPBody() is not expected!\n";
+		std::cout << "Answer in Hue::refreshState of HttpHandler().GETJson(...) is not expected!\n";
 	}
 }
