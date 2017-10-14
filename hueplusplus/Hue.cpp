@@ -56,7 +56,7 @@ std::vector<HueFinder::HueIdentification> HueFinder::FindBridges() const
 			unsigned int start = p.first.find("//") + 2;
 			unsigned int length = p.first.find(":", start) - start;
 			bridge.ip = p.first.substr(start, length);
-			std::string desc = HttpHandler().sendRequestGetBody("GET /description.xml HTTP/1.0\r\nContent-Type: application/xml\r\nContent-Length: 0\r\n\r\n\r\n\r\n", bridge.ip);
+			std::string desc = HttpHandler().GETString("/description.xml", "application/xml", "", bridge.ip);
 			std::smatch matchResult;
 			if (std::regex_search(desc, manufRegex) && std::regex_search(desc, manURLRegex) && std::regex_search(desc, modelRegex) && std::regex_search(desc, matchResult, serialRegex))
 			{
@@ -106,29 +106,13 @@ const std::map<std::string, std::string>& HueFinder::GetAllUsernames() const
 	return usernames;
 }
 
+//! \todo Remove duplicate code found in HueFinder::RequestUsername and Hue::requestUsername
 std::string HueFinder::RequestUsername(const std::string & ip) const
 {
 	std::cout << "Please press the link Button! You've got 35 secs!\n";	// when the link button was presed we got 30 seconds to get our username for control
 
 	Json::Value request;
-	request["devicetype"] = "HuePlusPlus#System User";
-
-	// POST /api HTTP/1.0\r\nContent-Type: application/json\r\nContent-Length: <length>\r\n\r\n<content>\r\n\r\n
-
-	std::string post;
-	post.append("POST /api HTTP/1.0\r\nContent-Type: application/json\r\nContent-Length: ");
-	post.append(std::to_string(request.toStyledString().size()));
-	post.append("\r\n\r\n");
-	post.append(request.toStyledString());
-	post.append("\r\n\r\n");
-
-	std::cout << post << std::endl;
-	std::cout << ip << std::endl;
-
-	Json::CharReaderBuilder builder;
-	builder["collectComments"] = false;
-	std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
-	std::string error;
+	request["devicetype"] = "HuePlusPlus#User";
 
 	Json::Value answer;
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
@@ -138,12 +122,8 @@ std::string HueFinder::RequestUsername(const std::string & ip) const
 		if (std::chrono::steady_clock::now() - lastCheck > std::chrono::seconds(1))
 		{
 			lastCheck = std::chrono::steady_clock::now();
-			std::string postAnswer = HttpHandler().sendRequestGetBody(post.c_str(), ip, 80);
-			if (!reader->parse(postAnswer.c_str(), postAnswer.c_str() + postAnswer.length(), &answer, &error))
-			{
-				std::cout << "Error while parsing JSON in getUsername of Hue: " << error << std::endl;
-				throw(std::runtime_error("Error while parsing JSON in getUsername of Hue"));
-			}
+			answer = HttpHandler().GETJson("/api", request, ip);
+
 			if (answer[0]["success"] != Json::nullValue)
 			{
 				// [{"success":{"username": "83b7780291a6ceffbe0bd049104df"}}]
@@ -161,8 +141,8 @@ std::string HueFinder::RequestUsername(const std::string & ip) const
 }
 
 
-Hue::Hue(const std::string& ip, const std::string& username) : 
-ip(ip), 
+Hue::Hue(const std::string& ip, const std::string& username) :
+ip(ip),
 username(username)
 {
 	simpleBrightnessStrategy = std::make_shared<SimpleBrightnessStrategy>();
@@ -180,26 +160,9 @@ std::string Hue::getBridgeIP()
 void Hue::requestUsername(const std::string& ip)
 {
 	std::cout << "Please press the link Button! You've got 35 secs!\n";	// when the link button was presed we got 30 seconds to get our username for control
-	
+
 	Json::Value request;
-	request["devicetype"] = "Enwiro Smarthome#System User";
-
-	// POST /api HTTP/1.0\r\nContent-Type: application/json\r\nContent-Length: <length>\r\n\r\n<content>\r\n\r\n
-
-	std::string post;
-	post.append("POST /api HTTP/1.0\r\nContent-Type: application/json\r\nContent-Length: ");
-	post.append(std::to_string(request.toStyledString().size()));
-	post.append("\r\n\r\n");
-	post.append(request.toStyledString());
-	post.append("\r\n\r\n");
-
-	std::cout << post << std::endl;
-	std::cout << ip << std::endl;
-
-	Json::CharReaderBuilder builder;
-	builder["collectComments"] = false;
-	std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
-	std::string error;
+	request["devicetype"] = "HuePlusPlus#User";
 
 	Json::Value answer;
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
@@ -209,12 +172,7 @@ void Hue::requestUsername(const std::string& ip)
 		if (std::chrono::steady_clock::now() - lastCheck > std::chrono::seconds(1))
 		{
 			lastCheck = std::chrono::steady_clock::now();
-			std::string postAnswer = HttpHandler().sendRequestGetBody(post.c_str(), ip, 80);
-			if (!reader->parse(postAnswer.c_str(), postAnswer.c_str() + postAnswer.length(), &answer, &error))
-			{
-				std::cout << "Error while parsing JSON in getUsername of Hue: " << error << std::endl;
-				throw(std::runtime_error("Error while parsing JSON in getUsername of Hue"));
-			}
+			answer = HttpHandler().GETJson("/api", request, ip);
 			if (answer[0]["success"] != Json::nullValue)
 			{
 				// [{"success":{"username": "<username>"}}]
@@ -326,30 +284,13 @@ void Hue::refreshState()
 	{
 		return;
 	}
-	std::string get;
-	get.append("GET /api/");
-	get.append(username);
-	get.append(" HTTP / 1.0\r\nContent - Type: application / json\r\nContent - Length: 0\r\n\r\n\r\n\r\n");
-
-	Json::CharReaderBuilder builder;
-	builder["collectComments"] = false;
-	std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
-	std::string error;
-
-	Json::Value answer;
-	std::string postAnswer = HttpHandler().sendRequestGetBody(get.c_str(), ip, 80);
-	//std::cout <<"\""<< postAnswer << "\"\n" << std::endl;
-	if (!reader->parse(postAnswer.c_str(), postAnswer.c_str() + postAnswer.length(), &answer, &error))
-	{
-		std::cout << "Error while parsing JSON in refreshState of Hue: " << error << std::endl;
-		throw(std::runtime_error("Error while parsing JSON in refreshState of Hue"));
-	}
+	Json::Value answer = HttpHandler().GETJson("/api/"+username, Json::objectValue, ip);
 	if (answer.isObject() && answer.isMember("lights"))
 	{
 		state = answer;
 	}
 	else
 	{
-		std::cout << "Answer in refreshState() of HttpHandler().sendRequestGetBody() is not expected!\n";
+		std::cout << "Answer in refreshState() of HttpHandler().sendGetHTTPBody() is not expected!\n";
 	}
 }

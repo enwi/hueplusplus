@@ -78,7 +78,7 @@ bool HueLight::alert()
 	return false;
 }
 
-HueLight::HueLight(const std::string& ip, const std::string& username, int id) 
+HueLight::HueLight(const std::string& ip, const std::string& username, int id)
 	: HueLight(ip,  username, id, nullptr, nullptr, nullptr)
 {}
 
@@ -173,54 +173,16 @@ bool HueLight::OffNoRefresh(uint8_t transition)
 
 Json::Value HueLight::SendPutRequest(const Json::Value& request)
 {
-	std::string put;
-	put.append("PUT /api/");
-	put.append(username);
-	put.append("/lights/");
-	put.append(std::to_string(id));
-	put.append("/state HTTP/1.0\r\nContent-Type: application/json\r\nContent-Length: ");
-	put.append(std::to_string(request.toStyledString().size()));
-	put.append("\r\n\r\n");
-	put.append(request.toStyledString());
-	put.append("\r\n\r\n");
-
-	Json::CharReaderBuilder builder;
-	builder["collectComments"] = false;
-	std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
-	std::string error;
-	std::string putAnswer = HttpHandler().sendRequestGetBody(put.c_str(), ip, 80);
-
-	Json::Value result;
-	if (!reader->parse(putAnswer.c_str(), putAnswer.c_str() + putAnswer.length(), &result, &error))
-	{
-		std::cout << "Error while parsing JSON in function SendRequest() of HueLight: " << error << std::endl;
-		throw(std::runtime_error("Error while parsing JSON in function SendRequest() of HueLight"));
-	}
-	return result;
+	return HttpHandler().PUTJson("/api/"+username+"/lights/"+std::to_string(id)+"/state", request, ip);
 }
 
 void HueLight::refreshState()
 {
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 	std::cout << "\tRefreshing lampstate of lamp with id: " << id << ", ip: " << ip << "\n";
-	// GET /api/<username>/lights/<id> HTTP/1.0\r\nContent-Type: application/json\r\nContent-Length: <length>\r\n\r\n<content>\r\n\r\n
-	std::string get;
-	get.append("GET /api/");
-	get.append(username);
-	get.append("/lights/");
-	get.append(std::to_string(id));
-	get.append(" HTTP/1.0\r\nContent-Type: application/json\r\nContent-Length: 0\r\n\r\n\r\n\r\n");
 
-	Json::CharReaderBuilder builder;
-	builder["collectComments"] = false;
-	std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
-	std::string error;
-	std::string getAnswer = HttpHandler().sendRequestGetBody(get.c_str(), ip, 80);
-	// todo check whether getAnswer is containing right information
-	if (!reader->parse(getAnswer.c_str(), getAnswer.c_str() + getAnswer.length(), &state, &error))
-	{
-		std::cout << "Error while parsing JSON in function refreshState() of HueLight: " << error << std::endl;
-		throw(std::runtime_error("Error while parsing JSON in function refreshState() of HueLight"));
-	}
+	state = HttpHandler().GETJson("/api/"+username+"/lights/"+std::to_string(id), Json::objectValue, ip);
+	//! \todo check whether getAnswer is containing right information
+
 	std::cout << "\tRefresh state took: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() << "ms" << std::endl;
 }
