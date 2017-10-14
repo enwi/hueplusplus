@@ -29,26 +29,32 @@ where index is your preferred Bridge from the part [Finding Bridges](#findingBri
 ```C++
 Hue bridge = finder.GetBridge(bridges[0]);
 ```
-If you on the other hand already have a username you can add you bridge like so
+If you on the other hand already have a username you can add your bridge like so
 ```C++
 finder.AddUsername(bridges[0].mac, "<username>");
 Hue bridge = finder.GetBridge(bridges[0]);
 ```
 
 ### Controlling lights
-If you have your Bridge all set up now you can control its lights.
-For that create a new HueLight and call getLight(\<id\>) from you bridge object to get a reference to a specific light, where id
+If you have your Bridge all set up, you can now control its lights.
+For that create a new HueLight object and call getLight(\<id\>) on your bridge object to get a reference to a specific light, where id
 is the id of the light set internally by the Hue Bridge.
 ```C++
 HueLight light1 = bridge.getLight(1);
 ```
-If you now want to control the light you just call the specific function of the light.
+If you don't know the id of a specific light or want to get an overview over all lights that are controlled by your bridge you can do that by calling getAllLights() on your bridge object. If no lights are founb the vector will be empty.
+```C++
+std::vector<std::reference_wrapper<HueLight>> lights = bridge.getAllLights();
+```
+If you now want to control a light, call a specific function of the it.
 ```C++
 light1.On();
 light1.setBrightness(120);
 light1.alertHueSaturation(25500, 255);
 light1.setColorLoop(true);
 light1.setColorRGB(255, 128, 0);
+lights[1].Off();
+lights.at(1).setColorHue(4562);
 ```
 But keep in mind that some light types do not have all functions available. So you might call a 
 specific function, but nothing will happen. For that you might want to check beforehand what type 
