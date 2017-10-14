@@ -42,7 +42,7 @@ is the id of the light set internally by the Hue Bridge.
 ```C++
 HueLight light1 = bridge.getLight(1);
 ```
-If you don't know the id of a specific light or want to get an overview over all lights that are controlled by your bridge you can do that by calling getAllLights() on your bridge object. If no lights are founb the vector will be empty.
+If you don't know the id of a specific light or want to get an overview over all lights that are controlled by your bridge, you can get a vector containing them by calling getAllLights() on your bridge object. If no lights are found the vector will be empty.
 ```C++
 std::vector<std::reference_wrapper<HueLight>> lights = bridge.getAllLights();
 ```
