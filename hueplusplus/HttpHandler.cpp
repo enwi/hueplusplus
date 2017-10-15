@@ -223,22 +223,22 @@ std::string HttpHandler::sendHTTPRequest(std::string method, std::string uri, st
 	std::string request;
 	// Protocol reference: https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html
 	// Request-Line
-	request.append(method);				// Method
-	request.append(" ");					// Separation
-	request.append(uri);					// Request-URI
-	request.append(" ");					// Separation
+	request.append(method);			// Method
+	request.append(" ");			// Separation
+	request.append(uri);			// Request-URI
+	request.append(" ");			// Separation
 	request.append("HTTP/1.0");		// HTTP-Version
-	request.append("\r\n");				// Ending
+	request.append("\r\n");			// Ending
 	// Entities
-	request.append("Content-Type:");		// entity-header
-	request.append(" ");								// Separation
-	request.append(content_type);				// media-type
-	request.append("\r\n");							// Entity ending
-	request.append("Content-Length:");	// entity-header
-	request.append(" ");								// Separation
+	request.append("Content-Type:");	// entity-header
+	request.append(" ");				// Separation
+	request.append(content_type);		// media-type
+	request.append("\r\n");				// Entity ending
+	request.append("Content-Length:");				// entity-header
+	request.append(" ");							// Separation
 	request.append(std::to_string(body.size()));	// length
 	request.append("\r\n\r\n");		// Entity ending & Request-Line ending
-	request.append(body);					// message-body
+	request.append(body);			// message-body
 	request.append("\r\n\r\n");		// Ending
 
 	return sendGetHTTPBody(request.c_str(), adr, port);
@@ -259,6 +259,7 @@ std::string HttpHandler::PUTString(std::string uri, std::string content_type, st
 	return sendHTTPRequest("PUT", uri, content_type, body, adr, port);
 }
 
+//! \todo Get rid of duplicate code in GETJson, POSTJson and PUTJson
 Json::Value HttpHandler::GETJson(std::string uri, const Json::Value& body, const std::string &adr, int port)
 {
 	std::string response = GETString(uri, "application/json", body.toStyledString(), adr, port);
