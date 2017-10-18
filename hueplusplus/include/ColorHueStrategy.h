@@ -24,7 +24,7 @@
 
 class HueLight;
 
-//! Virtual base class for all ColorHueStrategys
+//! Virtual base class for all ColorHueStrategies
 class ColorHueStrategy
 {
     public:
