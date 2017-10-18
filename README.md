@@ -24,7 +24,7 @@ if (bridges.empty())
 
 ### Using Bridges
 If you have found the Bridge you were looking for, you can then move on with the authentication process.
-To get a new username from the Bridge (for now) you simply call GetBridge(bridges[\<index\>]), 
+To get a new username from the Bridge (for now) you simply call GetBridge(bridges[\<index\>]),
 where index is your preferred Bridge from the part [Finding Bridges](#findingBridges).
 ```C++
 Hue bridge = finder.GetBridge(bridges[0]);
@@ -56,18 +56,53 @@ light1.setColorRGB(255, 128, 0);
 lights[1].Off();
 lights.at(1).setColorHue(4562);
 ```
-But keep in mind that some light types do not have all functions available. So you might call a 
-specific function, but nothing will happen. For that you might want to check beforehand what type 
-of a lamp you are controlling. For that you can call the function getColorType(), which will return 
+But keep in mind that some light types do not have all functions available. So you might call a
+specific function, but nothing will happen. For that you might want to check beforehand what type
+of a lamp you are controlling. For that you can call the function getColorType(), which will return
 a ColorType.
 ```C++
 ColorType type1 = light1.getColorType();
 ```
 
 ### Further reading
-If you want to know more about all functions just look inside the doxygen description, 
+If you want to know more about all functions just look inside the doxygen description,
 which for now can be found in the regarding sourcecode file or create the documentation
 with the provided Doxyfile yourself.
+
+## Build and install
+If you want to build the library you can use cmake (at least version 2.8.3). First create a build folder and then execute cmake.
+```bash
+mkdir build
+cd build
+cmake ..
+```
+Then compile the code with make. If you are inpatient use the option -j<number>, where number specifies how many files are compiled at the same time. Note this number should not exceed the number of cores*2 of your machine.
+```bash
+make
+```
+```bash
+make -j4
+```
+If you want to install the library use
+```bash
+make install
+```
+To remove it
+```bash
+make uninstall
+```
+If you additionally want to run the tests you will need to checkout the testing branch and use cmake with the option -Dhueplusplus_TESTS=ON. Testing is done with Google gtest and gmock. Note that you wont need to install gtest/gmock yourself, because cmake will automatically download them and include them during the build.
+```bash
+mkdir build
+cd build
+cmake .. -Dhueplusplus_TESTS=ON
+make
+```
+To execute them use
+```bash
+./hueplusplus/test/HuePlusPlus_Test
+```
+
 
 ## Copyright
 Copyright (c) 2017 Jan Rogall & Moritz Wirger. See LICENSE for further details.
