@@ -37,7 +37,7 @@ class SocketCloser {
 	private: int s;
 };
 
-std::string HttpHandler::send(const std::string & msg, const std::string & adr, int port)
+std::string HttpHandler::send(const std::string & msg, const std::string & adr, int port) const
 {
 	// create socket
 	int socketFD = socket(AF_INET, SOCK_STREAM, 0);
@@ -126,7 +126,7 @@ std::string HttpHandler::send(const std::string & msg, const std::string & adr, 
 	return response;
 }
 
-std::string HttpHandler::sendGetHTTPBody(const std::string & msg, const std::string & adr, int port)
+std::string HttpHandler::sendGetHTTPBody(const std::string & msg, const std::string & adr, int port) const
 {
 	std::string response = send(msg, adr, port);
 	size_t start = response.find("\r\n\r\n");
@@ -139,7 +139,7 @@ std::string HttpHandler::sendGetHTTPBody(const std::string & msg, const std::str
 	return response;
 }
 
-std::vector<std::string> HttpHandler::sendMulticast(const std::string & msg, const std::string & adr, int port, int timeout)
+std::vector<std::string> HttpHandler::sendMulticast(const std::string & msg, const std::string & adr, int port, int timeout) const
 {
 	hostent *server;			// host information
 	sockaddr_in server_addr;	// server address
@@ -218,7 +218,7 @@ std::vector<std::string> HttpHandler::sendMulticast(const std::string & msg, con
 	return returnString;
 }
 
-std::string HttpHandler::sendHTTPRequest(std::string method, std::string uri, std::string content_type, std::string body, const std::string &adr, int port)
+std::string HttpHandler::sendHTTPRequest(std::string method, std::string uri, std::string content_type, std::string body, const std::string &adr, int port) const
 {
 	std::string request;
 	// Protocol reference: https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html
@@ -244,23 +244,23 @@ std::string HttpHandler::sendHTTPRequest(std::string method, std::string uri, st
 	return sendGetHTTPBody(request.c_str(), adr, port);
 }
 
-std::string HttpHandler::GETString(std::string uri, std::string content_type, std::string body, const std::string &adr, int port)
+std::string HttpHandler::GETString(std::string uri, std::string content_type, std::string body, const std::string &adr, int port) const
 {
 	return sendHTTPRequest("GET", uri, content_type, body, adr, port);
 }
 
-std::string HttpHandler::POSTString(std::string uri, std::string content_type, std::string body, const std::string &adr, int port)
+std::string HttpHandler::POSTString(std::string uri, std::string content_type, std::string body, const std::string &adr, int port) const
 {
 	return sendHTTPRequest("POST", uri, content_type, body, adr, port);
 }
 
-std::string HttpHandler::PUTString(std::string uri, std::string content_type, std::string body, const std::string &adr, int port)
+std::string HttpHandler::PUTString(std::string uri, std::string content_type, std::string body, const std::string &adr, int port) const
 {
 	return sendHTTPRequest("PUT", uri, content_type, body, adr, port);
 }
 
 //! \todo Get rid of duplicate code in GETJson, POSTJson and PUTJson
-Json::Value HttpHandler::GETJson(std::string uri, const Json::Value& body, const std::string &adr, int port)
+Json::Value HttpHandler::GETJson(std::string uri, const Json::Value& body, const std::string &adr, int port) const
 {
 	std::string response = GETString(uri, "application/json", body.toStyledString(), adr, port);
 
@@ -277,7 +277,7 @@ Json::Value HttpHandler::GETJson(std::string uri, const Json::Value& body, const
 	return result;
 }
 
-Json::Value HttpHandler::POSTJson(std::string uri, const Json::Value& body, const std::string &adr, int port)
+Json::Value HttpHandler::POSTJson(std::string uri, const Json::Value& body, const std::string &adr, int port) const
 {
 	std::string response = POSTString(uri, "application/json", body.toStyledString(), adr, port);
 
@@ -294,7 +294,7 @@ Json::Value HttpHandler::POSTJson(std::string uri, const Json::Value& body, cons
 	return result;
 }
 
-Json::Value HttpHandler::PUTJson(std::string uri, const Json::Value& body, const std::string &adr, int port)
+Json::Value HttpHandler::PUTJson(std::string uri, const Json::Value& body, const std::string &adr, int port) const
 {
 	std::string response = PUTString(uri, "application/json", body.toStyledString(), adr, port);
 
