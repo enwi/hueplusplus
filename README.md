@@ -12,8 +12,8 @@ A simple and easy to use library for Philips Hue Lights
 ## How to use
 ### <a name="searchingBridges"></a>Searching for Bridges
 To start searching for a Hue Bridge you will need to choose an IHttpHandler and create one. For now there is only one, the "HttpHandler".
-Then create a HueFinder object with the handler. 
-The handler is needed, because it tells the finder which functions to use to communicate with a bridge or your local network. 
+Then create a HueFinder object with the handler.
+The handler is needed, because it tells the finder which functions to use to communicate with a bridge or your local network.
 After that you can call FindBridges(), which will return a vector containing the ip and mac address of all found Bridges.
 If no Bridges were found the vector is empty, so make sure that in that case you provide an ip and mac address.
 ```C++
@@ -38,7 +38,7 @@ If you on the other hand already have a username you can add your bridge like so
 finder.AddUsername(bridges[0].mac, "<username>");
 Hue bridge = finder.GetBridge(bridges[0]);
 ```
-If you do not want to use the HueFinder or you already know the ip and username of your bridge you have the option to create your own Hue object. 
+If you do not want to use the HueFinder or you already know the ip and username of your bridge you have the option to create your own Hue object.
 Here you will need to provide the ip address, a username and an HttpHandler
 ```C++
 handler = std::make_shared<HttpHandler>();
