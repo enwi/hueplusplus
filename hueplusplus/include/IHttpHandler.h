@@ -25,6 +25,7 @@
 
 #include "json/json.h"
 
+//! Abstract class for classes that handle http requests and multicast requests
 class IHttpHandler
 {
 public:
@@ -41,7 +42,7 @@ public:
   //! \return String containing the response of the host
   virtual std::string send(const std::string &msg, const std::string &adr, int port=80) const = 0;
 
-  //! \brief Virtual Function that should given message to a specified host and return the body of the response.
+  //! \brief Virtual function that should given message to a specified host and return the body of the response.
   //!
   //! It should return a string containing only the body of the response of the host.
   //! Note if no body is found a runtime error is thrown!
