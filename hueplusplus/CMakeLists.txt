@@ -1,4 +1,4 @@
-file(GLOB hueplusplus_HEADERS *.h *.hpp)
+file(GLOB hueplusplus_HEADERS include/*.h include/*.hpp)
 file(GLOB hueplusplus_SOURCES *.cpp)
 
 add_library(hueplusplusshared SHARED ${hueplusplus_SOURCES})
