@@ -76,7 +76,7 @@ mkdir build
 cd build
 cmake ..
 ```
-Then compile the code with make. If you are inpatient use the option -j<number>, where number specifies how many files are compiled at the same time. Note this number should not exceed the number of cores*2 of your machine.
+Then compile the code with make. If you are inpatient use the option -j\<number\>, where number specifies how many files are compiled at the same time. Note this number should not exceed the number of cores*2 of your machine.
 ```bash
 make
 ```
@@ -98,7 +98,7 @@ cd build
 cmake .. -Dhueplusplus_TESTS=ON
 make
 ```
-To execute them use
+To execute the tests use
 ```bash
 ./hueplusplus/test/HuePlusPlus_Test
 ```
