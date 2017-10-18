@@ -20,8 +20,11 @@
 #ifndef _UPNP_H
 #define _UPNP_H
 
+#include <memory>
 #include <string>
 #include <vector>
+
+#include "IHttpHandler.h"
 
 //! Class that looks for UPnP devices using an m-search package
 class UPnP
@@ -31,8 +34,9 @@ public:
 	//!
 	//! It does it by sending an m-search packet and waits for all responses.
 	//! Since responses can be received multiple times this function conveniently removes all duplicates.
+	//! \param handler HttpHandler of type \ref IHttpHandler for communication with the bridge
 	//! \return A vector containing pairs of address and name of all found devices
-	std::vector<std::pair<std::string, std::string>> getDevices();
+	std::vector<std::pair<std::string, std::string>> getDevices(std::shared_ptr<const IHttpHandler> handler);
 };
 
 #endif

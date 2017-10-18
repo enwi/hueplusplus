@@ -23,8 +23,9 @@
 #include <string>
 #include <vector>
 
-#include "json/json.h"
 #include "IHttpHandler.h"
+
+#include "json/json.h"
 
 //! Class to handle http requests and multicast requests
 class HttpHandler : public IHttpHandler

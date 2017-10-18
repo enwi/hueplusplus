@@ -18,28 +18,28 @@
 **/
 
 #include "include/Hue.h"
-#include "include/HueLight.h"
-#include "include/SimpleBrightnessStrategy.h"
-#include "include/SimpleColorHueStrategy.h"
-#include "include/ExtendedColorHueStrategy.h"
-#include "include/SimpleColorTemperatureStrategy.h"
-#include "include/ExtendedColorTemperatureStrategy.h"
-
-#include "include/HttpHandler.h"
-#include "include/UPnP.h"
 
 #include <chrono>
 #include <iostream>
-#include <memory>
 #include <regex>
 #include <stdexcept>
 #include <thread>
 
+#include "include/ExtendedColorHueStrategy.h"
+#include "include/ExtendedColorTemperatureStrategy.h"
+#include "include/SimpleBrightnessStrategy.h"
+#include "include/SimpleColorHueStrategy.h"
+#include "include/SimpleColorTemperatureStrategy.h"
+
+#include "include/UPnP.h"
+
+HueFinder::HueFinder(std::shared_ptr<const IHttpHandler> handler) : http_handler(std::move(handler))
+{}
 
 std::vector<HueFinder::HueIdentification> HueFinder::FindBridges() const
 {
 	UPnP uplug;
-	std::vector<std::pair<std::string, std::string>> foundDevices = uplug.getDevices();
+	std::vector<std::pair<std::string, std::string>> foundDevices = uplug.getDevices(http_handler);
 
 	//Does not work
 	std::regex manufRegex("<manufacturer>Royal Philips Electronics</manufacturer>");
@@ -56,7 +56,7 @@ std::vector<HueFinder::HueIdentification> HueFinder::FindBridges() const
 			unsigned int start = p.first.find("//") + 2;
 			unsigned int length = p.first.find(":", start) - start;
 			bridge.ip = p.first.substr(start, length);
-			std::string desc = HttpHandler().GETString("/description.xml", "application/xml", "", bridge.ip);
+			std::string desc = http_handler->GETString("/description.xml", "application/xml", "", bridge.ip);
 			std::smatch matchResult;
 			if (std::regex_search(desc, manufRegex) && std::regex_search(desc, manURLRegex) && std::regex_search(desc, modelRegex) && std::regex_search(desc, matchResult, serialRegex))
 			{
@@ -93,7 +93,7 @@ Hue HueFinder::GetBridge(const HueIdentification& identification)
 			AddUsername(identification.mac, username);
 		}
 	}
-	return Hue(identification.ip, username);
+	return Hue(identification.ip, username, http_handler);
 }
 
 void HueFinder::AddUsername(const std::string& mac, const std::string& username)
@@ -122,7 +122,7 @@ std::string HueFinder::RequestUsername(const std::string & ip) const
 		if (std::chrono::steady_clock::now() - lastCheck > std::chrono::seconds(1))
 		{
 			lastCheck = std::chrono::steady_clock::now();
-			answer = HttpHandler().GETJson("/api", request, ip);
+			answer = http_handler->GETJson("/api", request, ip);
 
 			if (answer[0]["success"] != Json::nullValue)
 			{
@@ -141,9 +141,10 @@ std::string HueFinder::RequestUsername(const std::string & ip) const
 }
 
 
-Hue::Hue(const std::string& ip, const std::string& username) :
+Hue::Hue(const std::string& ip, const std::string& username, std::shared_ptr<const IHttpHandler> handler) :
 ip(ip),
-username(username)
+username(username),
+http_handler(std::move(handler))
 {
 	simpleBrightnessStrategy = std::make_shared<SimpleBrightnessStrategy>();
 	simpleColorHueStrategy = std::make_shared<SimpleColorHueStrategy>();
@@ -172,7 +173,8 @@ void Hue::requestUsername(const std::string& ip)
 		if (std::chrono::steady_clock::now() - lastCheck > std::chrono::seconds(1))
 		{
 			lastCheck = std::chrono::steady_clock::now();
-			answer = HttpHandler().GETJson("/api", request, ip);
+			answer = http_handler->GETJson("/api", request, ip);
+
 			if (answer[0]["success"] != Json::nullValue)
 			{
 				// [{"success":{"username": "<username>"}}]
@@ -218,7 +220,7 @@ HueLight& Hue::getLight(int id)
 	if (type == "LCT001" || type == "LCT002" || type == "LCT003" || type == "LCT007" || type == "LLM001")
 	{
 		// HueExtendedColorLight Gamut B
-		HueLight light = HueLight(ip, username, id, simpleBrightnessStrategy, extendedColorTemperatureStrategy, extendedColorHueStrategy);
+		HueLight light = HueLight(ip, username, id, simpleBrightnessStrategy, extendedColorTemperatureStrategy, extendedColorHueStrategy, http_handler);
 		light.colorType = ColorType::GAMUT_B;
 		lights.emplace(id, light);
 		return lights.find(id)->second;
@@ -226,7 +228,7 @@ HueLight& Hue::getLight(int id)
 	else if (type == "LCT010" || type == "LCT011" || type == "LCT014" || type == "LLC020" || type == "LST002")
 	{
 		// HueExtendedColorLight Gamut C
-		HueLight light = HueLight(ip, username, id, simpleBrightnessStrategy, extendedColorTemperatureStrategy, extendedColorHueStrategy);
+		HueLight light = HueLight(ip, username, id, simpleBrightnessStrategy, extendedColorTemperatureStrategy, extendedColorHueStrategy, http_handler);
 		light.colorType = ColorType::GAMUT_C;
 		lights.emplace(id, light);
 		return lights.find(id)->second;
@@ -234,7 +236,7 @@ HueLight& Hue::getLight(int id)
 	else if (type == "LST001" || type == "LLC006" || type == "LLC007" || type == "LLC010" || type == "LLC011" || type == "LLC012" || type == "LLC013")
 	{
 		// HueColorLight Gamut A
-		HueLight light = HueLight(ip, username, id, simpleBrightnessStrategy, simpleColorTemperatureStrategy, simpleColorHueStrategy);
+		HueLight light = HueLight(ip, username, id, simpleBrightnessStrategy, simpleColorTemperatureStrategy, simpleColorHueStrategy, http_handler);
 		light.colorType = ColorType::GAMUT_A;
 		lights.emplace(id, light);
 		return lights.find(id)->second;
@@ -242,7 +244,7 @@ HueLight& Hue::getLight(int id)
 	else if (type == "LWB004" || type == "LWB006" || type == "LWB007" || type == "LWB010" || type == "LWB014")
 	{
 		// HueDimmableLight No Color Type
-		HueLight light = HueLight(ip, username, id, simpleBrightnessStrategy, nullptr, nullptr);
+		HueLight light = HueLight(ip, username, id, simpleBrightnessStrategy, nullptr, nullptr, http_handler);
 		light.colorType = ColorType::NONE;
 		lights.emplace(id, light);
 		return lights.find(id)->second;
@@ -250,7 +252,7 @@ HueLight& Hue::getLight(int id)
 	else if (type == "LLM010" || type == "LLM011" || type == "LLM012" || type == "LTW001" || type == "LTW004" || type == "LTW013" || type == "LTW014")
 	{
 		// HueTemperatureLight
-		HueLight light = HueLight(ip, username, id, simpleBrightnessStrategy, simpleColorTemperatureStrategy, nullptr);
+		HueLight light = HueLight(ip, username, id, simpleBrightnessStrategy, simpleColorTemperatureStrategy, nullptr, http_handler);
 		light.colorType = ColorType::TEMPERATURE;
 		lights.emplace(id, light);
 		return lights.find(id)->second;
@@ -284,13 +286,13 @@ void Hue::refreshState()
 	{
 		return;
 	}
-	Json::Value answer = HttpHandler().GETJson("/api/"+username, Json::objectValue, ip);
+	Json::Value answer = http_handler->GETJson("/api/"+username, Json::objectValue, ip);
 	if (answer.isObject() && answer.isMember("lights"))
 	{
 		state = answer;
 	}
 	else
 	{
-		std::cout << "Answer in Hue::refreshState of HttpHandler().GETJson(...) is not expected!\n";
+		std::cout << "Answer in Hue::refreshState of http_handler->GETJson(...) is not expected!\n";
 	}
 }

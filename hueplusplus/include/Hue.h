@@ -20,18 +20,19 @@
 #ifndef _HUE_H
 #define _HUE_H
 
-#include "HueLight.h"
-#include "BrightnessStrategy.h"
-#include "ColorHueStrategy.h"
-#include "ColorTemperatureStrategy.h"
-
-#include "json/json.h"
-
 #include <map>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
+
+#include "BrightnessStrategy.h"
+#include "ColorHueStrategy.h"
+#include "ColorTemperatureStrategy.h"
+#include "HueLight.h"
+#include "IHttpHandler.h"
+
+#include "json/json.h"
 
 // forward declarations
 class Hue;
@@ -47,7 +48,14 @@ public:
 		std::string ip;
 		std::string mac;
 	};
+
 public:
+
+	//! \brief Constructor of HueFinder class
+	//!
+	//! \param handler HttpHandler of type \ref IHttpHandler for communication with the bridge
+	HueFinder(std::shared_ptr<const IHttpHandler> handler);
+
 	//! \brief Function that finds all bridges in the network and returns them.
 	//!
 	//! The user should be given the opportunity to select the correct one based on the mac address.
@@ -68,9 +76,10 @@ public:
 
 	//! \brief Function that returns a map of mac addresses and usernames.
 	//!
-	//! These should be saved at the end and re-loaded next time, so only one username is generated per bridge.
+	//! Note these should be saved at the end and re-loaded with \ref AddUsername next time, so only one username is generated per bridge.
 	//! \returns A map mapping mac address to username for every bridge
 	const std::map<std::string, std::string>& GetAllUsernames() const;
+
 private:
 	//! \brief Function that sends a username request to the Hue bridge.
 	//!
@@ -82,6 +91,7 @@ private:
 
 private:
 	std::map<std::string, std::string> usernames;		//!< Maps all macs to usernames added by \ref HueFinder::AddUsername
+	std::shared_ptr<const IHttpHandler> http_handler;
 };
 
 //! Hue class
@@ -92,7 +102,8 @@ public:
 	//!
 	//! \param ip String that specifies the ip address of the Hue bridge in dotted decimal notation like "192.168.2.1"
 	//! \param username String that specifies the username that is used to control the bridge. This needs to be acquired in \ref requestUsername
-	Hue(const std::string& ip, const std::string& username);
+	//! \param handler HttpHandler of type \ref IHttpHandler for communication with the bridge
+	Hue(const std::string& ip, const std::string& username, std::shared_ptr<const IHttpHandler> handler);
 
 	//! \brief Function to get the ip address of the hue bridge
 	//!
@@ -149,6 +160,7 @@ private:
 	std::shared_ptr<ColorHueStrategy>			extendedColorHueStrategy;							//!< Strategy that is used for controlling the color of lights
 	std::shared_ptr<ColorTemperatureStrategy>	simpleColorTemperatureStrategy;		//!< Strategy that is used for controlling the color temperature of lights
 	std::shared_ptr<ColorTemperatureStrategy>	extendedColorTemperatureStrategy;	//!< Strategy that is used for controlling the color temperature of lights
+	std::shared_ptr<const IHttpHandler> http_handler;
 };
 
 #endif
