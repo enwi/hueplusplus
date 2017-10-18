@@ -18,14 +18,14 @@
 **/
 
 #include "include/UPnP.h"
-#include "include/HttpHandler.h"
+
 #include <algorithm>
 #include <iostream>
 
-std::vector<std::pair<std::string, std::string>> UPnP::getDevices()
+std::vector<std::pair<std::string, std::string>> UPnP::getDevices(std::shared_ptr<const IHttpHandler> handler)
 {
 	// send UPnP M-Search request
-	std::vector<std::string> foundDevices =  HttpHandler().sendMulticast("M-SEARCH * HTTP/1.1\r\nHOST: 239.255.255.250:1900\r\nMAN: \"ssdp:discover\"\r\nMX: 5\r\nST: ssdp:all\r\n\r\n", "239.255.255.250", 1900, 5);
+	std::vector<std::string> foundDevices =  handler->sendMulticast("M-SEARCH * HTTP/1.1\r\nHOST: 239.255.255.250:1900\r\nMAN: \"ssdp:discover\"\r\nMX: 5\r\nST: ssdp:all\r\n\r\n", "239.255.255.250", 1900, 5);
 
 	std::vector<std::pair<std::string, std::string>> devices;
 

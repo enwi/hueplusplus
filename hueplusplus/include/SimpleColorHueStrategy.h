@@ -20,6 +20,7 @@
 #ifndef _SIMPLE_COLOR_HUE_STRATEGY_H
 #define _SIMPLE_COLOR_HUE_STRATEGY_H
 
+#include "ColorHueStrategy.h"
 #include "HueLight.h"
 
 //! Class implementing the functions of ColorHueStrategy

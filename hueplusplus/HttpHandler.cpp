@@ -18,18 +18,19 @@
 **/
 
 #include "include/HttpHandler.h"
-#include <iostream>
-#include <memory>
-#include <stdexcept>
-#include <stdio.h>		// printf, sprintf
-#include <stdlib.h>		// exit
-#include <unistd.h>		// read, write, close
-#include <sys/socket.h> // socket, connect
+
+#include <chrono>
 #include <netinet/in.h> // struct sockaddr_in, struct sockaddr
 #include <arpa/inet.h>
-#include <netdb.h>		// struct hostent, gethostbyname
-#include <string.h>
-#include <chrono>
+#include <iostream>
+#include <memory>
+#include <netdb.h>			// struct hostent, gethostbyname
+#include <sys/socket.h> // socket, connect
+#include <stdexcept>
+#include <stdio.h>			// printf, sprintf
+#include <stdlib.h>			// exit
+#include <string.h>			// functions for C style null-terminated strings
+#include <unistd.h>			// read, write, close
 
 class SocketCloser {
 	public: SocketCloser(int sockFd) :s(sockFd) {}

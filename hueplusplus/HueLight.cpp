@@ -19,12 +19,11 @@
 
 #include "include/HueLight.h"
 
-#include "include/HttpHandler.h"
-#include "include/json/json.h"
-
 #include <cmath>
 #include <iostream>
 #include <thread>
+
+#include "include/json/json.h"
 
 bool HueLight::On(uint8_t transition)
 {
@@ -78,17 +77,18 @@ bool HueLight::alert()
 	return false;
 }
 
-HueLight::HueLight(const std::string& ip, const std::string& username, int id)
-	: HueLight(ip,  username, id, nullptr, nullptr, nullptr)
+HueLight::HueLight(const std::string& ip, const std::string& username, int id, std::shared_ptr<const IHttpHandler> handler)
+	: HueLight(ip,  username, id, nullptr, nullptr, nullptr, handler)
 {}
 
-HueLight::HueLight(const std::string& ip, const std::string& username, int id, std::shared_ptr<const BrightnessStrategy> brightnessStrategy, std::shared_ptr<const ColorTemperatureStrategy> colorTempStrategy, std::shared_ptr<const ColorHueStrategy> colorHueStrategy)
+HueLight::HueLight(const std::string& ip, const std::string& username, int id, std::shared_ptr<const BrightnessStrategy> brightnessStrategy, std::shared_ptr<const ColorTemperatureStrategy> colorTempStrategy, std::shared_ptr<const ColorHueStrategy> colorHueStrategy, std::shared_ptr<const IHttpHandler> handler)
 	: ip(ip),
 	username(username),
 	id(id),
 	brightnessStrategy(std::move(brightnessStrategy)),
 	colorTemperatureStrategy(std::move(colorTempStrategy)),
-	colorHueStrategy(std::move(colorHueStrategy))
+	colorHueStrategy(std::move(colorHueStrategy)),
+	http_handler(std::move(handler))
 {
 	refreshState();
 }
@@ -173,7 +173,7 @@ bool HueLight::OffNoRefresh(uint8_t transition)
 
 Json::Value HueLight::SendPutRequest(const Json::Value& request)
 {
-	return HttpHandler().PUTJson("/api/"+username+"/lights/"+std::to_string(id)+"/state", request, ip);
+	return http_handler->PUTJson("/api/"+username+"/lights/"+std::to_string(id)+"/state", request, ip);
 }
 
 void HueLight::refreshState()
@@ -181,7 +181,7 @@ void HueLight::refreshState()
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 	std::cout << "\tRefreshing lampstate of lamp with id: " << id << ", ip: " << ip << "\n";
 
-	state = HttpHandler().GETJson("/api/"+username+"/lights/"+std::to_string(id), Json::objectValue, ip);
+	state = http_handler->GETJson("/api/"+username+"/lights/"+std::to_string(id), Json::objectValue, ip);
 	//! \todo check whether getAnswer is containing right information
 
 	std::cout << "\tRefresh state took: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() << "ms" << std::endl;

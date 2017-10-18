@@ -23,6 +23,8 @@
 #include <string>
 #include <vector>
 
+#include "IHttpHandler.h"
+
 #include "json/json.h"
 #include "IHttpHandler.h"
 
