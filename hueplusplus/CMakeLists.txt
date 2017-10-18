@@ -10,3 +10,8 @@ set_property(TARGET hueplusplusstatic PROPERTY CXX_STANDARD 14)
 set_property(TARGET hueplusplusstatic PROPERTY CXX_EXTENSIONS OFF)
 install(TARGETS hueplusplusstatic DESTINATION lib)
 install(FILES ${hueplusplus_HEADERS} DESTINATION include)
+
+if(hueplusplus_TESTS)
+    set(HuePlusPlus_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+    add_subdirectory("test")
+endif()
