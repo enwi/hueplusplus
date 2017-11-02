@@ -39,10 +39,26 @@ bool HueLight::Off(uint8_t transition)
 	return OffNoRefresh(transition);
 }
 
+bool HueLight::IsOn()
+{
+	refreshState();
+	return state["state"]["on"].asBool();
+}
+
 std::string HueLight::getName()
 {
 	refreshState();
 	return state["name"].asString();
+}
+
+bool HueLight::setName(const std::string& name)
+{
+	Json::Value request(Json::objectValue);
+	request["name"] = name;
+	Json::Value reply = SendPutRequest(request, "/name");
+
+	//Check whether request was successful
+	return !reply[0].isNull() && reply[0].isMember("success") && reply[0]["success"]["/lights/" + std::to_string(id) + "/name"] == name;
 }
 
 ColorType HueLight::getColorType()
@@ -67,7 +83,7 @@ bool HueLight::alert()
 	Json::Value request;
 	request["alert"] = "select";
 
-	Json::Value reply = SendPutRequest(request);
+	Json::Value reply = SendPutRequest(request, "/state");
 
 	if (reply[0]["success"]["/lights/" + std::to_string(id) + "/state/alert"].asString() == "select")
 	{
@@ -78,7 +94,7 @@ bool HueLight::alert()
 }
 
 HueLight::HueLight(const std::string& ip, const std::string& username, int id, std::shared_ptr<const IHttpHandler> handler)
-	: HueLight(ip,  username, id, nullptr, nullptr, nullptr, handler)
+	: HueLight(ip, username, id, nullptr, nullptr, nullptr, handler)
 {}
 
 HueLight::HueLight(const std::string& ip, const std::string& username, int id, std::shared_ptr<const BrightnessStrategy> brightnessStrategy, std::shared_ptr<const ColorTemperatureStrategy> colorTempStrategy, std::shared_ptr<const ColorHueStrategy> colorHueStrategy, std::shared_ptr<const IHttpHandler> handler)
@@ -89,6 +105,7 @@ HueLight::HueLight(const std::string& ip, const std::string& username, int id, s
 	colorTemperatureStrategy(std::move(colorTempStrategy)),
 	colorHueStrategy(std::move(colorHueStrategy)),
 	http_handler(std::move(handler))
+
 {
 	refreshState();
 }
@@ -112,7 +129,7 @@ bool HueLight::OnNoRefresh(uint8_t transition)
 		return true;
 	}
 
-	Json::Value reply = SendPutRequest(request);
+	Json::Value reply = SendPutRequest(request, "/state");
 
 	//Check whether request was successful
 	std::string path = "/lights/" + std::to_string(id) + "/state/";
@@ -151,7 +168,7 @@ bool HueLight::OffNoRefresh(uint8_t transition)
 		return true;
 	}
 
-	Json::Value reply = SendPutRequest(request);
+	Json::Value reply = SendPutRequest(request, "/state");
 
 	//Check whether request was successful
 	std::string path = "/lights/" + std::to_string(id) + "/state/";
@@ -171,9 +188,9 @@ bool HueLight::OffNoRefresh(uint8_t transition)
 	return success;
 }
 
-Json::Value HueLight::SendPutRequest(const Json::Value& request)
+Json::Value HueLight::SendPutRequest(const Json::Value& request, const std::string& subPath)
 {
-	return http_handler->PUTJson("/api/"+username+"/lights/"+std::to_string(id)+"/state", request, ip);
+	return http_handler->PUTJson("/api/"+username+"/lights/"+std::to_string(id)+subPath, request, ip);
 }
 
 void HueLight::refreshState()
