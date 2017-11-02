@@ -20,12 +20,12 @@
 #include "include/HttpHandler.h"
 
 #include <chrono>
-#include <netinet/in.h> // struct sockaddr_in, struct sockaddr
+#include <netinet/in.h> 	// struct sockaddr_in, struct sockaddr
 #include <arpa/inet.h>
 #include <iostream>
 #include <memory>
 #include <netdb.h>			// struct hostent, gethostbyname
-#include <sys/socket.h> // socket, connect
+#include <sys/socket.h> 	// socket, connect
 #include <stdexcept>
 #include <stdio.h>			// printf, sprintf
 #include <stdlib.h>			// exit
@@ -260,6 +260,11 @@ std::string HttpHandler::PUTString(std::string uri, std::string content_type, st
 	return sendHTTPRequest("PUT", uri, content_type, body, adr, port);
 }
 
+std::string HttpHandler::DELETEString(std::string uri, std::string content_type, std::string body, const std::string &adr, int port) const
+{
+	return sendHTTPRequest("DELETE", uri, content_type, body, adr, port);
+}
+
 //! \todo Get rid of duplicate code in GETJson, POSTJson and PUTJson
 Json::Value HttpHandler::GETJson(std::string uri, const Json::Value& body, const std::string &adr, int port) const
 {
@@ -298,6 +303,23 @@ Json::Value HttpHandler::POSTJson(std::string uri, const Json::Value& body, cons
 Json::Value HttpHandler::PUTJson(std::string uri, const Json::Value& body, const std::string &adr, int port) const
 {
 	std::string response = PUTString(uri, "application/json", body.toStyledString(), adr, port);
+
+	std::string error;
+	Json::Value result;
+	Json::CharReaderBuilder builder;
+	builder["collectComments"] = false;
+	std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
+	if (!reader->parse(response.c_str(), response.c_str() + response.length(), &result, &error))
+	{
+		std::cout << "Error while parsing JSON in function PUTJson() of HttpHandler: " << error << std::endl;
+		throw(std::runtime_error("Error while parsing JSON in function PUTJson() of HttpHandler"));
+	}
+	return result;
+}
+
+Json::Value HttpHandler::DELETEJson(std::string uri, const Json::Value& body, const std::string &adr, int port) const
+{
+	std::string response = DELETEString(uri, "application/json", body.toStyledString(), adr, port);
 
 	std::string error;
 	Json::Value result;
