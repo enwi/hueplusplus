@@ -113,10 +113,20 @@ public:
 	//! \return Bool that is true on success
 	bool Off(uint8_t transition = 4);
 
+	//! \brief Function to check whether a light is on or off
+	//!
+	//! \return Bool that is true, when the light is on and false, when off
+	bool IsOn();
+
 	//! \brief Function that returns the name of the light.
 	//!
 	//! \return String containig the name of the light
 	std::string getName();
+
+	//! \brief Function that sets the name of the light
+	//!
+	//! \return Bool that is true on success
+	bool setName(const std::string& name);
 
 	//! \brief Function that returns the color type of the light.
 	//!
@@ -138,7 +148,7 @@ public:
 	//! \brief Function that sets the brightness of this light.
 	//!
 	//! Notice the brightness will only be set if the light has a reference to a specific \ref BrightnessStrategy.
-	//! The brightness can range from 0 = off to 255 = fully lit.
+	//! The brightness can range from 0 = off to 254 = fully lit.
 	//! \param bri Unsigned int that specifies the brightness
 	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
 	//! \return Bool that is true on success
@@ -149,6 +159,20 @@ public:
 			return brightnessStrategy->setBrightness(bri, transition, *this);
 	 	}
 		return false;
+	};
+
+	//! \brief Function that returns the brightness of this light.
+	//!
+	//! Notice the brightness will only be returned if the light has a reference to a specific \ref BrightnessStrategy.
+	//! The brightness can range from 0 = off to 254 = fully lit.
+	//! \return Unsigned int that is 0 when function failed
+	unsigned int getBrightness()
+	{
+		if (brightnessStrategy)
+		{
+			return brightnessStrategy->getBrightness(*this);
+	 	}
+		return 0;
 	};
 
 	//! \brief Fucntion that sets the color temperature of this light in mired.
@@ -398,8 +422,10 @@ protected:
 	//! \brief Utility function to send a put request to the light.
 	//!
 	//! \throws std::runtime_error if the reply could not be parsed
+	//! \param request A Json::Value aka the request to send
+	//! \param subPath A path that is appended to the uri, note it should always start with a slash ("/")
 	//! \return The parsed reply
-	Json::Value SendPutRequest(const Json::Value& request);
+	Json::Value SendPutRequest(const Json::Value& request, const std::string& subPath);
 
 	//! \brief Virtual function that refreshes the \ref state of the light.
 	virtual void refreshState();
@@ -414,7 +440,7 @@ protected:
 	std::shared_ptr<const BrightnessStrategy>		brightnessStrategy;			//!< holds a reference to the strategy that handles brightness commands
 	std::shared_ptr<const ColorTemperatureStrategy> colorTemperatureStrategy;	//!< holds a reference to the strategy that handles colortemperature commands
 	std::shared_ptr<const ColorHueStrategy>			colorHueStrategy;			//!< holds a reference to the strategy that handles all color commands
-	std::shared_ptr<const IHttpHandler> http_handler;
+	std::shared_ptr<const IHttpHandler> http_handler;							//!< A IHttpHandler that is used to communicate with the bridge
 };
 
 #endif
