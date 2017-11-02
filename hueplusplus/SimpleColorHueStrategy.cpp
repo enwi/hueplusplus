@@ -18,6 +18,7 @@
 **/
 
 #include "include/SimpleColorHueStrategy.h"
+#include "include/HueConfig.h"
 
 #include <cmath>
 #include <iostream>
@@ -47,7 +48,7 @@ bool SimpleColorHueStrategy::setColorHue(uint16_t hue, uint8_t transistion, HueL
 		return true;
 	}
 
-	Json::Value reply = light.SendPutRequest(request);
+	Json::Value reply = light.SendPutRequest(request, "/state");
 
 	//Check whether request was successful
 	std::string path = "/lights/" + std::to_string(light.id) + "/state/";
@@ -100,7 +101,7 @@ bool SimpleColorHueStrategy::setColorSaturation(uint8_t sat, uint8_t transistion
 		return true;
 	}
 
-	Json::Value reply = light.SendPutRequest(request);
+	Json::Value reply = light.SendPutRequest(request, "/state");
 
 	//Check whether request was successful
 	std::string path = "/lights/" + std::to_string(light.id) + "/state/";
@@ -159,7 +160,7 @@ bool SimpleColorHueStrategy::setColorHueSaturation(uint16_t hue, uint8_t sat, ui
 		return true;
 	}
 
-	Json::Value reply = light.SendPutRequest(request);
+	Json::Value reply = light.SendPutRequest(request, "/state");
 
 	//Check whether request was successful
 	std::string path = "/lights/" + std::to_string(light.id) + "/state/";
@@ -216,7 +217,7 @@ bool SimpleColorHueStrategy::setColorXY(float x, float y, uint8_t transistion, H
 		return true;
 	}
 
-	Json::Value reply = light.SendPutRequest(request);
+	Json::Value reply = light.SendPutRequest(request, "/state");
 
 	//Check whether request was successful
 	std::string path = "/lights/" + std::to_string(light.id) + "/state/";
@@ -248,21 +249,21 @@ bool SimpleColorHueStrategy::setColorXY(float x, float y, uint8_t transistion, H
 
 bool SimpleColorHueStrategy::setColorRGB(uint8_t r, uint8_t g, uint8_t b, uint8_t transistion, HueLight& light) const
 {
-	float red = float(r) / 255;
-	float green = float(g) / 255;
-	float blue = float(b) / 255;
+	const float red = float(r) / 255;
+	const float green = float(g) / 255;
+	const float blue = float(b) / 255;
 
 	// gamma correction
-	red = (red > 0.04045f) ? pow((red + 0.055f) / (1.0f + 0.055f), 2.4f) : (red / 12.92f);
-	green = (green > 0.04045f) ? pow((green + 0.055f) / (1.0f + 0.055f), 2.4f) : (green / 12.92f);
-	blue = (blue > 0.04045f) ? pow((blue + 0.055f) / (1.0f + 0.055f), 2.4f) : (blue / 12.92f);
+	const float redCorrected = (red > 0.04045f) ? pow((red + 0.055f) / (1.0f + 0.055f), 2.4f) : (red / 12.92f);
+	const float greenCorrected = (green > 0.04045f) ? pow((green + 0.055f) / (1.0f + 0.055f), 2.4f) : (green / 12.92f);
+	const float blueCorrected = (blue > 0.04045f) ? pow((blue + 0.055f) / (1.0f + 0.055f), 2.4f) : (blue / 12.92f);
 
-	float X = red * 0.664511f + green * 0.154324f + blue * 0.162028f;
-	float Y = red * 0.283881f + green * 0.668433f + blue * 0.047685f;
-	float Z = red * 0.000088f + green * 0.072310f + blue * 0.986039f;
+	const float X = redCorrected * 0.664511f + greenCorrected * 0.154324f + blueCorrected * 0.162028f;
+	const float Y = redCorrected * 0.283881f + greenCorrected * 0.668433f + blueCorrected * 0.047685f;
+	const float Z = redCorrected * 0.000088f + greenCorrected * 0.072310f + blueCorrected * 0.986039f;
 
-	float x = X / (X + Y + Z);
-	float y = Y / (X + Y + Z);
+	const float x = X / (X + Y + Z);
+	const float y = Y / (X + Y + Z);
 
 	return light.setColorXY(x, y, transistion);
 }
@@ -288,7 +289,7 @@ bool SimpleColorHueStrategy::setColorLoop(bool on, HueLight& light) const
 		return true;
 	}
 
-	Json::Value reply = light.SendPutRequest(request);
+	Json::Value reply = light.SendPutRequest(request, "/state");
 
 	//Check whether request was successful
 	std::string path = "/lights/" + std::to_string(light.id) + "/state/";
@@ -321,14 +322,15 @@ bool SimpleColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, HueLi
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(110));
+		std::this_thread::sleep_for(std::chrono::milliseconds(c_PRE_ALERT_DELAY));
 		if (!light.alert())
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+		std::this_thread::sleep_for(std::chrono::milliseconds(c_POST_ALERT_DELAY));
 		if (!on)
 		{
+			light.setColorHueSaturation(oldHue, oldSat, 1);
 			return light.OffNoRefresh(1);
 		}
 		else
@@ -344,14 +346,15 @@ bool SimpleColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, HueLi
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(110));
+		std::this_thread::sleep_for(std::chrono::milliseconds(c_PRE_ALERT_DELAY));
 		if (!light.alert())
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+		std::this_thread::sleep_for(std::chrono::milliseconds(c_POST_ALERT_DELAY));
 		if (!on)
 		{
+			light.setColorXY(oldX, oldY, 1);
 			return light.OffNoRefresh(1);
 		}
 		else
@@ -378,14 +381,15 @@ bool SimpleColorHueStrategy::alertXY(float x, float y, HueLight& light) const
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(110));
+		std::this_thread::sleep_for(std::chrono::milliseconds(c_PRE_ALERT_DELAY));
 		if (!light.alert())
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+		std::this_thread::sleep_for(std::chrono::milliseconds(c_POST_ALERT_DELAY));
 		if (!on)
 		{
+			light.setColorHueSaturation(oldHue, oldSat, 1);
 			return light.OffNoRefresh(1);
 		}
 		else
@@ -401,14 +405,15 @@ bool SimpleColorHueStrategy::alertXY(float x, float y, HueLight& light) const
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(110));
+		std::this_thread::sleep_for(std::chrono::milliseconds(c_PRE_ALERT_DELAY));
 		if (!light.alert())
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+		std::this_thread::sleep_for(std::chrono::milliseconds(c_POST_ALERT_DELAY));
 		if (!on)
 		{
+			light.setColorXY(oldX, oldY, 1);
 			return light.OffNoRefresh(1);
 		}
 		else
@@ -435,14 +440,15 @@ bool SimpleColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLight&
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(110));
+		std::this_thread::sleep_for(std::chrono::milliseconds(c_PRE_ALERT_DELAY));
 		if (!light.alert())
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+		std::this_thread::sleep_for(std::chrono::milliseconds(c_POST_ALERT_DELAY));
 		if (!on)
 		{
+			light.setColorHueSaturation(oldHue, oldSat, 1);
 			return light.OffNoRefresh(1);
 		}
 		else
@@ -458,14 +464,15 @@ bool SimpleColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLight&
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(110));
+		std::this_thread::sleep_for(std::chrono::milliseconds(c_PRE_ALERT_DELAY));
 		if (!light.alert())
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+		std::this_thread::sleep_for(std::chrono::milliseconds(c_POST_ALERT_DELAY));
 		if (!on)
 		{
+			light.setColorXY(oldX, oldY, 1);
 			return light.OffNoRefresh(1);
 		}
 		else
@@ -479,6 +486,17 @@ bool SimpleColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLight&
 	}
 }
 
+std::pair<uint16_t, uint8_t> SimpleColorHueStrategy::getColorHueSaturation(HueLight & light) const
+{
+	light.refreshState();
+	return std::pair<uint16_t, uint8_t>(static_cast<uint16_t>(light.state["state"]["hue"].asUInt()), static_cast<uint8_t>(light.state["state"]["sat"].asUInt()));
+}
+
+std::pair<float, float> SimpleColorHueStrategy::getColorXY(HueLight & light) const
+{
+	light.refreshState();
+	return std::pair<float, float>(light.state["state"]["xy"][0].asFloat(), light.state["state"]["xy"][1].asFloat());
+}
 /*bool SimpleColorHueStrategy::pointInTriangle(float pointx, float pointy, float x0, float y0, float x1, float y1, float x2, float y2)
 {
 float A = (-y1 * x2 + y0*(-x1 + x2) + x0*(y1 - y2) + x1 * y1);

@@ -18,6 +18,7 @@
 **/
 
 #include "include/ExtendedColorTemperatureStrategy.h"
+#include "include/HueConfig.h"
 
 #include <cmath>
 #include <iostream>
@@ -55,7 +56,7 @@ bool ExtendedColorTemperatureStrategy::setColorTemperature(unsigned int mired, u
 		return true;
 	}
 
-	Json::Value reply = light.SendPutRequest(request);
+	Json::Value reply = light.SendPutRequest(request, "/state");
 
 	//Check whether request was successful
 	std::string path = "/lights/" + std::to_string(light.id) + "/state/";
@@ -94,14 +95,15 @@ bool ExtendedColorTemperatureStrategy::alertTemperature(unsigned int mired, HueL
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(110));
+		std::this_thread::sleep_for(std::chrono::milliseconds(c_PRE_ALERT_DELAY));
 		if (!light.alert())
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+		std::this_thread::sleep_for(std::chrono::milliseconds(c_POST_ALERT_DELAY));
 		if (!on)
 		{
+			light.setColorHueSaturation(oldHue, oldSat, 1);
 			return light.OffNoRefresh(1);
 		}
 		else
@@ -117,14 +119,15 @@ bool ExtendedColorTemperatureStrategy::alertTemperature(unsigned int mired, HueL
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(110));
+		std::this_thread::sleep_for(std::chrono::milliseconds(c_PRE_ALERT_DELAY));
 		if (!light.alert())
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+		std::this_thread::sleep_for(std::chrono::milliseconds(c_POST_ALERT_DELAY));
 		if (!on)
 		{
+			light.setColorXY(oldX, oldY, 1);
 			return light.OffNoRefresh(1);
 		}
 		else
@@ -139,14 +142,15 @@ bool ExtendedColorTemperatureStrategy::alertTemperature(unsigned int mired, HueL
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(110));
+		std::this_thread::sleep_for(std::chrono::milliseconds(c_PRE_ALERT_DELAY));
 		if (!light.alert())
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+		std::this_thread::sleep_for(std::chrono::milliseconds(c_POST_ALERT_DELAY));
 		if (!on)
 		{
+			light.setColorTemperature(oldCT, 1);
 			return light.OffNoRefresh(1);
 		}
 		else
@@ -159,4 +163,3 @@ bool ExtendedColorTemperatureStrategy::alertTemperature(unsigned int mired, HueL
 		return false;
 	}
 }
-
