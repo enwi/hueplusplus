@@ -135,6 +135,13 @@ public:
 	//! \return \ref HueLight that can be controlled
 	HueLight& getLight(int id);
 
+	//! \brief Function to remove a light from the bridge
+	//!
+	//! \attention Any use of the light after it was successfully removed results in undefined behavior
+	//! \param id Id of the light to remove
+	//! \return Bool that is true on success
+	bool removeLight(int id);
+
 	//! \brief Function that returns all light types that are associated with this bridge
 	//!
 	//! \return A map mapping light id's to light types for every light
@@ -145,22 +152,28 @@ public:
 	//! \return A vector containing references to every HueLight
 	std::vector<std::reference_wrapper<HueLight>> getAllLights();
 
+	//! \brief Function that sets the HttpHandler.
+	//!
+	//! The HttpHandler defines how specific commands that deal with bridge communication are executed
+	//! \param handler a HttpHandler of type \ref IHttpHandler
+	void setHttpHandler(std::shared_ptr<const IHttpHandler> handler)  { http_handler = std::move(handler); };
+
 private:
 	//! \brief Function that refreshes the local \ref state of the Hue bridge
 	void refreshState();
 
 private:
-	std::string ip;				//!< IP-Address of the hue bridge in dotted decimal notation like "192.168.2.1"
+	std::string ip;			//!< IP-Address of the hue bridge in dotted decimal notation like "192.168.2.1"
 	std::string username;	//!< Username that is ussed to access the hue bridge
 	Json::Value state;		//!< The state of the hue bridge as it is returned from it
 	std::map< uint8_t, HueLight > lights;	//!< Maps ids to HueLights that are controlled by this bridge
 
-	std::shared_ptr<BrightnessStrategy>			simpleBrightnessStrategy;						//!< Strategy that is used for controlling the brightness of lights
-	std::shared_ptr<ColorHueStrategy> 			simpleColorHueStrategy;							//!< Strategy that is used for controlling the color of lights
-	std::shared_ptr<ColorHueStrategy>			extendedColorHueStrategy;							//!< Strategy that is used for controlling the color of lights
+	std::shared_ptr<BrightnessStrategy>			simpleBrightnessStrategy;			//!< Strategy that is used for controlling the brightness of lights
+	std::shared_ptr<ColorHueStrategy> 			simpleColorHueStrategy;				//!< Strategy that is used for controlling the color of lights
+	std::shared_ptr<ColorHueStrategy>			extendedColorHueStrategy;			//!< Strategy that is used for controlling the color of lights
 	std::shared_ptr<ColorTemperatureStrategy>	simpleColorTemperatureStrategy;		//!< Strategy that is used for controlling the color temperature of lights
 	std::shared_ptr<ColorTemperatureStrategy>	extendedColorTemperatureStrategy;	//!< Strategy that is used for controlling the color temperature of lights
-	std::shared_ptr<const IHttpHandler> http_handler;
+	std::shared_ptr<const IHttpHandler> http_handler;								//!< A IHttpHandler that is used to communicate with the bridge
 };
 
 #endif
