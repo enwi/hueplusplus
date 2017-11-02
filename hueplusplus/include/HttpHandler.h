@@ -34,7 +34,6 @@ class HttpHandler : public IHttpHandler
 public:
     //! \brief Function that sends a given message to the specified host and returns the response.
     //!
-    //! It returns a string containing the response of the host.
     //! \param msg String that contains the message that is sent to the specified address
     //! \param adr String that contains an ip or hostname in dotted decimal notation like "192.168.2.1"
     //! \param port Optional integer that specifies the port to which the request is sent to. Default is 80
@@ -43,7 +42,6 @@ public:
 
     //! \brief Function that sends a given message to the specified host and returns the body of the response.
     //!
-    //! It returns a string containing only the body of the response of the host.
     //! Note if no body is found a runtime error is thrown!
     //! \param msg String that contains the message that is sent to the specified address
     //! \param adr String that contains an ip or hostname in dotted decimal notation like "192.168.2.1"
@@ -53,7 +51,6 @@ public:
 
     //! \brief Function that sends a multicast request with the specified message.
     //!
-    //! It returns a vector containing all responses the multicast request got back
     //! \param msg String that contains the request that is sent to the specified address
     //! \param adr Optional String that contains an ip or hostname in dotted decimal notation, default is "239.255.255.250"
     //! \param port Optional integer that specifies the port to which the request is sent. Default is 1900
@@ -63,7 +60,6 @@ public:
 
     //! \brief Function that sends a HTTP request with the given method to the specified host and returns the body of the response.
     //!
-    //! It returns a string containing only the body of the response of the host.
     //! Note body can also be left empty!
     //! \param method String that contains the HTTP method type e.g. GET, HEAD, POST, PUT, DELETE, ...
     //! \param uri String that contains the uniform resource identifier
@@ -76,7 +72,6 @@ public:
 
     //! \brief Function that sends a HTTP GET request to the specified host and returns the body of the response.
     //!
-    //! It returns a string containing only the body of the response of the host.
     //! Note body can also be left empty!
     //! \param uri String that contains the uniform resource identifier
     //! \param content_type String that contains the type(MIME) of the body data e.g. "text/html", "application/json", ...
@@ -88,7 +83,6 @@ public:
 
     //! \brief Function that sends a HTTP POST request to the specified host and returns the body of the response.
     //!
-    //! It returns a string containing only the body of the response of the host.
     //! Note body can also be left empty!
     //! \param uri String that contains the uniform resource identifier
     //! \param content_type String that contains the type(MIME) of the body data e.g. "text/html", "application/json", ...
@@ -100,7 +94,6 @@ public:
 
     //! \brief Function that sends a HTTP PUT request to the specified host and returns the body of the response.
     //!
-    //! It returns a string containing only the body of the response of the host.
     //! Note body can also be left empty!
     //! \param uri String that contains the uniform resource identifier
     //! \param content_type String that contains the type(MIME) of the body data e.g. "text/html", "application/json", ...
@@ -110,9 +103,19 @@ public:
     //! \return String containing the body of the response of the host
     std::string PUTString(std::string uri, std::string content_type, std::string body, const std::string &adr, int port=80) const;
 
+    //! \brief Function that sends a HTTP DELETE request to the specified host and returns the body of the response.
+    //!
+    //! Note body can also be left empty!
+    //! \param uri String that contains the uniform resource identifier
+    //! \param content_type String that contains the type(MIME) of the body data e.g. "text/html", "application/json", ...
+    //! \param body String that contains the data of the request
+    //! \param adr String that contains an ip or hostname in dotted decimal notation like "192.168.2.1"
+    //! \param port Optional integer that specifies the port to which the request is sent to. Default is 80
+    //! \return String containing the body of the response of the host
+    std::string DELETEString(std::string uri, std::string content_type, std::string body, const std::string &adr, int port=80) const;
+
     //! \brief Function that sends a HTTP GET request to the specified host and returns the body of the response.
     //!
-    //! It returns a Json::Value parsed from the body of the response of the host.
     //! Note body can also be left empty!
     //! \param uri String that contains the uniform resource identifier
     //! \param body Json::Value that contains the data of the request
@@ -123,7 +126,6 @@ public:
 
     //! \brief Function that sends a HTTP POST request to the specified host and returns the body of the response.
     //!
-    //! It returns a Json::Value parsed from the body of the response of the host.
     //! Note body can also be left empty!
     //! \param uri String that contains the uniform resource identifier
     //! \param body Json::Value that contains the data of the request
@@ -134,7 +136,6 @@ public:
 
     //! \brief Function that sends a HTTP PUT request to the specified host and returns the body of the response.
     //!
-    //! It returns a Json::Value parsed from the body of the response of the host.
     //! Note body can also be left empty!
     //! \param uri String that contains the uniform resource identifier
     //! \param body Json::Value that contains the data of the request
@@ -142,6 +143,16 @@ public:
     //! \param port Optional integer that specifies the port to which the request is sent to. Default is 80
     //! \return Json::Value containing the parsed body of the response of the host
     Json::Value PUTJson(std::string uri, const Json::Value& body, const std::string &adr, int port=80) const;
+
+    //! \brief Function that sends a HTTP DELETE request to the specified host and returns the body of the response.
+    //!
+    //! Note body can also be left empty!
+    //! \param uri String that contains the uniform resource identifier
+    //! \param body Json::Value that contains the data of the request
+    //! \param adr String that contains an ip or hostname in dotted decimal notation like "192.168.2.1"
+    //! \param port Optional integer that specifies the port to which the request is sent to. Default is 80
+    //! \return Json::Value containing the parsed body of the response of the host
+    Json::Value DELETEJson(std::string uri, const Json::Value& body, const std::string &adr, int port=80) const;
 };
 
 #endif
