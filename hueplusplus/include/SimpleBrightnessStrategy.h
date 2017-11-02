@@ -26,13 +26,18 @@
 //! Class implementing the functions of BrightnessStrategy
 class SimpleBrightnessStrategy : public BrightnessStrategy
 {
-    public:
-        //! \brief Function for changing a lights brightness with a specified transition.
-        //!
-        //! \param bri The brightness raning from 0 = off to 255 = fully lit
-        //! \param transition The time it takes to fade to the new brightness in multiples of 100ms, 4 = 400ms and should be seen as the default
-        //! \param light A reference of the light
-        bool setBrightness(unsigned int bri, uint8_t transition, HueLight& light) const;
+public:
+    //! \brief Function for changing a lights brightness with a specified transition.
+    //!
+    //! \param bri The brightness raning from 0 = off to 255 = fully lit
+    //! \param transition The time it takes to fade to the new brightness in multiples of 100ms, 4 = 400ms and should be seen as the default
+    //! \param light A reference of the light
+    bool setBrightness(unsigned int bri, uint8_t transition, HueLight& light) const override;
+    //! \brief Function that returns the current brightnessof the light
+    //!
+    //! \param light A reference of the light
+    //! \return Unsigned int representing the brightness
+    unsigned int getBrightness(HueLight& light) const override;
 };
 
 #endif
