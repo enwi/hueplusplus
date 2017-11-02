@@ -49,12 +49,12 @@ std::vector<HueFinder::HueIdentification> HueFinder::FindBridges() const
 	std::vector<HueIdentification> foundBridges;
 	for (const std::pair<std::string, std::string> &p : foundDevices)
 	{
-		unsigned int found = p.second.find("IpBridge");
+		size_t found = p.second.find("IpBridge");
 		if (found != std::string::npos)
 		{
 			HueIdentification bridge;
-			unsigned int start = p.first.find("//") + 2;
-			unsigned int length = p.first.find(":", start) - start;
+			size_t start = p.first.find("//") + 2;
+			size_t length = p.first.find(":", start) - start;
 			bridge.ip = p.first.substr(start, length);
 			std::string desc = http_handler->GETString("/description.xml", "application/xml", "", bridge.ip);
 			std::smatch matchResult;
@@ -238,6 +238,7 @@ HueLight& Hue::getLight(int id)
 	else if (type == "LST001" || type == "LLC006" || type == "LLC007" || type == "LLC010" || type == "LLC011" || type == "LLC012" || type == "LLC013")
 	{
 		// HueColorLight Gamut A
+		//! \todo Check whether extended strategies are needed, because it is not clear, if these lights really have ct mode
 		HueLight light = HueLight(ip, username, id, simpleBrightnessStrategy, simpleColorTemperatureStrategy, simpleColorHueStrategy, http_handler);
 		light.colorType = ColorType::GAMUT_A;
 		lights.emplace(id, light);
@@ -261,6 +262,17 @@ HueLight& Hue::getLight(int id)
 	}
 	std::cout << "Could not determine HueLight type!\n";
 	throw(std::runtime_error("Could not determine HueLight type!"));
+}
+
+bool Hue::removeLight(int id)
+{
+	Json::Value result = http_handler->DELETEJson("/api/"+username+"/lights/"+std::to_string(id), Json::objectValue, ip);
+	bool success = result.isArray() && !result[0].isNull() && result[0].isMember("success") && result[0]["success"] == "/lights/" + std::to_string(id) + " deleted";
+	if (success && lights.count(id) != 0)
+	{
+		lights.erase(id);
+	}
+	return success;
 }
 
 std::vector<std::reference_wrapper<HueLight>> Hue::getAllLights()
