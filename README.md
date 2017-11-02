@@ -91,16 +91,16 @@ To remove it
 ```bash
 make uninstall
 ```
-If you additionally want to run the tests you will need to checkout the testing branch and use cmake with the option -Dhueplusplus_TESTS=ON. Testing is done with Google gtest and gmock. Note that you wont need to install gtest/gmock yourself, because cmake will automatically download them and include them during the build.
+If you additionally want to run the tests you will currently need to checkout the development branch and use cmake with the option -Dhueplusplus_TESTS=ON. Testing is done with Google gtest and gmock. Note that you wont need to install gtest/gmock yourself, because cmake will automatically download them and include them during the build. Since I added a custom target you will only need to call "make unittest" and the tests are compiled and executed.
 ```bash
 mkdir build
 cd build
 cmake .. -Dhueplusplus_TESTS=ON
-make
+make unittest
 ```
-To execute the tests use
+If you also want to execute coverage tests you will need to install gcov and lcov yourself. To run the coverage test use
 ```bash
-./hueplusplus/test/HuePlusPlus_Test
+make coveragetest
 ```
 
 
