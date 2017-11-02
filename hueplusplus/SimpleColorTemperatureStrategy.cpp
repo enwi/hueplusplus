@@ -18,6 +18,7 @@
 **/
 
 #include "include/SimpleColorTemperatureStrategy.h"
+#include "include/HueConfig.h"
 
 #include <cmath>
 #include <iostream>
@@ -55,7 +56,7 @@ bool SimpleColorTemperatureStrategy::setColorTemperature(unsigned int mired, uin
 		return true;
 	}
 
-	Json::Value reply = light.SendPutRequest(request);
+	Json::Value reply = light.SendPutRequest(request, "/state");
 
 	//Check whether request was successful
 	std::string path = "/lights/" + std::to_string(light.id) + "/state/";
@@ -93,14 +94,15 @@ bool SimpleColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLig
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(110));
+		std::this_thread::sleep_for(std::chrono::milliseconds(c_PRE_ALERT_DELAY));
 		if (!light.alert())
 		{
 			return false;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+		std::this_thread::sleep_for(std::chrono::milliseconds(c_POST_ALERT_DELAY));
 		if (!on)
 		{
+			light.setColorTemperature(oldCT, 1);
 			return light.OffNoRefresh(1);
 		}
 		else
@@ -114,3 +116,8 @@ bool SimpleColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLig
 	}
 }
 
+unsigned int SimpleColorTemperatureStrategy::getColorTemperature(HueLight& light) const
+{
+	light.refreshState();
+	return light.state["state"]["ct"].asUInt();
+}

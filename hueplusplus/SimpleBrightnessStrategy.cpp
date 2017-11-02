@@ -51,7 +51,6 @@ bool SimpleBrightnessStrategy::setBrightness(unsigned int bri, uint8_t transitio
 		}
 		if (light.state["state"]["bri"].asUInt() != bri)
 		{
-			bri -= 1;
 			if (bri > 254)
 			{
 				bri = 254;
@@ -65,7 +64,7 @@ bool SimpleBrightnessStrategy::setBrightness(unsigned int bri, uint8_t transitio
 			return true;
 		}
 
-		Json::Value reply = light.SendPutRequest(request);
+		Json::Value reply = light.SendPutRequest(request, "/state");
 
 		//Check whether request was successful
 		std::string path = "/lights/" + std::to_string(light.id) + "/state/";
@@ -90,4 +89,10 @@ bool SimpleBrightnessStrategy::setBrightness(unsigned int bri, uint8_t transitio
 		}
 		return success;
 	}
+}
+
+unsigned int SimpleBrightnessStrategy::getBrightness(HueLight& light) const
+{
+	light.refreshState();
+	return light.state["state"]["bri"].asUInt();
 }
