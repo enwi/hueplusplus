@@ -204,9 +204,11 @@ void Hue::setIP(const std::string ip)
 
 HueLight& Hue::getLight(int id)
 {
-	if(lights.count(id) > 0)
+	auto pos = lights.find(id);
+	if(pos != lights.end())
 	{
-		return lights.find(id)->second;
+		pos->second.refreshState();
+		return pos->second;
 	}
 	refreshState();
 	if (!state["lights"].isMember(std::to_string(id)))
