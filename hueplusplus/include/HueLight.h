@@ -123,6 +123,12 @@ public:
 	//! \return String containig the name of the light
 	std::string getName();
 
+	//! \brief Const function that returns the name of the light.
+	//!
+	//! \note This will not refresh the light state
+	//! \return String containig the name of the light
+	std::string getName() const;
+
 	//! \brief Function that sets the name of the light
 	//!
 	//! \return Bool that is true on success
