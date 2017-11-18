@@ -17,7 +17,7 @@ timestamps {
         }
         stage('Test')
         {
-            sh '''cd debug
+            sh '''cd build
             hueplusplus/test/test_HuePlusPlus --gtest_output=xml:test.xml'''
             step([$class: 'XUnitBuilder', testTimeMargin: '3000', thresholdMode: 1,
                 thresholds: [
@@ -25,7 +25,7 @@ timestamps {
                     [$class: 'SkippedThreshold', failureNewThreshold: '', failureThreshold: '', unstableNewThreshold: '', unstableThreshold: '']
                     ],
                 tools: [
-                    [$class: 'GoogleTestType', deleteOutputFiles: true, failIfNotNew: true, pattern: 'debug/test.xml', skipNoTestFiles: false, stopProcessingIfError: true]
+                    [$class: 'GoogleTestType', deleteOutputFiles: true, failIfNotNew: true, pattern: 'build/test.xml', skipNoTestFiles: false, stopProcessingIfError: true]
                     ]
                 ])
         }
@@ -43,8 +43,8 @@ timestamps {
         {
             warnings canComputeNew: false, canResolveRelativePaths: false, categoriesPattern: '', defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '', messagesPattern: '', parserConfigurations: [[parserName: 'Doxygen', pattern: 'doxylog.txt']], unHealthy: ''
             sh returnStatus: true, script: 'rm doxylog.txt'
-            warnings canComputeNew: false, canResolveRelativePaths: false, categoriesPattern: '', defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '', messagesPattern: '', parserConfigurations: [[parserName: 'GNU C Compiler 4 (gcc)', pattern: 'debug/buildlog.txt']], unHealthy: ''
-            sh returnStatus: true, script: 'rm debug/buildlog.txt'
+            warnings canComputeNew: false, canResolveRelativePaths: false, categoriesPattern: '', defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '', messagesPattern: '', parserConfigurations: [[parserName: 'GNU C Compiler 4 (gcc)', pattern: 'build/buildlog.txt']], unHealthy: ''
+            sh returnStatus: true, script: 'rm build/buildlog.txt'
         }
     }
 
