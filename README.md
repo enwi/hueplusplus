@@ -2,11 +2,12 @@
 A simple and easy to use library for Philips Hue Lights
 
 ## Features
-* finds bridges with SSDP or set ip manually
-* function to assign username or set manually
-* all common light functions
-* extended alert() function, which alerts in a specific color
+* find bridges with SSDP or set an ip manually
+* function to assign a username or set one manually
+* all common light functions (brightness, color, temperature)
+* extended alert() functions, which alert in a specific color (good for notifications)
 * documented with doxygen
+* starting to test with google test, google mock and gcov/lcov
 
 ## How to use
 ### <a name="findingBridges"></a>Finding Bridges
