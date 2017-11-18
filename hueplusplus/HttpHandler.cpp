@@ -265,7 +265,6 @@ std::string HttpHandler::DELETEString(std::string uri, std::string content_type,
 	return sendHTTPRequest("DELETE", uri, content_type, body, adr, port);
 }
 
-//! \todo Get rid of duplicate code in GETJson, POSTJson and PUTJson
 Json::Value HttpHandler::GETJson(std::string uri, const Json::Value& body, const std::string &adr, int port) const
 {
 	std::string response = GETString(uri, "application/json", body.toStyledString(), adr, port);

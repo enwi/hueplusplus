@@ -199,7 +199,6 @@ void HueLight::refreshState()
 	std::cout << "\tRefreshing lampstate of lamp with id: " << id << ", ip: " << ip << "\n";
 
 	state = http_handler->GETJson("/api/"+username+"/lights/"+std::to_string(id), Json::objectValue, ip);
-	//! \todo check whether getAnswer is containing right information
 
 	std::cout << "\tRefresh state took: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() << "ms" << std::endl;
 }

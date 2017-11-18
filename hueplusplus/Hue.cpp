@@ -106,7 +106,6 @@ const std::map<std::string, std::string>& HueFinder::GetAllUsernames() const
 	return usernames;
 }
 
-//! \todo Remove duplicate code found in HueFinder::RequestUsername and Hue::requestUsername
 std::string HueFinder::RequestUsername(const std::string & ip) const
 {
 	std::cout << "Please press the link Button! You've got 35 secs!\n";	// when the link button was presed we got 30 seconds to get our username for control
@@ -238,7 +237,6 @@ HueLight& Hue::getLight(int id)
 	else if (type == "LST001" || type == "LLC006" || type == "LLC007" || type == "LLC010" || type == "LLC011" || type == "LLC012" || type == "LLC013")
 	{
 		// HueColorLight Gamut A
-		//! \todo Check whether extended strategies are needed, because it is not clear, if these lights really have ct mode
 		HueLight light = HueLight(ip, username, id, simpleBrightnessStrategy, simpleColorTemperatureStrategy, simpleColorHueStrategy, http_handler);
 		light.colorType = ColorType::GAMUT_A;
 		lights.emplace(id, light);
