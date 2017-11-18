@@ -116,7 +116,13 @@ public:
 	//! \brief Function to check whether a light is on or off
 	//!
 	//! \return Bool that is true, when the light is on and false, when off
-	bool IsOn();
+	bool isOn();
+
+	//! \brief Const function to check whether a light is on or off
+	//!
+	//! \note This will not refresh the light state
+	//! \return Bool that is true, when the light is on and false, when off
+	bool isOn() const;
 
 	//! \brief Function that returns the name of the light.
 	//!
