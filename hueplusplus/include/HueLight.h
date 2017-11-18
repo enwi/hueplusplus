@@ -133,6 +133,30 @@ public:
 	//! \return ColorType containig the color type of the light
 	ColorType getColorType();
 
+	//! \brief Function to check whether this light has brightness control
+	//!
+	//! \return Bool that is true when the light has specified abilities and false when not
+	bool hasBrightnessControl()
+	{
+		return brightnessStrategy != nullptr;
+	};
+
+	//! \brief Function to check whether this light has color temperature control
+	//!
+	//! \return Bool that is true when the light has specified abilities and false when not
+	bool hasTemperatureControl()
+	{
+		return colorTemperatureStrategy != nullptr;
+	};
+
+	//! \brief Function to check whether this light has full color control
+	//!
+	//! \return Bool that is true when the light has specified abilities and false when not
+	bool hasColorControl()
+	{
+		return colorHueStrategy != nullptr;
+	};
+
 	//! \brief Function that converts Kelvin to Mired.
 	//!
 	//! \param kelvin Unsigned integer value in Kelvin
@@ -147,7 +171,7 @@ public:
 
 	//! \brief Function that sets the brightness of this light.
 	//!
-	//! Notice the brightness will only be set if the light has a reference to a specific \ref BrightnessStrategy.
+	//! \note The brightness will only be set if the light has a reference to a specific \ref BrightnessStrategy.
 	//! The brightness can range from 0 = off to 254 = fully lit.
 	//! \param bri Unsigned int that specifies the brightness
 	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
@@ -161,9 +185,24 @@ public:
 		return false;
 	};
 
+	//! \brief Const function that returns the brightness of this light.
+	//!
+	//! \note The brightness will only be returned if the light has a reference to a specific \ref BrightnessStrategy.
+	//! \note This will not refresh the light state
+	//! The brightness can range from 0 = off to 254 = fully lit.
+	//! \return Unsigned int that is 0 when function failed
+	unsigned int getBrightness() const
+	{
+		if (brightnessStrategy)
+		{
+			return brightnessStrategy->getBrightness(*this);
+	 	}
+		return 0;
+	};
+
 	//! \brief Function that returns the brightness of this light.
 	//!
-	//! Notice the brightness will only be returned if the light has a reference to a specific \ref BrightnessStrategy.
+	//! \note The brightness will only be returned if the light has a reference to a specific \ref BrightnessStrategy.
 	//! The brightness can range from 0 = off to 254 = fully lit.
 	//! \return Unsigned int that is 0 when function failed
 	unsigned int getBrightness()
@@ -177,7 +216,7 @@ public:
 
 	//! \brief Fucntion that sets the color temperature of this light in mired.
 	//!
-	//! Notice the color temperature will only be set if the light has a reference to a specific \ref ColorTemperatureStrategy.
+	//! \note The color temperature will only be set if the light has a reference to a specific \ref ColorTemperatureStrategy.
 	//! The color temperature can range from 153 to 500.
 	//! \param mired Unsigned int that specifies the color temperature in Mired
 	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
@@ -191,9 +230,41 @@ public:
 		return false;
 	};
 
+	//! \brief Const function that returns the current color temperature of the light
+    //!
+	//! \note The color temperature will only be returned when the light has a reference to a specific \ref ColorTemperatureStrategy.
+	//! \note This will not refresh the light state
+    //! The color temperature in mired ranges from 153 to 500 whereas 153 is cold and 500 is warm.
+    //! \param light A reference of the light
+    //! \return Unsigned int representing the color temperature in mired or 0 when failed
+    unsigned int getColorTemperature() const
+	{
+		if (colorTemperatureStrategy)
+		{
+			return colorTemperatureStrategy->getColorTemperature(*this);
+		}
+		return 0;
+	};
+
+	//! \brief Function that returns the current color temperature of the light
+    //!
+	//! \note The color temperature will only be returned when the light has a reference to a specific \ref ColorTemperatureStrategy.
+    //! Updates the lights state by calling refreshState()
+    //! The color temperature in mired ranges from 153 to 500 whereas 153 is cold and 500 is warm.
+    //! \param light A reference of the light
+    //! \return Unsigned int representing the color temperature in mired or 0 when failed
+    unsigned int getColorTemperature()
+	{
+		if (colorTemperatureStrategy)
+		{
+			return colorTemperatureStrategy->getColorTemperature(*this);
+		}
+		return 0;
+	};
+
 	//! \brief Function to set the color of this light with specified hue.
 	//!
-	//! Notice the color will only be set if the light has a reference to a specific \ref ColorHueStrategy.
+	//! \note The color will only be set if the light has a reference to a specific \ref ColorHueStrategy.
 	//! The hue can range from 0 to 65535, whereas 65535 and 0 are red, 25500 is green and 46920 is blue.
 	//! \param hue uint16_t that specifies the hue
 	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
@@ -209,7 +280,7 @@ public:
 
 	//! \brief Function to set the color of this light with specified saturation.
 	//!
-	//! Notice the color will only be set if the light has a reference to a specific \ref ColorHueStrategy.
+	//! \note The color will only be set if the light has a reference to a specific \ref ColorHueStrategy.
 	//! The saturation can range from 0 to 254, whereas 0 is least saturated (white) and 254 is most saturated.
 	//! \param sat uint8_t that specifies the saturation
 	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
@@ -225,7 +296,7 @@ public:
 
 	//! \brief Function to set the color of this light with specified hue and saturation.
 	//!
-	//! Notice the color will only be set if the light has a reference to a specific \ref ColorHueStrategy.
+	//! \note The color will only be set if the light has a reference to a specific \ref ColorHueStrategy.
 	//! \param hue uint16_t that specifies the hue
 	//! \param sat uint8_t that specifies the saturation
 	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms.
@@ -239,9 +310,39 @@ public:
 		return false;
 	};
 
+	//! \brief Const function that returns the current color of the light as hue and saturation
+    //!
+	//! \note The color hue and saturation will only be returned when the light has a reference to a specific \ref ColorHueStrategy.
+    //! \note This will not refresh the light state
+    //! \param light A reference of the light
+    //! \return Pair containing the hue as first value and saturation as second value or an empty one when failed
+    std::pair<uint16_t, uint8_t> getColorHueSaturation() const
+	{
+		if(colorHueStrategy)
+		{
+			return colorHueStrategy->getColorHueSaturation(*this);
+		}
+		return {};
+	};
+
+    //! \brief Function that returns the current color of the light as hue and saturation
+    //!
+	//! \note The color hue and saturation will only be returned when the light has a reference to a specific \ref ColorHueStrategy.
+	//! Updates the lights state by calling refreshState()
+    //! \param light A const reference of the light
+    //! \return Pair containing the hue as first value and saturation as second value or an empty one when failed
+    std::pair<uint16_t, uint8_t> getColorHueSaturation()
+	{
+		if(colorHueStrategy)
+		{
+			return colorHueStrategy->getColorHueSaturation(*this);
+		}
+		return {};
+	};
+
 	//! \brief Function to set the color of this light in CIE with specified x y.
 	//!
-	//! Notice the color will only be set if the light has a reference to a specific \ref ColorHueStrategy.
+	//! \note The color will only be set if the light has a reference to a specific \ref ColorHueStrategy.
 	//! The values of x and y are ranging from 0 to 1.
 	//! \param x float that specifies the x coordinate in CIE
 	//! \param y float that specifies the y coordinate in CIE
@@ -256,9 +357,39 @@ public:
 		return false;
 	};
 
+	//! \brief Const function that returns the current color of the light as xy
+    //!
+	//! \note The color x and y will only be returned when the light has a reference to a specific \ref ColorHueStrategy.
+    //! \note This does not update the lights state
+    //! \param light A const reference of the light
+    //! \return Pair containing the x as first value and y as second value or an empty one when failed
+    std::pair<float, float> getColorXY() const
+	{
+		if(colorHueStrategy)
+		{
+			return colorHueStrategy->getColorXY(*this);
+		}
+		return {};
+	};
+
+	//! \brief Function that returns the current color of the light as xy
+    //!
+	//! \note The color x and y will only be returned when the light has a reference to a specific \ref ColorHueStrategy.
+    //! Updates the lights state by calling refreshState()
+    //! \param light A reference of the light
+    //! \return Pair containing the x as first value and y as second value or an empty one when failed
+	std::pair<float, float> getColorXY()
+	{
+		if(colorHueStrategy)
+		{
+			return colorHueStrategy->getColorXY(*this);
+		}
+		return {};
+	};
+
 	//! \brief Function to set the color of this light with red green and blue values.
 	//!
-	//! Notice the color will only be set if the light has a reference to a specific \ref ColorHueStrategy.
+	//! \note The color will only be set if the light has a reference to a specific \ref ColorHueStrategy.
 	//! The values of red, green and blue are ranging from 0 to 255.
 	//! \param r uint8_t that specifies the red color value
 	//! \param g uint8_t that specifies the green color value
@@ -282,7 +413,7 @@ public:
 
 	//! \brief Function that lets the light perform one breath cycle in specified color temperature.
 	//!
-	//! Notice the breath cylce will only be performed if the light has a reference to a specific \ref ColorTemperatureStrategy.
+	//! \note The breath cylce will only be performed if the light has a reference to a specific \ref ColorTemperatureStrategy.
 	//! \param mired Color temperature in mired
 	//! \return Bool that is true on success
 	bool alertTemperature(unsigned int mired)
@@ -296,7 +427,7 @@ public:
 
 	//! \brief Function that lets the light perform one breath cycle in specified color.
 	//!
-	//! Notice the breath cylce will only be performed if the light has a reference to a specific \ref ColorHueStrategy.
+	//! \note The breath cylce will only be performed if the light has a reference to a specific \ref ColorHueStrategy.
 	//! \param hue uint16_t that specifies the hue
 	//! \param sat uint8_t that specifies the saturation
 	//! \return Bool that is true on success
@@ -311,7 +442,7 @@ public:
 
 	//! \brief Function that lets the light perform one breath cycle in specified color.
 	//!
-	//! Notice the breath cylce will only be performed if the light has a reference to a specific \ref ColorHueStrategy.
+	//! \note The breath cylce will only be performed if the light has a reference to a specific \ref ColorHueStrategy.
 	//! The values of x and y are ranging from 0 to 1.
 	//! \param x float that specifies the x coordinate in CIE
 	//! \param y float that specifies the y coordinate in CIE
@@ -327,7 +458,7 @@ public:
 
 	//! \brief Function that lets the light perform one breath cycle in specified color.
 	//!
-	//! Notice the breath cylce will only be performed if the light has a reference to a specific \ref ColorHueStrategy.
+	//! \note The breath cylce will only be performed if the light has a reference to a specific \ref ColorHueStrategy.
 	//! The values of red, green and blue are ranging from 0 to 255.
 	//! \param r uint8_t that specifies the red color value
 	//! \param g uint8_t that specifies the green color value

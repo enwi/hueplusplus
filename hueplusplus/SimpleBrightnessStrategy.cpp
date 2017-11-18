@@ -96,3 +96,8 @@ unsigned int SimpleBrightnessStrategy::getBrightness(HueLight& light) const
 	light.refreshState();
 	return light.state["state"]["bri"].asUInt();
 }
+
+unsigned int SimpleBrightnessStrategy::getBrightness(const HueLight& light) const
+{
+	return light.state["state"]["bri"].asUInt();
+}
