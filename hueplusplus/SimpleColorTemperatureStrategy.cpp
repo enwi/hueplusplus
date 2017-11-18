@@ -121,3 +121,8 @@ unsigned int SimpleColorTemperatureStrategy::getColorTemperature(HueLight& light
 	light.refreshState();
 	return light.state["state"]["ct"].asUInt();
 }
+
+unsigned int SimpleColorTemperatureStrategy::getColorTemperature(const HueLight& light) const
+{
+	return light.state["state"]["ct"].asUInt();
+}

@@ -103,14 +103,28 @@ public:
     virtual bool alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLight& light) const = 0;
     //! \brief Virtual function that returns the current color of the light as hue and saturation
     //!
+    //! Should update the lights state by calling refreshState()
     //! \param light A reference of the light
     //! \return Pair containing the hue as first value and saturation as second value
     virtual std::pair<uint16_t, uint8_t> getColorHueSaturation(HueLight& light) const = 0;
+    //! \brief Virtual function that returns the current color of the light as hue and saturation
+    //!
+    //! \note This should not update the lights state
+    //! \param light A const reference of the light
+    //! \return Pair containing the hue as first value and saturation as second value
+    virtual std::pair<uint16_t, uint8_t> getColorHueSaturation(const HueLight& light) const = 0;
     //! \brief Virtual function that returns the current color of the light as xy
     //!
+    //! Should update the lights state by calling refreshState()
     //! \param light A reference of the light
     //! \return Pair containing the x as first value and y as second value
 	virtual std::pair<float, float> getColorXY(HueLight& light) const = 0;
+    //! \brief Virtual function that returns the current color of the light as xy
+    //!
+    //! \note This should not update the lights state
+    //! \param light A const reference of the light
+    //! \return Pair containing the x as first value and y as second value
+    virtual std::pair<float, float> getColorXY(const HueLight& light) const = 0;
     //! \brief Virtual dtor
     virtual ~ColorHueStrategy() = default;
 };
