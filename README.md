@@ -67,12 +67,19 @@ lights[1].Off();
 lights.at(1).setColorHue(4562);
 ```
 But keep in mind that some light types do not have all functions available. So you might call a
-specific function, but nothing will happen. For that you might want to check beforehand what type
-of a lamp you are controlling. For that you can call the function getColorType(), which will return
+specific function, but nothing will happen. For that you might want to check what type
+of a light you are controlling. For that you can call the function getColorType(), which will return
 a ColorType.
 ```C++
 ColorType type1 = light1.getColorType();
 ```
+There's also a new way to check whether specific functions of a light are available:
+```C++
+light1.hasBrightnessControl();
+light1.hasTemperatureControl();
+light1.hasColorControl();
+```
+These will either return true(light has specified function) or false(light lacks specified function).
 
 ### Further reading
 If you want to know more about all functions just look inside the doxygen description,
