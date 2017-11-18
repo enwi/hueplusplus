@@ -208,7 +208,7 @@ TEST(Hue, getLight)
         .WillOnce(::testing::Return(hue_bridge_state));
 
     EXPECT_CALL(*handler, GETJson("/api/" + bridge_username + "/lights/1", empty_json_obj, bridge_ip, 80))
-        .Times(3)
+        .Times(::testing::AtLeast(1))
         .WillRepeatedly(::testing::Return(hue_bridge_state["lights"]["1"]));
 
     // Test when correct data is sent
@@ -230,7 +230,7 @@ TEST(Hue, getLight)
         .WillOnce(::testing::Return(hue_bridge_state));
 
     EXPECT_CALL(*handler, GETJson("/api/" + bridge_username + "/lights/1", empty_json_obj, bridge_ip, 80))
-        .Times(2)
+        .Times(::testing::AtLeast(1))
         .WillRepeatedly(::testing::Return(hue_bridge_state["lights"]["1"]));
     test_bridge = Hue(bridge_ip, bridge_username, handler);
 
@@ -246,7 +246,7 @@ TEST(Hue, getLight)
         .WillOnce(::testing::Return(hue_bridge_state));
 
     EXPECT_CALL(*handler, GETJson("/api/" + bridge_username + "/lights/1", empty_json_obj, bridge_ip, 80))
-        .Times(2)
+        .Times(::testing::AtLeast(1))
         .WillRepeatedly(::testing::Return(hue_bridge_state["lights"]["1"]));
     test_bridge = Hue(bridge_ip, bridge_username, handler);
 
@@ -262,7 +262,7 @@ TEST(Hue, getLight)
         .WillOnce(::testing::Return(hue_bridge_state));
 
     EXPECT_CALL(*handler, GETJson("/api/" + bridge_username + "/lights/1", empty_json_obj, bridge_ip, 80))
-        .Times(2)
+        .Times(::testing::AtLeast(1))
         .WillRepeatedly(::testing::Return(hue_bridge_state["lights"]["1"]));
     test_bridge = Hue(bridge_ip, bridge_username, handler);
 
@@ -278,7 +278,7 @@ TEST(Hue, getLight)
         .WillOnce(::testing::Return(hue_bridge_state));
 
     EXPECT_CALL(*handler, GETJson("/api/" + bridge_username + "/lights/1", empty_json_obj, bridge_ip, 80))
-        .Times(2)
+        .Times(::testing::AtLeast(1))
         .WillRepeatedly(::testing::Return(hue_bridge_state["lights"]["1"]));
     test_bridge = Hue(bridge_ip, bridge_username, handler);
 
