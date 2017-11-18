@@ -46,10 +46,6 @@ timestamps {
             warnings canComputeNew: false, canResolveRelativePaths: false, categoriesPattern: '', defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '', messagesPattern: '', parserConfigurations: [[parserName: 'GNU C Compiler 4 (gcc)', pattern: 'build/buildlog.txt']], unHealthy: ''
             sh returnStatus: true, script: 'rm build/buildlog.txt'
         }
-        stage('Publish state')
-        {
-            step([$class: 'GitHubCommitStatusSetter', statusResultSource: [$class: 'ConditionalStatusResultSource', results: []]])
-        }
     }
 
 }
