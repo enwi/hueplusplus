@@ -128,7 +128,6 @@ public:
 	//! \param ip String that specifies the ip in dotted decimal notation like "192.168.2.1"
 	void setIP(const std::string ip);
 
-	//! \todo add some intelligence of finding light
 	//! \brief Function that returns a \ref Hue::HueLight of specified id
 	//!
 	//! \param id Integer that specifies the ID of a Hue light
