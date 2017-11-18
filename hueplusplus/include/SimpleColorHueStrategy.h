@@ -104,14 +104,28 @@ public:
     bool alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLight& light) const override;
     //! \brief Function that returns the current color of the light as hue and saturation
     //!
+    //! Updates the lights state by calling refreshState()
     //! \param light A reference of the light
     //! \return Pair containing the hue as first value and saturation as second value
     std::pair<uint16_t, uint8_t> getColorHueSaturation(HueLight& light) const override;
+    //! \brief Function that returns the current color of the light as hue and saturation
+    //!
+    //! \note This does not update the lights state
+    //! \param light A const reference of the light
+    //! \return Pair containing the hue as first value and saturation as second value
+    std::pair<uint16_t, uint8_t> getColorHueSaturation(const HueLight& light) const override;
     //! \brief Function that returns the current color of the light as xy
     //!
+    //! Updates the lights state by calling refreshState()
     //! \param light A reference of the light
     //! \return Pair containing the x as first value and y as second value
 	std::pair<float, float> getColorXY(HueLight& light) const override;
+    //! \brief Function that returns the current color of the light as xy
+    //!
+    //! \note This does not update the lights state
+    //! \param light A const reference of the light
+    //! \return Pair containing the x as first value and y as second value
+    std::pair<float, float> getColorXY(const HueLight& light) const override;
 };
 
 #endif

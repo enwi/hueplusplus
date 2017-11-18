@@ -43,10 +43,18 @@ public:
 	virtual bool alertTemperature(unsigned int mired, HueLight& light) const = 0;
     //! \brief Virtual function that returns the current color temperature of the light
     //!
+    //! Should update the lights state by calling refreshState()
     //! The color temperature in mired ranges from 153 to 500 whereas 153 is cold and 500 is warm.
     //! \param light A reference of the light
     //! \return Unsigned int representing the color temperature in mired
     virtual unsigned int getColorTemperature(HueLight& light) const = 0;
+    //! \brief Virtual function that returns the current color temperature of the light
+    //!
+    //! The color temperature in mired ranges from 153 to 500 whereas 153 is cold and 500 is warm.
+    //! \note This should not update the lights state
+    //! \param light A const reference of the light
+    //! \return Unsigned int representing the color temperature in mired
+    virtual unsigned int getColorTemperature(const HueLight& light) const = 0;
     //! \brief Virtual dtor
     virtual ~ColorTemperatureStrategy() = default;
 };

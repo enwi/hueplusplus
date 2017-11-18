@@ -43,10 +43,18 @@ public:
     bool alertTemperature(unsigned int mired, HueLight& light) const override;
     //! \brief Function that returns the current color temperature of the light
     //!
+    //! Updates the lights state by calling refreshState()
     //! The color temperature in mired ranges from 153 to 500 whereas 153 is cold and 500 is warm.
     //! \param light A reference of the light
     //! \return Unsigned int representing the color temperature in mired
     unsigned int getColorTemperature(HueLight& light) const override;
+    //! \brief Function that returns the current color temperature of the light
+    //!
+    //! The color temperature in mired ranges from 153 to 500 whereas 153 is cold and 500 is warm.
+    //! \note This does not update the lights state
+    //! \param light A const reference of the light
+    //! \return Unsigned int representing the color temperature in mired
+    unsigned int getColorTemperature(const HueLight& light) const override;
 };
 
 #endif

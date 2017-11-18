@@ -492,9 +492,19 @@ std::pair<uint16_t, uint8_t> SimpleColorHueStrategy::getColorHueSaturation(HueLi
 	return std::pair<uint16_t, uint8_t>(static_cast<uint16_t>(light.state["state"]["hue"].asUInt()), static_cast<uint8_t>(light.state["state"]["sat"].asUInt()));
 }
 
+std::pair<uint16_t, uint8_t> SimpleColorHueStrategy::getColorHueSaturation(const HueLight & light) const
+{
+	return std::pair<uint16_t, uint8_t>(static_cast<uint16_t>(light.state["state"]["hue"].asUInt()), static_cast<uint8_t>(light.state["state"]["sat"].asUInt()));
+}
+
 std::pair<float, float> SimpleColorHueStrategy::getColorXY(HueLight & light) const
 {
 	light.refreshState();
+	return std::pair<float, float>(light.state["state"]["xy"][0].asFloat(), light.state["state"]["xy"][1].asFloat());
+}
+
+std::pair<float, float> SimpleColorHueStrategy::getColorXY(const HueLight & light) const
+{
 	return std::pair<float, float>(light.state["state"]["xy"][0].asFloat(), light.state["state"]["xy"][1].asFloat());
 }
 /*bool SimpleColorHueStrategy::pointInTriangle(float pointx, float pointy, float x0, float y0, float x1, float y1, float x2, float y2)
