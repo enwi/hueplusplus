@@ -39,9 +39,14 @@ bool HueLight::Off(uint8_t transition)
 	return OffNoRefresh(transition);
 }
 
-bool HueLight::IsOn()
+bool HueLight::isOn()
 {
 	refreshState();
+	return state["state"]["on"].asBool();
+}
+
+bool HueLight::isOn() const
+{
 	return state["state"]["on"].asBool();
 }
 
