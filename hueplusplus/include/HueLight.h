@@ -148,7 +148,7 @@ public:
 	//! \brief Function to check whether this light has brightness control
 	//!
 	//! \return Bool that is true when the light has specified abilities and false when not
-	bool hasBrightnessControl()
+	bool hasBrightnessControl() const
 	{
 		return brightnessStrategy != nullptr;
 	};
@@ -156,7 +156,7 @@ public:
 	//! \brief Function to check whether this light has color temperature control
 	//!
 	//! \return Bool that is true when the light has specified abilities and false when not
-	bool hasTemperatureControl()
+	bool hasTemperatureControl() const
 	{
 		return colorTemperatureStrategy != nullptr;
 	};
@@ -164,7 +164,7 @@ public:
 	//! \brief Function to check whether this light has full color control
 	//!
 	//! \return Bool that is true when the light has specified abilities and false when not
-	bool hasColorControl()
+	bool hasColorControl() const
 	{
 		return colorHueStrategy != nullptr;
 	};
