@@ -20,6 +20,8 @@
 #ifndef _IHTTPHANDLER_H
 #define _IHTTPHANDLER_H
 
+#include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -48,7 +50,18 @@ public:
     //! \param adr String that contains an ip or hostname in dotted decimal notation like "192.168.2.1"
     //! \param port Optional integer that specifies the port to which the request should be sent. Default is 80
     //! \return String containing the body of the response of the host
-    virtual std::string sendGetHTTPBody(const std::string &msg, const std::string &adr, int port = 80) const = 0;
+    virtual std::string sendGetHTTPBody(const std::string &msg, const std::string &adr, int port = 80) const
+	{
+		std::string response = send(msg, adr, port);
+		size_t start = response.find("\r\n\r\n");
+		if (start == std::string::npos)
+		{
+			std::cerr << "Failed to find body in response\n";
+			throw(std::runtime_error("Failed to find body in response"));
+		}
+		response.erase(0, start + 4);
+		return response;
+	};
 
     //! \brief Virtual function that should send a multicast request with a specified message.
     //!
@@ -69,7 +82,31 @@ public:
     //! \param adr String that contains an ip or hostname in dotted decimal notation like "192.168.2.1"
     //! \param port Optional integer that specifies the port to which the request is sent to. Default is 80
     //! \return String containing the body of the response of the host
-    virtual std::string sendHTTPRequest(std::string method, std::string uri, std::string content_type, std::string body, const std::string &adr, int port=80) const = 0;
+    virtual std::string sendHTTPRequest(std::string method, std::string uri, std::string content_type, std::string body, const std::string &adr, int port=80) const
+	{
+		std::string request;
+		// Protocol reference: https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html
+		// Request-Line
+		request.append(method);			// Method
+		request.append(" ");			// Separation
+		request.append(uri);			// Request-URI
+		request.append(" ");			// Separation
+		request.append("HTTP/1.0");		// HTTP-Version
+		request.append("\r\n");			// Ending
+										// Entities
+		request.append("Content-Type:");	// entity-header
+		request.append(" ");				// Separation
+		request.append(content_type);		// media-type
+		request.append("\r\n");				// Entity ending
+		request.append("Content-Length:");				// entity-header
+		request.append(" ");							// Separation
+		request.append(std::to_string(body.size()));	// length
+		request.append("\r\n\r\n");		// Entity ending & Request-Line ending
+		request.append(body);			// message-body
+		request.append("\r\n\r\n");		// Ending
+
+		return sendGetHTTPBody(request.c_str(), adr, port);
+	};
 
     //! \brief Virtual function that should send a HTTP GET request to the specified host and return the body of the response.
     //!
@@ -80,7 +117,10 @@ public:
     //! \param adr String that contains an ip or hostname in dotted decimal notation like "192.168.2.1"
     //! \param port Optional integer that specifies the port to which the request is sent to. Default is 80
     //! \return String containing the body of the response of the host
-    virtual std::string GETString(std::string uri, std::string content_type, std::string body, const std::string &adr, int port=80) const = 0;
+    virtual std::string GETString(std::string uri, std::string content_type, std::string body, const std::string &adr, int port=80) const
+	{
+		return sendHTTPRequest("GET", uri, content_type, body, adr, port);
+	};
 
     //! \brief Virtual function that should send a HTTP POST request to the specified host and returns the body of the response.
     //!
@@ -91,7 +131,10 @@ public:
     //! \param adr String that contains an ip or hostname in dotted decimal notation like "192.168.2.1"
     //! \param port Optional integer that specifies the port to which the request is sent to. Default is 80
     //! \return String containing the body of the response of the host
-    virtual std::string POSTString(std::string uri, std::string content_type, std::string body, const std::string &adr, int port=80) const = 0;
+    virtual std::string POSTString(std::string uri, std::string content_type, std::string body, const std::string &adr, int port=80) const
+	{
+		return sendHTTPRequest("POST", uri, content_type, body, adr, port);
+	};
 
     //! \brief Virtual function that should send a HTTP PUT request to the specified host and return the body of the response.
     //!
@@ -102,7 +145,10 @@ public:
     //! \param adr String that contains an ip or hostname in dotted decimal notation like "192.168.2.1"
     //! \param port Optional integer that specifies the port to which the request is sent to. Default is 80
     //! \return String containing the body of the response of the host
-    virtual std::string PUTString(std::string uri, std::string content_type, std::string body, const std::string &adr, int port=80) const = 0;
+    virtual std::string PUTString(std::string uri, std::string content_type, std::string body, const std::string &adr, int port=80) const
+	{
+		return sendHTTPRequest("PUT", uri, content_type, body, adr, port);
+	};
 
     //! \brief Virtual function that should send a HTTP DELETE request to the specified host and return the body of the response.
     //!
@@ -113,7 +159,10 @@ public:
     //! \param adr String that contains an ip or hostname in dotted decimal notation like "192.168.2.1"
     //! \param port Optional integer that specifies the port to which the request is sent to. Default is 80
     //! \return String containing the body of the response of the host
-    virtual std::string DELETEString(std::string uri, std::string content_type, std::string body, const std::string &adr, int port=80) const = 0;
+    virtual std::string DELETEString(std::string uri, std::string content_type, std::string body, const std::string &adr, int port=80) const
+	{
+		return sendHTTPRequest("DELETE", uri, content_type, body, adr, port);
+	};
 
     //! \brief Virtual function that should send a HTTP GET request to the specified host and return the body of the response.
     //!
@@ -123,7 +172,22 @@ public:
     //! \param adr String that contains an ip or hostname in dotted decimal notation like "192.168.2.1"
     //! \param port Optional integer that specifies the port to which the request is sent to. Default is 80
     //! \return Json::Value containing the parsed body of the response of the host
-    virtual Json::Value GETJson(std::string uri, const Json::Value& body, const std::string &adr, int port=80) const = 0;
+    virtual Json::Value GETJson(std::string uri, const Json::Value& body, const std::string &adr, int port=80) const
+	{
+		std::string response = GETString(uri, "application/json", body.toStyledString(), adr, port);
+
+		std::string error;
+		Json::Value result;
+		Json::CharReaderBuilder builder;
+		builder["collectComments"] = false;
+		std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
+		if (!reader->parse(response.c_str(), response.c_str() + response.length(), &result, &error))
+		{
+			std::cout << "Error while parsing JSON in function GETJson() of linHttpHandler: " << error << std::endl;
+			throw(std::runtime_error("Error while parsing JSON in function GETJson() of linHttpHandler"));
+		}
+		return result;
+	};
 
     //! \brief Virtual function that should send a HTTP POST request to the specified host and return the body of the response.
     //!
@@ -133,7 +197,22 @@ public:
     //! \param adr String that contains an ip or hostname in dotted decimal notation like "192.168.2.1"
     //! \param port Optional integer that specifies the port to which the request is sent to. Default is 80
     //! \return Json::Value containing the parsed body of the response of the host
-    virtual Json::Value POSTJson(std::string uri, const Json::Value& body, const std::string &adr, int port=80) const = 0;
+    virtual Json::Value POSTJson(std::string uri, const Json::Value& body, const std::string &adr, int port=80) const
+	{
+		std::string response = POSTString(uri, "application/json", body.toStyledString(), adr, port);
+
+		std::string error;
+		Json::Value result;
+		Json::CharReaderBuilder builder;
+		builder["collectComments"] = false;
+		std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
+		if (!reader->parse(response.c_str(), response.c_str() + response.length(), &result, &error))
+		{
+			std::cout << "Error while parsing JSON in function POSTJson() of linHttpHandler: " << error << std::endl;
+			throw(std::runtime_error("Error while parsing JSON in function POSTJson() of linHttpHandler"));
+		}
+		return result;
+	}
 
     //! \brief Virtual function that should send a HTTP PUT request to the specified host and return the body of the response.
     //!
@@ -143,7 +222,22 @@ public:
     //! \param adr String that contains an ip or hostname in dotted decimal notation like "192.168.2.1"
     //! \param port Optional integer that specifies the port to which the request is sent to. Default is 80
     //! \return Json::Value containing the parsed body of the response of the host
-    virtual Json::Value PUTJson(std::string uri, const Json::Value& body, const std::string &adr, int port=80) const = 0;
+    virtual Json::Value PUTJson(std::string uri, const Json::Value& body, const std::string &adr, int port=80) const
+	{
+		std::string response = PUTString(uri, "application/json", body.toStyledString(), adr, port);
+
+		std::string error;
+		Json::Value result;
+		Json::CharReaderBuilder builder;
+		builder["collectComments"] = false;
+		std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
+		if (!reader->parse(response.c_str(), response.c_str() + response.length(), &result, &error))
+		{
+			std::cout << "Error while parsing JSON in function PUTJson() of linHttpHandler: " << error << std::endl;
+			throw(std::runtime_error("Error while parsing JSON in function PUTJson() of linHttpHandler"));
+		}
+		return result;
+	};
 
     //! \brief Virtual function that should send a HTTP DELETE request to the specified host and return the body of the response.
     //!
@@ -153,7 +247,22 @@ public:
     //! \param adr String that contains an ip or hostname in dotted decimal notation like "192.168.2.1"
     //! \param port Optional integer that specifies the port to which the request is sent to. Default is 80
     //! \return Json::Value containing the parsed body of the response of the host
-    virtual Json::Value DELETEJson(std::string uri, const Json::Value& body, const std::string &adr, int port=80) const = 0;
+    virtual Json::Value DELETEJson(std::string uri, const Json::Value& body, const std::string &adr, int port=80) const
+	{
+		std::string response = DELETEString(uri, "application/json", body.toStyledString(), adr, port);
+
+		std::string error;
+		Json::Value result;
+		Json::CharReaderBuilder builder;
+		builder["collectComments"] = false;
+		std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
+		if (!reader->parse(response.c_str(), response.c_str() + response.length(), &result, &error))
+		{
+			std::cout << "Error while parsing JSON in function PUTJson() of linHttpHandler: " << error << std::endl;
+			throw(std::runtime_error("Error while parsing JSON in function PUTJson() of linHttpHandler"));
+		}
+		return result;
+	};
 };
 
 #endif
