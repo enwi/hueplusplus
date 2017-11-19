@@ -48,8 +48,8 @@ std::string linHttpHandler::send(const std::string & msg, const std::string & ad
 	SocketCloser closeMySocket(socketFD);
 	if (socketFD < 0)
 	{
-		std::cerr << "Failed to open socket\n";
-		throw(std::runtime_error("Failed to open socket"));
+		std::cerr << "linHttpHandler: Failed to open socket\n";
+		throw(std::runtime_error("linHttpHandler: Failed to open socket"));
 	}
 
 	// lookup ip address
@@ -57,8 +57,8 @@ std::string linHttpHandler::send(const std::string & msg, const std::string & ad
 	server = gethostbyname(adr.c_str());
 	if (server == NULL)
 	{
-		std::cerr << "Failed to find host with address " << adr << "\n";
-		throw(std::runtime_error("Failed to find host"));
+		std::cerr << "linHttpHandler: Failed to find host with address " << adr << "\n";
+		throw(std::runtime_error("linHttpHandler: Failed to find host"));
 	}
 
 	// fill in the structure
@@ -71,8 +71,8 @@ std::string linHttpHandler::send(const std::string & msg, const std::string & ad
 	// connect the socket
 	if (connect(socketFD, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
 	{
-		std::cerr << "Failed to connect socket\n";
-		throw(std::runtime_error("Failed to connect socket"));
+		std::cerr << "linHttpHandler: Failed to connect socket\n";
+		throw(std::runtime_error("linHttpHandler: Failed to connect socket"));
 	}
 
 	// send the request
@@ -83,8 +83,8 @@ std::string linHttpHandler::send(const std::string & msg, const std::string & ad
 		ssize_t bytes = write(socketFD, msg.c_str() + sent, total - sent);
 		if (bytes < 0)
 		{
-			std::cerr << "Failed to write message to socket\n";
-			throw(std::runtime_error("Failed to write message to socket"));
+			std::cerr << "linHttpHandler: Failed to write message to socket\n";
+			throw(std::runtime_error("linHttpHandler: Failed to write message to socket"));
 		}
 		if (bytes == 0)
 		{
@@ -106,8 +106,8 @@ std::string linHttpHandler::send(const std::string & msg, const std::string & ad
 		ssize_t bytes = read(socketFD, buffer, 127);
 		if (bytes < 0)
 		{
-			std::cerr << "Failed to read response from socket: " << errno << std::endl;
-			throw(std::runtime_error("Failed to read response from socket"));
+			std::cerr << "linHttpHandler: Failed to read response from socket: " << errno << std::endl;
+			throw(std::runtime_error("linHttpHandler: Failed to read response from socket"));
 		}
 		if (bytes == 0)
 		{
@@ -122,8 +122,8 @@ std::string linHttpHandler::send(const std::string & msg, const std::string & ad
 
 	if (received == total)
 	{
-		std::cerr << "Failed to store complete response from socket\n";
-		throw(std::runtime_error("Failed to store complete response from socket"));
+		std::cerr << "linHttpHandler: Failed to store complete response from socket\n";
+		throw(std::runtime_error("linHttpHandler: Failed to store complete response from socket"));
 	}
 
 	return response;
@@ -143,8 +143,8 @@ std::vector<std::string> linHttpHandler::sendMulticast(const std::string & msg, 
 	server = gethostbyname(adr.c_str());
 	if (!server)
 	{
-		std::cerr << "Failed to obtain address of " << msg << "\n";
-		throw(std::runtime_error("Failed to obtain address of host"));
+		std::cerr << "linHttpHandler: sendMulticast: Failed to obtain address of " << msg << "\n";
+		throw(std::runtime_error("linHttpHandler: sendMulticast: Failed to obtain address of host"));
 	}
 
 	// put the host's address into the server address structure
@@ -155,15 +155,15 @@ std::vector<std::string> linHttpHandler::sendMulticast(const std::string & msg, 
 	SocketCloser closeMySendSocket(socketFD);
 	if (socketFD < 0)
 	{
-		std::cerr << "Failed to open socket\n";
-		throw(std::runtime_error("Failed to open socket"));
+		std::cerr << "linHttpHandler: sendMulticast: Failed to open socket\n";
+		throw(std::runtime_error("linHttpHandler: sendMulticast: Failed to open socket"));
 	}
 
 	// send a message to the server
 	if (sendto(socketFD, msg.c_str(), strlen(msg.c_str()), 0, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
 	{
-		std::cerr << "Failed to send message\n";
-		throw(std::runtime_error("Failed to send message"));
+		std::cerr << "linHttpHandler: sendMulticast: Failed to send message\n";
+		throw(std::runtime_error("linHttpHandler: sendMulticast: Failed to send message"));
 	}
 
 	std::string response;
@@ -178,8 +178,8 @@ std::vector<std::string> linHttpHandler::sendMulticast(const std::string & msg, 
 		{
 			if (errno != EAGAIN && errno != EWOULDBLOCK)
 			{
-				std::cerr << "Failed to read response from socket\n";
-				throw(std::runtime_error("Failed to read response from socket"));
+				std::cerr << "linHttpHandler: sendMulticast: Failed to read response from socket\n";
+				throw(std::runtime_error("linHttpHandler: sendMulticast: Failed to read response from socket"));
 			}
 			continue;
 		}
