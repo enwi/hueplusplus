@@ -2,19 +2,23 @@
 A simple and easy to use library for Philips Hue Lights
 
 ## Features
-* finds bridges with SSDP or set ip manually
-* function to assign username or set manually
-* all common light functions
-* extended alert() function, which alerts in a specific color
+* find bridges with SSDP or set an ip manually
+* function to assign a username or set one manually
+* all common light functions (brightness, color, temperature)
+* extended alert() functions, which alert in a specific color (good for notifications)
 * documented with doxygen
+* starting to test with google test, google mock and gcov/lcov
 
 ## How to use
-### <a name="findingBridges"></a>Finding Bridges
-If you want to find a Hue Bridge make a HueFinder object and call FindBridges()
-it will return a vector containing the ip and mac address of all found Bridges.
+### <a name="searchingBridges"></a>Searching for Bridges
+To start searching for a Hue Bridge you will need to choose an IHttpHandler and create one. For now there is only one, the "HttpHandler".
+Then create a HueFinder object with the handler. 
+The handler is needed, because it tells the finder which functions to use to communicate with a bridge or your local network. 
+After that you can call FindBridges(), which will return a vector containing the ip and mac address of all found Bridges.
 If no Bridges were found the vector is empty, so make sure that in that case you provide an ip and mac address.
 ```C++
-HueFinder finder;
+handler = std::make_shared<HttpHandler>();
+HueFinder finder(handler);
 std::vector<HueFinder::HueIdentification> bridges = finder.FindBridges();
 if (bridges.empty())
 {
@@ -22,10 +26,10 @@ if (bridges.empty())
 }
 ```
 
-### Using Bridges
+### Authenticate Bridges
 If you have found the Bridge you were looking for, you can then move on with the authentication process.
 To get a new username from the Bridge (for now) you simply call GetBridge(bridges[\<index\>]),
-where index is your preferred Bridge from the part [Finding Bridges](#findingBridges).
+where index is your preferred Bridge from the part [Searching for Bridges](#searchingBridges).
 ```C++
 Hue bridge = finder.GetBridge(bridges[0]);
 ```
@@ -33,6 +37,12 @@ If you on the other hand already have a username you can add your bridge like so
 ```C++
 finder.AddUsername(bridges[0].mac, "<username>");
 Hue bridge = finder.GetBridge(bridges[0]);
+```
+If you do not want to use the HueFinder or you already know the ip and username of your bridge you have the option to create your own Hue object. 
+Here you will need to provide the ip address, a username and an HttpHandler
+```C++
+handler = std::make_shared<HttpHandler>();
+Hue bridge("192.168.2.102", "<username>", handler);
 ```
 
 ### Controlling lights
