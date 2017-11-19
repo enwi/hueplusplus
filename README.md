@@ -9,6 +9,10 @@ A simple and easy to use library for Philips Hue Lights
 * documented with doxygen
 * starting to test with google test, google mock and gcov/lcov
 
+## Compatability
+* linux
+* windows
+
 ## How to use
 ### <a name="searchingBridges"></a>Searching for Bridges
 To start searching for a Hue Bridge you will need to choose an IHttpHandler and create one. For now there is only one, the "HttpHandler".
