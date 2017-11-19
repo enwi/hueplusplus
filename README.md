@@ -46,7 +46,8 @@ Hue bridge = finder.GetBridge(bridges[0]);
 If you do not want to use the HueFinder or you already know the ip and username of your bridge you have the option to create your own Hue object.
 Here you will need to provide the ip address, a username and an HttpHandler
 ```C++
-handler = std::make_shared<HttpHandler>();
+// For windows use std::make_shared<winHttpHandler>();
+handler = std::make_shared<linHttpHandler>();
 Hue bridge("192.168.2.102", "<username>", handler);
 ```
 
