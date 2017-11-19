@@ -56,8 +56,8 @@ public:
 		size_t start = response.find("\r\n\r\n");
 		if (start == std::string::npos)
 		{
-			std::cerr << "Failed to find body in response\n";
-			throw(std::runtime_error("Failed to find body in response"));
+			std::cerr << "IHttpHandler: Failed to find body in response\n";
+			throw(std::runtime_error("IHttpHandler: Failed to find body in response"));
 		}
 		response.erase(0, start + 4);
 		return response;
@@ -93,7 +93,7 @@ public:
 		request.append(" ");			// Separation
 		request.append("HTTP/1.0");		// HTTP-Version
 		request.append("\r\n");			// Ending
-										// Entities
+		// Entities
 		request.append("Content-Type:");	// entity-header
 		request.append(" ");				// Separation
 		request.append(content_type);		// media-type
@@ -183,8 +183,8 @@ public:
 		std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
 		if (!reader->parse(response.c_str(), response.c_str() + response.length(), &result, &error))
 		{
-			std::cout << "Error while parsing JSON in function GETJson() of linHttpHandler: " << error << std::endl;
-			throw(std::runtime_error("Error while parsing JSON in function GETJson() of linHttpHandler"));
+			std::cout << "IHttpHandler: Error while parsing JSON in function GETJson(): " << error << std::endl;
+			throw(std::runtime_error("IHttpHandler: Error while parsing JSON in function GETJson()"));
 		}
 		return result;
 	};
@@ -208,8 +208,8 @@ public:
 		std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
 		if (!reader->parse(response.c_str(), response.c_str() + response.length(), &result, &error))
 		{
-			std::cout << "Error while parsing JSON in function POSTJson() of linHttpHandler: " << error << std::endl;
-			throw(std::runtime_error("Error while parsing JSON in function POSTJson() of linHttpHandler"));
+			std::cout << "IHttpHandler: Error while parsing JSON in function POSTJson(): " << error << std::endl;
+			throw(std::runtime_error("IHttpHandler: Error while parsing JSON in function POSTJson()"));
 		}
 		return result;
 	}
@@ -233,8 +233,8 @@ public:
 		std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
 		if (!reader->parse(response.c_str(), response.c_str() + response.length(), &result, &error))
 		{
-			std::cout << "Error while parsing JSON in function PUTJson() of linHttpHandler: " << error << std::endl;
-			throw(std::runtime_error("Error while parsing JSON in function PUTJson() of linHttpHandler"));
+			std::cout << "IHttpHandler: Error while parsing JSON in function PUTJson(): " << error << std::endl;
+			throw(std::runtime_error("IHttpHandler: Error while parsing JSON in function PUTJson()"));
 		}
 		return result;
 	};
@@ -258,8 +258,8 @@ public:
 		std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
 		if (!reader->parse(response.c_str(), response.c_str() + response.length(), &result, &error))
 		{
-			std::cout << "Error while parsing JSON in function PUTJson() of linHttpHandler: " << error << std::endl;
-			throw(std::runtime_error("Error while parsing JSON in function PUTJson() of linHttpHandler"));
+			std::cout << "IHttpHandler: Error while parsing JSON in function PUTJson(): " << error << std::endl;
+			throw(std::runtime_error("IHttpHandler: Error while parsing JSON in function PUTJson()"));
 		}
 		return result;
 	};
