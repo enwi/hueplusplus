@@ -1,5 +1,28 @@
 file(GLOB hueplusplus_HEADERS include/*.h include/*.hpp)
-file(GLOB hueplusplus_SOURCES *.cpp)
+set(hueplusplus_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/ExtendedColorHueStrategy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ExtendedColorTemperatureStrategy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Hue.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/HueLight.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/jsoncpp.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/SimpleBrightnessStrategy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/SimpleColorHueStrategy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/SimpleColorTemperatureStrategy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/UPnP.cpp
+)
+
+if(WIN32)
+    set(hueplusplus_SOURCES
+        ${hueplusplus_SOURCES}
+        ${CMAKE_CURRENT_SOURCE_DIR}/winHttpHandler.cpp
+    )
+endif()
+if(UNIX)
+    set(hueplusplus_SOURCES
+        ${hueplusplus_SOURCES}
+        ${CMAKE_CURRENT_SOURCE_DIR}/linHttpHandler.cpp
+    )
+endif()
 
 add_library(hueplusplusshared SHARED ${hueplusplus_SOURCES})
 set_property(TARGET hueplusplusshared PROPERTY CXX_STANDARD 14)

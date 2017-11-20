@@ -19,8 +19,6 @@
 
 #include "include/linHttpHandler.h"
 
-#ifndef _MSC_VER
-
 #include <chrono>
 #include <netinet/in.h> 	// struct sockaddr_in, struct sockaddr
 #include <arpa/inet.h>
@@ -207,5 +205,3 @@ std::vector<std::string> linHttpHandler::sendMulticast(const std::string & msg, 
 
 	return returnString;
 }
-
-#endif
