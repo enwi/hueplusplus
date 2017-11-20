@@ -19,8 +19,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 #include "include/winHttpHandler.h"
 
-#ifdef _MSC_VER
-
 #include <chrono>
 #include <iostream>
 #include <memory>
@@ -268,5 +266,3 @@ std::vector<std::string> winHttpHandler::sendMulticast(const std::string & msg, 
 
 	return returnString;
 }
-
-#endif

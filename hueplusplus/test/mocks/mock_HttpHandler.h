@@ -25,7 +25,7 @@
 
 #include <gmock/gmock.h>
 
-#include "../hueplusplus/include/HttpHandler.h"
+#include "../hueplusplus/include/IHttpHandler.h"
 #include "../hueplusplus/include/json/json.h"
 
 //! Mock Class
