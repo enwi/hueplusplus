@@ -30,9 +30,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 winHttpHandler::winHttpHandler()
 {
 	// Initialize Winsock
-	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+	int return_code = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	if (return_code != 0)
 	{
-		std::cerr << "winHttpHandler: Failed to open socket: " << WSAGetLastError() << std::endl;
+		std::cerr << "Failed to open socket: " << return_code << std::endl;
 		throw(std::runtime_error("winHttpHandler: Failed to open socket"));
 	}
 }
