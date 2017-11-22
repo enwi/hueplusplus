@@ -95,6 +95,7 @@ std::string winHttpHandler::send(const std::string & msg, const std::string & ad
 	// Send an initial buffer
 	if (::send(connect_socket, msg.c_str(), msg.size(), 0) == SOCKET_ERROR)
 	{
+		closesocket(connect_socket);
 		std::cerr << "winHttpHandler: send failed: " << WSAGetLastError() << std::endl;
 		throw(std::runtime_error("winHttpHandler: send failed"));
 	}
@@ -128,10 +129,12 @@ std::string winHttpHandler::send(const std::string & msg, const std::string & ad
 		}
 		else
 		{
+			closesocket(connect_socket);
 			std::cerr << "winHttpHandler: recv failed: " << WSAGetLastError() << std::endl;
 			throw(std::runtime_error("winHttpHandler: recv failed"));
 		}
 	} while (res > 0);
+	closesocket(connect_socket);
 
 	return response;
 }
@@ -202,8 +205,8 @@ std::vector<std::string> winHttpHandler::sendMulticast(const std::string & msg, 
 	// Send a message to the multicasting address.
 	if (sendto(connect_socket, msg.c_str(), msg.size(), 0, (struct sockaddr FAR *) &dest_sin, sizeof(dest_sin)) == SOCKET_ERROR)
 	{
-		std::cerr << "winHttpHandler: sendMulticast: sendto failed: " << WSAGetLastError() << std::endl;
 		closesocket(connect_socket);
+		std::cerr << "winHttpHandler: sendMulticast: sendto failed: " << WSAGetLastError() << std::endl;
 		throw(std::runtime_error("winHttpHandler: sendMulticast: sendto failed"));
 	}
 
