@@ -52,10 +52,9 @@ std::string winHttpHandler::send(const std::string & msg, const std::string & ad
 
 	// Resolve the server address and port
 	struct addrinfo *result = nullptr;
-	int res = getaddrinfo(adr.c_str(), std::to_string(port).c_str(), &hints, &result);
-	if (res != 0)
+	if (getaddrinfo(adr.c_str(), std::to_string(port).c_str(), &hints, &result) != 0)
 	{
-		std::cerr << "winHttpHandler: getaddrinfo failed: " << res << std::endl;
+		std::cerr << "winHttpHandler: getaddrinfo failed: " << WSAGetLastError() << std::endl;
 		throw(std::runtime_error("winHttpHandler: getaddrinfo failed"));
 	}
 
@@ -74,8 +73,7 @@ std::string winHttpHandler::send(const std::string & msg, const std::string & ad
 	}
 
 	// Connect to server.
-	res = connect(connect_socket, ptr->ai_addr, (int)ptr->ai_addrlen);
-	if (res == SOCKET_ERROR)
+	if (connect(connect_socket, ptr->ai_addr, (int)ptr->ai_addrlen) == SOCKET_ERROR)
 	{
 		closesocket(connect_socket);
 		connect_socket = INVALID_SOCKET;
@@ -95,8 +93,7 @@ std::string winHttpHandler::send(const std::string & msg, const std::string & ad
 	}
 
 	// Send an initial buffer
-	res = ::send(connect_socket, msg.c_str(), msg.size(), 0);
-	if (res == SOCKET_ERROR)
+	if (::send(connect_socket, msg.c_str(), msg.size(), 0) == SOCKET_ERROR)
 	{
 		std::cerr << "winHttpHandler: send failed: " << WSAGetLastError() << std::endl;
 		throw(std::runtime_error("winHttpHandler: send failed"));
@@ -104,8 +101,7 @@ std::string winHttpHandler::send(const std::string & msg, const std::string & ad
 
 	// shutdown the connection for sending since no more data will be sent
 	// the client can still use the ConnectSocket for receiving data
-	res = shutdown(connect_socket, SD_SEND);
-	if (res == SOCKET_ERROR)
+	if (shutdown(connect_socket, SD_SEND) == SOCKET_ERROR)
 	{
 		closesocket(connect_socket);
 		std::cerr << "winHttpHandler: shutdown failed: " << WSAGetLastError() << std::endl;
@@ -117,6 +113,7 @@ std::string winHttpHandler::send(const std::string & msg, const std::string & ad
 
 	// Receive data until the server closes the connection
 	std::string response;
+	int res;
 	do
 	{
 		res = recv(connect_socket, recvbuf, recvbuflen, 0);
@@ -148,10 +145,9 @@ std::vector<std::string> winHttpHandler::sendMulticast(const std::string & msg, 
 
 	// Resolve the server address and port
 	struct addrinfo *result = nullptr;
-	int res = getaddrinfo(adr.c_str(), std::to_string(port).c_str(), &hints, &result);
-	if (res != 0)
+	if (getaddrinfo(adr.c_str(), std::to_string(port).c_str(), &hints, &result) != 0)
 	{
-		std::cerr << "winHttpHandler: sendMulticast: getaddrinfo failed: " << res << std::endl;
+		std::cerr << "winHttpHandler: sendMulticast: getaddrinfo failed: " << WSAGetLastError() << std::endl;
 		throw(std::runtime_error("winHttpHandler: sendMulticast: getaddrinfo failed"));
 	}
 
@@ -213,8 +209,7 @@ std::vector<std::string> winHttpHandler::sendMulticast(const std::string & msg, 
 
 	// shutdown the connection for sending since no more data will be sent
 	// the client can still use the ConnectSocket for receiving data
-	res = shutdown(connect_socket, SD_SEND);
-	if (res == SOCKET_ERROR)
+	if (shutdown(connect_socket, SD_SEND) == SOCKET_ERROR)
 	{
 		closesocket(connect_socket);
 		std::cerr << "winHttpHandler: sendMulticast: shutdown failed: " << WSAGetLastError() << std::endl;
@@ -224,6 +219,7 @@ std::vector<std::string> winHttpHandler::sendMulticast(const std::string & msg, 
 	std::string response;
 	const int recvbuflen = 2048;
 	char recvbuf[recvbuflen] = {};
+	int res;
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 	while (std::chrono::steady_clock::now() - start < std::chrono::seconds(timeout))
 	{
