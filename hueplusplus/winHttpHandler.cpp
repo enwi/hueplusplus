@@ -45,14 +45,13 @@ winHttpHandler::~winHttpHandler()
 
 std::string winHttpHandler::send(const std::string & msg, const std::string & adr, int port) const
 {
-	struct addrinfo *result = nullptr, *ptr = nullptr, hints;
-
-	ZeroMemory(&hints, sizeof(hints));
+	struct addrinfo hints = {};
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = IPPROTO_TCP;
 
 	// Resolve the server address and port
+	struct addrinfo *result = nullptr;
 	int res = getaddrinfo(adr.c_str(), std::to_string(port).c_str(), &hints, &result);
 	if (res != 0)
 	{
@@ -60,15 +59,12 @@ std::string winHttpHandler::send(const std::string & msg, const std::string & ad
 		throw(std::runtime_error("winHttpHandler: getaddrinfo failed"));
 	}
 
-	SOCKET connect_socket = INVALID_SOCKET;
-
-
 	// Attempt to connect to the first address returned by
 	// the call to getaddrinfo
-	ptr = result;
+	struct addrinfo *ptr = result;
 
 	// Create a SOCKET for connecting to server
-	connect_socket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
+	SOCKET connect_socket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
 
 	if (connect_socket == INVALID_SOCKET)
 	{
@@ -121,7 +117,6 @@ std::string winHttpHandler::send(const std::string & msg, const std::string & ad
 
 	// Receive data until the server closes the connection
 	std::string response;
-	int received = 0;
 	do
 	{
 		res = recv(connect_socket, recvbuf, recvbuflen, 0);
@@ -146,15 +141,13 @@ std::string winHttpHandler::send(const std::string & msg, const std::string & ad
 
 std::vector<std::string> winHttpHandler::sendMulticast(const std::string & msg, const std::string & adr, int port, int timeout) const
 {
-	struct addrinfo *result = nullptr, *ptr = nullptr, hints;
-	SOCKADDR_IN source_sin, dest_sin;
-
-	ZeroMemory(&hints, sizeof(hints));
+	struct addrinfo hints = {};
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_DGRAM;
 	hints.ai_protocol = IPPROTO_TCP;
 
 	// Resolve the server address and port
+	struct addrinfo *result = nullptr;
 	int res = getaddrinfo(adr.c_str(), std::to_string(port).c_str(), &hints, &result);
 	if (res != 0)
 	{
@@ -162,14 +155,12 @@ std::vector<std::string> winHttpHandler::sendMulticast(const std::string & msg, 
 		throw(std::runtime_error("winHttpHandler: sendMulticast: getaddrinfo failed"));
 	}
 
-	SOCKET connect_socket = INVALID_SOCKET;
-
-
 	// Attempt to connect to the first address returned by
 	// the call to getaddrinfo
-	ptr = result;
+	struct addrinfo *ptr = result;
 
 	// Create a SOCKET for connecting to server
+	SOCKET connect_socket;
 	if ((connect_socket = socket(ptr->ai_family, ptr->ai_socktype, 0)) == INVALID_SOCKET)
 	{
 		freeaddrinfo(result);
@@ -178,6 +169,7 @@ std::vector<std::string> winHttpHandler::sendMulticast(const std::string & msg, 
 	}
 
 	// Fill out source socket's address information.
+	SOCKADDR_IN source_sin;
 	source_sin.sin_family = AF_INET;
 	source_sin.sin_port = htons(0);
 	source_sin.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -197,7 +189,7 @@ std::vector<std::string> winHttpHandler::sendMulticast(const std::string & msg, 
 	setsockopt(connect_socket, SOL_SOCKET, SO_BROADCAST, (char *)&bOptVal, sizeof(bOptVal));
 
 	// Set the Time-to-Live of the multicast.
-	int iOptVal = 64;
+	int iOptVal = 1;	// for same subnet, but might be increased to 16
 	if (setsockopt(connect_socket, IPPROTO_IP, IP_MULTICAST_TTL, (char FAR *)&iOptVal, sizeof(int)) == SOCKET_ERROR)
 	{
 		closesocket(connect_socket);
@@ -206,6 +198,7 @@ std::vector<std::string> winHttpHandler::sendMulticast(const std::string & msg, 
 	}
 
 	// Fill out the desination socket's address information.
+	SOCKADDR_IN dest_sin;
 	dest_sin.sin_family = AF_INET;
 	dest_sin.sin_port = htons(port);
 	dest_sin.sin_addr.s_addr = inet_addr((const char*)ptr->ai_addr);
