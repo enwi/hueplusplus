@@ -119,12 +119,12 @@ std::string winHttpHandler::send(const std::string & msg, const std::string & ad
 		res = recv(connect_socket, recvbuf, recvbuflen, 0);
 		if (res > 0)
 		{
-			std::cout << "winHttpHandler: Bytes received: " << res << std::endl;
+			//std::cout << "winHttpHandler: Bytes received: " << res << std::endl;
 			response.append(recvbuf, res);
 		}
 		else if (res == 0)
 		{
-			std::cout << "winHttpHandler: Connection closed " << std::endl;
+			//std::cout << "winHttpHandler: Connection closed " << std::endl;
 		}
 		else
 		{
@@ -226,12 +226,12 @@ std::vector<std::string> winHttpHandler::sendMulticast(const std::string & msg, 
 		res = recv(connect_socket, recvbuf, recvbuflen, 0);
 		if (res > 0)
 		{
-			std::cout << "winHttpHandler: sendMulticast: Bytes received: " << res << std::endl;
+			//std::cout << "winHttpHandler: sendMulticast: Bytes received: " << res << std::endl;
 			response.append(recvbuf, res);
 		}
 		else if (res == 0)
 		{
-			std::cout << "winHttpHandler: sendMulticast: Connection closed " << std::endl;
+			//std::cout << "winHttpHandler: sendMulticast: Connection closed " << std::endl;
 		}
 		else
 		{
