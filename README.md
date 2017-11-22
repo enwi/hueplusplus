@@ -93,6 +93,7 @@ which for now can be found in the regarding sourcecode file or create the docume
 with the provided Doxyfile yourself.
 
 ## Build and install
+### Basic installation
 If you want to build the library you can use cmake (at least version 2.8.3). First create a build folder and then execute cmake.
 ```bash
 mkdir build
@@ -114,6 +115,31 @@ To remove it
 ```bash
 make uninstall
 ```
+
+### Advanced usage
+If you have a project that already uses CMake you probably want to add the hueplusplus library directly in your cmake file.
+For that the best way is to use find_package().
+When cmake finds the hueplusplus library you can then link against either the shared or static version of the library.
+```cmake
+find_package(hueplusplus)
+
+target_link_libraries(<executable> hueplusplusstatic)
+```
+But this will only work if the hueplusplus library is already installed.
+To get around this problem there is a pretty awesome way.
+If you have the hueplusplus repository included in your project repository (as a submodule) or know where the folder lives you can do the following:
+```cmake
+find_package(hueplusplus)
+if(NOT hueplusplus_FOUND)
+    message(STATUS "-- hueplusplus not found, building it")
+    add_subdirectory("${CMAKE_SOURCE_DIR}/<path to directory>/hueplusplus" "${CMAKE_BINARY_DIR}/hueplusplus")
+endif()
+
+target_link_libraries(<executable> hueplusplusstatic)
+```
+This will check if the hueplusplus library was found by find_package() and if not it will use the specified path to the library source and compile it during the build process.
+
+### Running tests
 If you additionally want to run the tests you will currently need to checkout the development branch and use cmake with the option -Dhueplusplus_TESTS=ON. Testing is done with Google gtest and gmock. Note that you wont need to install gtest/gmock yourself, because cmake will automatically download them and include them during the build. Since I added a custom target you will only need to call "make unittest" and the tests are compiled and executed.
 ```bash
 mkdir build
