@@ -30,13 +30,14 @@ endif()
 add_library(hueplusplusshared SHARED ${hueplusplus_SOURCES})
 set_property(TARGET hueplusplusshared PROPERTY CXX_STANDARD 14)
 set_property(TARGET hueplusplusshared PROPERTY CXX_EXTENSIONS OFF)
+install(TARGETS hueplusplusshared DESTINATION lib)
 
 # hueplusplus static library
 add_library(hueplusplusstatic STATIC ${hueplusplus_SOURCES})
 set_property(TARGET hueplusplusstatic PROPERTY CXX_STANDARD 14)
 set_property(TARGET hueplusplusstatic PROPERTY CXX_EXTENSIONS OFF)
 install(TARGETS hueplusplusstatic DESTINATION lib)
-install(FILES ${hueplusplus_HEADERS} DESTINATION include)
+install(FILES ${hueplusplus_HEADERS} DESTINATION include/hueplusplus)
 
 # Export the package for use from the build-tree
 # (this registers the build-tree with a global CMake-registry)
