@@ -124,6 +124,16 @@ public:
 	//! \return Bool that is true, when the light is on and false, when off
 	bool isOn() const;
 
+	//! \brief Const function that returns the id of this light
+	//!
+	//! \return integer representing the light id
+	int getId() const;
+
+	//! \brief Const function that returns the light type
+	//!
+	//! \return String containing the type
+	std::string getType() const;
+
 	//! \brief Function that returns the name of the light.
 	//!
 	//! \return String containig the name of the light
@@ -135,10 +145,39 @@ public:
 	//! \return String containig the name of the light
 	std::string getName() const;
 
-	//! \brief Const function that returns the id of this light
+	//! \brief Const function that returns the modelid of the light
 	//!
-	//! \return integer representing the light id
-	int getId() const;
+	//! \return String conatining the modelid
+	std::string getModelId() const;
+
+	//! \brief Const function that returns the uniqueid of the light
+	//!
+	//! \note Only working on bridges with versions starting at 1.4
+	//! \return String containing the uniqueid or an empty string when the function is not supported
+	std::string getUId() const;
+
+	//! \brief Const function that returns the manufacturername of the light
+	//!
+	//! \note Only working on bridges with versions starting at 1.7
+	//! \return String containing the manufacturername or an empty string when the function is not supported
+	std::string getManufacturername() const;
+
+	//! \brief Const function that returns the luminaireuniqueid of the light
+	//!
+	//! \note Only working on bridges with versions starting at 1.9
+	//! \return String containing the luminaireuniqueid or an empty string when the function is not supported
+	std::string getLuminaireUId() const;
+
+	//! \brief Function that returns the software version of the light
+	//!
+	//! \return String containing the software version
+	std::string getSwVersion();
+
+	//! \brief Const function that returns the software version of the light
+	//!
+	//! \note This will not refresh the light state
+	//! \return String containing the software version
+	std::string getSwVersion() const;
 
 	//! \brief Function that sets the name of the light
 	//!
