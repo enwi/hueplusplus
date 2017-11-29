@@ -292,6 +292,35 @@ std::vector<std::reference_wrapper<HueLight>> Hue::getAllLights()
 	return result;
 }
 
+bool Hue::lightExists(int id)
+{
+	auto pos = lights.find(id);
+	if (pos != lights.end())
+	{
+		return true;
+	}
+	refreshState();
+	if (state["lights"].isMember(std::to_string(id)))
+	{
+		return true;
+	}
+	return false;
+}
+
+bool Hue::lightExists(int id) const
+{
+	auto pos = lights.find(id);
+	if (pos != lights.end())
+	{
+		return true;
+	}
+	if (state["lights"].isMember(std::to_string(id)))
+	{
+		return true;
+	}
+	return false;
+}
+
 void Hue::refreshState()
 {
 	if (username.empty())
