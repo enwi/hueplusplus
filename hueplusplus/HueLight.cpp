@@ -61,6 +61,11 @@ std::string HueLight::getName() const
 	return state["name"].asString();
 }
 
+int HueLight::getId() const
+{
+	return id;
+}
+
 bool HueLight::setName(const std::string& name)
 {
 	Json::Value request(Json::objectValue);

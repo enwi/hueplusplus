@@ -135,6 +135,11 @@ public:
 	//! \return String containig the name of the light
 	std::string getName() const;
 
+	//! \brief Const function that returns the id of this light
+	//!
+	//! \return integer representing the light id
+	int getId() const;
+
 	//! \brief Function that sets the name of the light
 	//!
 	//! \return Bool that is true on success
