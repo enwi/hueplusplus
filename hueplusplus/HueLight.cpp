@@ -50,6 +50,16 @@ bool HueLight::isOn() const
 	return state["state"]["on"].asBool();
 }
 
+int HueLight::getId() const
+{
+	return id;
+}
+
+std::string HueLight::getType() const
+{
+	return state["type"].asString();
+}
+
 std::string HueLight::getName()
 {
 	refreshState();
@@ -61,9 +71,47 @@ std::string HueLight::getName() const
 	return state["name"].asString();
 }
 
-int HueLight::getId() const
+std::string HueLight::getModelId() const
 {
-	return id;
+	return state["modelid"].asString();
+}
+
+std::string HueLight::getUId() const
+{
+	if (state.isMember("uniqueid"))
+	{
+		return state["uniqueid"].asString();
+	}
+	return std::string();
+}
+
+std::string HueLight::getManufacturername() const
+{
+	if (state.isMember("manufacturername"))
+	{
+		return state["manufacturername"].asString();
+	}
+	return std::string();
+}
+
+std::string HueLight::getLuminaireUId() const
+{
+	if (state.isMember("luminaireuniqueid"))
+	{
+		return state["luminaireuniqueid"].asString();
+	}
+	return std::string();
+}
+
+std::string HueLight::getSwVersion()
+{
+	refreshState();
+	return state["swversion"].asString();
+}
+
+std::string HueLight::getSwVersion() const
+{
+	return state["swversion"].asString();
 }
 
 bool HueLight::setName(const std::string& name)
