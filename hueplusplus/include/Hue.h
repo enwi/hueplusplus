@@ -151,6 +151,20 @@ public:
 	//! \return A vector containing references to every HueLight
 	std::vector<std::reference_wrapper<HueLight>> getAllLights();
 
+	//! \brief Function that tells whether a given light id represents an existing light
+	//!
+	//! Calls refreshState to update the local bridge state
+	//! \param id Id of a light to check for existance
+	//! \return Bool that is true when a light with the given id exists and false when not
+	bool lightExists(int id);
+
+	//! \brief Const function that tells whether a given light id represents an existing light
+	//!
+	//! \note This will not update the local state of the bridge
+	//! \param id Id of a light to check for existance
+	//! \return Bool that is true when a light with the given id exists and false when not
+	bool lightExists(int id) const;
+
 	//! \brief Function that sets the HttpHandler.
 	//!
 	//! The HttpHandler defines how specific commands that deal with bridge communication are executed
