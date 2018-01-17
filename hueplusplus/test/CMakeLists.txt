@@ -34,8 +34,9 @@ endif()
 
 # define all test sources
 set(TEST_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_Main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/test_Hue.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_HueLight.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_Main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/test_UPnP.cpp
 )
 
