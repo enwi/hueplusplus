@@ -184,12 +184,12 @@ public:
 	//! \return Bool that is true on success
 	bool setName(const std::string& name);
 
-	//! \brief Function that returns the color type of the light.
+	//! \brief Const function that returns the color type of the light.
 	//!
 	//! \return ColorType containig the color type of the light
-	ColorType getColorType();
+	ColorType getColorType() const;
 
-	//! \brief Function to check whether this light has brightness control
+	//! \brief Const function to check whether this light has brightness control
 	//!
 	//! \return Bool that is true when the light has specified abilities and false when not
 	bool hasBrightnessControl() const
@@ -197,7 +197,7 @@ public:
 		return brightnessStrategy != nullptr;
 	};
 
-	//! \brief Function to check whether this light has color temperature control
+	//! \brief Const function to check whether this light has color temperature control
 	//!
 	//! \return Bool that is true when the light has specified abilities and false when not
 	bool hasTemperatureControl() const
@@ -205,7 +205,7 @@ public:
 		return colorTemperatureStrategy != nullptr;
 	};
 
-	//! \brief Function to check whether this light has full color control
+	//! \brief Connst function to check whether this light has full color control
 	//!
 	//! \return Bool that is true when the light has specified abilities and false when not
 	bool hasColorControl() const
@@ -213,17 +213,17 @@ public:
 		return colorHueStrategy != nullptr;
 	};
 
-	//! \brief Function that converts Kelvin to Mired.
+	//! \brief Const function that converts Kelvin to Mired.
 	//!
 	//! \param kelvin Unsigned integer value in Kelvin
 	//! \return Unsigned integer value in Mired
-	unsigned int KelvinToMired(unsigned int kelvin);
+	unsigned int KelvinToMired(unsigned int kelvin) const;
 
-	//! \brief Function that converts Mired to Kelvin.
+	//! \brief Const function that converts Mired to Kelvin.
 	//!
 	//! \param mired Unsigned integer value in Mired
 	//! \return Unsigned integer value in Kelvin
-	unsigned int MiredToKelvin(unsigned int mired);
+	unsigned int MiredToKelvin(unsigned int mired) const;
 
 	//! \brief Function that sets the brightness of this light.
 	//!
