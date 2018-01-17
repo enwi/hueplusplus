@@ -81,15 +81,6 @@ public:
 	const std::map<std::string, std::string>& GetAllUsernames() const;
 
 private:
-	//! \brief Function that sends a username request to the Hue bridge.
-	//!
-	//! It does that for about 30 seconds and you have 5 seconds to prepare.
-	//! It returns the username received
-	//! \param ip String that specifies the ip the request is send to
-	//! \return String containing username
-	std::string RequestUsername(const std::string& ip) const;
-
-private:
 	std::map<std::string, std::string> usernames;		//!< Maps all macs to usernames added by \ref HueFinder::AddUsername
 	std::shared_ptr<const IHttpHandler> http_handler;
 };
@@ -97,6 +88,8 @@ private:
 //! Hue class
 class Hue
 {
+	friend class HueFinder;
+
 public:
 	//! \brief Constructor of Hue class
 	//!
@@ -113,10 +106,11 @@ public:
 	//! \brief Function that sends a username request to the Hue bridge.
 	//!
 	//! It does that for about 30 seconds and you have 5 seconds to prepare
-	//! It automatically sets the \ref username variable according to the username received
+	//! It automatically sets the \ref username variable according to the username received and returns the username received
 	//! This function should only be called once to acquire a username to control the bridge and the username should be saved for future use
 	//! \param ip String that specifies the ip (in dotted decimal notation like "192.168.2.1") the request is send to
-	void requestUsername(const std::string& ip);
+	//! \return String containing username
+	std::string requestUsername(const std::string& ip);
 
 	//! \brief Function that returns the \ref username
 	//!
