@@ -74,26 +74,26 @@ std::vector<HueFinder::HueIdentification> HueFinder::FindBridges() const
 
 Hue HueFinder::GetBridge(const HueIdentification& identification)
 {
-	std::string username;
+	Hue bridge(identification.ip, "", http_handler);
 	auto pos = usernames.find(identification.mac);
 	if (pos != usernames.end())
 	{
-		username = pos->second;
+		bridge.username = pos->second;
 	}
 	else
 	{
-		username = RequestUsername(identification.ip);
-		if (username.empty())
+		bridge.requestUsername(identification.ip);
+		if (bridge.getUsername().empty() || bridge.getUsername() == "")
 		{
 			std::cerr << "Failed to request username for ip " << identification.ip << std::endl;
 			throw std::runtime_error("Failed to request username!");
 		}
 		else
 		{
-			AddUsername(identification.mac, username);
+			AddUsername(identification.mac, bridge.getUsername());
 		}
 	}
-	return Hue(identification.ip, username, http_handler);
+	return bridge;
 }
 
 void HueFinder::AddUsername(const std::string& mac, const std::string& username)
@@ -104,39 +104,6 @@ void HueFinder::AddUsername(const std::string& mac, const std::string& username)
 const std::map<std::string, std::string>& HueFinder::GetAllUsernames() const
 {
 	return usernames;
-}
-
-std::string HueFinder::RequestUsername(const std::string & ip) const
-{
-	std::cout << "Please press the link Button! You've got 35 secs!\n";	// when the link button was presed we got 30 seconds to get our username for control
-
-	Json::Value request;
-	request["devicetype"] = "HuePlusPlus#User";
-
-	Json::Value answer;
-	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-	std::chrono::steady_clock::time_point lastCheck;
-	while (std::chrono::steady_clock::now() - start < std::chrono::seconds(35))
-	{
-		if (std::chrono::steady_clock::now() - lastCheck > std::chrono::seconds(1))
-		{
-			lastCheck = std::chrono::steady_clock::now();
-			answer = http_handler->GETJson("/api", request, ip);
-
-			if (answer[0]["success"] != Json::nullValue)
-			{
-				// [{"success":{"username": "83b7780291a6ceffbe0bd049104df"}}]
-				std::cout << "Success! Link button was pressed!\n";
-				std::cout << "Username is \"" << answer[0]["success"]["username"].asString() << "\"\n";;
-				return answer[0]["success"]["username"].asString();
-			}
-			if (answer[0]["error"] != Json::nullValue)
-			{
-				std::cout << "Link button not pressed!\n";
-			}
-		}
-	}
-	return std::string();
 }
 
 
@@ -157,7 +124,7 @@ std::string Hue::getBridgeIP()
 	return ip;
 }
 
-void Hue::requestUsername(const std::string& ip)
+std::string Hue::requestUsername(const std::string& ip)
 {
 	std::cout << "Please press the link Button! You've got 35 secs!\n";	// when the link button was presed we got 30 seconds to get our username for control
 
@@ -180,6 +147,7 @@ void Hue::requestUsername(const std::string& ip)
 				username = answer[0]["success"]["username"].asString();
 				this->ip = ip;
 				std::cout << "Success! Link button was pressed!\n";
+				std::cout << "Username is \"" << username << "\"\n";
 				break;
 			}
 			if (answer[0]["error"] != Json::nullValue)
@@ -188,7 +156,7 @@ void Hue::requestUsername(const std::string& ip)
 			}
 		}
 	}
-	return;
+	return username;
 }
 
 std::string Hue::getUsername()
