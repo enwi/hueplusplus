@@ -124,17 +124,17 @@ bool HueLight::setName(const std::string& name)
 	return !reply[0].isNull() && reply[0].isMember("success") && reply[0]["success"]["/lights/" + std::to_string(id) + "/name"] == name;
 }
 
-ColorType HueLight::getColorType()
+ColorType HueLight::getColorType() const
 {
 	return colorType;
 }
 
-unsigned int HueLight::KelvinToMired(unsigned int kelvin)
+unsigned int HueLight::KelvinToMired(unsigned int kelvin) const
 {
 	return int(0.5f + (1000000 / kelvin));
 }
 
-unsigned int HueLight::MiredToKelvin(unsigned int mired)
+unsigned int HueLight::MiredToKelvin(unsigned int mired) const
 {
 	return int(0.5f + (1000000 / mired));
 }
@@ -186,7 +186,7 @@ bool HueLight::OnNoRefresh(uint8_t transition)
 		request["on"] = true;
 	}
 
-	if (!request.isMember("on") && !request.isMember("transitiontime"))
+	if (!request.isMember("on"))
 	{
 		//Nothing needs to be changed
 		return true;
@@ -225,7 +225,7 @@ bool HueLight::OffNoRefresh(uint8_t transition)
 		request["on"] = false;
 	}
 
-	if (!request.isMember("on") && !request.isMember("transitiontime"))
+	if (!request.isMember("on"))
 	{
 		//Nothing needs to be changed
 		return true;
