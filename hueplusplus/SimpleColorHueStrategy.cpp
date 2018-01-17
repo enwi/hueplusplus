@@ -238,10 +238,10 @@ bool SimpleColorHueStrategy::setColorXY(float x, float y, uint8_t transistion, H
 	if (success && request.isMember("xy"))
 	{
 		//Check if success was sent and the value was changed
-		success = !reply[i].isNull() && reply[i].isMember("success") && reply[i]["success"][path + "xy"][0].asFloat() == request["xy"][0].asFloat();
+		success = !reply[i].isNull() && reply[i].isMember("success") && static_cast<int>(reply[i]["success"][path + "xy"][0].asFloat() * 10000 + 0.5) == static_cast<int>(request["xy"][0].asFloat() * 10000 + 0.5);
 		if (success)
 		{
-			success = !reply[i].isNull() && reply[i].isMember("success") && reply[i]["success"][path + "xy"][1].asFloat() == request["xy"][1].asFloat();
+			success = !reply[i].isNull() && reply[i].isMember("success") && static_cast<int>(reply[i]["success"][path + "xy"][1].asFloat() * 10000 + 0.5) == static_cast<int>(request["xy"][1].asFloat() * 10000 + 0.5);
 		}
 	}
 	return success;
