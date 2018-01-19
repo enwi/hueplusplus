@@ -181,10 +181,6 @@ std::vector<std::string> linHttpHandler::sendMulticast(const std::string & msg, 
 			}
 			continue;
 		}
-		if (bytesReceived == 0)
-		{
-			break;
-		}
 		if (bytesReceived)
 		{
 			response.append(buffer, bytesReceived);
