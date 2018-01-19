@@ -25,7 +25,6 @@
 
 bool SimpleBrightnessStrategy::setBrightness(unsigned int bri, uint8_t transition, HueLight& light) const
 {
-	std::cout << "Setting lamp with id: " << light.id << " to brightness of " << bri << std::endl;
 	light.refreshState();
 	if (bri == 0)
 	{
