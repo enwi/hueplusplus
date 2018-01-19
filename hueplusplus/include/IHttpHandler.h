@@ -31,7 +31,6 @@
 class IHttpHandler
 {
 public:
-
     //! \brief Virtual dtor
     virtual ~IHttpHandler() = default;
 
@@ -174,19 +173,7 @@ public:
     //! \return Json::Value containing the parsed body of the response of the host
     virtual Json::Value GETJson(std::string uri, const Json::Value& body, const std::string &adr, int port=80) const
 	{
-		std::string response = GETString(uri, "application/json", body.toStyledString(), adr, port);
-
-		std::string error;
-		Json::Value result;
-		Json::CharReaderBuilder builder;
-		builder["collectComments"] = false;
-		std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
-		if (!reader->parse(response.c_str(), response.c_str() + response.length(), &result, &error))
-		{
-			std::cout << "IHttpHandler: Error while parsing JSON in function GETJson(): " << error << std::endl;
-			throw(std::runtime_error("IHttpHandler: Error while parsing JSON in function GETJson()"));
-		}
-		return result;
+        return strToJsonValue(GETString(uri, "application/json", body.toStyledString(), adr, port));
 	};
 
     //! \brief Virtual function that should send a HTTP POST request to the specified host and return the body of the response.
@@ -199,19 +186,7 @@ public:
     //! \return Json::Value containing the parsed body of the response of the host
     virtual Json::Value POSTJson(std::string uri, const Json::Value& body, const std::string &adr, int port=80) const
 	{
-		std::string response = POSTString(uri, "application/json", body.toStyledString(), adr, port);
-
-		std::string error;
-		Json::Value result;
-		Json::CharReaderBuilder builder;
-		builder["collectComments"] = false;
-		std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
-		if (!reader->parse(response.c_str(), response.c_str() + response.length(), &result, &error))
-		{
-			std::cout << "IHttpHandler: Error while parsing JSON in function POSTJson(): " << error << std::endl;
-			throw(std::runtime_error("IHttpHandler: Error while parsing JSON in function POSTJson()"));
-		}
-		return result;
+        return strToJsonValue(POSTString(uri, "application/json", body.toStyledString(), adr, port));
 	}
 
     //! \brief Virtual function that should send a HTTP PUT request to the specified host and return the body of the response.
@@ -224,19 +199,7 @@ public:
     //! \return Json::Value containing the parsed body of the response of the host
     virtual Json::Value PUTJson(std::string uri, const Json::Value& body, const std::string &adr, int port=80) const
 	{
-		std::string response = PUTString(uri, "application/json", body.toStyledString(), adr, port);
-
-		std::string error;
-		Json::Value result;
-		Json::CharReaderBuilder builder;
-		builder["collectComments"] = false;
-		std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
-		if (!reader->parse(response.c_str(), response.c_str() + response.length(), &result, &error))
-		{
-			std::cout << "IHttpHandler: Error while parsing JSON in function PUTJson(): " << error << std::endl;
-			throw(std::runtime_error("IHttpHandler: Error while parsing JSON in function PUTJson()"));
-		}
-		return result;
+        return strToJsonValue(PUTString(uri, "application/json", body.toStyledString(), adr, port));
 	};
 
     //! \brief Virtual function that should send a HTTP DELETE request to the specified host and return the body of the response.
@@ -248,21 +211,30 @@ public:
     //! \param port Optional integer that specifies the port to which the request is sent to. Default is 80
     //! \return Json::Value containing the parsed body of the response of the host
     virtual Json::Value DELETEJson(std::string uri, const Json::Value& body, const std::string &adr, int port=80) const
-	{
-		std::string response = DELETEString(uri, "application/json", body.toStyledString(), adr, port);
+    {
+        return strToJsonValue(DELETEString(uri, "application/json", body.toStyledString(), adr, port));
+    };
 
-		std::string error;
-		Json::Value result;
-		Json::CharReaderBuilder builder;
-		builder["collectComments"] = false;
-		std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
-		if (!reader->parse(response.c_str(), response.c_str() + response.length(), &result, &error))
-		{
-			std::cout << "IHttpHandler: Error while parsing JSON in function PUTJson(): " << error << std::endl;
-			throw(std::runtime_error("IHttpHandler: Error while parsing JSON in function PUTJson()"));
-		}
-		return result;
-	};
+private:
+
+    //! \brief Function that converts a given string to a Json::Value
+    //!
+    //! \param str String that gets converted
+    //! \return Json::Value containing parsed string
+    Json::Value strToJsonValue(std::string str) const
+    {
+        std::string error;
+        Json::Value result;
+        Json::CharReaderBuilder builder;
+        builder["collectComments"] = false;
+        std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
+        if (!reader->parse(str.c_str(), str.c_str() + str.length(), &result, &error))
+        {
+        	std::cout << "IHttpHandler: Error while parsing JSON in function strToJsonValue(): " << error << std::endl;
+        	throw(std::runtime_error("IHttpHandler: Error while parsing JSON in function strToJsonValue()"));
+        }
+        return result;
+    }
 };
 
 #endif
