@@ -27,14 +27,12 @@
 
 bool HueLight::On(uint8_t transition)
 {
-	std::cout << "Turning lamp with id: " << id << " on\n";
 	refreshState();
 	return OnNoRefresh(transition);
 }
 
 bool HueLight::Off(uint8_t transition)
 {
-	std::cout << "Turning lamp with id: " << id << " off\n";
 	refreshState();
 	return OffNoRefresh(transition);
 }
@@ -141,8 +139,6 @@ unsigned int HueLight::MiredToKelvin(unsigned int mired) const
 
 bool HueLight::alert()
 {
-	std::cout << "alert()\n";
-
 	Json::Value request;
 	request["alert"] = "select";
 
@@ -175,7 +171,6 @@ HueLight::HueLight(const std::string& ip, const std::string& username, int id, s
 
 bool HueLight::OnNoRefresh(uint8_t transition)
 {
-	std::cout << "\tOnNoRefresh()\n";
 	Json::Value request(Json::objectValue);
 	if (transition != 4)
 	{
@@ -214,7 +209,6 @@ bool HueLight::OnNoRefresh(uint8_t transition)
 
 bool HueLight::OffNoRefresh(uint8_t transition)
 {
-	std::cout << "\tOffNoRefresh()\n";
 	Json::Value request(Json::objectValue);
 	if (transition != 4)
 	{
@@ -258,10 +252,16 @@ Json::Value HueLight::SendPutRequest(const Json::Value& request, const std::stri
 
 void HueLight::refreshState()
 {
-	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-	std::cout << "\tRefreshing lampstate of lamp with id: " << id << ", ip: " << ip << "\n";
-
-	state = http_handler->GETJson("/api/"+username+"/lights/"+std::to_string(id), Json::objectValue, ip);
-
-	std::cout << "\tRefresh state took: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() << "ms" << std::endl;
+	//std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+	//std::cout << "\tRefreshing lampstate of lamp with id: " << id << ", ip: " << ip << "\n";
+	Json::Value answer = http_handler->GETJson("/api/"+username+"/lights/"+std::to_string(id), Json::objectValue, ip);
+	if (answer.isObject() && answer.isMember("state"))
+	{
+		state = answer;
+	}
+	else
+	{
+		std::cout << "Answer in HueLight::refreshState of http_handler->GETJson(...) is not expected!\nAnswer:\n\t" << answer.toStyledString() << std::endl;
+	}
+	//std::cout << "\tRefresh state took: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() << "ms" << std::endl;
 }
