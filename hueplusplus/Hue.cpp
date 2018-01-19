@@ -302,6 +302,6 @@ void Hue::refreshState()
 	}
 	else
 	{
-		std::cout << "Answer in Hue::refreshState of http_handler->GETJson(...) is not expected!\n";
+		std::cout << "Answer in Hue::refreshState of http_handler->GETJson(...) is not expected!\nAnswer:\n\t" << answer.toStyledString() << std::endl;
 	}
 }
