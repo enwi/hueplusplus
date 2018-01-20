@@ -30,7 +30,7 @@ bool SimpleColorHueStrategy::setColorHue(uint16_t hue, uint8_t transistion, HueL
 	Json::Value request(Json::objectValue);
 	if (transistion != 4)
 	{
-		request["transistiontime"] = transistion;
+		request["transitiontime"] = transistion;
 	}
 	if (light.state["state"]["on"].asBool() != true)
 	{
@@ -54,10 +54,10 @@ bool SimpleColorHueStrategy::setColorHue(uint16_t hue, uint8_t transistion, HueL
 	std::string path = "/lights/" + std::to_string(light.id) + "/state/";
 	bool success = true;
 	int i = 0;
-	if (success && request.isMember("transistiontime"))
+	if (success && request.isMember("transitiontime"))
 	{
 		//Check if success was sent and the value was changed
-		success = !reply[i].isNull() && reply[i].isMember("success") && reply[i]["success"][path + "transistiontime"].asUInt() == request["transistiontime"].asUInt();
+		success = !reply[i].isNull() && reply[i].isMember("success") && reply[i]["success"][path + "transitiontime"].asUInt() == request["transitiontime"].asUInt();
 		++i;
 	}
 	if (success && request.isMember("on"))
@@ -80,7 +80,7 @@ bool SimpleColorHueStrategy::setColorSaturation(uint8_t sat, uint8_t transistion
 	Json::Value request(Json::objectValue);
 	if (transistion != 4)
 	{
-		request["transistiontime"] = transistion;
+		request["transitiontime"] = transistion;
 	}
 	if (light.state["state"]["on"].asBool() != true)
 	{
@@ -107,10 +107,10 @@ bool SimpleColorHueStrategy::setColorSaturation(uint8_t sat, uint8_t transistion
 	std::string path = "/lights/" + std::to_string(light.id) + "/state/";
 	bool success = true;
 	int i = 0;
-	if (success && request.isMember("transistiontime"))
+	if (success && request.isMember("transitiontime"))
 	{
 		//Check if success was sent and the value was changed
-		success = !reply[i].isNull() && reply[i].isMember("success") && reply[i]["success"][path + "transistiontime"].asUInt() == request["transistiontime"].asUInt();
+		success = !reply[i].isNull() && reply[i].isMember("success") && reply[i]["success"][path + "transitiontime"].asUInt() == request["transitiontime"].asUInt();
 		++i;
 	}
 	if (success && request.isMember("on"))
