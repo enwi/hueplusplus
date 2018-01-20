@@ -1,3 +1,5 @@
+#ifndef _TEST_HELPER_H
+#define _TEST_HELPER_H
 
 const std::string bridge_ip = "192.168.2.116";                         //!< IP-Address of the fake hue bridge in dotted decimal notation like "192.168.2.1"
 const std::string bridge_username = "83b7780291a6ceffbe0bd049104df";	  //!< Username that is ussed to access the fake hue bridge
@@ -217,3 +219,5 @@ const std::vector<std::string> multicast_reply = {
   "ST: urn:schemas-upnp-org:device:basic:1\r\n"
   "USN: uuid:1f111f11-da11-11e1-1b11-11111111e111"
 };
+
+#endif
