@@ -34,9 +34,15 @@ endif()
 
 # define all test sources
 set(TEST_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_ExtendedColorHueStrategy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_ExtendedColorTemperatureStrategy.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/test_Hue.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/test_HueLight.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_IHttpHandler.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/test_Main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_SimpleBrightnessStrategy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_SimpleColorHueStrategy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_SimpleColorTemperatureStrategy.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/test_UPnP.cpp
 )
 

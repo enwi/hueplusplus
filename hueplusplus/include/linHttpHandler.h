@@ -37,7 +37,7 @@ public:
     //! \param adr String that contains an ip or hostname in dotted decimal notation like "192.168.2.1"
     //! \param port Optional integer that specifies the port to which the request is sent to. Default is 80
     //! \return String containing the response of the host
-    std::string send(const std::string &msg, const std::string &adr, int port=80) const;
+    virtual std::string send(const std::string &msg, const std::string &adr, int port=80) const;
 
     //! \brief Function that sends a multicast request with the specified message.
     //!
@@ -46,7 +46,7 @@ public:
     //! \param port Optional integer that specifies the port to which the request is sent. Default is 1900
     //! \param timeout Optional Integer that specifies the timeout of the request in seconds. Default is 5
     //! \return Vector containing strings of each answer received
-    std::vector<std::string> sendMulticast(const std::string &msg, const std::string &adr = "239.255.255.250", int port = 1900, int timeout = 5) const;
+    virtual std::vector<std::string> sendMulticast(const std::string &msg, const std::string &adr = "239.255.255.250", int port = 1900, int timeout = 5) const;
 };
 
 #endif
