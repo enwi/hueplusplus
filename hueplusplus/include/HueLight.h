@@ -105,94 +105,94 @@ public:
 	//!
 	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
 	//! \return Bool that is true on success
-	bool On(uint8_t transition = 4);
+	virtual bool On(uint8_t transition = 4);
 
 	//! \brief Function that turns the light off.
 	//!
 	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
 	//! \return Bool that is true on success
-	bool Off(uint8_t transition = 4);
+	virtual bool Off(uint8_t transition = 4);
 
 	//! \brief Function to check whether a light is on or off
 	//!
 	//! \return Bool that is true, when the light is on and false, when off
-	bool isOn();
+	virtual bool isOn();
 
 	//! \brief Const function to check whether a light is on or off
 	//!
 	//! \note This will not refresh the light state
 	//! \return Bool that is true, when the light is on and false, when off
-	bool isOn() const;
+	virtual bool isOn() const;
 
 	//! \brief Const function that returns the id of this light
 	//!
 	//! \return integer representing the light id
-	int getId() const;
+	virtual int getId() const;
 
 	//! \brief Const function that returns the light type
 	//!
 	//! \return String containing the type
-	std::string getType() const;
+	virtual std::string getType() const;
 
 	//! \brief Function that returns the name of the light.
 	//!
 	//! \return String containig the name of the light
-	std::string getName();
+	virtual std::string getName();
 
 	//! \brief Const function that returns the name of the light.
 	//!
 	//! \note This will not refresh the light state
 	//! \return String containig the name of the light
-	std::string getName() const;
+	virtual std::string getName() const;
 
 	//! \brief Const function that returns the modelid of the light
 	//!
 	//! \return String conatining the modelid
-	std::string getModelId() const;
+	virtual std::string getModelId() const;
 
 	//! \brief Const function that returns the uniqueid of the light
 	//!
 	//! \note Only working on bridges with versions starting at 1.4
 	//! \return String containing the uniqueid or an empty string when the function is not supported
-	std::string getUId() const;
+	virtual std::string getUId() const;
 
 	//! \brief Const function that returns the manufacturername of the light
 	//!
 	//! \note Only working on bridges with versions starting at 1.7
 	//! \return String containing the manufacturername or an empty string when the function is not supported
-	std::string getManufacturername() const;
+	virtual std::string getManufacturername() const;
 
 	//! \brief Const function that returns the luminaireuniqueid of the light
 	//!
 	//! \note Only working on bridges with versions starting at 1.9
 	//! \return String containing the luminaireuniqueid or an empty string when the function is not supported
-	std::string getLuminaireUId() const;
+	virtual std::string getLuminaireUId() const;
 
 	//! \brief Function that returns the software version of the light
 	//!
 	//! \return String containing the software version
-	std::string getSwVersion();
+	virtual std::string getSwVersion();
 
 	//! \brief Const function that returns the software version of the light
 	//!
 	//! \note This will not refresh the light state
 	//! \return String containing the software version
-	std::string getSwVersion() const;
+	virtual std::string getSwVersion() const;
 
 	//! \brief Function that sets the name of the light
 	//!
 	//! \return Bool that is true on success
-	bool setName(const std::string& name);
+	virtual bool setName(const std::string& name);
 
 	//! \brief Const function that returns the color type of the light.
 	//!
 	//! \return ColorType containig the color type of the light
-	ColorType getColorType() const;
+	virtual ColorType getColorType() const;
 
 	//! \brief Const function to check whether this light has brightness control
 	//!
 	//! \return Bool that is true when the light has specified abilities and false when not
-	bool hasBrightnessControl() const
+	virtual bool hasBrightnessControl() const
 	{
 		return brightnessStrategy != nullptr;
 	};
@@ -200,7 +200,7 @@ public:
 	//! \brief Const function to check whether this light has color temperature control
 	//!
 	//! \return Bool that is true when the light has specified abilities and false when not
-	bool hasTemperatureControl() const
+	virtual bool hasTemperatureControl() const
 	{
 		return colorTemperatureStrategy != nullptr;
 	};
@@ -208,7 +208,7 @@ public:
 	//! \brief Connst function to check whether this light has full color control
 	//!
 	//! \return Bool that is true when the light has specified abilities and false when not
-	bool hasColorControl() const
+	virtual bool hasColorControl() const
 	{
 		return colorHueStrategy != nullptr;
 	};
@@ -232,7 +232,7 @@ public:
 	//! \param bri Unsigned int that specifies the brightness
 	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
 	//! \return Bool that is true on success
-	bool setBrightness(unsigned int bri, uint8_t transition = 4)
+	virtual bool setBrightness(unsigned int bri, uint8_t transition = 4)
 	{
 		if (brightnessStrategy)
 		{
@@ -247,7 +247,7 @@ public:
 	//! \note This will not refresh the light state
 	//! The brightness can range from 0 = off to 254 = fully lit.
 	//! \return Unsigned int that is 0 when function failed
-	unsigned int getBrightness() const
+	virtual unsigned int getBrightness() const
 	{
 		if (brightnessStrategy)
 		{
@@ -261,7 +261,7 @@ public:
 	//! \note The brightness will only be returned if the light has a reference to a specific \ref BrightnessStrategy.
 	//! The brightness can range from 0 = off to 254 = fully lit.
 	//! \return Unsigned int that is 0 when function failed
-	unsigned int getBrightness()
+	virtual unsigned int getBrightness()
 	{
 		if (brightnessStrategy)
 		{
@@ -277,7 +277,7 @@ public:
 	//! \param mired Unsigned int that specifies the color temperature in Mired
 	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
 	//! \return Bool that is true on success
-	bool setColorTemperature(unsigned int mired, uint8_t transition = 4)
+	virtual bool setColorTemperature(unsigned int mired, uint8_t transition = 4)
 	{
 		if (colorTemperatureStrategy)
 		{
@@ -293,7 +293,7 @@ public:
     //! The color temperature in mired ranges from 153 to 500 whereas 153 is cold and 500 is warm.
     //! \param light A reference of the light
     //! \return Unsigned int representing the color temperature in mired or 0 when failed
-    unsigned int getColorTemperature() const
+    virtual unsigned int getColorTemperature() const
 	{
 		if (colorTemperatureStrategy)
 		{
@@ -309,7 +309,7 @@ public:
     //! The color temperature in mired ranges from 153 to 500 whereas 153 is cold and 500 is warm.
     //! \param light A reference of the light
     //! \return Unsigned int representing the color temperature in mired or 0 when failed
-    unsigned int getColorTemperature()
+    virtual unsigned int getColorTemperature()
 	{
 		if (colorTemperatureStrategy)
 		{
@@ -325,7 +325,7 @@ public:
 	//! \param hue uint16_t that specifies the hue
 	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
 	//! \return Bool that is true on success
-	bool setColorHue(uint16_t hue, uint8_t transition = 4)
+	virtual bool setColorHue(uint16_t hue, uint8_t transition = 4)
 	{
 		if(colorHueStrategy)
 		{
@@ -341,7 +341,7 @@ public:
 	//! \param sat uint8_t that specifies the saturation
 	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
 	//! \return Bool that is true on success
-	bool setColorSaturation(uint8_t sat, uint8_t transition = 4)
+	virtual bool setColorSaturation(uint8_t sat, uint8_t transition = 4)
 	{
 		if(colorHueStrategy)
 		{
@@ -357,7 +357,7 @@ public:
 	//! \param sat uint8_t that specifies the saturation
 	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms.
 	//! \return Bool that is true on success
-	bool setColorHueSaturation(uint16_t hue, uint8_t sat, uint8_t transition = 4)
+	virtual bool setColorHueSaturation(uint16_t hue, uint8_t sat, uint8_t transition = 4)
 	{
 		if(colorHueStrategy)
 		{
@@ -372,7 +372,7 @@ public:
     //! \note This will not refresh the light state
     //! \param light A reference of the light
     //! \return Pair containing the hue as first value and saturation as second value or an empty one when failed
-    std::pair<uint16_t, uint8_t> getColorHueSaturation() const
+    virtual std::pair<uint16_t, uint8_t> getColorHueSaturation() const
 	{
 		if(colorHueStrategy)
 		{
@@ -387,7 +387,7 @@ public:
 	//! Updates the lights state by calling refreshState()
     //! \param light A const reference of the light
     //! \return Pair containing the hue as first value and saturation as second value or an empty one when failed
-    std::pair<uint16_t, uint8_t> getColorHueSaturation()
+    virtual std::pair<uint16_t, uint8_t> getColorHueSaturation()
 	{
 		if(colorHueStrategy)
 		{
@@ -404,7 +404,7 @@ public:
 	//! \param y float that specifies the y coordinate in CIE
 	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
 	//! \return Bool that is true on success
-	bool setColorXY(float x, float y, uint8_t transition = 4)
+	virtual bool setColorXY(float x, float y, uint8_t transition = 4)
 	{
 		if(colorHueStrategy)
 		{
@@ -419,7 +419,7 @@ public:
     //! \note This does not update the lights state
     //! \param light A const reference of the light
     //! \return Pair containing the x as first value and y as second value or an empty one when failed
-    std::pair<float, float> getColorXY() const
+    virtual std::pair<float, float> getColorXY() const
 	{
 		if(colorHueStrategy)
 		{
@@ -434,7 +434,7 @@ public:
     //! Updates the lights state by calling refreshState()
     //! \param light A reference of the light
     //! \return Pair containing the x as first value and y as second value or an empty one when failed
-	std::pair<float, float> getColorXY()
+	virtual std::pair<float, float> getColorXY()
 	{
 		if(colorHueStrategy)
 		{
@@ -452,7 +452,7 @@ public:
 	//! \param b uint8_t that specifies the blue color value
 	//! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
 	//! \return Bool that is true on success
-	bool setColorRGB(uint8_t r, uint8_t g, uint8_t b, uint8_t transition = 4)
+	virtual bool setColorRGB(uint8_t r, uint8_t g, uint8_t b, uint8_t transition = 4)
 	{
 		if(colorHueStrategy)
 		{
@@ -472,7 +472,7 @@ public:
 	//! \note The breath cylce will only be performed if the light has a reference to a specific \ref ColorTemperatureStrategy.
 	//! \param mired Color temperature in mired
 	//! \return Bool that is true on success
-	bool alertTemperature(unsigned int mired)
+	virtual bool alertTemperature(unsigned int mired)
 	{
 		if(colorTemperatureStrategy)
 		{
@@ -487,7 +487,7 @@ public:
 	//! \param hue uint16_t that specifies the hue
 	//! \param sat uint8_t that specifies the saturation
 	//! \return Bool that is true on success
-	bool alertHueSaturation(uint16_t hue, uint8_t sat)
+	virtual bool alertHueSaturation(uint16_t hue, uint8_t sat)
 	{
 		if(colorHueStrategy)
 		{
@@ -503,7 +503,7 @@ public:
 	//! \param x float that specifies the x coordinate in CIE
 	//! \param y float that specifies the y coordinate in CIE
 	//! \return Bool that is true on success
-	bool alertXY(float x, float y)
+	virtual bool alertXY(float x, float y)
 	{
 		if(colorHueStrategy)
 		{
@@ -520,7 +520,7 @@ public:
 	//! \param g uint8_t that specifies the green color value
 	//! \param b uint8_t that specifies the blue color value
 	//! \return Bool that is true on success
-	bool alertRGB(uint8_t r, uint8_t g, uint8_t b)
+	virtual bool alertRGB(uint8_t r, uint8_t g, uint8_t b)
 	{
 		if(colorHueStrategy)
 		{
@@ -539,7 +539,7 @@ public:
 	//! then use any of the setter functions.
 	//! \param on bool that enables this feature when true and disables it when false
 	//! \return Bool that is true on success
-	bool setColorLoop(bool on)
+	virtual bool setColorLoop(bool on)
 	{
 		if(colorHueStrategy)
 		{
@@ -574,37 +574,37 @@ protected:
 	//!
 	//! The strategy defines how specific commands that deal with brightness control are executed
 	//! \param strat a strategy of type \ref BrightnessStrategy
-	void setBrightnessStrategy(std::shared_ptr<const BrightnessStrategy> strat)  { brightnessStrategy = std::move(strat); };
+	virtual void setBrightnessStrategy(std::shared_ptr<const BrightnessStrategy> strat)  { brightnessStrategy = std::move(strat); };
 
 	//! \brief Protected function that sets the colorTemperature strategy.
 	//!
 	//! The strategy defines how specific commands that deal with colortemperature control are executed
 	//! \param strat a strategy of type \ref ColorTemperatureStrategy
-	void setColorTemperatureStrategy(std::shared_ptr<const ColorTemperatureStrategy> strat)  { colorTemperatureStrategy = std::move(strat); };
+	virtual void setColorTemperatureStrategy(std::shared_ptr<const ColorTemperatureStrategy> strat)  { colorTemperatureStrategy = std::move(strat); };
 
 	//! \brief Protected function that sets the colorHue strategy.
 	//!
 	//! The strategy defines how specific commands that deal with color control are executed
 	//! \param strat a strategy of type \ref ColorHueStrategy
-	void setColorHueStrategy(std::shared_ptr<const ColorHueStrategy> strat)  { colorHueStrategy = std::move(strat); };
+	virtual void setColorHueStrategy(std::shared_ptr<const ColorHueStrategy> strat)  { colorHueStrategy = std::move(strat); };
 
 	//! \brief Protected function that sets the HttpHandler.
 	//!
 	//! The HttpHandler defines how specific commands that deal with bridge communication are executed
 	//! \param handler a HttpHandler of type \ref IHttpHandler
-	void setHttpHandler(std::shared_ptr<const IHttpHandler> handler)  { http_handler = std::move(handler); };
+	virtual void setHttpHandler(std::shared_ptr<const IHttpHandler> handler)  { http_handler = std::move(handler); };
 
 	//! \brief Function that turns the light on without refreshing its state.
 	//!
 	//! \param transition Optional parameter to set the transition from current state to new standard is 4 = 400ms
 	//! \return Bool that is true on success
-	bool OnNoRefresh(uint8_t transition = 4);
+	virtual bool OnNoRefresh(uint8_t transition = 4);
 
 	//! \brief Function that turns the light off without refreshing its state.
 	//!
 	//! \param transition Optional parameter to set the transition from current state to new standard is 4 = 400ms
 	//! \return Bool that is true on success
-	bool OffNoRefresh(uint8_t transition = 4);
+	virtual bool OffNoRefresh(uint8_t transition = 4);
 
 	//! \brief Utility function to send a put request to the light.
 	//!
@@ -612,7 +612,7 @@ protected:
 	//! \param request A Json::Value aka the request to send
 	//! \param subPath A path that is appended to the uri, note it should always start with a slash ("/")
 	//! \return The parsed reply
-	Json::Value SendPutRequest(const Json::Value& request, const std::string& subPath);
+	virtual Json::Value SendPutRequest(const Json::Value& request, const std::string& subPath);
 
 	//! \brief Virtual function that refreshes the \ref state of the light.
 	virtual void refreshState();
