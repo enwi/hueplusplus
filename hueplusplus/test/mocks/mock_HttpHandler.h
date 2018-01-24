@@ -32,7 +32,6 @@
 class MockHttpHandler : public IHttpHandler
 {
 public:
-
     MOCK_CONST_METHOD3( send, std::string(const std::string &msg, const std::string &adr, int port) );
 
     MOCK_CONST_METHOD3( sendGetHTTPBody, std::string(const std::string &msg, const std::string &adr, int port) );
