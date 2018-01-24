@@ -7,7 +7,7 @@ A simple and easy to use library for Philips Hue Lights
 * all common light functions (brightness, color, temperature)
 * extended alert() functions, which alert in a specific color (good for notifications)
 * documented with doxygen
-* starting to test with google test, google mock and gcov/lcov
+* tested with google test, google mock and gcov/lcov
 
 ## Compatability
 * linux
