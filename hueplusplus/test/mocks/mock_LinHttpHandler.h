@@ -1,5 +1,5 @@
 /**
-	\file mock_linHttpHandler.h
+	\file mock_LinHttpHandler.h
 	Copyright Notice\n
 	Copyright (C) 2017  Jan Rogall		- developer\n
 	Copyright (C) 2017  Moritz Wirger	- developer\n
@@ -25,11 +25,11 @@
 
 #include <gmock/gmock.h>
 
-#include "../hueplusplus/include/linHttpHandler.h"
+#include "../hueplusplus/include/LinHttpHandler.h"
 #include "../hueplusplus/include/json/json.h"
 
 //! Mock Class
-class MockLinHttpHandler : public linHttpHandler
+class MockLinHttpHandler : public LinHttpHandler
 {
 public:
     MOCK_CONST_METHOD3( send, std::string(const std::string &msg, const std::string &adr, int port) );

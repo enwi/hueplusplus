@@ -1,5 +1,5 @@
 /**
-	\file linHttpHandler.h
+	\file LinHttpHandler.h
 	Copyright Notice\n
 	Copyright (C) 2017  Jan Rogall		- developer\n
 	Copyright (C) 2017  Moritz Wirger	- developer\n
@@ -23,12 +23,12 @@
 #include <string>
 #include <vector>
 
-#include "IHttpHandler.h"
+#include "BaseHttpHandler.h"
 
 #include "json/json.h"
 
 //! Class to handle http requests and multicast requests on linux systems
-class linHttpHandler : public IHttpHandler
+class LinHttpHandler : public BaseHttpHandler
 {
 public:
     //! \brief Function that sends a given message to the specified host and returns the response.

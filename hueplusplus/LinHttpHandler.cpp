@@ -1,5 +1,5 @@
 /**
-	\file linHttpHandler.cpp
+	\file LinHttpHandler.cpp
 	Copyright Notice\n
 	Copyright (C) 2017  Jan Rogall		- developer\n
 	Copyright (C) 2017  Moritz Wirger	- developer\n
@@ -17,7 +17,7 @@
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **/
 
-#include "include/linHttpHandler.h"
+#include "include/LinHttpHandler.h"
 
 #include <chrono>
 #include <netinet/in.h> 	// struct sockaddr_in, struct sockaddr
@@ -38,7 +38,7 @@ class SocketCloser {
 	private: int s;
 };
 
-std::string linHttpHandler::send(const std::string & msg, const std::string & adr, int port) const
+std::string LinHttpHandler::send(const std::string & msg, const std::string & adr, int port) const
 {
 	// create socket
 	int socketFD = socket(AF_INET, SOCK_STREAM, 0);
@@ -46,8 +46,8 @@ std::string linHttpHandler::send(const std::string & msg, const std::string & ad
 	SocketCloser closeMySocket(socketFD);
 	if (socketFD < 0)
 	{
-		std::cerr << "linHttpHandler: Failed to open socket\n";
-		throw(std::runtime_error("linHttpHandler: Failed to open socket"));
+		std::cerr << "LinHttpHandler: Failed to open socket\n";
+		throw(std::runtime_error("LinHttpHandler: Failed to open socket"));
 	}
 
 	// lookup ip address
@@ -55,8 +55,8 @@ std::string linHttpHandler::send(const std::string & msg, const std::string & ad
 	server = gethostbyname(adr.c_str());
 	if (server == NULL)
 	{
-		std::cerr << "linHttpHandler: Failed to find host with address " << adr << "\n";
-		throw(std::runtime_error("linHttpHandler: Failed to find host"));
+		std::cerr << "LinHttpHandler: Failed to find host with address " << adr << "\n";
+		throw(std::runtime_error("LinHttpHandler: Failed to find host"));
 	}
 
 	// fill in the structure
@@ -69,8 +69,8 @@ std::string linHttpHandler::send(const std::string & msg, const std::string & ad
 	// connect the socket
 	if (connect(socketFD, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
 	{
-		std::cerr << "linHttpHandler: Failed to connect socket\n";
-		throw(std::runtime_error("linHttpHandler: Failed to connect socket"));
+		std::cerr << "LinHttpHandler: Failed to connect socket\n";
+		throw(std::runtime_error("LinHttpHandler: Failed to connect socket"));
 	}
 
 	// send the request
@@ -81,8 +81,8 @@ std::string linHttpHandler::send(const std::string & msg, const std::string & ad
 		ssize_t bytes = write(socketFD, msg.c_str() + sent, total - sent);
 		if (bytes < 0)
 		{
-			std::cerr << "linHttpHandler: Failed to write message to socket\n";
-			throw(std::runtime_error("linHttpHandler: Failed to write message to socket"));
+			std::cerr << "LinHttpHandler: Failed to write message to socket\n";
+			throw(std::runtime_error("LinHttpHandler: Failed to write message to socket"));
 		}
 		if (bytes == 0)
 		{
@@ -104,8 +104,8 @@ std::string linHttpHandler::send(const std::string & msg, const std::string & ad
 		ssize_t bytes = read(socketFD, buffer, 127);
 		if (bytes < 0)
 		{
-			std::cerr << "linHttpHandler: Failed to read response from socket: " << errno << std::endl;
-			throw(std::runtime_error("linHttpHandler: Failed to read response from socket"));
+			std::cerr << "LinHttpHandler: Failed to read response from socket: " << errno << std::endl;
+			throw(std::runtime_error("LinHttpHandler: Failed to read response from socket"));
 		}
 		if (bytes == 0)
 		{
@@ -120,14 +120,14 @@ std::string linHttpHandler::send(const std::string & msg, const std::string & ad
 
 	if (received == total)
 	{
-		std::cerr << "linHttpHandler: Failed to store complete response from socket\n";
-		throw(std::runtime_error("linHttpHandler: Failed to store complete response from socket"));
+		std::cerr << "LinHttpHandler: Failed to store complete response from socket\n";
+		throw(std::runtime_error("LinHttpHandler: Failed to store complete response from socket"));
 	}
 
 	return response;
 }
 
-std::vector<std::string> linHttpHandler::sendMulticast(const std::string & msg, const std::string & adr, int port, int timeout) const
+std::vector<std::string> LinHttpHandler::sendMulticast(const std::string & msg, const std::string & adr, int port, int timeout) const
 {
 	hostent *server;			// host information
 	sockaddr_in server_addr;	// server address
@@ -141,8 +141,8 @@ std::vector<std::string> linHttpHandler::sendMulticast(const std::string & msg, 
 	server = gethostbyname(adr.c_str());
 	if (!server)
 	{
-		std::cerr << "linHttpHandler: sendMulticast: Failed to obtain address of " << msg << "\n";
-		throw(std::runtime_error("linHttpHandler: sendMulticast: Failed to obtain address of host"));
+		std::cerr << "LinHttpHandler: sendMulticast: Failed to obtain address of " << msg << "\n";
+		throw(std::runtime_error("LinHttpHandler: sendMulticast: Failed to obtain address of host"));
 	}
 
 	// put the host's address into the server address structure
@@ -153,15 +153,15 @@ std::vector<std::string> linHttpHandler::sendMulticast(const std::string & msg, 
 	SocketCloser closeMySendSocket(socketFD);
 	if (socketFD < 0)
 	{
-		std::cerr << "linHttpHandler: sendMulticast: Failed to open socket\n";
-		throw(std::runtime_error("linHttpHandler: sendMulticast: Failed to open socket"));
+		std::cerr << "LinHttpHandler: sendMulticast: Failed to open socket\n";
+		throw(std::runtime_error("LinHttpHandler: sendMulticast: Failed to open socket"));
 	}
 
 	// send a message to the server
 	if (sendto(socketFD, msg.c_str(), strlen(msg.c_str()), 0, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
 	{
-		std::cerr << "linHttpHandler: sendMulticast: Failed to send message\n";
-		throw(std::runtime_error("linHttpHandler: sendMulticast: Failed to send message"));
+		std::cerr << "LinHttpHandler: sendMulticast: Failed to send message\n";
+		throw(std::runtime_error("LinHttpHandler: sendMulticast: Failed to send message"));
 	}
 
 	std::string response;
@@ -176,8 +176,8 @@ std::vector<std::string> linHttpHandler::sendMulticast(const std::string & msg, 
 		{
 			if (errno != EAGAIN && errno != EWOULDBLOCK)
 			{
-				std::cerr << "linHttpHandler: sendMulticast: Failed to read response from socket\n";
-				throw(std::runtime_error("linHttpHandler: sendMulticast: Failed to read response from socket"));
+				std::cerr << "LinHttpHandler: sendMulticast: Failed to read response from socket\n";
+				throw(std::runtime_error("LinHttpHandler: sendMulticast: Failed to read response from socket"));
 			}
 			continue;
 		}

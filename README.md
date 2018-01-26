@@ -15,14 +15,14 @@ A simple and easy to use library for Philips Hue Lights
 
 ## How to use
 ### <a name="searchingBridges"></a>Searching for Bridges
-To start searching for a Hue Bridge you will need to choose an IHttpHandler and create one. The options are a "winHttpHandler" (for windows) or a "linHttpHandler" (for linux).
+To start searching for a Hue Bridge you will need to choose an IHttpHandler and create one. The options are a "WinHttpHandler" (for windows) or a "LinHttpHandler" (for linux).
 Then create a HueFinder object with the handler.
 The handler is needed, because it tells the finder which functions to use to communicate with a bridge or your local network.
 After that you can call FindBridges(), which will return a vector containing the ip and mac address of all found Bridges.
 If no Bridges were found the vector is empty, so make sure that in that case you provide an ip and mac address.
 ```C++
-// For windows use std::make_shared<winHttpHandler>();
-handler = std::make_shared<linHttpHandler>();
+// For windows use std::make_shared<WinHttpHandler>();
+handler = std::make_shared<LinHttpHandler>();
 HueFinder finder(handler);
 std::vector<HueFinder::HueIdentification> bridges = finder.FindBridges();
 if (bridges.empty())
@@ -46,8 +46,8 @@ Hue bridge = finder.GetBridge(bridges[0]);
 If you do not want to use the HueFinder or you already know the ip and username of your bridge you have the option to create your own Hue object.
 Here you will need to provide the ip address, a username and an HttpHandler
 ```C++
-// For windows use std::make_shared<winHttpHandler>();
-handler = std::make_shared<linHttpHandler>();
+// For windows use std::make_shared<WinHttpHandler>();
+handler = std::make_shared<LinHttpHandler>();
 Hue bridge("192.168.2.102", "<username>", handler);
 ```
 
