@@ -175,12 +175,12 @@ private:
 	Json::Value state;		//!< The state of the hue bridge as it is returned from it
 	std::map< uint8_t, HueLight > lights;	//!< Maps ids to HueLights that are controlled by this bridge
 
-	std::shared_ptr<BrightnessStrategy>			simpleBrightnessStrategy;			//!< Strategy that is used for controlling the brightness of lights
-	std::shared_ptr<ColorHueStrategy> 			simpleColorHueStrategy;				//!< Strategy that is used for controlling the color of lights
-	std::shared_ptr<ColorHueStrategy>			extendedColorHueStrategy;			//!< Strategy that is used for controlling the color of lights
-	std::shared_ptr<ColorTemperatureStrategy>	simpleColorTemperatureStrategy;		//!< Strategy that is used for controlling the color temperature of lights
-	std::shared_ptr<ColorTemperatureStrategy>	extendedColorTemperatureStrategy;	//!< Strategy that is used for controlling the color temperature of lights
-	std::shared_ptr<const IHttpHandler> http_handler;								//!< A IHttpHandler that is used to communicate with the bridge
+	std::shared_ptr<BrightnessStrategy>         simpleBrightnessStrategy;           //!< Strategy that is used for controlling the brightness of lights
+	std::shared_ptr<ColorHueStrategy>           simpleColorHueStrategy;             //!< Strategy that is used for controlling the color of lights
+	std::shared_ptr<ColorHueStrategy>           extendedColorHueStrategy;           //!< Strategy that is used for controlling the color of lights
+	std::shared_ptr<ColorTemperatureStrategy>   simpleColorTemperatureStrategy;     //!< Strategy that is used for controlling the color temperature of lights
+	std::shared_ptr<ColorTemperatureStrategy>   extendedColorTemperatureStrategy;   //!< Strategy that is used for controlling the color temperature of lights
+	std::shared_ptr<const IHttpHandler> http_handler;                               //!< A IHttpHandler that is used to communicate with the bridge
 };
 
 #endif
