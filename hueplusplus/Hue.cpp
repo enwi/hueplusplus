@@ -262,12 +262,12 @@ std::vector<std::reference_wrapper<HueLight>> Hue::getAllLights()
 
 bool Hue::lightExists(int id)
 {
+	refreshState();
 	auto pos = lights.find(id);
 	if (pos != lights.end())
 	{
 		return true;
 	}
-	refreshState();
 	if (state["lights"].isMember(std::to_string(id)))
 	{
 		return true;
