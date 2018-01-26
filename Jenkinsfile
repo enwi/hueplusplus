@@ -18,7 +18,8 @@ timestamps {
         stage('Test')
         {
             sh '''cd build
-            hueplusplus/test/test_HuePlusPlus --gtest_output=xml:test.xml'''
+            hueplusplus/test/test_HuePlusPlus --gtest_output=xml:test.xml
+            make -j8 coveragetest'''
             step([$class: 'XUnitBuilder', testTimeMargin: '3000', thresholdMode: 1,
                 thresholds: [
                     [$class: 'FailedThreshold', failureNewThreshold: '', failureThreshold: '', unstableNewThreshold: '', unstableThreshold: ''],
@@ -28,6 +29,9 @@ timestamps {
                     [$class: 'GoogleTestType', deleteOutputFiles: true, failIfNotNew: true, pattern: 'build/test.xml', skipNoTestFiles: false, stopProcessingIfError: true]
                     ]
                 ])
+            publishHTML(
+                [allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'build/coveragetest', reportFiles: 'index.html', reportName: 'Coveragetest', reportTitles: '']
+                )
         }
         stage('CppCheck')
         {
