@@ -1,5 +1,5 @@
 /**
-	\file mock_LinHttpHandler.h
+	\file mock_BaseHttpHandler.h
 	Copyright Notice\n
 	Copyright (C) 2017  Jan Rogall		- developer\n
 	Copyright (C) 2017  Moritz Wirger	- developer\n
@@ -17,8 +17,8 @@
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **/
 
-#ifndef _MOCK_LIN_HTTPHANDLER_H
-#define _MOCK_LIN_HTTPHANDLER_H
+#ifndef _MOCK_BASE_HTTPHANDLER_H
+#define _MOCK_BASE_HTTPHANDLER_H
 
 #include <string>
 #include <vector>
