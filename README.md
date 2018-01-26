@@ -9,7 +9,7 @@ A simple and easy to use library for Philips Hue Lights
 * documented with doxygen
 * tested with google test, google mock and gcov/lcov
 
-## Compatability
+## Compatibility
 * linux
 * windows
 
