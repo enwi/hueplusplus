@@ -11,18 +11,18 @@ set(hueplusplus_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/UPnP.cpp
 )
 
-# on windows we want to compile the winHttpHandler
+# on windows we want to compile the WinHttpHandler
 if(WIN32)
     set(hueplusplus_SOURCES
         ${hueplusplus_SOURCES}
-        ${CMAKE_CURRENT_SOURCE_DIR}/winHttpHandler.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/WinHttpHandler.cpp
     )
 endif()
-# whereas on linux we want the linHttpHandler
+# whereas on linux we want the LinHttpHandler
 if(UNIX)
     set(hueplusplus_SOURCES
         ${hueplusplus_SOURCES}
-        ${CMAKE_CURRENT_SOURCE_DIR}/linHttpHandler.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/LinHttpHandler.cpp
     )
 endif()
 
