@@ -180,7 +180,7 @@ HueLight& Hue::getLight(int id)
 	refreshState();
 	if (!state["lights"].isMember(std::to_string(id)))
 	{
-		std::cout << "Error in Hue getLight(): light with id " << id << " is not valid\n";
+		std::cerr << "Error in Hue getLight(): light with id " << id << " is not valid\n";
 		throw(std::runtime_error("Error in Hue getLight(): light id is not valid"));
 	}
 	//std::cout << state["lights"][std::to_string(id)] << std::endl;
@@ -226,7 +226,7 @@ HueLight& Hue::getLight(int id)
 		lights.emplace(id, light);
 		return lights.find(id)->second;
 	}
-	std::cout << "Could not determine HueLight type!\n";
+	std::cerr << "Could not determine HueLight type!\n";
 	throw(std::runtime_error("Could not determine HueLight type!"));
 }
 
