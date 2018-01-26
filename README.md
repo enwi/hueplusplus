@@ -140,7 +140,7 @@ target_link_libraries(<executable> hueplusplusstatic)
 This will check if the hueplusplus library was found by find_package() and if not it will use the specified path to the library source and compile it during the build process.
 
 ### Running tests
-If you additionally want to run the tests you will currently need to checkout the development branch and use cmake with the option -Dhueplusplus_TESTS=ON. Testing is done with Google gtest and gmock. Note that you wont need to install gtest/gmock yourself, because cmake will automatically download them and include them during the build. Since I added a custom target you will only need to call "make unittest" and the tests are compiled and executed.
+If you additionally want to run the tests use cmake with the option -Dhueplusplus_TESTS=ON. Testing is done with Google gtest and gmock. Note that you wont need to install gtest/gmock yourself, because cmake will automatically download them and include them during the build. Since I added a custom target you will only need to call "make unittest" and the tests are compiled and executed.
 ```bash
 mkdir build
 cd build
