@@ -1,5 +1,5 @@
 /**
-\file winHttpHandler.h
+\file WinHttpHandler.h
 Copyright Notice\n
 Copyright (C) 2017  Jan Rogall		- developer\n
 Copyright (C) 2017  Moritz Wirger	- developer\n
@@ -24,19 +24,19 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 #include <vector>
 #include <winsock2.h>
 
-#include "IHttpHandler.h"
+#include "BaseHttpHandler.h"
 
 #include "json/json.h"
 
 //! Class to handle http requests and multicast requests on windows systems
-class winHttpHandler : public IHttpHandler
+class WinHttpHandler : public BaseHttpHandler
 {
 public:
 	//! \brief Ctor needed for initializing wsaData
-	winHttpHandler();
+	WinHttpHandler();
 
 	//! \brief Dtor needed for wsaData cleanup
-	~winHttpHandler();
+	~WinHttpHandler();
 
 	//! \brief Function that sends a given message to the specified host and returns the response.
 	//!

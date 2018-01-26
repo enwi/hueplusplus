@@ -2,13 +2,13 @@
 #include <gmock/gmock.h>
 
 #include "../include/json/json.h"
-#include "mocks/mock_linHttpHandler.h"
+#include "mocks/mock_LinHttpHandler.h"
 #include "testhelper.h"
 
 #include <memory>
 #include <string>
 
-TEST(IHttpHandler, sendGetHTTPBody)
+TEST(BaseHttpHandler, sendGetHTTPBody)
 {
     using namespace ::testing;
     MockLinHttpHandler handler;
@@ -22,7 +22,7 @@ TEST(IHttpHandler, sendGetHTTPBody)
     EXPECT_EQ("testreply", handler.sendGetHTTPBody("testmsg", "192.168.2.1", 90));
 }
 
-TEST(IHttpHandler, sendHTTPRequest)
+TEST(BaseHttpHandler, sendHTTPRequest)
 {
     using namespace ::testing;
     MockLinHttpHandler handler;
@@ -36,7 +36,7 @@ TEST(IHttpHandler, sendHTTPRequest)
     EXPECT_EQ("testreply", handler.sendHTTPRequest("GET", "UrI", "text/html", "body", "192.168.2.1", 90));
 }
 
-TEST(IHttpHandler, GETString)
+TEST(BaseHttpHandler, GETString)
 {
     using namespace ::testing;
     MockLinHttpHandler handler;
@@ -50,7 +50,7 @@ TEST(IHttpHandler, GETString)
     EXPECT_EQ("testreply", handler.GETString("UrI", "text/html", "body", "192.168.2.1", 90));
 }
 
-TEST(IHttpHandler, POSTString)
+TEST(BaseHttpHandler, POSTString)
 {
     using namespace ::testing;
     MockLinHttpHandler handler;
@@ -64,7 +64,7 @@ TEST(IHttpHandler, POSTString)
     EXPECT_EQ("testreply", handler.POSTString("UrI", "text/html", "body", "192.168.2.1", 90));
 }
 
-TEST(IHttpHandler, PUTString)
+TEST(BaseHttpHandler, PUTString)
 {
     using namespace ::testing;
     MockLinHttpHandler handler;
@@ -78,7 +78,7 @@ TEST(IHttpHandler, PUTString)
     EXPECT_EQ("testreply", handler.PUTString("UrI", "text/html", "body", "192.168.2.1", 90));
 }
 
-TEST(IHttpHandler, DELETEString)
+TEST(BaseHttpHandler, DELETEString)
 {
     using namespace ::testing;
     MockLinHttpHandler handler;
@@ -92,7 +92,7 @@ TEST(IHttpHandler, DELETEString)
     EXPECT_EQ("testreply", handler.DELETEString("UrI", "text/html", "body", "192.168.2.1", 90));
 }
 
-TEST(IHttpHandler, GETJson)
+TEST(BaseHttpHandler, GETJson)
 {
     using namespace ::testing;
     MockLinHttpHandler handler;
@@ -118,7 +118,7 @@ TEST(IHttpHandler, GETJson)
     EXPECT_EQ(expected, handler.GETJson("UrI", testval, "192.168.2.1", 90));
 }
 
-TEST(IHttpHandler, POSTJson)
+TEST(BaseHttpHandler, POSTJson)
 {
     using namespace ::testing;
     MockLinHttpHandler handler;
@@ -144,7 +144,7 @@ TEST(IHttpHandler, POSTJson)
     EXPECT_EQ(expected, handler.POSTJson("UrI", testval, "192.168.2.1", 90));
 }
 
-TEST(IHttpHandler, PUTJson)
+TEST(BaseHttpHandler, PUTJson)
 {
     using namespace ::testing;
     MockLinHttpHandler handler;
@@ -170,7 +170,7 @@ TEST(IHttpHandler, PUTJson)
     EXPECT_EQ(expected, handler.PUTJson("UrI", testval, "192.168.2.1", 90));
 }
 
-TEST(IHttpHandler, DELETEJson)
+TEST(BaseHttpHandler, DELETEJson)
 {
     using namespace ::testing;
     MockLinHttpHandler handler;
