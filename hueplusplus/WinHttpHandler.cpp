@@ -33,7 +33,7 @@ WinHttpHandler::WinHttpHandler()
 	int return_code = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (return_code != 0)
 	{
-		std::cerr << "Failed to open socket: " << return_code << std::endl;
+		std::cerr << "WinHttpHandler: Failed to open socket: " << return_code << std::endl;
 		throw(std::runtime_error("WinHttpHandler: Failed to open socket"));
 	}
 }
