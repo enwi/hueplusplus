@@ -24,13 +24,13 @@
 #include <iostream>
 #include <thread>
 
-bool SimpleColorHueStrategy::setColorHue(uint16_t hue, uint8_t transistion, HueLight& light) const
+bool SimpleColorHueStrategy::setColorHue(uint16_t hue, uint8_t transition, HueLight& light) const
 {
 	light.refreshState();
 	Json::Value request(Json::objectValue);
-	if (transistion != 4)
+	if (transition != 4)
 	{
-		request["transitiontime"] = transistion;
+		request["transitiontime"] = transition;
 	}
 	if (light.state["state"]["on"].asBool() != true)
 	{
@@ -74,13 +74,13 @@ bool SimpleColorHueStrategy::setColorHue(uint16_t hue, uint8_t transistion, HueL
 	return success;
 }
 
-bool SimpleColorHueStrategy::setColorSaturation(uint8_t sat, uint8_t transistion, HueLight& light) const
+bool SimpleColorHueStrategy::setColorSaturation(uint8_t sat, uint8_t transition, HueLight& light) const
 {
 	light.refreshState();
 	Json::Value request(Json::objectValue);
-	if (transistion != 4)
+	if (transition != 4)
 	{
-		request["transitiontime"] = transistion;
+		request["transitiontime"] = transition;
 	}
 	if (light.state["state"]["on"].asBool() != true)
 	{
@@ -127,14 +127,14 @@ bool SimpleColorHueStrategy::setColorSaturation(uint8_t sat, uint8_t transistion
 	return success;
 }
 
-bool SimpleColorHueStrategy::setColorHueSaturation(uint16_t hue, uint8_t sat, uint8_t transistion, HueLight& light) const
+bool SimpleColorHueStrategy::setColorHueSaturation(uint16_t hue, uint8_t sat, uint8_t transition, HueLight& light) const
 {
 	light.refreshState();
 	Json::Value request(Json::objectValue);
 
-	if (transistion != 4)
+	if (transition != 4)
 	{
-		request["transitiontime"] = transistion;
+		request["transitiontime"] = transition;
 	}
 	if (light.state["state"]["on"].asBool() != true)
 	{
@@ -192,14 +192,14 @@ bool SimpleColorHueStrategy::setColorHueSaturation(uint16_t hue, uint8_t sat, ui
 	return success;
 }
 
-bool SimpleColorHueStrategy::setColorXY(float x, float y, uint8_t transistion, HueLight& light) const
+bool SimpleColorHueStrategy::setColorXY(float x, float y, uint8_t transition, HueLight& light) const
 {
 	light.refreshState();
 	Json::Value request(Json::objectValue);
 
-	if (transistion != 4)
+	if (transition != 4)
 	{
-		request["transitiontime"] = transistion;
+		request["transitiontime"] = transition;
 	}
 	if (light.state["state"]["on"].asBool() != true)
 	{
@@ -247,7 +247,7 @@ bool SimpleColorHueStrategy::setColorXY(float x, float y, uint8_t transistion, H
 	return success;
 }
 
-bool SimpleColorHueStrategy::setColorRGB(uint8_t r, uint8_t g, uint8_t b, uint8_t transistion, HueLight& light) const
+bool SimpleColorHueStrategy::setColorRGB(uint8_t r, uint8_t g, uint8_t b, uint8_t transition, HueLight& light) const
 {
 	if( (r == 0) && (g == 0) && (b == 0) )
 	{
@@ -270,7 +270,7 @@ bool SimpleColorHueStrategy::setColorRGB(uint8_t r, uint8_t g, uint8_t b, uint8_
 	const float x = X / (X + Y + Z);
 	const float y = Y / (X + Y + Z);
 
-	return light.setColorXY(x, y, transistion);
+	return light.setColorXY(x, y, transition);
 }
 
 bool SimpleColorHueStrategy::setColorLoop(bool on, HueLight& light) const
