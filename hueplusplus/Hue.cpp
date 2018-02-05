@@ -139,7 +139,7 @@ std::string Hue::requestUsername(const std::string& ip)
 		if (std::chrono::steady_clock::now() - lastCheck > std::chrono::seconds(1))
 		{
 			lastCheck = std::chrono::steady_clock::now();
-			answer = http_handler->GETJson("/api", request, ip);
+			answer = http_handler->POSTJson("/api", request, ip);
 
 			if (answer[0]["success"] != Json::nullValue)
 			{
