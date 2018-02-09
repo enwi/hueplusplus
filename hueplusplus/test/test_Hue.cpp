@@ -63,7 +63,7 @@ TEST_F(HueFinderTest, GetBridge)
     user_ret_uns[0]["error"]["address"] = "";
     user_ret_uns[0]["error"]["description"] = "link button not pressed";
 
-    EXPECT_CALL(*handler, GETJson("/api", request, bridge_ip, 80))
+    EXPECT_CALL(*handler, POSTJson("/api", request, bridge_ip, 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(user_ret_uns));
 
@@ -78,7 +78,7 @@ TEST_F(HueFinderTest, GetBridge)
     user_ret_suc[0]["success"] = Json::Value(Json::objectValue);
     user_ret_suc[0]["success"]["username"] = bridge_username;
 
-    EXPECT_CALL(*handler, GETJson("/api", request, bridge_ip, 80))
+    EXPECT_CALL(*handler, POSTJson("/api", request, bridge_ip, 80))
         .Times(1)
         .WillOnce(Return(user_ret_suc));
 
@@ -140,7 +140,7 @@ TEST(Hue, requestUsername)
     user_ret_uns[0]["error"]["address"] = "";
     user_ret_uns[0]["error"]["description"] = "link button not pressed";
 
-    EXPECT_CALL(*handler, GETJson("/api", request, bridge_ip, 80))
+    EXPECT_CALL(*handler, POSTJson("/api", request, bridge_ip, 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(user_ret_uns));
 
@@ -154,7 +154,7 @@ TEST(Hue, requestUsername)
     user_ret_suc[0] = Json::Value(Json::objectValue);
     user_ret_suc[0]["success"] = Json::Value(Json::objectValue);
     user_ret_suc[0]["success"]["username"] = bridge_username;
-    EXPECT_CALL(*handler, GETJson("/api", request, bridge_ip, 80))
+    EXPECT_CALL(*handler, POSTJson("/api", request, bridge_ip, 80))
         .Times(1)
         .WillRepeatedly(Return(user_ret_suc));
 
