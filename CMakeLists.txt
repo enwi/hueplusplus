@@ -12,7 +12,6 @@ else()
 endif()
 set(INSTALL_CMAKE_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH "Installation directory for CMake files")
 
-
 # target for uninstall
 if(NOT TARGET uninstall)
     configure_file(
