@@ -438,10 +438,10 @@ TEST_F(HueLightTest, hasTemperatureControl)
     HueLight test_light_3 = test_bridge.getLight(3);
 
     EXPECT_EQ(false, ctest_light_1.hasTemperatureControl());
-    EXPECT_EQ(true, ctest_light_2.hasTemperatureControl());
+    EXPECT_EQ(false, ctest_light_2.hasTemperatureControl());
     EXPECT_EQ(true, ctest_light_3.hasTemperatureControl());
     EXPECT_EQ(false, test_light_1.hasTemperatureControl());
-    EXPECT_EQ(true, test_light_2.hasTemperatureControl());
+    EXPECT_EQ(false, test_light_2.hasTemperatureControl());
     EXPECT_EQ(true, test_light_3.hasTemperatureControl());
 }
 
@@ -512,9 +512,6 @@ TEST_F(HueLightTest, getBrightness)
 TEST_F(HueLightTest, setColorTemperature)
 {
     using namespace ::testing;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/2/state", _, bridge_ip, 80))
-        .Times(1)
-        .WillOnce(Return(Json::Value(Json::arrayValue)));
     Json::Value prep_ret;
     prep_ret = Json::Value(Json::arrayValue);
     prep_ret[2] = Json::Value(Json::objectValue);
@@ -549,10 +546,10 @@ TEST_F(HueLightTest, getColorTemperature)
     HueLight test_light_3 = test_bridge.getLight(3);
 
     EXPECT_EQ(0, ctest_light_1.getColorTemperature());
-    EXPECT_EQ(366, ctest_light_2.getColorTemperature());
+    EXPECT_EQ(0, ctest_light_2.getColorTemperature());
     EXPECT_EQ(366, ctest_light_3.getColorTemperature());
     EXPECT_EQ(0, test_light_1.getColorTemperature());
-    EXPECT_EQ(366, test_light_2.getColorTemperature());
+    EXPECT_EQ(0, test_light_2.getColorTemperature());
     EXPECT_EQ(366, test_light_3.getColorTemperature());
 }
 
@@ -775,9 +772,6 @@ TEST_F(HueLightTest, alert)
 TEST_F(HueLightTest, alertTemperature)
 {
     using namespace ::testing;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/2/state", _, bridge_ip, 80))
-        .Times(1)
-        .WillOnce(Return(Json::Value(Json::arrayValue)));
     EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/3/state", _, bridge_ip, 80))
         .Times(1)
         .WillOnce(Return(Json::Value(Json::arrayValue)));

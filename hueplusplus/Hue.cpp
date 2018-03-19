@@ -205,7 +205,7 @@ HueLight& Hue::getLight(int id)
 	else if (type == "LST001" || type == "LLC006" || type == "LLC007" || type == "LLC010" || type == "LLC011" || type == "LLC012" || type == "LLC013")
 	{
 		// HueColorLight Gamut A
-		HueLight light = HueLight(ip, username, id, simpleBrightnessStrategy, simpleColorTemperatureStrategy, simpleColorHueStrategy, http_handler);
+		HueLight light = HueLight(ip, username, id, simpleBrightnessStrategy, nullptr, simpleColorHueStrategy, http_handler);
 		light.colorType = ColorType::GAMUT_A;
 		lights.emplace(id, light);
 		return lights.find(id)->second;
