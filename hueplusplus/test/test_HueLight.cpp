@@ -35,6 +35,7 @@ protected:
         hue_bridge_state["lights"]["1"]["name"] = "Hue lamp 1";
         hue_bridge_state["lights"]["1"]["modelid"] = "LWB004";
         hue_bridge_state["lights"]["1"]["manufacturername"] = "Philips";
+        hue_bridge_state["lights"]["1"]["productname"] = "Hue bloom";
         hue_bridge_state["lights"]["1"]["uniqueid"] = "00:00:00:00:00:00:00:00-00";
         hue_bridge_state["lights"]["1"]["swversion"] = "5.50.1.19085";
         hue_bridge_state["lights"]["1"]["luminaireuniqueid"] = "0000000";
@@ -77,6 +78,7 @@ protected:
         hue_bridge_state["lights"]["3"]["name"] = "Hue lamp 3";
         hue_bridge_state["lights"]["3"]["modelid"] = "LCT010";
         hue_bridge_state["lights"]["3"]["manufacturername"] = "Philips";
+        hue_bridge_state["lights"]["3"]["productname"] = "Hue bloom";
         hue_bridge_state["lights"]["3"]["swversion"] = "5.50.1.19085";
 
         EXPECT_CALL(*handler, GETJson("/api/" + bridge_username, Json::Value(Json::objectValue), bridge_ip, 80))
@@ -274,6 +276,23 @@ TEST_F(HueLightTest, getManufacturername)
     EXPECT_EQ("Philips", test_light_1.getManufacturername());
     EXPECT_EQ("", test_light_2.getManufacturername());
     EXPECT_EQ("Philips", test_light_3.getManufacturername());
+}
+
+TEST_F(HueLightTest, getProductname)
+{
+    const HueLight ctest_light_1 = test_bridge.getLight(1);
+    const HueLight ctest_light_2 = test_bridge.getLight(2);
+    const HueLight ctest_light_3 = test_bridge.getLight(3);
+    HueLight test_light_1 = test_bridge.getLight(1);
+    HueLight test_light_2 = test_bridge.getLight(2);
+    HueLight test_light_3 = test_bridge.getLight(3);
+
+    EXPECT_EQ("Hue bloom", ctest_light_1.getProductname());
+    EXPECT_EQ("", ctest_light_2.getProductname());
+    EXPECT_EQ("Hue bloom", ctest_light_3.getProductname());
+    EXPECT_EQ("Hue bloom", test_light_1.getProductname());
+    EXPECT_EQ("", test_light_2.getProductname());
+    EXPECT_EQ("Hue bloom", test_light_3.getProductname());
 }
 
 TEST_F(HueLightTest, getLuminaireUId)

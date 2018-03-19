@@ -60,7 +60,7 @@ add_custom_target("unittest"
     # Run the executable
     COMMAND test_HuePlusPlus
     # Depends on test_HuePlusPlus
-	DEPENDS test_HuePlusPlus
+    DEPENDS test_HuePlusPlus
 )
 
 # Check for coverage test prerequisites

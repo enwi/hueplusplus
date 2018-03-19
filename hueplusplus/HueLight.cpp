@@ -92,6 +92,15 @@ std::string HueLight::getManufacturername() const
 	return std::string();
 }
 
+std::string HueLight::getProductname() const
+{
+	if (state.isMember("productname"))
+	{
+		return state["productname"].asString();
+	}
+	return std::string();
+}
+
 std::string HueLight::getLuminaireUId() const
 {
 	if (state.isMember("luminaireuniqueid"))
