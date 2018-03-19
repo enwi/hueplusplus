@@ -162,6 +162,12 @@ public:
 	//! \return String containing the manufacturername or an empty string when the function is not supported
 	virtual std::string getManufacturername() const;
 
+	//! \brief Const function that returns the productname of the light
+	//!
+	//! \note Only working on bridges with versions starting at 1.24
+	//! \return String containing the productname or an empty string when the function is not supported
+	virtual std::string getProductname() const;
+
 	//! \brief Const function that returns the luminaireuniqueid of the light
 	//!
 	//! \note Only working on bridges with versions starting at 1.9
