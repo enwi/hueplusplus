@@ -56,8 +56,12 @@ public:
 		size_t start = response.find("\r\n\r\n");
 		if (start == std::string::npos)
 		{
-			std::cerr << "IHttpHandler: Failed to find body in response\n";
-			throw(std::runtime_error("IHttpHandler: Failed to find body in response"));
+			std::cerr << "BaseHttpHandler: Failed to find body in response\n";
+			std::cerr << "Request:\n";
+			std::cerr << "\"" << msg << "\"\n";
+			std::cerr << "Response:\n";
+			std::cerr << "\"" << response << "\"\n";
+			throw(std::runtime_error("BaseHttpHandler: Failed to find body in response"));
 		}
 		response.erase(0, start + 4);
 		return response;
@@ -231,8 +235,8 @@ private:
         std::unique_ptr<Json::CharReader> reader = std::unique_ptr<Json::CharReader>(builder.newCharReader());
         if (!reader->parse(str.c_str(), str.c_str() + str.length(), &result, &error))
         {
-        	std::cerr << "IHttpHandler: Error while parsing JSON in function strToJsonValue(): " << error << std::endl;
-        	throw(std::runtime_error("IHttpHandler: Error while parsing JSON in function strToJsonValue()"));
+        	std::cerr << "BaseHttpHandler: Error while parsing JSON in function strToJsonValue(): " << error << std::endl;
+        	throw(std::runtime_error("BaseHttpHandler: Error while parsing JSON in function strToJsonValue()"));
         }
         return result;
     }
