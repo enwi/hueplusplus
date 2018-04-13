@@ -57,10 +57,10 @@ set_property(TARGET test_HuePlusPlus PROPERTY CXX_STANDARD 14)
 set_property(TARGET test_HuePlusPlus PROPERTY CXX_EXTENSIONS OFF)
 # add custom target to make it simple to run the tests
 add_custom_target("unittest"
-    # make test_HuePlusPlus executable
-    COMMAND "make" test_HuePlusPlus
     # Run the executable
-    COMMAND "${CMAKE_BINARY_DIR}/hueplusplus/test/test_HuePlusPlus"
+    COMMAND test_HuePlusPlus
+    # Depends on test_HuePlusPlus
+	DEPENDS test_HuePlusPlus
 )
 
 # Check for coverage test prerequisites
