@@ -74,16 +74,16 @@ std::vector<HueFinder::HueIdentification> HueFinder::FindBridges() const
 
 Hue HueFinder::GetBridge(const HueIdentification& identification)
 {
-    Hue bridge(identification.ip, "", http_handler);
     auto pos = usernames.find(identification.mac);
     if (pos != usernames.end())
     {
-        bridge.username = pos->second;
+        return Hue(identification.ip, pos->second, http_handler);
     }
     else
     {
+        Hue bridge(identification.ip, "", http_handler);
         bridge.requestUsername(identification.ip);
-        if (bridge.getUsername().empty() || bridge.getUsername() == "")
+        if (bridge.getUsername().empty())
         {
             std::cerr << "Failed to request username for ip " << identification.ip << std::endl;
             throw std::runtime_error("Failed to request username!");
@@ -92,8 +92,8 @@ Hue HueFinder::GetBridge(const HueIdentification& identification)
         {
             AddUsername(identification.mac, bridge.getUsername());
         }
+        return bridge;
     }
-    return bridge;
 }
 
 void HueFinder::AddUsername(const std::string& mac, const std::string& username)
@@ -147,6 +147,8 @@ std::string Hue::requestUsername(const std::string& ip)
                 // [{"success":{"username": "<username>"}}]
                 username = answer[0]["success"]["username"].asString();
                 this->ip = ip;
+                //Update commands with new username and ip
+                commands = HueCommandAPI(ip, username, http_handler);
                 std::cout << "Success! Link button was pressed!\n";
                 std::cout << "Username is \"" << username << "\"\n";
                 break;
