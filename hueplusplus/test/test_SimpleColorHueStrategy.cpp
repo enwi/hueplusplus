@@ -150,10 +150,10 @@ TEST(SimpleColorHueStrategy, setColorXY)
     test_light.getState()["state"]["xy"][0] = 0.1;
     test_light.getState()["state"]["xy"][1] = 0.1;
     test_light.getState()["state"]["colormode"] = "xy";
-    EXPECT_EQ( true, SimpleColorHueStrategy().setColorXY(0.1, 0.1, 4, test_light) );
+    EXPECT_EQ( true, SimpleColorHueStrategy().setColorXY(0.1f, 0.1f, 4, test_light) );
 
     test_light.getState()["state"]["on"] = false;
-    EXPECT_EQ( true, SimpleColorHueStrategy().setColorXY(0.2355, 0.1234, 6, test_light) );
+    EXPECT_EQ( true, SimpleColorHueStrategy().setColorXY(0.2355f, 0.1234f, 6, test_light) );
 }
 
 TEST(SimpleColorHueStrategy, setColorRGB)
@@ -290,7 +290,7 @@ TEST(SimpleColorHueStrategy, alertXY)
         .WillRepeatedly(Return());
 
     test_light.getState()["state"]["colormode"] = "invalid";
-    EXPECT_EQ( false, SimpleColorHueStrategy().alertXY(0.1, 0.1, test_light) );
+    EXPECT_EQ( false, SimpleColorHueStrategy().alertXY(0.1f, 0.1f, test_light) );
 
     EXPECT_CALL(test_light, setColorXY(_, _, 1))
         .Times(AtLeast(2))
@@ -302,24 +302,24 @@ TEST(SimpleColorHueStrategy, alertXY)
     test_light.getState()["state"]["xy"][1] = 0.1;
     test_light.getState()["state"]["sat"] = 100;
     test_light.getState()["state"]["hue"] = 200;
-    EXPECT_EQ( false, SimpleColorHueStrategy().alertXY(0.1, 0.1, test_light) );
+    EXPECT_EQ( false, SimpleColorHueStrategy().alertXY(0.1f, 0.1f, test_light) );
 
     EXPECT_CALL(test_light, alert())
         .Times(AtLeast(2))
         .WillOnce(Return(false))
         .WillRepeatedly(Return(true));
-    EXPECT_EQ( false, SimpleColorHueStrategy().alertXY(0.1, 0.1, test_light) );
+    EXPECT_EQ( false, SimpleColorHueStrategy().alertXY(0.1f, 0.1f, test_light) );
 
     EXPECT_CALL(test_light, setColorHueSaturation(_, _, 1))
         .Times(AtLeast(2))
         .WillRepeatedly(Return(true));
-    EXPECT_EQ( true, SimpleColorHueStrategy().alertXY(0.1, 0.1, test_light) );
+    EXPECT_EQ( true, SimpleColorHueStrategy().alertXY(0.1f, 0.1f, test_light) );
 
     EXPECT_CALL(test_light, OffNoRefresh(_))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(true));
     test_light.getState()["state"]["on"] = false;
-    EXPECT_EQ( true, SimpleColorHueStrategy().alertXY(0.1, 0.1, test_light) );
+    EXPECT_EQ( true, SimpleColorHueStrategy().alertXY(0.1f, 0.1f, test_light) );
 
     EXPECT_CALL(test_light, setColorXY(_, _, 1))
         .Times(AtLeast(2))
@@ -327,21 +327,21 @@ TEST(SimpleColorHueStrategy, alertXY)
         .WillRepeatedly(Return(true));
     test_light.getState()["state"]["colormode"] = "xy";
     test_light.getState()["state"]["on"] = true;
-    EXPECT_EQ( false, SimpleColorHueStrategy().alertXY(0.1, 0.1, test_light) );
+    EXPECT_EQ( false, SimpleColorHueStrategy().alertXY(0.1f, 0.1f, test_light) );
 
     EXPECT_CALL(test_light, alert())
         .Times(AtLeast(2))
         .WillOnce(Return(false))
         .WillRepeatedly(Return(true));
-    EXPECT_EQ( false, SimpleColorHueStrategy().alertXY(0.1, 0.1, test_light) );
+    EXPECT_EQ( false, SimpleColorHueStrategy().alertXY(0.1f, 0.1f, test_light) );
 
-    EXPECT_EQ( true, SimpleColorHueStrategy().alertXY(0.1, 0.1, test_light) );
+    EXPECT_EQ( true, SimpleColorHueStrategy().alertXY(0.1f, 0.1f, test_light) );
 
     EXPECT_CALL(test_light, OffNoRefresh(_))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(true));
     test_light.getState()["state"]["on"] = false;
-    EXPECT_EQ( true, SimpleColorHueStrategy().alertXY(0.1, 0.1, test_light) );
+    EXPECT_EQ( true, SimpleColorHueStrategy().alertXY(0.1f, 0.1f, test_light) );
 }
 
 TEST(SimpleColorHueStrategy, alertRGB)

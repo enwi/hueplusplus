@@ -25,7 +25,7 @@
 #include "BrightnessStrategy.h"
 #include "ColorHueStrategy.h"
 #include "ColorTemperatureStrategy.h"
-#include "IHttpHandler.h"
+#include "HueCommandAPI.h"
 
 #include "json/json.h"
 
@@ -557,24 +557,20 @@ public:
 protected:
 	//! \brief Protected ctor that is used by \ref Hue class.
 	//!
-	//! \param ip String that specifies the ip of the Hue bridge
-	//! \param username String that specifies the username used to control the bridge
 	//! \param id Integer that specifies the id of this light
-	//! \param handler HttpHandler of type \ref IHttpHandler for communication with the bridge
+	//! \param commands HueCommandAPI for communication with the bridge
 	//!
 	//! leaves strategies unset
-	HueLight(const std::string& ip, const std::string& username, int id, std::shared_ptr<const IHttpHandler> handler);
+	HueLight(int id, const HueCommandAPI& commands);
 
 	//! \brief Protected ctor that is used by \ref Hue class, also sets strategies.
 	//!
-	//! \param ip String that specifies the ip of the Hue bridge
-	//! \param username String that specifies the username used to control the bridge
 	//! \param id Integer that specifies the id of this light
+	//! \param commands HueCommandAPI for communication with the bridge
 	//! \param brightnessStrategy Strategy for brightness. May be nullptr.
 	//! \param colorTempStrategy Strategy for color temperature. May be nullptr.
 	//! \param colorHueStrategy Strategy for color hue/saturation. May be nullptr.
-	//! \param handler HttpHandler of type \ref IHttpHandler for communication with the bridge
-	HueLight(const std::string& ip, const std::string& username, int id, std::shared_ptr<const BrightnessStrategy> brightnessStrategy, std::shared_ptr<const ColorTemperatureStrategy> colorTempStrategy, std::shared_ptr<const ColorHueStrategy> colorHueStrategy, std::shared_ptr<const IHttpHandler> handler);
+	HueLight(int id, const HueCommandAPI& commands, std::shared_ptr<const BrightnessStrategy> brightnessStrategy, std::shared_ptr<const ColorTemperatureStrategy> colorTempStrategy, std::shared_ptr<const ColorHueStrategy> colorHueStrategy);
 
 	//! \brief Protected function that sets the brightness strategy.
 	//!
@@ -594,11 +590,11 @@ protected:
 	//! \param strat a strategy of type \ref ColorHueStrategy
 	virtual void setColorHueStrategy(std::shared_ptr<const ColorHueStrategy> strat)  { colorHueStrategy = std::move(strat); };
 
-	//! \brief Protected function that sets the HttpHandler.
+	//! \brief Protected function that sets the HueCommandAPI.
 	//!
-	//! The HttpHandler defines how specific commands that deal with bridge communication are executed
-	//! \param handler a HttpHandler of type \ref IHttpHandler
-	virtual void setHttpHandler(std::shared_ptr<const IHttpHandler> handler)  { http_handler = std::move(handler); };
+	//! The HueCommandAPI is used for bridge communication
+	//! \param commandAPI the new HueCommandAPI
+	virtual void setCommandAPI(const HueCommandAPI& commandAPI)  { commands = commandAPI; };
 
 	//! \brief Function that turns the light on without refreshing its state.
 	//!
@@ -633,7 +629,7 @@ protected:
 	std::shared_ptr<const BrightnessStrategy>		brightnessStrategy;			//!< holds a reference to the strategy that handles brightness commands
 	std::shared_ptr<const ColorTemperatureStrategy> colorTemperatureStrategy;	//!< holds a reference to the strategy that handles colortemperature commands
 	std::shared_ptr<const ColorHueStrategy>			colorHueStrategy;			//!< holds a reference to the strategy that handles all color commands
-	std::shared_ptr<const IHttpHandler> http_handler;							//!< A IHttpHandler that is used to communicate with the bridge
+	HueCommandAPI commands;							//!< A IHttpHandler that is used to communicate with the bridge
 };
 
 #endif

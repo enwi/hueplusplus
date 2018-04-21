@@ -49,8 +49,6 @@ set(TEST_SOURCES
 # test executable
 add_executable(test_HuePlusPlus ${TEST_SOURCES} ${hueplusplus_SOURCES})
 target_link_libraries(test_HuePlusPlus gtest gmock)
-# prevent Main.cpp from defining main()
-target_compile_definitions(test_HuePlusPlus PUBLIC MAIN_CPP_NO_MAIN_FUNCTION)
 target_include_directories(test_HuePlusPlus PUBLIC ${GTest_INCLUDE_DIRS})
 target_include_directories(test_HuePlusPlus PUBLIC ${HuePlusPlus_INCLUDE_DIR})
 set_property(TARGET test_HuePlusPlus PROPERTY CXX_STANDARD 14)
