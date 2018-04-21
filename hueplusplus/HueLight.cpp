@@ -166,9 +166,7 @@ HueLight::HueLight(int id, const HueCommandAPI& commands)
 {}
 
 HueLight::HueLight(int id, const HueCommandAPI& commands, std::shared_ptr<const BrightnessStrategy> brightnessStrategy, std::shared_ptr<const ColorTemperatureStrategy> colorTempStrategy, std::shared_ptr<const ColorHueStrategy> colorHueStrategy)
-    : ip(ip),
-    username(username),
-    id(id),
+    : id(id),
     brightnessStrategy(std::move(brightnessStrategy)),
     colorTemperatureStrategy(std::move(colorTempStrategy)),
     colorHueStrategy(std::move(colorHueStrategy)),

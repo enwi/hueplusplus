@@ -17,9 +17,11 @@
     Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **/
 
-#include "include\HueCommandAPI.h"
+#include "include/HueCommandAPI.h"
 
 #include <thread>
+
+constexpr std::chrono::steady_clock::duration HueCommandAPI::minDelay;
 
 HueCommandAPI::HueCommandAPI(const std::string& ip, const std::string& username, std::shared_ptr<const IHttpHandler> httpHandler)
     : ip(ip),

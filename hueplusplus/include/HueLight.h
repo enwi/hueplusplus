@@ -620,8 +620,6 @@ protected:
 	virtual void refreshState();
 
 protected:
-	std::string ip;			//!< holds the ip of the light's base
-	std::string username;	//!< holds the username of the light's base
 	int id;					//!< holds the id of the light
 	Json::Value state;		//!< holds the current state of the light updated by \ref refreshState
 	ColorType colorType;	//!< holds the \ref ColorType of the light
