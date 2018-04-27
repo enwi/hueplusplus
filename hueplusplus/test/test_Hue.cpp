@@ -23,14 +23,14 @@ protected:
 
         EXPECT_CALL(*handler, sendMulticast("M-SEARCH * HTTP/1.1\r\nHOST: 239.255.255.250:1900\r\nMAN: \"ssdp:discover\"\r\nMX: 5\r\nST: ssdp:all\r\n\r\n", "239.255.255.250", 1900, 5))
             .Times(AtLeast(1))
-            .WillRepeatedly(Return(multicast_reply));
+            .WillRepeatedly(Return(getMulticastReply()));
 
         EXPECT_CALL(*handler, GETString("/description.xml", "application/xml", "", "192.168.2.1", 80))
             .Times(0);
 
-        EXPECT_CALL(*handler, GETString("/description.xml", "application/xml", "", bridge_ip, 80))
+        EXPECT_CALL(*handler, GETString("/description.xml", "application/xml", "", getBridgeIp(), 80))
             .Times(AtLeast(1))
-            .WillRepeatedly(Return(brige_xml));
+            .WillRepeatedly(Return(getBridgeXml()));
     }
     ~HueFinderTest() {};
 };
@@ -41,8 +41,8 @@ TEST_F(HueFinderTest, FindBridges)
     std::vector<HueFinder::HueIdentification> bridges = finder.FindBridges();
 
     HueFinder::HueIdentification bridge_to_comp;
-    bridge_to_comp.ip = bridge_ip;
-    bridge_to_comp.mac = bridge_mac;
+    bridge_to_comp.ip = getBridgeIp();
+    bridge_to_comp.mac = getBridgeMac();
 
     EXPECT_EQ(bridges.size(), 1) << "HueFinder found more than one Bridge";
     EXPECT_EQ(bridges[0].ip, bridge_to_comp.ip) << "HueIdentification ip does not match";
@@ -63,7 +63,7 @@ TEST_F(HueFinderTest, GetBridge)
     user_ret_uns[0]["error"]["address"] = "";
     user_ret_uns[0]["error"]["description"] = "link button not pressed";
 
-    EXPECT_CALL(*handler, POSTJson("/api", request, bridge_ip, 80))
+    EXPECT_CALL(*handler, POSTJson("/api", request, getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(user_ret_uns));
 
@@ -76,9 +76,9 @@ TEST_F(HueFinderTest, GetBridge)
     user_ret_suc = Json::Value(Json::arrayValue);
     user_ret_suc[0] = Json::Value(Json::objectValue);
     user_ret_suc[0]["success"] = Json::Value(Json::objectValue);
-    user_ret_suc[0]["success"]["username"] = bridge_username;
+    user_ret_suc[0]["success"]["username"] = getBridgeUsername();
 
-    EXPECT_CALL(*handler, POSTJson("/api", request, bridge_ip, 80))
+    EXPECT_CALL(*handler, POSTJson("/api", request, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(user_ret_suc));
 
@@ -87,13 +87,13 @@ TEST_F(HueFinderTest, GetBridge)
 
     Hue test_bridge = finder.GetBridge(bridges[0]);
 
-    EXPECT_EQ(test_bridge.getBridgeIP(), bridge_ip) << "Bridge IP not matching";
-    EXPECT_EQ(test_bridge.getUsername(), bridge_username) << "Bridge username not matching";
+    EXPECT_EQ(test_bridge.getBridgeIP(), getBridgeIp()) << "Bridge IP not matching";
+    EXPECT_EQ(test_bridge.getUsername(), getBridgeUsername()) << "Bridge username not matching";
 
     //Verify that username is correctly set in api requests
     Json::Value hue_bridge_state;
     hue_bridge_state["lights"] = Json::objectValue;
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username, Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername(), Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(1).WillOnce(Return(hue_bridge_state));
 
     test_bridge.getAllLights();
@@ -106,11 +106,11 @@ TEST_F(HueFinderTest, AddUsername)
     HueFinder finder(handler);
     std::vector<HueFinder::HueIdentification> bridges = finder.FindBridges();
 
-    finder.AddUsername(bridges[0].mac, bridge_username);
+    finder.AddUsername(bridges[0].mac, getBridgeUsername());
     Hue test_bridge = finder.GetBridge(bridges[0]);
 
-    EXPECT_EQ(test_bridge.getBridgeIP(), bridge_ip) << "Bridge IP not matching";
-    EXPECT_EQ(test_bridge.getUsername(), bridge_username) << "Bridge username not matching";
+    EXPECT_EQ(test_bridge.getBridgeIP(), getBridgeIp()) << "Bridge IP not matching";
+    EXPECT_EQ(test_bridge.getUsername(), getBridgeUsername()) << "Bridge username not matching";
 }
 
 TEST_F(HueFinderTest, GetAllUsernames)
@@ -118,19 +118,19 @@ TEST_F(HueFinderTest, GetAllUsernames)
     HueFinder finder(handler);
     std::vector<HueFinder::HueIdentification> bridges = finder.FindBridges();
 
-    finder.AddUsername(bridges[0].mac, bridge_username);
+    finder.AddUsername(bridges[0].mac, getBridgeUsername());
 
     std::map<std::string, std::string> users = finder.GetAllUsernames();
-    EXPECT_EQ(users[bridge_mac], bridge_username) << "Username of MAC:" << bridge_mac << "not matching";
+    EXPECT_EQ(users[getBridgeMac()], getBridgeUsername()) << "Username of MAC:" << getBridgeMac() << "not matching";
 }
 
 TEST(Hue, Constructor)
 {
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
-    Hue test_bridge(bridge_ip, bridge_username, handler);
+    Hue test_bridge(getBridgeIp(), getBridgeUsername(), handler);
 
-    EXPECT_EQ(test_bridge.getBridgeIP(), bridge_ip) << "Bridge IP not matching";
-    EXPECT_EQ(test_bridge.getUsername(), bridge_username) << "Bridge username not matching";
+    EXPECT_EQ(test_bridge.getBridgeIP(), getBridgeIp()) << "Bridge IP not matching";
+    EXPECT_EQ(test_bridge.getUsername(), getBridgeUsername()) << "Bridge username not matching";
 }
 
 TEST(Hue, requestUsername)
@@ -148,11 +148,11 @@ TEST(Hue, requestUsername)
     user_ret_uns[0]["error"]["address"] = "";
     user_ret_uns[0]["error"]["description"] = "link button not pressed";
 
-    EXPECT_CALL(*handler, POSTJson("/api", request, bridge_ip, 80))
+    EXPECT_CALL(*handler, POSTJson("/api", request, getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(user_ret_uns));
 
-    Hue test_bridge(bridge_ip, "", handler);
+    Hue test_bridge(getBridgeIp(), "", handler);
 
     test_bridge.requestUsername(test_bridge.getBridgeIP());
     EXPECT_EQ(test_bridge.getUsername(), "") << "Bridge username not matching";
@@ -161,22 +161,22 @@ TEST(Hue, requestUsername)
     user_ret_suc = Json::Value(Json::arrayValue);
     user_ret_suc[0] = Json::Value(Json::objectValue);
     user_ret_suc[0]["success"] = Json::Value(Json::objectValue);
-    user_ret_suc[0]["success"]["username"] = bridge_username;
-    EXPECT_CALL(*handler, POSTJson("/api", request, bridge_ip, 80))
+    user_ret_suc[0]["success"]["username"] = getBridgeUsername();
+    EXPECT_CALL(*handler, POSTJson("/api", request, getBridgeIp(), 80))
         .Times(1)
         .WillRepeatedly(Return(user_ret_suc));
 
-    test_bridge = Hue(bridge_ip, "", handler);
+    test_bridge = Hue(getBridgeIp(), "", handler);
 
     test_bridge.requestUsername(test_bridge.getBridgeIP());
 
-    EXPECT_EQ(test_bridge.getBridgeIP(), bridge_ip) << "Bridge IP not matching";
-    EXPECT_EQ(test_bridge.getUsername(), bridge_username) << "Bridge username not matching";
+    EXPECT_EQ(test_bridge.getBridgeIP(), getBridgeIp()) << "Bridge IP not matching";
+    EXPECT_EQ(test_bridge.getUsername(), getBridgeUsername()) << "Bridge username not matching";
 
     //Verify that username is correctly set in api requests
     Json::Value hue_bridge_state;
     hue_bridge_state["lights"] = Json::objectValue;
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username, Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername(), Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(1).WillOnce(Return(hue_bridge_state));
 
     test_bridge.getAllLights();
@@ -185,8 +185,8 @@ TEST(Hue, requestUsername)
 TEST(Hue, setIP)
 {
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
-    Hue test_bridge(bridge_ip, "", handler);
-    EXPECT_EQ(test_bridge.getBridgeIP(), bridge_ip) << "Bridge IP not matching after initialization";
+    Hue test_bridge(getBridgeIp(), "", handler);
+    EXPECT_EQ(test_bridge.getBridgeIP(), getBridgeIp()) << "Bridge IP not matching after initialization";
     test_bridge.setIP("192.168.2.112");
     EXPECT_EQ(test_bridge.getBridgeIP(), "192.168.2.112") << "Bridge IP not matching after setting it";
 }
@@ -195,10 +195,10 @@ TEST(Hue, getLight)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username, Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername(), Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(1);
 
-    Hue test_bridge(bridge_ip, bridge_username, handler);
+    Hue test_bridge(getBridgeIp(), getBridgeUsername(), handler);
 
     // Test exception
     ASSERT_THROW(test_bridge.getLight(1), std::runtime_error);
@@ -222,11 +222,11 @@ TEST(Hue, getLight)
     hue_bridge_state["lights"]["1"]["manufacturername"] = "Philips";
     hue_bridge_state["lights"]["1"]["uniqueid"] = "00:00:00:00:00:00:00:00-00";
     hue_bridge_state["lights"]["1"]["swversion"] = "5.50.1.19085";
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username, Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername(), Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(hue_bridge_state));
 
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username + "/lights/1", Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(hue_bridge_state["lights"]["1"]));
 
@@ -244,14 +244,14 @@ TEST(Hue, getLight)
 
     // more coverage stuff
     hue_bridge_state["lights"]["1"]["modelid"] = "LCT001";
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username, Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername(), Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(hue_bridge_state));
 
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username + "/lights/1", Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(hue_bridge_state["lights"]["1"]));
-    test_bridge = Hue(bridge_ip, bridge_username, handler);
+    test_bridge = Hue(getBridgeIp(), getBridgeUsername(), handler);
 
     // Test when correct data is sent
     test_light_1 = test_bridge.getLight(1);
@@ -260,14 +260,14 @@ TEST(Hue, getLight)
 
 
     hue_bridge_state["lights"]["1"]["modelid"] = "LCT010";
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username, Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername(), Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(hue_bridge_state));
 
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username + "/lights/1", Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(hue_bridge_state["lights"]["1"]));
-    test_bridge = Hue(bridge_ip, bridge_username, handler);
+    test_bridge = Hue(getBridgeIp(), getBridgeUsername(), handler);
 
     // Test when correct data is sent
     test_light_1 = test_bridge.getLight(1);
@@ -276,14 +276,14 @@ TEST(Hue, getLight)
 
 
     hue_bridge_state["lights"]["1"]["modelid"] = "LST001";
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username, Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername(), Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(hue_bridge_state));
 
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username + "/lights/1", Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(hue_bridge_state["lights"]["1"]));
-    test_bridge = Hue(bridge_ip, bridge_username, handler);
+    test_bridge = Hue(getBridgeIp(), getBridgeUsername(), handler);
 
     // Test when correct data is sent
     test_light_1 = test_bridge.getLight(1);
@@ -292,14 +292,14 @@ TEST(Hue, getLight)
 
 
     hue_bridge_state["lights"]["1"]["modelid"] = "LWB004";
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username, Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername(), Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(hue_bridge_state));
 
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username + "/lights/1", Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(hue_bridge_state["lights"]["1"]));
-    test_bridge = Hue(bridge_ip, bridge_username, handler);
+    test_bridge = Hue(getBridgeIp(), getBridgeUsername(), handler);
 
     // Test when correct data is sent
     test_light_1 = test_bridge.getLight(1);
@@ -308,10 +308,10 @@ TEST(Hue, getLight)
 
 
     hue_bridge_state["lights"]["1"]["modelid"] = "ABC000";
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username, Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername(), Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(hue_bridge_state));
-    test_bridge = Hue(bridge_ip, bridge_username, handler);
+    test_bridge = Hue(getBridgeIp(), getBridgeUsername(), handler);
 
     ASSERT_THROW(test_bridge.getLight(1), std::runtime_error);
 }
@@ -339,13 +339,13 @@ TEST(Hue, removeLight)
     hue_bridge_state["lights"]["1"]["manufacturername"] = "Philips";
     hue_bridge_state["lights"]["1"]["uniqueid"] = "00:00:00:00:00:00:00:00-00";
     hue_bridge_state["lights"]["1"]["swversion"] = "5.50.1.19085";
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username, Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername(), Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(hue_bridge_state));
 
-    Hue test_bridge(bridge_ip, bridge_username, handler);
+    Hue test_bridge(getBridgeIp(), getBridgeUsername(), handler);
 
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username + "/lights/1", Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(1)
         .WillRepeatedly(Return(hue_bridge_state["lights"]["1"]));
 
@@ -353,7 +353,7 @@ TEST(Hue, removeLight)
     return_answer = Json::Value(Json::arrayValue);
     return_answer[0] = Json::Value(Json::objectValue);
     return_answer[0]["success"] = "/lights/1 deleted";
-    EXPECT_CALL(*handler, DELETEJson("/api/" + bridge_username + "/lights/1", Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, DELETEJson("/api/" + getBridgeUsername() + "/lights/1", Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(2)
         .WillOnce(Return(return_answer))
         .WillOnce(Return(Json::Value()));
@@ -389,15 +389,15 @@ TEST(Hue, getAllLights)
     hue_bridge_state["lights"]["1"]["manufacturername"] = "Philips";
     hue_bridge_state["lights"]["1"]["uniqueid"] = "00:00:00:00:00:00:00:00-00";
     hue_bridge_state["lights"]["1"]["swversion"] = "5.50.1.19085";
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username, Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername(), Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(2)
         .WillRepeatedly(Return(hue_bridge_state));
 
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username + "/lights/1", Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(2)
         .WillRepeatedly(Return(hue_bridge_state["lights"]["1"]));
 
-    Hue test_bridge(bridge_ip, bridge_username, handler);
+    Hue test_bridge(getBridgeIp(), getBridgeUsername(), handler);
 
     std::vector<std::reference_wrapper<HueLight>> test_lights = test_bridge.getAllLights();
     ASSERT_EQ(1, test_lights.size());
@@ -428,14 +428,14 @@ TEST(Hue, lightExists)
     hue_bridge_state["lights"]["1"]["manufacturername"] = "Philips";
     hue_bridge_state["lights"]["1"]["uniqueid"] = "00:00:00:00:00:00:00:00-00";
     hue_bridge_state["lights"]["1"]["swversion"] = "5.50.1.19085";
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username, Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername(), Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(AtLeast(2))
         .WillRepeatedly(Return(hue_bridge_state));
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username + "/lights/1", Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(hue_bridge_state["lights"]["1"]));
 
-    Hue test_bridge(bridge_ip, bridge_username, handler);
+    Hue test_bridge(getBridgeIp(), getBridgeUsername(), handler);
 
     EXPECT_EQ(true, test_bridge.lightExists(1));
     EXPECT_EQ(false, test_bridge.lightExists(2));
@@ -453,7 +453,7 @@ TEST(Hue, lightExists)
 TEST(Hue, refreshState)
 {
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
-    Hue test_bridge(bridge_ip, "", handler);    // NULL as username leads to segfault
+    Hue test_bridge(getBridgeIp(), "", handler);    // NULL as username leads to segfault
 
     std::vector<std::reference_wrapper<HueLight>> test_lights = test_bridge.getAllLights();
     EXPECT_EQ(test_lights.size(), 0);

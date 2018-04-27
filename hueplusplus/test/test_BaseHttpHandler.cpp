@@ -11,7 +11,7 @@
 TEST(BaseHttpHandler, sendGetHTTPBody)
 {
     using namespace ::testing;
-	MockBaseHttpHandler handler;
+    MockBaseHttpHandler handler;
 
     EXPECT_CALL(handler, send("testmsg", "192.168.2.1", 90))
         .Times(AtLeast(2))
@@ -25,7 +25,7 @@ TEST(BaseHttpHandler, sendGetHTTPBody)
 TEST(BaseHttpHandler, sendHTTPRequest)
 {
     using namespace ::testing;
-	MockBaseHttpHandler handler;
+    MockBaseHttpHandler handler;
 
     EXPECT_CALL(handler, send("GET UrI HTTP/1.0\r\nContent-Type: text/html\r\nContent-Length: 4\r\n\r\nbody\r\n\r\n", "192.168.2.1", 90))
         .Times(AtLeast(2))
@@ -39,7 +39,7 @@ TEST(BaseHttpHandler, sendHTTPRequest)
 TEST(BaseHttpHandler, GETString)
 {
     using namespace ::testing;
-	MockBaseHttpHandler handler;
+    MockBaseHttpHandler handler;
 
     EXPECT_CALL(handler, send("GET UrI HTTP/1.0\r\nContent-Type: text/html\r\nContent-Length: 4\r\n\r\nbody\r\n\r\n", "192.168.2.1", 90))
         .Times(AtLeast(2))
@@ -53,7 +53,7 @@ TEST(BaseHttpHandler, GETString)
 TEST(BaseHttpHandler, POSTString)
 {
     using namespace ::testing;
-	MockBaseHttpHandler handler;
+    MockBaseHttpHandler handler;
 
     EXPECT_CALL(handler, send("POST UrI HTTP/1.0\r\nContent-Type: text/html\r\nContent-Length: 4\r\n\r\nbody\r\n\r\n", "192.168.2.1", 90))
         .Times(AtLeast(2))
@@ -67,7 +67,7 @@ TEST(BaseHttpHandler, POSTString)
 TEST(BaseHttpHandler, PUTString)
 {
     using namespace ::testing;
-	MockBaseHttpHandler handler;
+    MockBaseHttpHandler handler;
 
     EXPECT_CALL(handler, send("PUT UrI HTTP/1.0\r\nContent-Type: text/html\r\nContent-Length: 4\r\n\r\nbody\r\n\r\n", "192.168.2.1", 90))
         .Times(AtLeast(2))
@@ -81,7 +81,7 @@ TEST(BaseHttpHandler, PUTString)
 TEST(BaseHttpHandler, DELETEString)
 {
     using namespace ::testing;
-	MockBaseHttpHandler handler;
+    MockBaseHttpHandler handler;
 
     EXPECT_CALL(handler, send("DELETE UrI HTTP/1.0\r\nContent-Type: text/html\r\nContent-Length: 4\r\n\r\nbody\r\n\r\n", "192.168.2.1", 90))
         .Times(AtLeast(2))
@@ -95,7 +95,7 @@ TEST(BaseHttpHandler, DELETEString)
 TEST(BaseHttpHandler, GETJson)
 {
     using namespace ::testing;
-	MockBaseHttpHandler handler;
+    MockBaseHttpHandler handler;
 
     Json::Value testval;
     testval["test"] = 100;
@@ -121,7 +121,7 @@ TEST(BaseHttpHandler, GETJson)
 TEST(BaseHttpHandler, POSTJson)
 {
     using namespace ::testing;
-	MockBaseHttpHandler handler;
+    MockBaseHttpHandler handler;
 
     Json::Value testval;
     testval["test"] = 100;
@@ -147,7 +147,7 @@ TEST(BaseHttpHandler, POSTJson)
 TEST(BaseHttpHandler, PUTJson)
 {
     using namespace ::testing;
-	MockBaseHttpHandler handler;
+    MockBaseHttpHandler handler;
 
     Json::Value testval;
     testval["test"] = 100;
@@ -173,7 +173,7 @@ TEST(BaseHttpHandler, PUTJson)
 TEST(BaseHttpHandler, DELETEJson)
 {
     using namespace ::testing;
-	MockBaseHttpHandler handler;
+    MockBaseHttpHandler handler;
 
     Json::Value testval;
     testval["test"] = 100;
