@@ -79,21 +79,16 @@ Hue HueFinder::GetBridge(const HueIdentification& identification)
     {
         return Hue(identification.ip, pos->second, http_handler);
     }
-    else
+    Hue bridge(identification.ip, "", http_handler);
+    bridge.requestUsername(identification.ip);
+    if (bridge.getUsername().empty())
     {
-        Hue bridge(identification.ip, "", http_handler);
-        bridge.requestUsername(identification.ip);
-        if (bridge.getUsername().empty())
-        {
-            std::cerr << "Failed to request username for ip " << identification.ip << std::endl;
-            throw std::runtime_error("Failed to request username!");
-        }
-        else
-        {
-            AddUsername(identification.mac, bridge.getUsername());
-        }
-        return bridge;
+        std::cerr << "Failed to request username for ip " << identification.ip << std::endl;
+        throw std::runtime_error("Failed to request username!");
     }
+    AddUsername(identification.mac, bridge.getUsername());
+
+    return bridge;
 }
 
 void HueFinder::AddUsername(const std::string& mac, const std::string& username)
