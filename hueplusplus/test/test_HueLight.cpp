@@ -15,8 +15,8 @@ protected:
     Hue test_bridge;
 protected:
     HueLightTest() :
-    handler(std::make_shared<MockHttpHandler>()),
-    test_bridge(bridge_ip, bridge_username, handler)
+        handler(std::make_shared<MockHttpHandler>()),
+        test_bridge(getBridgeIp(), getBridgeUsername(), handler)
     {
         using namespace ::testing;
         hue_bridge_state["lights"] = Json::Value(Json::objectValue);
@@ -81,20 +81,20 @@ protected:
         hue_bridge_state["lights"]["3"]["productname"] = "Hue bloom";
         hue_bridge_state["lights"]["3"]["swversion"] = "5.50.1.19085";
 
-        EXPECT_CALL(*handler, GETJson("/api/" + bridge_username, Json::Value(Json::objectValue), bridge_ip, 80))
-           .Times(AtLeast(1))
-           .WillRepeatedly(Return(hue_bridge_state));
-        EXPECT_CALL(*handler, GETJson("/api/" + bridge_username + "/lights/1", Json::Value(Json::objectValue), bridge_ip, 80))
-           .Times(AtLeast(1))
-           .WillRepeatedly(Return(hue_bridge_state["lights"]["1"]));
-        EXPECT_CALL(*handler, GETJson("/api/" + bridge_username + "/lights/2", Json::Value(Json::objectValue), bridge_ip, 80))
-           .Times(AtLeast(1))
-           .WillRepeatedly(Return(hue_bridge_state["lights"]["2"]));
-        EXPECT_CALL(*handler, GETJson("/api/" + bridge_username + "/lights/3", Json::Value(Json::objectValue), bridge_ip, 80))
-           .Times(AtLeast(1))
-           .WillRepeatedly(Return(hue_bridge_state["lights"]["3"]));
+        EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername(), Json::Value(Json::objectValue), getBridgeIp(), 80))
+            .Times(AtLeast(1))
+            .WillRepeatedly(Return(hue_bridge_state));
+        EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", Json::Value(Json::objectValue), getBridgeIp(), 80))
+            .Times(AtLeast(1))
+            .WillRepeatedly(Return(hue_bridge_state["lights"]["1"]));
+        EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername() + "/lights/2", Json::Value(Json::objectValue), getBridgeIp(), 80))
+            .Times(AtLeast(1))
+            .WillRepeatedly(Return(hue_bridge_state["lights"]["2"]));
+        EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername() + "/lights/3", Json::Value(Json::objectValue), getBridgeIp(), 80))
+            .Times(AtLeast(1))
+            .WillRepeatedly(Return(hue_bridge_state["lights"]["3"]));
     }
-    ~HueLightTest(){};
+    ~HueLightTest() {};
 };
 
 TEST_F(HueLightTest, Constructor)
@@ -110,7 +110,7 @@ TEST_F(HueLightTest, Constructor)
 TEST_F(HueLightTest, On)
 {
     using namespace ::testing;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/2/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/2/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(Json::Value(Json::arrayValue)));
 
@@ -122,7 +122,7 @@ TEST_F(HueLightTest, On)
     prep_ret[1] = Json::Value(Json::objectValue);
     prep_ret[1]["success"] = Json::Value(Json::objectValue);
     prep_ret[1]["success"]["/lights/3/state/on"] = true;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/3/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/3/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(prep_ret));
 
@@ -146,7 +146,7 @@ TEST_F(HueLightTest, Off)
     prep_ret[1] = Json::Value(Json::objectValue);
     prep_ret[1]["success"] = Json::Value(Json::objectValue);
     prep_ret[1]["success"]["/lights/1/state/on"] = false;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/1/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/1/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(prep_ret));
 
@@ -339,15 +339,15 @@ TEST_F(HueLightTest, setName)
     prep_ret[0] = Json::Value(Json::objectValue);
     prep_ret[0]["success"] = Json::Value(Json::objectValue);
     prep_ret[0]["success"]["/lights/1/name"] = expected_request["name"].asString();
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/1/name", expected_request, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/1/name", expected_request, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(prep_ret));
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/2/name", expected_request, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/2/name", expected_request, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(Json::Value(Json::arrayValue)));
     prep_ret[0]["success"] = Json::Value(Json::objectValue);
     prep_ret[0]["success"]["/lights/3/name"] = expected_request["name"].asString();
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/3/name", expected_request, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/3/name", expected_request, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(prep_ret));
 
@@ -387,11 +387,11 @@ TEST_F(HueLightTest, KelvinToMired)
     HueLight test_light_3 = test_bridge.getLight(3);
 
     EXPECT_EQ(10000, ctest_light_1.KelvinToMired(100));
-    EXPECT_EQ(  500, ctest_light_2.KelvinToMired(2000));
-    EXPECT_EQ(  303, ctest_light_3.KelvinToMired(3300));
-    EXPECT_EQ(  250, test_light_1.KelvinToMired(4000));
-    EXPECT_EQ(  200, test_light_2.KelvinToMired(5000));
-    EXPECT_EQ(  166, test_light_3.KelvinToMired(6000));
+    EXPECT_EQ(500, ctest_light_2.KelvinToMired(2000));
+    EXPECT_EQ(303, ctest_light_3.KelvinToMired(3300));
+    EXPECT_EQ(250, test_light_1.KelvinToMired(4000));
+    EXPECT_EQ(200, test_light_2.KelvinToMired(5000));
+    EXPECT_EQ(166, test_light_3.KelvinToMired(6000));
 }
 
 TEST_F(HueLightTest, MiredToKelvin)
@@ -403,7 +403,7 @@ TEST_F(HueLightTest, MiredToKelvin)
     HueLight test_light_2 = test_bridge.getLight(2);
     HueLight test_light_3 = test_bridge.getLight(3);
 
-    EXPECT_EQ( 100, ctest_light_1.MiredToKelvin(10000));
+    EXPECT_EQ(100, ctest_light_1.MiredToKelvin(10000));
     EXPECT_EQ(2000, ctest_light_2.MiredToKelvin(500));
     EXPECT_EQ(3300, ctest_light_3.MiredToKelvin(303));
     EXPECT_EQ(4000, test_light_1.MiredToKelvin(250));
@@ -465,7 +465,7 @@ TEST_F(HueLightTest, hasColorControl)
 TEST_F(HueLightTest, setBrightness)
 {
     using namespace ::testing;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/1/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/1/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(Json::Value(Json::arrayValue)));
     Json::Value prep_ret;
@@ -479,7 +479,7 @@ TEST_F(HueLightTest, setBrightness)
     prep_ret[2] = Json::Value(Json::objectValue);
     prep_ret[2]["success"] = Json::Value(Json::objectValue);
     prep_ret[2]["success"]["/lights/3/state/bri"] = 254;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/3/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/3/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(prep_ret));
 
@@ -523,7 +523,7 @@ TEST_F(HueLightTest, setColorTemperature)
     prep_ret[0] = Json::Value(Json::objectValue);
     prep_ret[0]["success"] = Json::Value(Json::objectValue);
     prep_ret[0]["success"]["/lights/3/state/transitiontime"] = 0;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/3/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/3/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(prep_ret));
 
@@ -556,7 +556,7 @@ TEST_F(HueLightTest, getColorTemperature)
 TEST_F(HueLightTest, setColorHue)
 {
     using namespace ::testing;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/2/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/2/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(Json::Value(Json::arrayValue)));
     Json::Value prep_ret;
@@ -570,7 +570,7 @@ TEST_F(HueLightTest, setColorHue)
     prep_ret[0] = Json::Value(Json::objectValue);
     prep_ret[0]["success"] = Json::Value(Json::objectValue);
     prep_ret[0]["success"]["/lights/3/state/transitiontime"] = 0;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/3/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/3/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(prep_ret));
 
@@ -586,7 +586,7 @@ TEST_F(HueLightTest, setColorHue)
 TEST_F(HueLightTest, setColorSaturation)
 {
     using namespace ::testing;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/2/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/2/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(Json::Value(Json::arrayValue)));
     Json::Value prep_ret;
@@ -600,7 +600,7 @@ TEST_F(HueLightTest, setColorSaturation)
     prep_ret[0] = Json::Value(Json::objectValue);
     prep_ret[0]["success"] = Json::Value(Json::objectValue);
     prep_ret[0]["success"]["/lights/3/state/transitiontime"] = 0;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/3/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/3/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(prep_ret));
 
@@ -616,7 +616,7 @@ TEST_F(HueLightTest, setColorSaturation)
 TEST_F(HueLightTest, setColorHueSaturation)
 {
     using namespace ::testing;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/2/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/2/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(Json::Value(Json::arrayValue)));
     Json::Value prep_ret;
@@ -633,7 +633,7 @@ TEST_F(HueLightTest, setColorHueSaturation)
     prep_ret[0] = Json::Value(Json::objectValue);
     prep_ret[0]["success"] = Json::Value(Json::objectValue);
     prep_ret[0]["success"]["/lights/3/state/transitiontime"] = 0;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/3/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/3/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(prep_ret));
 
@@ -666,7 +666,7 @@ TEST_F(HueLightTest, getColorHueSaturation)
 TEST_F(HueLightTest, setColorXY)
 {
     using namespace ::testing;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/2/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/2/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(Json::Value(Json::arrayValue)));
     Json::Value prep_ret;
@@ -681,7 +681,7 @@ TEST_F(HueLightTest, setColorXY)
     prep_ret[0] = Json::Value(Json::objectValue);
     prep_ret[0]["success"] = Json::Value(Json::objectValue);
     prep_ret[0]["success"]["/lights/3/state/transitiontime"] = 0;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/3/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/3/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(prep_ret));
 
@@ -714,7 +714,7 @@ TEST_F(HueLightTest, getColorXY)
 TEST_F(HueLightTest, setColorRGB)
 {
     using namespace ::testing;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/2/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/2/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(Json::Value(Json::arrayValue)));
     Json::Value prep_ret;
@@ -729,7 +729,7 @@ TEST_F(HueLightTest, setColorRGB)
     prep_ret[0] = Json::Value(Json::objectValue);
     prep_ret[0]["success"] = Json::Value(Json::objectValue);
     prep_ret[0]["success"]["/lights/3/state/transitiontime"] = 0;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/3/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/3/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(prep_ret));
 
@@ -745,10 +745,10 @@ TEST_F(HueLightTest, setColorRGB)
 TEST_F(HueLightTest, alert)
 {
     using namespace ::testing;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/1/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/1/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(Json::Value(Json::arrayValue)));
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/2/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/2/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(Json::Value(Json::arrayValue)));
     Json::Value prep_ret;
@@ -756,7 +756,7 @@ TEST_F(HueLightTest, alert)
     prep_ret[0] = Json::Value(Json::objectValue);
     prep_ret[0]["success"] = Json::Value(Json::objectValue);
     prep_ret[0]["success"]["/lights/3/state/alert"] = "select";
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/3/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/3/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(prep_ret));
 
@@ -772,7 +772,7 @@ TEST_F(HueLightTest, alert)
 TEST_F(HueLightTest, alertTemperature)
 {
     using namespace ::testing;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/3/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/3/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(Json::Value(Json::arrayValue)));
 
@@ -788,7 +788,7 @@ TEST_F(HueLightTest, alertTemperature)
 TEST_F(HueLightTest, alertHueSaturation)
 {
     using namespace ::testing;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/3/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/3/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(Json::Value(Json::arrayValue)));
 
@@ -804,7 +804,7 @@ TEST_F(HueLightTest, alertHueSaturation)
 TEST_F(HueLightTest, alertXY)
 {
     using namespace ::testing;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/3/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/3/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(Json::Value(Json::arrayValue)));
 
@@ -820,7 +820,7 @@ TEST_F(HueLightTest, alertXY)
 TEST_F(HueLightTest, alertRGB)
 {
     using namespace ::testing;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/3/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/3/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(Json::Value(Json::arrayValue)));
 
@@ -836,10 +836,10 @@ TEST_F(HueLightTest, alertRGB)
 TEST_F(HueLightTest, setColorLoop)
 {
     using namespace ::testing;
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/2/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/2/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(Json::Value(Json::arrayValue)));
-    EXPECT_CALL(*handler, PUTJson("/api/" + bridge_username + "/lights/3/state", _, bridge_ip, 80))
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/3/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(Json::Value(Json::arrayValue)));
 
@@ -859,7 +859,7 @@ TEST_F(HueLightTest, refreshState)
     test_bridge.getLight(2);
     test_bridge.getLight(3);
 
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username + "/lights/1", Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(2)
         .WillRepeatedly(Return(Json::Value(Json::objectValue)));
 

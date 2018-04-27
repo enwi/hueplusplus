@@ -33,7 +33,7 @@
 class MockHueLight : public HueLight
 {
 public:
-    MockHueLight(std::shared_ptr<const IHttpHandler> handler) : HueLight(1, HueCommandAPI(bridge_ip, bridge_username, handler)) {};
+    MockHueLight(std::shared_ptr<const IHttpHandler> handler) : HueLight(1, HueCommandAPI(getBridgeIp(), getBridgeUsername(), handler)) {};
 
     Json::Value& getState() { return state; };
 

@@ -14,7 +14,7 @@ TEST(ExtendedColorHueStrategy, alertHueSaturation)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler(std::make_shared<MockHttpHandler>());
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username + "/lights/1", Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(Json::Value(Json::objectValue)));
     MockHueLight test_light(handler);
@@ -107,7 +107,7 @@ TEST(ExtendedColorHueStrategy, alertXY)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler(std::make_shared<MockHttpHandler>());
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username + "/lights/1", Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(Json::Value(Json::objectValue)));
     MockHueLight test_light(handler);
@@ -200,7 +200,7 @@ TEST(ExtendedColorHueStrategy, alertRGB)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler(std::make_shared<MockHttpHandler>());
-    EXPECT_CALL(*handler, GETJson("/api/" + bridge_username + "/lights/1", Json::Value(Json::objectValue), bridge_ip, 80))
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", Json::Value(Json::objectValue), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(Json::Value(Json::objectValue)));
     MockHueLight test_light(handler);
