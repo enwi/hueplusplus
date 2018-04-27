@@ -400,6 +400,7 @@ TEST(Hue, getAllLights)
     Hue test_bridge(bridge_ip, bridge_username, handler);
 
     std::vector<std::reference_wrapper<HueLight>> test_lights = test_bridge.getAllLights();
+    ASSERT_EQ(1, test_lights.size());
     EXPECT_EQ(test_lights[0].get().getName(), "Hue ambiance lamp 1");
     EXPECT_EQ(test_lights[0].get().getColorType(), ColorType::TEMPERATURE);
 }
