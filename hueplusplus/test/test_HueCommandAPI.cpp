@@ -30,35 +30,35 @@ TEST(HueCommandAPI, PUTRequest)
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> httpHandler = std::make_shared<MockHttpHandler>();
 
-    HueCommandAPI api(bridge_ip, bridge_username, httpHandler);
+    HueCommandAPI api(getBridgeIp(), getBridgeUsername(), httpHandler);
     Json::Value request;
     Json::Value result = Json::objectValue;
     result["ok"] = true;
 
     //empty path
     {
-        EXPECT_CALL(*httpHandler, PUTJson("/api/" + bridge_username, request, bridge_ip, 80)).WillOnce(Return(result));
+        EXPECT_CALL(*httpHandler, PUTJson("/api/" + getBridgeUsername(), request, getBridgeIp(), 80)).WillOnce(Return(result));
         EXPECT_EQ(result, api.PUTRequest("", request));
         Mock::VerifyAndClearExpectations(httpHandler.get());
     }
     //not empty path, starting with slash
     {
         const std::string path = "/test";
-        EXPECT_CALL(*httpHandler, PUTJson("/api/" + bridge_username + path, request, bridge_ip, 80)).WillOnce(Return(result));
+        EXPECT_CALL(*httpHandler, PUTJson("/api/" + getBridgeUsername() + path, request, getBridgeIp(), 80)).WillOnce(Return(result));
         EXPECT_EQ(result, api.PUTRequest(path, request));
         Mock::VerifyAndClearExpectations(httpHandler.get());
     }
     //not empty path, not starting with slash
     {
         const std::string path = "test";
-        EXPECT_CALL(*httpHandler, PUTJson("/api/" + bridge_username + '/' + path, request, bridge_ip, 80)).WillOnce(Return(result));
+        EXPECT_CALL(*httpHandler, PUTJson("/api/" + getBridgeUsername() + '/' + path, request, getBridgeIp(), 80)).WillOnce(Return(result));
         EXPECT_EQ(result, api.PUTRequest(path, request));
         Mock::VerifyAndClearExpectations(httpHandler.get());
     }
     //recoverable error
     {
         const std::string path = "/test";
-        EXPECT_CALL(*httpHandler, PUTJson("/api/" + bridge_username + path, request, bridge_ip, 80))
+        EXPECT_CALL(*httpHandler, PUTJson("/api/" + getBridgeUsername() + path, request, getBridgeIp(), 80))
             .WillOnce(Throw(std::system_error(std::make_error_code(std::errc::connection_reset))))
             .WillOnce(Return(result));
         EXPECT_EQ(result, api.PUTRequest(path, request));
@@ -67,7 +67,7 @@ TEST(HueCommandAPI, PUTRequest)
     //recoverable error x2
     {
         const std::string path = "/test";
-        EXPECT_CALL(*httpHandler, PUTJson("/api/" + bridge_username + path, request, bridge_ip, 80))
+        EXPECT_CALL(*httpHandler, PUTJson("/api/" + getBridgeUsername() + path, request, getBridgeIp(), 80))
             .WillOnce(Throw(std::system_error(std::make_error_code(std::errc::connection_reset))))
             .WillOnce(Throw(std::system_error(std::make_error_code(std::errc::connection_reset))));
         EXPECT_THROW(api.PUTRequest(path, request), std::system_error);
@@ -76,7 +76,7 @@ TEST(HueCommandAPI, PUTRequest)
     //unrecoverable error
     {
         const std::string path = "/test";
-        EXPECT_CALL(*httpHandler, PUTJson("/api/" + bridge_username + path, request, bridge_ip, 80))
+        EXPECT_CALL(*httpHandler, PUTJson("/api/" + getBridgeUsername() + path, request, getBridgeIp(), 80))
             .WillOnce(Throw(std::system_error(std::make_error_code(std::errc::not_enough_memory))));
         EXPECT_THROW(api.PUTRequest(path, request), std::system_error);
         Mock::VerifyAndClearExpectations(httpHandler.get());
@@ -88,35 +88,35 @@ TEST(HueCommandAPI, GETRequest)
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> httpHandler = std::make_shared<MockHttpHandler>();
 
-    HueCommandAPI api(bridge_ip, bridge_username, httpHandler);
+    HueCommandAPI api(getBridgeIp(), getBridgeUsername(), httpHandler);
     Json::Value request;
     Json::Value result = Json::objectValue;
     result["ok"] = true;
 
     //empty path
     {
-        EXPECT_CALL(*httpHandler, GETJson("/api/" + bridge_username, request, bridge_ip, 80)).WillOnce(Return(result));
+        EXPECT_CALL(*httpHandler, GETJson("/api/" + getBridgeUsername(), request, getBridgeIp(), 80)).WillOnce(Return(result));
         EXPECT_EQ(result, api.GETRequest("", request));
         Mock::VerifyAndClearExpectations(httpHandler.get());
     }
     //not empty path, starting with slash
     {
         const std::string path = "/test";
-        EXPECT_CALL(*httpHandler, GETJson("/api/" + bridge_username + path, request, bridge_ip, 80)).WillOnce(Return(result));
+        EXPECT_CALL(*httpHandler, GETJson("/api/" + getBridgeUsername() + path, request, getBridgeIp(), 80)).WillOnce(Return(result));
         EXPECT_EQ(result, api.GETRequest(path, request));
         Mock::VerifyAndClearExpectations(httpHandler.get());
     }
     //not empty path, not starting with slash
     {
         const std::string path = "test";
-        EXPECT_CALL(*httpHandler, GETJson("/api/" + bridge_username + '/' + path, request, bridge_ip, 80)).WillOnce(Return(result));
+        EXPECT_CALL(*httpHandler, GETJson("/api/" + getBridgeUsername() + '/' + path, request, getBridgeIp(), 80)).WillOnce(Return(result));
         EXPECT_EQ(result, api.GETRequest(path, request));
         Mock::VerifyAndClearExpectations(httpHandler.get());
     }
     //recoverable error
     {
         const std::string path = "/test";
-        EXPECT_CALL(*httpHandler, GETJson("/api/" + bridge_username + path, request, bridge_ip, 80))
+        EXPECT_CALL(*httpHandler, GETJson("/api/" + getBridgeUsername() + path, request, getBridgeIp(), 80))
             .WillOnce(Throw(std::system_error(std::make_error_code(std::errc::connection_reset))))
             .WillOnce(Return(result));
         EXPECT_EQ(result, api.GETRequest(path, request));
@@ -125,7 +125,7 @@ TEST(HueCommandAPI, GETRequest)
     //recoverable error x2
     {
         const std::string path = "/test";
-        EXPECT_CALL(*httpHandler, GETJson("/api/" + bridge_username + path, request, bridge_ip, 80))
+        EXPECT_CALL(*httpHandler, GETJson("/api/" + getBridgeUsername() + path, request, getBridgeIp(), 80))
             .WillOnce(Throw(std::system_error(std::make_error_code(std::errc::connection_reset))))
             .WillOnce(Throw(std::system_error(std::make_error_code(std::errc::connection_reset))));
         EXPECT_THROW(api.GETRequest(path, request), std::system_error);
@@ -134,7 +134,7 @@ TEST(HueCommandAPI, GETRequest)
     //unrecoverable error
     {
         const std::string path = "/test";
-        EXPECT_CALL(*httpHandler, GETJson("/api/" + bridge_username + path, request, bridge_ip, 80))
+        EXPECT_CALL(*httpHandler, GETJson("/api/" + getBridgeUsername() + path, request, getBridgeIp(), 80))
             .WillOnce(Throw(std::system_error(std::make_error_code(std::errc::not_enough_memory))));
         EXPECT_THROW(api.GETRequest(path, request), std::system_error);
         Mock::VerifyAndClearExpectations(httpHandler.get());
@@ -146,35 +146,35 @@ TEST(HueCommandAPI, DELETERequest)
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> httpHandler = std::make_shared<MockHttpHandler>();
 
-    HueCommandAPI api(bridge_ip, bridge_username, httpHandler);
+    HueCommandAPI api(getBridgeIp(), getBridgeUsername(), httpHandler);
     Json::Value request;
     Json::Value result = Json::objectValue;
     result["ok"] = true;
 
     //empty path
     {
-        EXPECT_CALL(*httpHandler, DELETEJson("/api/" + bridge_username, request, bridge_ip, 80)).WillOnce(Return(result));
+        EXPECT_CALL(*httpHandler, DELETEJson("/api/" + getBridgeUsername(), request, getBridgeIp(), 80)).WillOnce(Return(result));
         EXPECT_EQ(result, api.DELETERequest("", request));
         Mock::VerifyAndClearExpectations(httpHandler.get());
     }
     //not empty path, starting with slash
     {
         const std::string path = "/test";
-        EXPECT_CALL(*httpHandler, DELETEJson("/api/" + bridge_username + path, request, bridge_ip, 80)).WillOnce(Return(result));
+        EXPECT_CALL(*httpHandler, DELETEJson("/api/" + getBridgeUsername() + path, request, getBridgeIp(), 80)).WillOnce(Return(result));
         EXPECT_EQ(result, api.DELETERequest(path, request));
         Mock::VerifyAndClearExpectations(httpHandler.get());
     }
     //not empty path, not starting with slash
     {
         const std::string path = "test";
-        EXPECT_CALL(*httpHandler, DELETEJson("/api/" + bridge_username + '/' + path, request, bridge_ip, 80)).WillOnce(Return(result));
+        EXPECT_CALL(*httpHandler, DELETEJson("/api/" + getBridgeUsername() + '/' + path, request, getBridgeIp(), 80)).WillOnce(Return(result));
         EXPECT_EQ(result, api.DELETERequest(path, request));
         Mock::VerifyAndClearExpectations(httpHandler.get());
     }
     //recoverable error
     {
         const std::string path = "/test";
-        EXPECT_CALL(*httpHandler, DELETEJson("/api/" + bridge_username + path, request, bridge_ip, 80))
+        EXPECT_CALL(*httpHandler, DELETEJson("/api/" + getBridgeUsername() + path, request, getBridgeIp(), 80))
             .WillOnce(Throw(std::system_error(std::make_error_code(std::errc::connection_reset))))
             .WillOnce(Return(result));
         EXPECT_EQ(result, api.DELETERequest(path, request));
@@ -183,7 +183,7 @@ TEST(HueCommandAPI, DELETERequest)
     //recoverable error x2
     {
         const std::string path = "/test";
-        EXPECT_CALL(*httpHandler, DELETEJson("/api/" + bridge_username + path, request, bridge_ip, 80))
+        EXPECT_CALL(*httpHandler, DELETEJson("/api/" + getBridgeUsername() + path, request, getBridgeIp(), 80))
             .WillOnce(Throw(std::system_error(std::make_error_code(std::errc::connection_reset))))
             .WillOnce(Throw(std::system_error(std::make_error_code(std::errc::connection_reset))));
         EXPECT_THROW(api.DELETERequest(path, request), std::system_error);
@@ -192,7 +192,7 @@ TEST(HueCommandAPI, DELETERequest)
     //unrecoverable error
     {
         const std::string path = "/test";
-        EXPECT_CALL(*httpHandler, GETJson("/api/" + bridge_username + path, request, bridge_ip, 80))
+        EXPECT_CALL(*httpHandler, GETJson("/api/" + getBridgeUsername() + path, request, getBridgeIp(), 80))
             .WillOnce(Throw(std::system_error(std::make_error_code(std::errc::not_enough_memory))));
         EXPECT_THROW(api.GETRequest(path, request), std::system_error);
         Mock::VerifyAndClearExpectations(httpHandler.get());
