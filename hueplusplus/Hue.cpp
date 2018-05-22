@@ -192,7 +192,7 @@ HueLight& Hue::getLight(int id)
         lights.emplace(id, light);
         return lights.find(id)->second;
     }
-    else if (type == "LCT010" || type == "LCT011" || type == "LCT014" || type == "LLC020" || type == "LST002")
+    else if (type == "LCT010" || type == "LCT011" || type == "LCT014" || type == "LCT015" || type == "LCT016" || type == "LLC020" || type == "LST002")
     {
         // HueExtendedColorLight Gamut C
         HueLight light = HueLight(id, commands, simpleBrightnessStrategy, extendedColorTemperatureStrategy, extendedColorHueStrategy);
