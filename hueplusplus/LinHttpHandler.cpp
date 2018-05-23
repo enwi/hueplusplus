@@ -178,12 +178,11 @@ std::vector<std::string> LinHttpHandler::sendMulticast(const std::string & msg, 
 
     std::string response;
     char buffer[2048] = {};		// receive buffer
-    ssize_t bytesReceived = 0;
 
     std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
     while (std::chrono::steady_clock::now() - start < std::chrono::seconds(timeout))
     {
-        bytesReceived = recv(socketFD, &buffer, 2048, MSG_DONTWAIT);
+        ssize_t bytesReceived = recv(socketFD, &buffer, 2048, MSG_DONTWAIT);
         if (bytesReceived < 0)
         {
             int errCode = errno;
