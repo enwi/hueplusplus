@@ -1,6 +1,11 @@
 # hueplusplus
 A simple and easy to use library for Philips Hue Lights
 
+| Branch | Travis CI | Codecov |
+|:-|:-|:-|
+| [Master](https://github.com/enwi/hueplusplus/tree/master) | [![Build Status](https://travis-ci.com/enwi/hueplusplus.svg?branch=master)](https://travis-ci.com/enwi/hueplusplus) | [![codecov](https://codecov.io/gh/enwi/hueplusplus/branch/master/graph/badge.svg)](https://codecov.io/gh/enwi/hueplusplus) |
+| [Development](https://github.com/enwi/hueplusplus/tree/development) | [![Build Status](https://travis-ci.com/enwi/hueplusplus.svg?branch=development)](https://travis-ci.com/enwi/hueplusplus) | [![codecov](https://codecov.io/gh/enwi/hueplusplus/branch/development/graph/badge.svg)](https://codecov.io/gh/enwi/hueplusplus) |
+
 ## Features
 * find bridges with SSDP or set an ip manually
 * function to assign a username or set one manually
