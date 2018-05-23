@@ -257,11 +257,10 @@ std::vector<std::string> WinHttpHandler::sendMulticast(const std::string & msg, 
     std::string response;
     const int recvbuflen = 2048;
     char recvbuf[recvbuflen] = {};
-    int res;
     std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
     while (std::chrono::steady_clock::now() - start < std::chrono::seconds(timeout))
     {
-        res = recv(connect_socket, recvbuf, recvbuflen, 0);
+        int res = recv(connect_socket, recvbuf, recvbuflen, 0);
         if (res > 0)
         {
             //std::cout << "WinHttpHandler: sendMulticast: Bytes received: " << res << std::endl;
