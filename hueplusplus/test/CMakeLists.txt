@@ -90,7 +90,7 @@ if(LCOV_PATH AND GCOV_PATH)
     # exclude some special files we do not want to profile
     set(COVERAGE_EXCLUDES
         '/usr/*'           # unix
-        '*/build/*'
+        '*/hueplusplus/build/*'
         '*/json*'
         '*/test/*'
         '*/v1/*'           # iOS
