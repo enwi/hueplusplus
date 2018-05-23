@@ -17,9 +17,9 @@ protected:
     std::shared_ptr<MockHttpHandler> handler;
 protected:
     HueFinderTest()
+        : handler(std::make_shared<MockHttpHandler>())
     {
         using namespace ::testing;
-        handler = std::make_shared<MockHttpHandler>();
 
         EXPECT_CALL(*handler, sendMulticast("M-SEARCH * HTTP/1.1\r\nHOST: 239.255.255.250:1900\r\nMAN: \"ssdp:discover\"\r\nMX: 5\r\nST: ssdp:all\r\n\r\n", "239.255.255.250", 1900, 5))
             .Times(AtLeast(1))
