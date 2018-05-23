@@ -36,7 +36,7 @@
 
 class SocketCloser {
 public:
-    SocketCloser(int sockFd) : s(sockFd) {}
+    explicit SocketCloser(int sockFd) : s(sockFd) {}
     ~SocketCloser() { close(s); }
 private:
     int s;
