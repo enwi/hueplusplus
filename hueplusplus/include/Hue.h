@@ -176,7 +176,7 @@ public:
 	//! Philips provides different file types.
 	//! \param model_id Model Id of a device to get the picture of
 	//! \return String that either contains the filename of the picture of the device or if it was not found an empty string
-	std::string getPictureOfModel(std::string model_id) const;
+	std::string getPictureOfModel(const std::string& model_id) const;
 
     //! \brief Function that sets the HttpHandler and updates the HueCommandAPI.
     //!

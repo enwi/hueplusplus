@@ -294,7 +294,7 @@ std::string Hue::getPictureOfLight(int id) const
 	return ret;
 }
 
-std::string Hue::getPictureOfModel(std::string model_id) const
+std::string Hue::getPictureOfModel(const std::string& model_id) const
 {
 	std::string ret = "";
 	if(model_id == "LCT001" || model_id == "LCT007" || model_id == "LCT010" || model_id == "LCT014" ||
