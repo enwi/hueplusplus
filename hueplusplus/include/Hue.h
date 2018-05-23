@@ -121,7 +121,7 @@ public:
     //! \brief Function to set the ip address of this class representing a bridge
     //!
     //! \param ip String that specifies the ip in dotted decimal notation like "192.168.2.1"
-    void setIP(const std::string ip);
+    void setIP(const std::string& ip);
 
     //! \brief Function that returns a \ref Hue::HueLight of specified id
     //!
