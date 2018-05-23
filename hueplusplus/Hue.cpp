@@ -106,14 +106,13 @@ Hue::Hue(const std::string& ip, const std::string& username, std::shared_ptr<con
     : ip(ip),
     username(username),
     http_handler(std::move(handler)),
-    commands(ip, username, http_handler)
-{
-    simpleBrightnessStrategy = std::make_shared<SimpleBrightnessStrategy>();
-    simpleColorHueStrategy = std::make_shared<SimpleColorHueStrategy>();
-    extendedColorHueStrategy = std::make_shared<ExtendedColorHueStrategy>();
-    simpleColorTemperatureStrategy = std::make_shared<SimpleColorTemperatureStrategy>();
-    extendedColorTemperatureStrategy = std::make_shared<ExtendedColorTemperatureStrategy>();
-}
+    commands(ip, username, http_handler),
+    simpleBrightnessStrategy(std::make_shared<SimpleBrightnessStrategy>()),
+    simpleColorHueStrategy(std::make_shared<SimpleColorHueStrategy>()),
+    extendedColorHueStrategy(std::make_shared<ExtendedColorHueStrategy>()),
+    simpleColorTemperatureStrategy(std::make_shared<SimpleColorTemperatureStrategy>()),
+    extendedColorTemperatureStrategy(std::make_shared<ExtendedColorTemperatureStrategy>())
+{}
 
 std::string Hue::getBridgeIP()
 {
@@ -162,7 +161,7 @@ std::string Hue::getUsername()
     return username;
 }
 
-void Hue::setIP(const std::string ip)
+void Hue::setIP(const std::string& ip)
 {
     this->ip = ip;
 }
