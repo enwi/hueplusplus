@@ -450,6 +450,46 @@ TEST(Hue, lightExists)
     EXPECT_EQ(true, const_test_bridge2.lightExists(1));
 }
 
+TEST(Hue, getPictureOfLight)
+{
+    using namespace ::testing;
+    std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
+    Json::Value hue_bridge_state;
+    hue_bridge_state["lights"] = Json::Value(Json::objectValue);
+    hue_bridge_state["lights"]["1"] = Json::Value(Json::objectValue);
+    hue_bridge_state["lights"]["1"]["state"] = Json::Value(Json::objectValue);
+    hue_bridge_state["lights"]["1"]["state"]["on"] = true;
+    hue_bridge_state["lights"]["1"]["state"]["bri"] = 254;
+    hue_bridge_state["lights"]["1"]["state"]["ct"] = 366;
+    hue_bridge_state["lights"]["1"]["state"]["alert"] = "none";
+    hue_bridge_state["lights"]["1"]["state"]["colormode"] = "ct";
+    hue_bridge_state["lights"]["1"]["state"]["reachable"] = true;
+    hue_bridge_state["lights"]["1"]["swupdate"] = Json::Value(Json::objectValue);
+    hue_bridge_state["lights"]["1"]["swupdate"]["state"] = "noupdates";
+    hue_bridge_state["lights"]["1"]["swupdate"]["lastinstall"] = Json::nullValue;
+    hue_bridge_state["lights"]["1"]["type"] = "Color temperature light";
+    hue_bridge_state["lights"]["1"]["name"] = "Hue ambiance lamp 1";
+    hue_bridge_state["lights"]["1"]["modelid"] = "LTW001";
+    hue_bridge_state["lights"]["1"]["manufacturername"] = "Philips";
+    hue_bridge_state["lights"]["1"]["uniqueid"] = "00:00:00:00:00:00:00:00-00";
+    hue_bridge_state["lights"]["1"]["swversion"] = "5.50.1.19085";
+
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername(), Json::Value(Json::objectValue), getBridgeIp(), 80))
+        .Times(AtLeast(1))
+        .WillRepeatedly(Return(hue_bridge_state));
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", Json::Value(Json::objectValue), getBridgeIp(), 80))
+        .Times(AtLeast(1))
+        .WillRepeatedly(Return(hue_bridge_state["lights"]["1"]));
+
+    Hue test_bridge(getBridgeIp(), getBridgeUsername(), handler);
+
+    test_bridge.getLight(1);
+
+    EXPECT_EQ("", test_bridge.getPictureOfLight(2));
+
+    EXPECT_EQ("e27_waca", test_bridge.getPictureOfLight(1));
+}
+
 TEST(Hue, refreshState)
 {
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
