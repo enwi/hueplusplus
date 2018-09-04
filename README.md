@@ -15,8 +15,9 @@ A simple and easy to use library for Philips Hue Lights
 * tested with google test, google mock and gcov/lcov
 
 ## Compatibility
-* linux
-* windows
+* Linux
+* Windows
+* MacOS
 
 ## How to use
 ### <a name="searchingBridges"></a>Searching for Bridges
