@@ -60,7 +60,7 @@ std::vector<HueFinder::HueIdentification> HueFinder::FindBridges() const
             std::smatch matchResult;
             if (std::regex_search(desc, manufRegex) && std::regex_search(desc, manURLRegex) && std::regex_search(desc, modelRegex) && std::regex_search(desc, matchResult, serialRegex))
             {
-                //The string matches
+                //The string matcheshttps://github.com/enwi/hueplusplus
                 //Get 1st submatch (0 is whole match)
                 bridge.mac = matchResult[1].str();
                 foundBridges.push_back(std::move(bridge));
@@ -74,7 +74,8 @@ std::vector<HueFinder::HueIdentification> HueFinder::FindBridges() const
 
 Hue HueFinder::GetBridge(const HueIdentification& identification)
 {
-    auto pos = usernames.find(identification.mac);
+    std::string normalizedMac = NormalizeMac(identification.mac);
+    auto pos = usernames.find(normalizedMac);
     if (pos != usernames.end())
     {
         return Hue(identification.ip, pos->second, http_handler);
@@ -86,19 +87,30 @@ Hue HueFinder::GetBridge(const HueIdentification& identification)
         std::cerr << "Failed to request username for ip " << identification.ip << std::endl;
         throw std::runtime_error("Failed to request username!");
     }
-    AddUsername(identification.mac, bridge.getUsername());
+    AddUsername(normalizedMac, bridge.getUsername());
 
     return bridge;
 }
 
 void HueFinder::AddUsername(const std::string& mac, const std::string& username)
 {
-    usernames[mac] = username;
+    usernames[NormalizeMac(mac)] = username;
 }
 
 const std::map<std::string, std::string>& HueFinder::GetAllUsernames() const
 {
     return usernames;
+}
+
+std::string HueFinder::NormalizeMac(std::string input)
+{
+    // Remove any non alphanumeric characters (e.g. ':' and whitespace)
+    input.erase(std::remove_if(input.begin(), input.end(),
+        [](char c) { return !std::isalnum(c, std::locale()); }), input.end());
+    // Convert to lower case
+    std::transform(input.begin(), input.end(), input.begin(),
+        [](char c) { return std::tolower(c, std::locale()); });
+    return input;
 }
 
 
@@ -284,139 +296,139 @@ bool Hue::lightExists(int id) const
 
 std::string Hue::getPictureOfLight(int id) const
 {
-	std::string ret = "";
-	auto pos = lights.find(id);
-	if (pos != lights.end())
-	{
-		ret = getPictureOfModel(pos->second.getModelId());
-	}
-	return ret;
+    std::string ret = "";
+    auto pos = lights.find(id);
+    if (pos != lights.end())
+    {
+        ret = getPictureOfModel(pos->second.getModelId());
+    }
+    return ret;
 }
 
 std::string Hue::getPictureOfModel(const std::string& model_id) const
 {
-	std::string ret = "";
-	if(model_id == "LCT001" || model_id == "LCT007" || model_id == "LCT010" || model_id == "LCT014" ||
-		model_id == "LTW010" || model_id == "LTW001" || model_id == "LTW004" || model_id == "LTW015" ||
-		model_id == "LWB004" || model_id == "LWB006")
-	{
-		ret.append("e27_waca");
-	}
-	else if (model_id == "LWB010" || model_id == "LWB014")
-	{
-		ret.append("e27_white");
-	}
-	else if (model_id == "LCT012" || model_id == "LTW012")
-	{
-		ret.append("e14");
-	}
-	else if (model_id == "LCT002")
-	{
-		ret.append("br30");
-	}
-	else if (model_id == "LCT011" || model_id == "LTW011")
-	{
-		ret.append("br30_slim");
-	}
-	else if (model_id == "LCT003")
-	{
-		ret.append("gu10");
-	}
-	else if (model_id == "LTW013")
-	{
-		ret.append("gu10_perfectfit");
-	}
-	else if (model_id == "LST001" || model_id == "LST002")
-	{
-		ret.append("lightstrip");
-	}
-	else if (model_id == "LLC006 " || model_id == "LLC010")
-	{
-		ret.append("iris");
-	}
-	else if (model_id == "LLC005" || model_id == "LLC011" || model_id == "LLC012" ||
-		model_id == "LLC007")
-	{
-		ret.append("bloom");
-	}
-	else if (model_id == "LLC014")
-	{
-		ret.append("aura");
-	}
-	else if (model_id == "LLC013")
-	{
-		ret.append("storylight");
-	}
-	else if (model_id == "LLC020")
-	{
-		ret.append("go");
-	}
-	else if (model_id == "HBL001" || model_id == "HBL002" || model_id == "HBL003")
-	{
-		ret.append("beyond_ceiling_pendant_table");
-	}
-	else if (model_id == "HIL001 " || model_id == "HIL002")
-	{
-		ret.append("impulse");
-	}
-	else if (model_id == "HEL001 " || model_id == "HEL002")
-	{
-		ret.append("entity");
-	}
-	else if (model_id == "HML001" || model_id == "HML002" || model_id == "HML003" ||
-		model_id == "HML004" || model_id == "HML005")
-	{
-		ret.append("phoenix_ceiling_pendant_table_wall");
-	}
-	else if (model_id == "HML006")
-	{
-		ret.append("phoenix_down");
-	}
-	else if (model_id == "LTP001" || model_id == "LTP002" || model_id == "LTP003" ||
-		model_id == "LTP004" || model_id == "LTP005" || model_id == "LTD003")
-	{
-		ret.append("pendant");
-	}
-	else if (model_id == "LDF002" || model_id == "LTF001" || model_id == "LTF002" ||
-		model_id == "LTC001" || model_id == "LTC002" || model_id == "LTC003" ||
-		model_id == "LTC004" || model_id == "LTD001" || model_id == "LTD002" ||
-		model_id == "LDF001")
-	{
-		ret.append("ceiling");
-	}
-	else if (model_id == "LDD002 " || model_id == "LFF001")
-	{
-		ret.append("floor");
-	}
-	else if (model_id == "LDD001 " || model_id == "LTT001")
-	{
-		ret.append("table");
-	}
-	else if (model_id == "LDT001 " || model_id == "MWM001")
-	{
-		ret.append("recessed");
-	}
-	else if (model_id == "BSB001")
-	{
-		ret.append("bridge_v1");
-	}
-	else if (model_id == "BSB002")
-	{
-		ret.append("bridge_v2");
-	}
-	else if (model_id == "SWT001")
-	{
-		ret.append("tap");
-	}
-	else if (model_id == "RWL021")
-	{
-		ret.append("hds");
-	}
-	else if (model_id == "SML001")
-	{
-		ret.append("motion_sensor");
-	}
-	return ret;
+    std::string ret = "";
+    if (model_id == "LCT001" || model_id == "LCT007" || model_id == "LCT010" || model_id == "LCT014" ||
+        model_id == "LTW010" || model_id == "LTW001" || model_id == "LTW004" || model_id == "LTW015" ||
+        model_id == "LWB004" || model_id == "LWB006")
+    {
+        ret.append("e27_waca");
+    }
+    else if (model_id == "LWB010" || model_id == "LWB014")
+    {
+        ret.append("e27_white");
+    }
+    else if (model_id == "LCT012" || model_id == "LTW012")
+    {
+        ret.append("e14");
+    }
+    else if (model_id == "LCT002")
+    {
+        ret.append("br30");
+    }
+    else if (model_id == "LCT011" || model_id == "LTW011")
+    {
+        ret.append("br30_slim");
+    }
+    else if (model_id == "LCT003")
+    {
+        ret.append("gu10");
+    }
+    else if (model_id == "LTW013")
+    {
+        ret.append("gu10_perfectfit");
+    }
+    else if (model_id == "LST001" || model_id == "LST002")
+    {
+        ret.append("lightstrip");
+    }
+    else if (model_id == "LLC006 " || model_id == "LLC010")
+    {
+        ret.append("iris");
+    }
+    else if (model_id == "LLC005" || model_id == "LLC011" || model_id == "LLC012" ||
+        model_id == "LLC007")
+    {
+        ret.append("bloom");
+    }
+    else if (model_id == "LLC014")
+    {
+        ret.append("aura");
+    }
+    else if (model_id == "LLC013")
+    {
+        ret.append("storylight");
+    }
+    else if (model_id == "LLC020")
+    {
+        ret.append("go");
+    }
+    else if (model_id == "HBL001" || model_id == "HBL002" || model_id == "HBL003")
+    {
+        ret.append("beyond_ceiling_pendant_table");
+    }
+    else if (model_id == "HIL001 " || model_id == "HIL002")
+    {
+        ret.append("impulse");
+    }
+    else if (model_id == "HEL001 " || model_id == "HEL002")
+    {
+        ret.append("entity");
+    }
+    else if (model_id == "HML001" || model_id == "HML002" || model_id == "HML003" ||
+        model_id == "HML004" || model_id == "HML005")
+    {
+        ret.append("phoenix_ceiling_pendant_table_wall");
+    }
+    else if (model_id == "HML006")
+    {
+        ret.append("phoenix_down");
+    }
+    else if (model_id == "LTP001" || model_id == "LTP002" || model_id == "LTP003" ||
+        model_id == "LTP004" || model_id == "LTP005" || model_id == "LTD003")
+    {
+        ret.append("pendant");
+    }
+    else if (model_id == "LDF002" || model_id == "LTF001" || model_id == "LTF002" ||
+        model_id == "LTC001" || model_id == "LTC002" || model_id == "LTC003" ||
+        model_id == "LTC004" || model_id == "LTD001" || model_id == "LTD002" ||
+        model_id == "LDF001")
+    {
+        ret.append("ceiling");
+    }
+    else if (model_id == "LDD002 " || model_id == "LFF001")
+    {
+        ret.append("floor");
+    }
+    else if (model_id == "LDD001 " || model_id == "LTT001")
+    {
+        ret.append("table");
+    }
+    else if (model_id == "LDT001 " || model_id == "MWM001")
+    {
+        ret.append("recessed");
+    }
+    else if (model_id == "BSB001")
+    {
+        ret.append("bridge_v1");
+    }
+    else if (model_id == "BSB002")
+    {
+        ret.append("bridge_v2");
+    }
+    else if (model_id == "SWT001")
+    {
+        ret.append("tap");
+    }
+    else if (model_id == "RWL021")
+    {
+        ret.append("hds");
+    }
+    else if (model_id == "SML001")
+    {
+        ret.append("motion_sensor");
+    }
+    return ret;
 }
 
 void Hue::refreshState()
