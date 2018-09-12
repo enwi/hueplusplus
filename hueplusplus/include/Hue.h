@@ -83,7 +83,7 @@ public:
 
 private:
     //! \brief Normalizes mac address to plain hex number.
-    //! returns \c input without separators and whitespace, in upper case.
+    //! \returns \p input without separators and whitespace, in upper case.
     static std::string NormalizeMac(std::string input);
 
     std::map<std::string, std::string> usernames;		//!< Maps all macs to usernames added by \ref HueFinder::AddUsername
