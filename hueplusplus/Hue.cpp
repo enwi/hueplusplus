@@ -60,7 +60,7 @@ std::vector<HueFinder::HueIdentification> HueFinder::FindBridges() const
             std::smatch matchResult;
             if (std::regex_search(desc, manufRegex) && std::regex_search(desc, manURLRegex) && std::regex_search(desc, modelRegex) && std::regex_search(desc, matchResult, serialRegex))
             {
-                //The string matcheshttps://github.com/enwi/hueplusplus
+                //The string matches
                 //Get 1st submatch (0 is whole match)
                 bridge.mac = matchResult[1].str();
                 foundBridges.push_back(std::move(bridge));
