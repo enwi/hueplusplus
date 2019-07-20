@@ -29,32 +29,60 @@
 #include "../hueplusplus/include/json/json.h"
 
 //! Mock Class
-class MockHttpHandler : public IHttpHandler
-{
+class MockHttpHandler : public IHttpHandler {
 public:
-    MOCK_CONST_METHOD3(send, std::string(const std::string &msg, const std::string &adr, int port));
+  MOCK_CONST_METHOD3(send, std::string(const std::string &msg,
+                                       const std::string &adr, int port));
 
-    MOCK_CONST_METHOD3(sendGetHTTPBody, std::string(const std::string &msg, const std::string &adr, int port));
+  MOCK_CONST_METHOD3(sendGetHTTPBody,
+                     std::string(const std::string &msg, const std::string &adr,
+                                 int port));
 
-    MOCK_CONST_METHOD4(sendMulticast, std::vector<std::string>(const std::string &msg, const std::string &adr, int port, int timeout));
+  MOCK_CONST_METHOD4(sendMulticast,
+                     std::vector<std::string>(const std::string &msg,
+                                              const std::string &adr, int port,
+                                              int timeout));
 
-    MOCK_CONST_METHOD6(sendHTTPRequest, std::string(std::string method, std::string uri, std::string content_type, std::string body, const std::string &adr, int port));
+  MOCK_CONST_METHOD6(sendHTTPRequest,
+                     std::string(std::string method, std::string uri,
+                                 std::string content_type, std::string body,
+                                 const std::string &adr, int port));
 
-    MOCK_CONST_METHOD5(GETString, std::string(std::string uri, std::string content_type, std::string body, const std::string &adr, int port));
+  MOCK_CONST_METHOD5(GETString,
+                     std::string(std::string uri, std::string content_type,
+                                 std::string body, const std::string &adr,
+                                 int port));
 
-    MOCK_CONST_METHOD5(POSTString, std::string(std::string uri, std::string content_type, std::string body, const std::string &adr, int port));
+  MOCK_CONST_METHOD5(POSTString,
+                     std::string(std::string uri, std::string content_type,
+                                 std::string body, const std::string &adr,
+                                 int port));
 
-    MOCK_CONST_METHOD5(PUTString, std::string(std::string uri, std::string content_type, std::string body, const std::string &adr, int port));
+  MOCK_CONST_METHOD5(PUTString,
+                     std::string(std::string uri, std::string content_type,
+                                 std::string body, const std::string &adr,
+                                 int port));
 
-    MOCK_CONST_METHOD5(DELETEString, std::string(std::string uri, std::string content_type, std::string body, const std::string &adr, int port));
+  MOCK_CONST_METHOD5(DELETEString,
+                     std::string(std::string uri, std::string content_type,
+                                 std::string body, const std::string &adr,
+                                 int port));
 
-    MOCK_CONST_METHOD4(GETJson, Json::Value(std::string uri, const Json::Value& body, const std::string &adr, int port));
+  MOCK_CONST_METHOD4(GETJson,
+                     Json::Value(std::string uri, const Json::Value &body,
+                                 const std::string &adr, int port));
 
-    MOCK_CONST_METHOD4(POSTJson, Json::Value(std::string uri, const Json::Value& body, const std::string &adr, int port));
+  MOCK_CONST_METHOD4(POSTJson,
+                     Json::Value(std::string uri, const Json::Value &body,
+                                 const std::string &adr, int port));
 
-    MOCK_CONST_METHOD4(PUTJson, Json::Value(std::string uri, const Json::Value& body, const std::string &adr, int port));
+  MOCK_CONST_METHOD4(PUTJson,
+                     Json::Value(std::string uri, const Json::Value &body,
+                                 const std::string &adr, int port));
 
-    MOCK_CONST_METHOD4(DELETEJson, Json::Value(std::string uri, const Json::Value& body, const std::string &adr, int port));
+  MOCK_CONST_METHOD4(DELETEJson,
+                     Json::Value(std::string uri, const Json::Value &body,
+                                 const std::string &adr, int port));
 };
 
 #endif
