@@ -86,9 +86,16 @@ private:
   //! \returns \p input without separators and whitespace, in upper case.
   static std::string NormalizeMac(std::string input);
 
+  //! \brief Parses mac address from description.xml
+  //!
+  //! \param description Content of description.xml file as returned by GET request.
+  //! \returns Content of xml element \c serialNumber if description matches a Hue bridge,
+  //! otherwise an empty string.
+  static std::string ParseDescription(const std::string& description);
+
   std::map<std::string, std::string>
-      usernames; //!< Maps all macs to usernames added by \ref
-                 //!< HueFinder::AddUsername
+    usernames; //!< Maps all macs to usernames added by \ref
+               //!< HueFinder::AddUsername
   std::shared_ptr<const IHttpHandler> http_handler;
 };
 
