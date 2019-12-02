@@ -19,9 +19,11 @@
 
 #include "include/Hue.h"
 
+#include <algorithm>
+#include <cctype>
 #include <chrono>
 #include <iostream>
-#include <regex>
+#include <locale>
 #include <stdexcept>
 #include <thread>
 
@@ -39,15 +41,8 @@ HueFinder::HueFinder(std::shared_ptr<const IHttpHandler> handler)
 std::vector<HueFinder::HueIdentification> HueFinder::FindBridges() const {
   UPnP uplug;
   std::vector<std::pair<std::string, std::string>> foundDevices =
-      uplug.getDevices(http_handler);
+    uplug.getDevices(http_handler);
 
-  // Does not work
-  std::regex manufRegex(
-      "<manufacturer>Royal Philips Electronics</manufacturer>");
-  std::regex manURLRegex(
-      "<manufacturerURL>http://www\\.philips\\.com</manufacturerURL>");
-  std::regex modelRegex("<modelName>Philips hue bridge[^<]*</modelName>");
-  std::regex serialRegex("<serialNumber>(\\w+)</serialNumber>");
   std::vector<HueIdentification> foundBridges;
   for (const std::pair<std::string, std::string> &p : foundDevices) {
     size_t found = p.second.find("IpBridge");
@@ -57,18 +52,12 @@ std::vector<HueFinder::HueIdentification> HueFinder::FindBridges() const {
       size_t length = p.first.find(":", start) - start;
       bridge.ip = p.first.substr(start, length);
       std::string desc = http_handler->GETString(
-          "/description.xml", "application/xml", "", bridge.ip);
-      std::smatch matchResult;
-      if (std::regex_search(desc, manufRegex) &&
-          std::regex_search(desc, manURLRegex) &&
-          std::regex_search(desc, modelRegex) &&
-          std::regex_search(desc, matchResult, serialRegex)) {
-        // The string matches
-        // Get 1st submatch (0 is whole match)
-        bridge.mac = matchResult[1].str();
+        "/description.xml", "application/xml", "", bridge.ip);
+      std::string mac = ParseDescription(desc);
+      if (!mac.empty()) {
+        bridge.mac = NormalizeMac(mac);
         foundBridges.push_back(std::move(bridge));
       }
-      // break;
     }
   }
   return foundBridges;
@@ -111,6 +100,28 @@ std::string HueFinder::NormalizeMac(std::string input) {
   std::transform(input.begin(), input.end(), input.begin(),
                  [](char c) { return std::tolower(c, std::locale()); });
   return input;
+}
+
+std::string HueFinder::ParseDescription(const std::string & description)
+{
+  const char* manufacturer = "<manufacturer>Royal Philips Electronics</manufacturer>";
+  const char* manURL = "<manufacturerURL>http://www.philips.com</manufacturerURL>";
+  const char* model = "<modelName>Philips hue bridge";
+  const char* serialBegin = "<serialNumber>";
+  const char* serialEnd = "</serialNumber>";
+  if (description.find(manufacturer) != std::string::npos && description.find(manURL) != std::string::npos
+    && description.find(model) != std::string::npos) {
+    std::size_t begin = description.find(serialBegin);
+    std::size_t end = description.find(serialEnd, begin);
+    if (begin != std::string::npos && end != std::string::npos) {
+      begin += std::strlen(serialBegin);
+      if (begin < description.size()) {
+        std::string result = description.substr(begin, end);
+        return result;
+      }
+    }
+  }
+  return std::string();
 }
 
 Hue::Hue(const std::string &ip, const std::string &username,
