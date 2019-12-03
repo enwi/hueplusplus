@@ -52,6 +52,13 @@ TEST_F(HueFinderTest, FindBridges) {
       << "HueIdentification ip does not match";
   EXPECT_EQ(bridges[0].mac, bridge_to_comp.mac)
       << "HueIdentification mac does not match";
+
+  // Test invalid description
+  EXPECT_CALL(*handler, GETString("/description.xml", "application/xml", "", getBridgeIp(), 80))
+    .Times(1)
+    .WillOnce(::testing::Return("invalid stuff"));
+  bridges = finder.FindBridges();
+  EXPECT_TRUE(bridges.empty());
 }
 
 TEST_F(HueFinderTest, GetBridge) {
