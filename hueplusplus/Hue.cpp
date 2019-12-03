@@ -22,6 +22,7 @@
 #include <algorithm>
 #include <cctype>
 #include <chrono>
+#include <cstring>
 #include <iostream>
 #include <locale>
 #include <stdexcept>
@@ -104,19 +105,16 @@ std::string HueFinder::NormalizeMac(std::string input) {
 
 std::string HueFinder::ParseDescription(const std::string & description)
 {
-  const char* manufacturer = "<manufacturer>Royal Philips Electronics</manufacturer>";
-  const char* manURL = "<manufacturerURL>http://www.philips.com</manufacturerURL>";
   const char* model = "<modelName>Philips hue bridge";
   const char* serialBegin = "<serialNumber>";
   const char* serialEnd = "</serialNumber>";
-  if (description.find(manufacturer) != std::string::npos && description.find(manURL) != std::string::npos
-    && description.find(model) != std::string::npos) {
+  if (description.find(model) != std::string::npos) {
     std::size_t begin = description.find(serialBegin);
     std::size_t end = description.find(serialEnd, begin);
     if (begin != std::string::npos && end != std::string::npos) {
       begin += std::strlen(serialBegin);
       if (begin < description.size()) {
-        std::string result = description.substr(begin, end);
+        std::string result = description.substr(begin, end - begin);
         return result;
       }
     }
