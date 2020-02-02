@@ -22,6 +22,7 @@ endif()
 
 # options to set
 option(hueplusplus_TESTS "Build tests" OFF)
+option(hueplusplus_SAMPLES "Build examples" OFF)
 
 option(CLANG_TIDY_FIX "Perform fixes for Clang-Tidy" OFF)
 find_program(CLANG_TIDY_EXE NAMES "clang-tidy" DOC "Path to clang-tidy executable")
@@ -97,4 +98,8 @@ add_subdirectory(src)
 # if the user decided to use tests add the subdirectory
 if(hueplusplus_TESTS)
     add_subdirectory("test")
+endif()
+
+if(hueplusplus_SAMPLES)
+	add_subdirectory("examples")
 endif()
