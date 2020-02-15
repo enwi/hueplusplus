@@ -52,8 +52,11 @@ std::vector<HueFinder::HueIdentification> HueFinder::FindBridges() const {
       size_t start = p.first.find("//") + 2;
       size_t length = p.first.find(":", start) - start;
       bridge.ip = p.first.substr(start, length);
+      auto portLength = p.first.find("/", start + length) - (start + length + 1);
+      auto port = p.first.substr(start + length + 1, portLength);
+      bridge.port = std::stoi(port);
       std::string desc = http_handler->GETString(
-        "/description.xml", "application/xml", "", bridge.ip);
+        "/description.xml", "application/xml", "", bridge.ip, bridge.port);
       std::string mac = ParseDescription(desc);
       if (!mac.empty()) {
         bridge.mac = NormalizeMac(mac);
@@ -68,9 +71,10 @@ Hue HueFinder::GetBridge(const HueIdentification &identification) {
   std::string normalizedMac = NormalizeMac(identification.mac);
   auto pos = usernames.find(normalizedMac);
   if (pos != usernames.end()) {
-    return Hue(identification.ip, pos->second, http_handler);
+    return Hue(identification.ip, identification.port,
+        pos->second, http_handler);
   }
-  Hue bridge(identification.ip, "", http_handler);
+  Hue bridge(identification.ip, identification.port, "", http_handler);
   bridge.requestUsername(identification.ip);
   if (bridge.getUsername().empty()) {
     std::cerr << "Failed to request username for ip " << identification.ip
@@ -122,9 +126,9 @@ std::string HueFinder::ParseDescription(const std::string & description)
   return std::string();
 }
 
-Hue::Hue(const std::string &ip, const std::string &username,
+Hue::Hue(const std::string &ip, const int port, const std::string &username,
          std::shared_ptr<const IHttpHandler> handler)
-    : ip(ip), username(username),
+    : ip(ip), port(port), username(username),
       simpleBrightnessStrategy(std::make_shared<SimpleBrightnessStrategy>()),
       simpleColorHueStrategy(std::make_shared<SimpleColorHueStrategy>()),
       extendedColorHueStrategy(std::make_shared<ExtendedColorHueStrategy>()),
@@ -132,9 +136,12 @@ Hue::Hue(const std::string &ip, const std::string &username,
           std::make_shared<SimpleColorTemperatureStrategy>()),
       extendedColorTemperatureStrategy(
           std::make_shared<ExtendedColorTemperatureStrategy>()),
-      http_handler(std::move(handler)), commands(ip, username, http_handler) {}
+      http_handler(std::move(handler)), commands(ip, port, username,
+          http_handler) {}
 
 std::string Hue::getBridgeIP() { return ip; }
+
+int Hue::getBridgePort() { return port; }
 
 std::string Hue::requestUsername(const std::string &ip) {
   std::cout
@@ -158,14 +165,14 @@ std::string Hue::requestUsername(const std::string &ip) {
     if (std::chrono::steady_clock::now() - lastCheck >
         std::chrono::seconds(1)) {
       lastCheck = std::chrono::steady_clock::now();
-      answer = http_handler->POSTJson("/api", request, ip);
+      answer = http_handler->POSTJson("/api", request, ip, port);
 
       if (answer[0]["success"] != Json::nullValue) {
         // [{"success":{"username": "<username>"}}]
         username = answer[0]["success"]["username"].asString();
         this->ip = ip;
         // Update commands with new username and ip
-        commands = HueCommandAPI(ip, username, http_handler);
+        commands = HueCommandAPI(ip, port, username, http_handler);
         std::cout << "Success! Link button was pressed!\n";
         std::cout << "Username is \"" << username << "\"\n";
         break;
@@ -181,6 +188,8 @@ std::string Hue::requestUsername(const std::string &ip) {
 std::string Hue::getUsername() { return username; }
 
 void Hue::setIP(const std::string &ip) { this->ip = ip; }
+
+void Hue::setPort(const int port) { this->port = port; }
 
 HueLight &Hue::getLight(int id) {
   auto pos = lights.find(id);

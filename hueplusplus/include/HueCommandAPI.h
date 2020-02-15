@@ -33,10 +33,11 @@ public:
   //! \brief Construct from ip, username and HttpHandler
   //!
   //! \param ip String that specifies the ip address of the Hue bridge in dotted
-  //! decimal notation like "192.168.2.1" \param username String that specifies
-  //! the username that is used to control the bridge \param handler HttpHandler
-  //! of type \ref IHttpHandler for communication with the bridge
-  HueCommandAPI(const std::string &ip, const std::string &username,
+  //! decimal notation like "192.168.2.1" \param port of the hue bridge
+  //! \param username String that specifies the username that is used to control
+  //! the bridge \param handler HttpHandler of type \ref IHttpHandler for
+  //! communication with the bridge
+  HueCommandAPI(const std::string &ip, const int port, const std::string &username,
                 std::shared_ptr<const IHttpHandler> httpHandler);
 
   //! \brief Copy construct from other HueCommandAPI
@@ -100,6 +101,7 @@ private:
   static constexpr std::chrono::steady_clock::duration minDelay =
       std::chrono::milliseconds(100);
   std::string ip;
+  int port;
   std::string username;
   std::shared_ptr<const IHttpHandler> httpHandler;
   std::shared_ptr<TimeoutData> timeout;
