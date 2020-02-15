@@ -54,6 +54,8 @@ target_include_directories(test_HuePlusPlus PUBLIC ${GTest_INCLUDE_DIRS})
 target_include_directories(test_HuePlusPlus PUBLIC ${HuePlusPlus_INCLUDE_DIR})
 set_property(TARGET test_HuePlusPlus PROPERTY CXX_STANDARD 14)
 set_property(TARGET test_HuePlusPlus PROPERTY CXX_EXTENSIONS OFF)
+set_property(TARGET gmock PROPERTY CXX_STANDARD 14)
+set_property(TARGET gtest PROPERTY CXX_STANDARD 14)
 # add custom target to make it simple to run the tests
 add_custom_target("unittest"
     # Run the executable
