@@ -16,7 +16,8 @@ protected:
 protected:
   HueLightTest()
       : handler(std::make_shared<MockHttpHandler>()),
-        test_bridge(getBridgeIp(), getBridgeUsername(), handler) {
+        test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(),
+            handler) {
     using namespace ::testing;
     hue_bridge_state["lights"] = Json::Value(Json::objectValue);
     hue_bridge_state["lights"]["1"] = Json::Value(Json::objectValue);

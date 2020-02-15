@@ -23,9 +23,10 @@
 
 constexpr std::chrono::steady_clock::duration HueCommandAPI::minDelay;
 
-HueCommandAPI::HueCommandAPI(const std::string &ip, const std::string &username,
+HueCommandAPI::HueCommandAPI(const std::string &ip, const int port,
+                             const std::string &username,
                              std::shared_ptr<const IHttpHandler> httpHandler)
-    : ip(ip), username(username), httpHandler(std::move(httpHandler)),
+    : ip(ip), port(port), username(username), httpHandler(std::move(httpHandler)),
       timeout(new TimeoutData{std::chrono::steady_clock::now()}) {}
 
 Json::Value HueCommandAPI::PUTRequest(const std::string &path,
@@ -40,7 +41,7 @@ Json::Value HueCommandAPI::PUTRequest(const std::string &path,
       "/api/" + username + (path.empty() || path.front() == '/' ? "" : "/") +
       path;
   try {
-    Json::Value v = httpHandler->PUTJson(combinedPath, request, ip);
+    Json::Value v = httpHandler->PUTJson(combinedPath, request, ip, port);
     timeout->timeout = now + minDelay;
     return v;
   } catch (const std::system_error &e) {
@@ -69,7 +70,7 @@ Json::Value HueCommandAPI::GETRequest(const std::string &path,
       "/api/" + username + (path.empty() || path.front() == '/' ? "" : "/") +
       path;
   try {
-    Json::Value v = httpHandler->GETJson(combinedPath, request, ip);
+    Json::Value v = httpHandler->GETJson(combinedPath, request, ip, port);
     timeout->timeout = now + minDelay;
     return v;
   } catch (const std::system_error &e) {
@@ -77,7 +78,7 @@ Json::Value HueCommandAPI::GETRequest(const std::string &path,
         e.code() == std::errc::timed_out) {
       // Happens when hue is too busy, wait and try again (once)
       std::this_thread::sleep_for(minDelay);
-      Json::Value v = httpHandler->GETJson(combinedPath, request, ip);
+      Json::Value v = httpHandler->GETJson(combinedPath, request, ip, port);
       timeout->timeout = std::chrono::steady_clock::now() + minDelay;
       return v;
     }
@@ -98,7 +99,7 @@ Json::Value HueCommandAPI::DELETERequest(const std::string &path,
       "/api/" + username + (path.empty() || path.front() == '/' ? "" : "/") +
       path;
   try {
-    Json::Value v = httpHandler->DELETEJson(combinedPath, request, ip);
+    Json::Value v = httpHandler->DELETEJson(combinedPath, request, ip, port);
     timeout->timeout = now + minDelay;
     return v;
   } catch (const std::system_error &e) {
@@ -106,7 +107,7 @@ Json::Value HueCommandAPI::DELETERequest(const std::string &path,
         e.code() == std::errc::timed_out) {
       // Happens when hue is too busy, wait and try again (once)
       std::this_thread::sleep_for(minDelay);
-      Json::Value v = httpHandler->DELETEJson(combinedPath, request, ip);
+      Json::Value v = httpHandler->DELETEJson(combinedPath, request, ip, port);
       timeout->timeout = std::chrono::steady_clock::now() + minDelay;
       return v;
     }

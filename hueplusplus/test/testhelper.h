@@ -6,6 +6,10 @@ inline std::string getBridgeIp() {
                           //!< decimal notation like "192.168.2.1"
 }
 
+inline int getBridgePort() {
+  return 80;
+}
+
 inline std::string getBridgeUsername() {
   return "83b7780291a6ceffbe0bd049104df"; //!< Username that is ussed to access
                                           //!< the fake hue bridge

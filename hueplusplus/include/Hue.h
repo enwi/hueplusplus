@@ -45,6 +45,7 @@ class HueFinder {
 public:
   struct HueIdentification {
     std::string ip;
+    int port = 80;
     std::string mac;
   };
 
@@ -107,17 +108,22 @@ public:
   //! \brief Constructor of Hue class
   //!
   //! \param ip String that specifies the ip address of the Hue bridge in dotted
-  //! decimal notation like "192.168.2.1" \param username String that specifies
-  //! the username that is used to control the bridge. This needs to be acquired
-  //! in \ref requestUsername \param handler HttpHandler of type \ref
-  //! IHttpHandler for communication with the bridge
-  Hue(const std::string &ip, const std::string &username,
-      std::shared_ptr<const IHttpHandler> handler);
+  //! decimal notation like "192.168.2.1" \param port Port of the hue bridge
+  //! \param username String that specifies the username that is used to control
+  //! the bridge. This needs to be acquired in \ref requestUsername \param handler
+  //!  HttpHandler of type \ref IHttpHandler for communication with the bridge
+  Hue(const std::string &ip, const int port, const std::string &username,
+        std::shared_ptr<const IHttpHandler> handler);
 
   //! \brief Function to get the ip address of the hue bridge
   //!
   //! \return string containing ip
   std::string getBridgeIP();
+
+  //! \brief Function to get the port of the hue bridge
+  //!
+  //! \return integer containing port
+  int getBridgePort();
 
   //! \brief Function that sends a username request to the Hue bridge.
   //!
@@ -140,6 +146,12 @@ public:
   //! \param ip String that specifies the ip in dotted decimal notation like
   //! "192.168.2.1"
   void setIP(const std::string &ip);
+
+  //! \brief Function to set the port of this class representing a bridge
+  //!
+  //! \param port Integer that specifies the port of an address like
+  //! "192.168.2.1:8080"
+  void setPort(const int port);
 
   //! \brief Function that returns a \ref Hue::HueLight of specified id
   //!
@@ -209,7 +221,7 @@ public:
   //! \param handler a HttpHandler of type \ref IHttpHandler
   void setHttpHandler(std::shared_ptr<const IHttpHandler> handler) {
     http_handler = std::move(handler);
-    commands = HueCommandAPI(ip, username, http_handler);
+    commands = HueCommandAPI(ip, port, username, http_handler);
   };
 
 private:
@@ -219,6 +231,7 @@ private:
 private:
   std::string ip; //!< IP-Address of the hue bridge in dotted decimal notation
                   //!< like "192.168.2.1"
+  int port;
   std::string username; //!< Username that is ussed to access the hue bridge
   Json::Value state; //!< The state of the hue bridge as it is returned from it
   std::map<uint8_t, HueLight>

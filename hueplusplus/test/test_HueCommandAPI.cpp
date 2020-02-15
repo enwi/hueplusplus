@@ -30,7 +30,8 @@ TEST(HueCommandAPI, PUTRequest) {
   std::shared_ptr<MockHttpHandler> httpHandler =
       std::make_shared<MockHttpHandler>();
 
-  HueCommandAPI api(getBridgeIp(), getBridgeUsername(), httpHandler);
+  HueCommandAPI api(getBridgeIp(), getBridgePort(), getBridgeUsername(),
+      httpHandler);
   Json::Value request;
   Json::Value result = Json::objectValue;
   result["ok"] = true;
@@ -102,7 +103,8 @@ TEST(HueCommandAPI, GETRequest) {
   std::shared_ptr<MockHttpHandler> httpHandler =
       std::make_shared<MockHttpHandler>();
 
-  HueCommandAPI api(getBridgeIp(), getBridgeUsername(), httpHandler);
+  HueCommandAPI api(getBridgeIp(), getBridgePort(), getBridgeUsername(),
+      httpHandler);
   Json::Value request;
   Json::Value result = Json::objectValue;
   result["ok"] = true;
@@ -174,7 +176,8 @@ TEST(HueCommandAPI, DELETERequest) {
   std::shared_ptr<MockHttpHandler> httpHandler =
       std::make_shared<MockHttpHandler>();
 
-  HueCommandAPI api(getBridgeIp(), getBridgeUsername(), httpHandler);
+  HueCommandAPI api(getBridgeIp(), getBridgePort(), getBridgeUsername(),
+      httpHandler);
   Json::Value request;
   Json::Value result = Json::objectValue;
   result["ok"] = true;
