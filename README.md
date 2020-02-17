@@ -50,11 +50,11 @@ finder.AddUsername(bridges[0].mac, "<username>");
 Hue bridge = finder.GetBridge(bridges[0]);
 ```
 If you do not want to use the HueFinder or you already know the ip and username of your bridge you have the option to create your own Hue object.
-Here you will need to provide the ip address, a username and an HttpHandler
+Here you will need to provide the ip address, the port number, a username and an HttpHandler
 ```C++
 // For windows use std::make_shared<WinHttpHandler>();
 handler = std::make_shared<LinHttpHandler>();
-Hue bridge("192.168.2.102", "<username>", handler);
+Hue bridge("192.168.2.102", 80, "<username>", handler);
 ```
 
 ### Controlling lights
