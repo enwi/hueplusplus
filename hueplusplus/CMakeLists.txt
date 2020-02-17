@@ -26,6 +26,12 @@ if(UNIX)
         ${CMAKE_CURRENT_SOURCE_DIR}/LinHttpHandler.cpp
     )
 endif()
+if(ESP_PLATFORM)
+    set(hueplusplus_SOURCES
+        ${hueplusplus_SOURCES}
+       ${CMAKE_CURRENT_SOURCE_DIR}/LinHttpHandler.cpp
+    )
+endif()
 
 
 # Set global includes BEFORE adding any targets for legacy CMake versions

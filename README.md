@@ -18,6 +18,7 @@ A simple and easy to use library for Philips Hue Lights
 * Linux
 * Windows
 * MacOS
+* Espressif ESP32 SDK & Arduino
 
 ## How to use
 ### <a name="searchingBridges"></a>Searching for Bridges
