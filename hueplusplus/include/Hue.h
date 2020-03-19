@@ -82,11 +82,11 @@ public:
   //! mapping mac address to username for every bridge
   const std::map<std::string, std::string> &GetAllUsernames() const;
 
-private:
   //! \brief Normalizes mac address to plain hex number.
   //! \returns \p input without separators and whitespace, in upper case.
   static std::string NormalizeMac(std::string input);
 
+private:
   //! \brief Parses mac address from description.xml
   //!
   //! \param description Content of description.xml file as returned by GET request.
