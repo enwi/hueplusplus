@@ -34,50 +34,48 @@ bool SimpleBrightnessStrategy::setBrightness(unsigned int bri,
       return true;
     }
   } else {
-    Json::Value request(Json::objectValue);
+    nlohmann::json request({});
     if (transition != 4) {
       request["transitiontime"] = transition;
     }
-    if (light.state["state"]["on"].asBool() != true) {
+    if (light.state["state"]["on"] != true) {
       request["on"] = true;
     }
-    if (light.state["state"]["bri"].asUInt() != bri) {
+    if (light.state["state"]["bri"] != bri) {
       if (bri > 254) {
         bri = 254;
       }
       request["bri"] = bri;
     }
 
-    if (!request.isMember("on") && !request.isMember("bri")) {
+    if (!request.count("on") && !request.count("bri")) {
       // Nothing needs to be changed
       return true;
     }
 
-    Json::Value reply = light.SendPutRequest(request, "/state");
+    nlohmann::json reply = light.SendPutRequest(request, "/state");
 
     // Check whether request was successful
     std::string path = "/lights/" + std::to_string(light.id) + "/state/";
     bool success = true;
     int i = 0;
-    if (success && request.isMember("transitiontime")) {
+    if (success && request.count("transitiontime")) {
       // Check if success was sent and the value was changed
-      success = !reply[i].isNull() && reply[i].isMember("success") &&
-                reply[i]["success"][path + "transitiontime"].asUInt() ==
-                    request["transitiontime"].asUInt();
+      success = reply[i].size() > i && reply[i].count("success") &&
+                reply[i]["success"][path + "transitiontime"] ==
+                    request["transitiontime"];
       ++i;
     }
-    if (success && request.isMember("on")) {
+    if (success && request.count("on")) {
       // Check if success was sent and the value was changed
-      success =
-          !reply[i].isNull() && reply[i].isMember("success") &&
-          reply[i]["success"][path + "on"].asBool() == request["on"].asBool();
+      success = reply[i].size() > i && reply[i].count("success") &&
+                reply[i]["success"][path + "on"] == request["on"];
       ++i;
     }
-    if (success && request.isMember("bri")) {
+    if (success && request.count("bri")) {
       // Check if success was sent and the value was changed
-      success =
-          !reply[i].isNull() && reply[i].isMember("success") &&
-          reply[i]["success"][path + "bri"].asUInt() == request["bri"].asUInt();
+      success = reply[i].size() > i && reply[i].count("success") &&
+                reply[i]["success"][path + "bri"] == request["bri"];
     }
     return success;
   }
@@ -85,10 +83,10 @@ bool SimpleBrightnessStrategy::setBrightness(unsigned int bri,
 
 unsigned int SimpleBrightnessStrategy::getBrightness(HueLight &light) const {
   light.refreshState();
-  return light.state["state"]["bri"].asUInt();
+  return light.state["state"]["bri"];
 }
 
 unsigned int
 SimpleBrightnessStrategy::getBrightness(const HueLight &light) const {
-  return light.state["state"]["bri"].asUInt();
+  return light.state["state"]["bri"];
 }

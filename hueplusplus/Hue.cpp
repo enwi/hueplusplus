@@ -42,7 +42,7 @@ HueFinder::HueFinder(std::shared_ptr<const IHttpHandler> handler)
 std::vector<HueFinder::HueIdentification> HueFinder::FindBridges() const {
   UPnP uplug;
   std::vector<std::pair<std::string, std::string>> foundDevices =
-    uplug.getDevices(http_handler);
+      uplug.getDevices(http_handler);
 
   std::vector<HueIdentification> foundBridges;
   for (const std::pair<std::string, std::string> &p : foundDevices) {
@@ -107,11 +107,10 @@ std::string HueFinder::NormalizeMac(std::string input) {
   return input;
 }
 
-std::string HueFinder::ParseDescription(const std::string & description)
-{
-  const char* model = "<modelName>Philips hue bridge";
-  const char* serialBegin = "<serialNumber>";
-  const char* serialEnd = "</serialNumber>";
+std::string HueFinder::ParseDescription(const std::string &description) {
+  const char *model = "<modelName>Philips hue bridge";
+  const char *serialBegin = "<serialNumber>";
+  const char *serialEnd = "</serialNumber>";
   if (description.find(model) != std::string::npos) {
     std::size_t begin = description.find(serialBegin);
     std::size_t end = description.find(serialEnd, begin);
@@ -154,10 +153,10 @@ std::string Hue::requestUsername(const std::string &ip) {
                                                                 // username for
                                                                 // control
 
-  Json::Value request;
+  nlohmann::json request;
   request["devicetype"] = "HuePlusPlus#User";
 
-  Json::Value answer;
+  nlohmann::json answer;
   std::chrono::steady_clock::time_point start =
       std::chrono::steady_clock::now();
   std::chrono::steady_clock::time_point lastCheck;
@@ -167,18 +166,19 @@ std::string Hue::requestUsername(const std::string &ip) {
       lastCheck = std::chrono::steady_clock::now();
       answer = http_handler->POSTJson("/api", request, ip, port);
 
-      if (answer[0]["success"] != Json::nullValue) {
-        // [{"success":{"username": "<username>"}}]
-        username = answer[0]["success"]["username"].asString();
-        this->ip = ip;
-        // Update commands with new username and ip
-        commands = HueCommandAPI(ip, port, username, http_handler);
-        std::cout << "Success! Link button was pressed!\n";
-        std::cout << "Username is \"" << username << "\"\n";
-        break;
-      }
-      if (answer[0]["error"] != Json::nullValue) {
-        std::cout << "Link button not pressed!\n";
+      if (answer.size() > 0) {
+        if (answer[0].count("success")) {
+          // [{"success":{"username": "<username>"}}]
+          username = answer[0]["success"]["username"];
+          this->ip = ip;
+          // Update commands with new username and ip
+          commands = HueCommandAPI(ip, port, username, http_handler);
+          std::cout << "Success! Link button was pressed!\n";
+          std::cout << "Username is \"" << username << "\"\n";
+          break;
+        } else if (answer[0].count("error")) {
+          std::cout << "Link button not pressed!\n";
+        }
       }
     }
   }
@@ -198,13 +198,13 @@ HueLight &Hue::getLight(int id) {
     return pos->second;
   }
   refreshState();
-  if (!state["lights"].isMember(std::to_string(id))) {
+  if (!state["lights"].count(std::to_string(id))) {
     std::cerr << "Error in Hue getLight(): light with id " << id
               << " is not valid\n";
     throw(std::runtime_error("Error in Hue getLight(): light id is not valid"));
   }
   // std::cout << state["lights"][std::to_string(id)] << std::endl;
-  std::string type = state["lights"][std::to_string(id)]["modelid"].asString();
+  std::string type = state["lights"][std::to_string(id)]["modelid"];
   // std::cout << type << std::endl;
   if (type == "LCT001" || type == "LCT002" || type == "LCT003" ||
       type == "LCT007" || type == "LLM001") {
@@ -266,11 +266,10 @@ HueLight &Hue::getLight(int id) {
 }
 
 bool Hue::removeLight(int id) {
-  Json::Value result = commands.DELETERequest("/lights/" + std::to_string(id),
-                                              Json::objectValue);
+  nlohmann::json result =
+      commands.DELETERequest("/lights/" + std::to_string(id), {});
   bool success =
-      result.isArray() && !result[0].isNull() &&
-      result[0].isMember("success") &&
+      result.is_array() && result.size() > 0 && result[0].count("success") &&
       result[0]["success"] == "/lights/" + std::to_string(id) + " deleted";
   if (success && lights.count(id) != 0) {
     lights.erase(id);
@@ -280,8 +279,8 @@ bool Hue::removeLight(int id) {
 
 std::vector<std::reference_wrapper<HueLight>> Hue::getAllLights() {
   refreshState();
-  for (const auto &id : state["lights"].getMemberNames()) {
-    getLight(std::stoi(id));
+  for (const auto &id : state["lights"].items()) {
+    getLight(std::stoi(id.key()));
   }
   std::vector<std::reference_wrapper<HueLight>> result;
   for (auto &entry : lights) {
@@ -296,7 +295,7 @@ bool Hue::lightExists(int id) {
   if (pos != lights.end()) {
     return true;
   }
-  if (state["lights"].isMember(std::to_string(id))) {
+  if (state["lights"].count(std::to_string(id))) {
     return true;
   }
   return false;
@@ -307,7 +306,7 @@ bool Hue::lightExists(int id) const {
   if (pos != lights.end()) {
     return true;
   }
-  if (state["lights"].isMember(std::to_string(id))) {
+  if (state["lights"].count(std::to_string(id))) {
     return true;
   }
   return false;
@@ -401,12 +400,12 @@ void Hue::refreshState() {
   if (username.empty()) {
     return;
   }
-  Json::Value answer = commands.GETRequest("", Json::objectValue);
-  if (answer.isObject() && answer.isMember("lights")) {
+  nlohmann::json answer = commands.GETRequest("", {});
+  if (answer.is_object() && answer.count("lights")) {
     state = answer;
   } else {
     std::cout << "Answer in Hue::refreshState of http_handler->GETJson(...) is "
                  "not expected!\nAnswer:\n\t"
-              << answer.toStyledString() << std::endl;
+              << answer.dump() << std::endl;
   }
 }

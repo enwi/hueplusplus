@@ -5,7 +5,6 @@ set(hueplusplus_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Hue.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/HueCommandAPI.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/HueLight.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/jsoncpp.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/SimpleBrightnessStrategy.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/SimpleColorHueStrategy.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/SimpleColorTemperatureStrategy.cpp
@@ -36,8 +35,10 @@ endif()
 
 # Set global includes BEFORE adding any targets for legacy CMake versions
 if(CMAKE_VERSION VERSION_LESS 2.8.12)
-	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
+  include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
+  include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/json")
 endif()
+
 
 # hueplusplus shared library
 add_library(hueplusplusshared SHARED ${hueplusplus_SOURCES})

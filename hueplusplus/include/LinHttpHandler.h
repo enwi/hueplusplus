@@ -25,7 +25,7 @@
 
 #include "BaseHttpHandler.h"
 
-#include "json/json.h"
+#include "json/json.hpp"
 
 //! Class to handle http requests and multicast requests on linux systems
 class LinHttpHandler : public BaseHttpHandler {

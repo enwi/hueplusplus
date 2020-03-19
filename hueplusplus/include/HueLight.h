@@ -27,7 +27,7 @@
 #include "ColorTemperatureStrategy.h"
 #include "HueCommandAPI.h"
 
-#include "json/json.h"
+#include "json/json.hpp"
 
 /*enum ModelType
 {
@@ -617,19 +617,19 @@ protected:
   //! \brief Utility function to send a put request to the light.
   //!
   //! \throws std::runtime_error if the reply could not be parsed
-  //! \param request A Json::Value aka the request to send
+  //! \param request A nlohmann::json aka the request to send
   //! \param subPath A path that is appended to the uri, note it should always
   //! start with a slash ("/") \return The parsed reply
-  virtual Json::Value SendPutRequest(const Json::Value &request,
-                                     const std::string &subPath);
+  virtual nlohmann::json SendPutRequest(const nlohmann::json &request,
+                                        const std::string &subPath);
 
   //! \brief Virtual function that refreshes the \ref state of the light.
   virtual void refreshState();
 
 protected:
-  int id;              //!< holds the id of the light
-  Json::Value state;   //!< holds the current state of the light updated by \ref
-                       //!< refreshState
+  int id;               //!< holds the id of the light
+  nlohmann::json state; //!< holds the current state of the light updated by
+                        //!< \ref refreshState
   ColorType colorType; //!< holds the \ref ColorType of the light
 
   std::shared_ptr<const BrightnessStrategy>
