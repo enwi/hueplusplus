@@ -109,7 +109,7 @@ std::string LinHttpHandler::send(const std::string &msg, const std::string &adr,
   // receive the response
   std::string response;
   total = sizeof(response) - 1;
-  decltype(total) received = 0;
+  size_t received = 0;
   char buffer[128] = {};
   do {
     ssize_t bytes = read(socketFD, buffer, 127);
