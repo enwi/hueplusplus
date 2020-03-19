@@ -26,8 +26,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 #include "BaseHttpHandler.h"
 
-#include "json/json.hpp"
-
 //! Class to handle http requests and multicast requests on windows systems
 class WinHttpHandler : public BaseHttpHandler {
 public:
