@@ -1419,6 +1419,7 @@ bool OurReader::readToken(Token& token) {
     ok = readStringSingleQuote();
     break;
     } // else continue
+    // fall through (magic comment for gcc, to pacify -Werror=implicit-fallthrough)
   case '/':
     token.type_ = tokenComment;
     ok = readComment();

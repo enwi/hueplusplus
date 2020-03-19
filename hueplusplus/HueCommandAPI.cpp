@@ -27,7 +27,7 @@ HueCommandAPI::HueCommandAPI(const std::string &ip, const int port,
                              const std::string &username,
                              std::shared_ptr<const IHttpHandler> httpHandler)
     : ip(ip), port(port), username(username), httpHandler(std::move(httpHandler)),
-      timeout(new TimeoutData{std::chrono::steady_clock::now()}) {}
+      timeout(new TimeoutData{std::chrono::steady_clock::now(),{}}) {}
 
 Json::Value HueCommandAPI::PUTRequest(const std::string &path,
                                       const Json::Value &request) const {

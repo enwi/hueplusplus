@@ -87,7 +87,7 @@ std::string LinHttpHandler::send(const std::string &msg, const std::string &adr,
 
   // send the request
   size_t total = msg.length();
-  ssize_t sent = 0;
+  size_t sent = 0;
   do {
     ssize_t bytes = write(socketFD, msg.c_str() + sent, total - sent);
     if (bytes < 0) {
@@ -98,10 +98,10 @@ std::string LinHttpHandler::send(const std::string &msg, const std::string &adr,
           errCode, std::generic_category(),
           "LinHttpHandler: Failed to write message to socket"));
     }
-    if (bytes == 0) {
+    else if (bytes == 0) {
       break;
     }
-    if (bytes) {
+    else {
       sent += bytes;
     }
   } while (sent < total);
@@ -109,7 +109,7 @@ std::string LinHttpHandler::send(const std::string &msg, const std::string &adr,
   // receive the response
   std::string response;
   total = sizeof(response) - 1;
-  int received = 0;
+  decltype(total) received = 0;
   char buffer[128] = {};
   do {
     ssize_t bytes = read(socketFD, buffer, 127);
@@ -121,10 +121,10 @@ std::string LinHttpHandler::send(const std::string &msg, const std::string &adr,
           errCode, std::generic_category(),
           "LinHttpHandler: Failed to read response from socket"));
     }
-    if (bytes == 0) {
+    else if (bytes == 0) {
       break;
     }
-    if (bytes) {
+    else {
       received += bytes;
       response.append(buffer, bytes);
     }
