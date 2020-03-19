@@ -33,6 +33,7 @@
 
 #include "include/ExtendedColorHueStrategy.h"
 #include "include/ExtendedColorTemperatureStrategy.h"
+#include "include/HueExceptionMacro.h"
 #include "include/SimpleBrightnessStrategy.h"
 #include "include/SimpleColorHueStrategy.h"
 #include "include/SimpleColorTemperatureStrategy.h"
@@ -291,7 +292,7 @@ HueLight& Hue::getLight(int id)
 
 bool Hue::removeLight(int id)
 {
-    nlohmann::json result = commands.DELETERequest("/lights/" + std::to_string(id), nlohmann::json::object());
+    nlohmann::json result = commands.DELETERequest("/lights/" + std::to_string(id), nlohmann::json::object(), CURRENT_FILE_INFO);
     bool success = utils::safeGetMember(result, 0, "success") == "/lights/" + std::to_string(id) + " deleted";
     if (success && lights.count(id) != 0)
     {
@@ -486,7 +487,7 @@ void Hue::refreshState()
     {
         return;
     }
-    nlohmann::json answer = commands.GETRequest("", nlohmann::json::object());
+    nlohmann::json answer = commands.GETRequest("", nlohmann::json::object(), CURRENT_FILE_INFO);
     if (answer.is_object() && answer.count("lights"))
     {
         state = answer;

@@ -27,6 +27,7 @@
 #include <thread>
 
 #include "include/HueConfig.h"
+#include "include/HueExceptionMacro.h"
 #include "include/Utils.h"
 
 bool SimpleColorHueStrategy::setColorHue(uint16_t hue, uint8_t transition, HueLight& light) const
@@ -53,7 +54,7 @@ bool SimpleColorHueStrategy::setColorHue(uint16_t hue, uint8_t transition, HueLi
         return true;
     }
 
-    nlohmann::json reply = light.SendPutRequest(request, "/state");
+    nlohmann::json reply = light.SendPutRequest(request, "/state", CURRENT_FILE_INFO);
 
     // Check whether request was successful
     return utils::validateReplyForLight(request, reply, light.id);
@@ -86,7 +87,7 @@ bool SimpleColorHueStrategy::setColorSaturation(uint8_t sat, uint8_t transition,
         return true;
     }
 
-    nlohmann::json reply = light.SendPutRequest(request, "/state");
+    nlohmann::json reply = light.SendPutRequest(request, "/state", CURRENT_FILE_INFO);
 
     // Check whether request was successful
     return utils::validateReplyForLight(request, reply, light.id);
@@ -125,7 +126,7 @@ bool SimpleColorHueStrategy::setColorHueSaturation(uint16_t hue, uint8_t sat, ui
         return true;
     }
 
-    nlohmann::json reply = light.SendPutRequest(request, "/state");
+    nlohmann::json reply = light.SendPutRequest(request, "/state", CURRENT_FILE_INFO);
 
     // Check whether request was successful
     return utils::validateReplyForLight(request, reply, light.id);
@@ -158,7 +159,7 @@ bool SimpleColorHueStrategy::setColorXY(float x, float y, uint8_t transition, Hu
         return true;
     }
 
-    nlohmann::json reply = light.SendPutRequest(request, "/state");
+    nlohmann::json reply = light.SendPutRequest(request, "/state", CURRENT_FILE_INFO);
 
     // Check whether request was successful
     return utils::validateReplyForLight(request, reply, light.id);
@@ -211,7 +212,7 @@ bool SimpleColorHueStrategy::setColorLoop(bool on, HueLight& light) const
         return true;
     }
 
-    nlohmann::json reply = light.SendPutRequest(request, "/state");
+    nlohmann::json reply = light.SendPutRequest(request, "/state", CURRENT_FILE_INFO);
 
     // Check whether request was successful
     return utils::validateReplyForLight(request, reply, light.id);
