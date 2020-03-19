@@ -70,7 +70,15 @@ license you like.
 
 
 
-
+#if defined __has_cpp_attribute
+    #if __has_cpp_attribute(fallthrough)
+        #define FALLTHROUGH [[fallthrough]]
+    #else
+        #define FALLTHROUGH
+    #endif
+#else
+    #define MY_FALLTHROUGH
+#endif
 
 
 #include "include/json/json.h"
@@ -1419,6 +1427,7 @@ bool OurReader::readToken(Token& token) {
     ok = readStringSingleQuote();
     break;
     } // else continue
+    FALLTHROUGH;
     // fall through (magic comment for gcc, to pacify -Werror=implicit-fallthrough)
   case '/':
     token.type_ = tokenComment;
