@@ -24,7 +24,44 @@
 
 #include <thread>
 
+#include "include/HueExceptionMacro.h"
+
 constexpr std::chrono::steady_clock::duration HueCommandAPI::minDelay;
+
+namespace
+{
+    // Runs functor with appropriate timeout and retries when timed out or connection reset
+    template <typename Timeout, typename Fun>
+    nlohmann::json RunWithTimeout(
+        std::shared_ptr<Timeout> timeout, std::chrono::steady_clock::duration minDelay, Fun fun)
+    {
+        auto now = std::chrono::steady_clock::now();
+        std::lock_guard<std::mutex> lock(timeout->mutex);
+        if (timeout->timeout > now)
+        {
+            std::this_thread::sleep_until(timeout->timeout);
+        }
+        try
+        {
+            nlohmann::json response = fun();
+            timeout->timeout = now + minDelay;
+            return response;
+        }
+        catch (const std::system_error& e)
+        {
+            if (e.code() == std::errc::connection_reset || e.code() == std::errc::timed_out)
+            {
+                // Happens when hue is too busy, wait and try again (once)
+                std::this_thread::sleep_for(minDelay);
+                nlohmann::json v = fun();
+                timeout->timeout = std::chrono::steady_clock::now() + minDelay;
+                return v;
+            }
+            // Cannot recover from other types of errors
+            throw;
+        }
+    }
+} // namespace
 
 HueCommandAPI::HueCommandAPI(
     const std::string& ip, const int port, const std::string& username, std::shared_ptr<const IHttpHandler> httpHandler)
@@ -32,98 +69,66 @@ HueCommandAPI::HueCommandAPI(
       port(port),
       username(username),
       httpHandler(std::move(httpHandler)),
-      timeout(new TimeoutData {std::chrono::steady_clock::now(), {}})
+      timeout(new TimeoutData{std::chrono::steady_clock::now(), {}})
 {}
 
 nlohmann::json HueCommandAPI::PUTRequest(const std::string& path, const nlohmann::json& request) const
 {
-    auto now = std::chrono::steady_clock::now();
-    std::lock_guard<std::mutex> lock(timeout->mutex);
-    if (timeout->timeout > now)
-    {
-        std::this_thread::sleep_until(timeout->timeout);
-    }
-    // If path does not begin with '/', insert it unless path is empty
-    const std::string combinedPath = "/api/" + username + (path.empty() || path.front() == '/' ? "" : "/") + path;
-    try
-    {
-        nlohmann::json v = httpHandler->PUTJson(combinedPath, request, ip);
-        timeout->timeout = now + minDelay;
-        return v;
-    }
-    catch (const std::system_error& e)
-    {
-        if (e.code() == std::errc::connection_reset || e.code() == std::errc::timed_out)
-        {
-            // Happens when hue is too busy, wait and try again (once)
-            std::this_thread::sleep_for(minDelay);
-            nlohmann::json v = httpHandler->PUTJson(combinedPath, request, ip);
-            timeout->timeout = std::chrono::steady_clock::now() + minDelay;
-            return v;
-        }
-        // Cannot recover from other types of errors
-        throw;
-    }
+    return PUTRequest(path, request, CURRENT_FILE_INFO);
+}
+
+nlohmann::json HueCommandAPI::PUTRequest(
+    const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const
+{
+    return HandleError(fileInfo,
+        RunWithTimeout(timeout, minDelay, [&]() { return httpHandler->PUTJson(CombinedPath(path), request, ip); }));
 }
 
 nlohmann::json HueCommandAPI::GETRequest(const std::string& path, const nlohmann::json& request) const
 {
-    auto now = std::chrono::steady_clock::now();
-    std::lock_guard<std::mutex> lock(timeout->mutex);
-    if (timeout->timeout > now)
-    {
-        std::this_thread::sleep_until(timeout->timeout);
-    }
-    // If path does not begin with '/', insert it unless path is empty
-    const std::string combinedPath = "/api/" + username + (path.empty() || path.front() == '/' ? "" : "/") + path;
-    try
-    {
-        nlohmann::json v = httpHandler->GETJson(combinedPath, request, ip);
-        timeout->timeout = now + minDelay;
-        return v;
-    }
-    catch (const std::system_error& e)
-    {
-        if (e.code() == std::errc::connection_reset || e.code() == std::errc::timed_out)
-        {
-            // Happens when hue is too busy, wait and try again (once)
-            std::this_thread::sleep_for(minDelay);
-            nlohmann::json v = httpHandler->GETJson(combinedPath, request, ip);
-            timeout->timeout = std::chrono::steady_clock::now() + minDelay;
-            return v;
-        }
-        // Cannot recover from other types of errors
-        throw;
-    }
+    return GETRequest(path, request, CURRENT_FILE_INFO);
+}
+
+nlohmann::json HueCommandAPI::GETRequest(
+    const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const
+{
+    return HandleError(fileInfo,
+        RunWithTimeout(timeout, minDelay, [&]() { return httpHandler->GETJson(CombinedPath(path), request, ip); }));
 }
 
 nlohmann::json HueCommandAPI::DELETERequest(const std::string& path, const nlohmann::json& request) const
 {
-    auto now = std::chrono::steady_clock::now();
-    std::lock_guard<std::mutex> lock(timeout->mutex);
-    if (timeout->timeout > now)
+    return DELETERequest(path, request, CURRENT_FILE_INFO);
+}
+
+nlohmann::json HueCommandAPI::DELETERequest(
+    const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const
+{
+    return HandleError(fileInfo,
+        RunWithTimeout(timeout, minDelay, [&]() { return httpHandler->DELETEJson(CombinedPath(path), request, ip); }));
+}
+
+nlohmann::json HueCommandAPI::HandleError(FileInfo fileInfo, const nlohmann::json& response) const
+{
+    if (response.count("error") != 0)
     {
-        std::this_thread::sleep_until(timeout->timeout);
+        int errorCode = response["type"];
+        std::string address = response["address"];
+        std::string description = response["description"];
+        throw HueAPIResponseException(std::move(fileInfo), errorCode, std::move(address), std::move(description));
     }
-    // If path does not begin with '/', insert it unless path is empty
-    const std::string combinedPath = "/api/" + username + (path.empty() || path.front() == '/' ? "" : "/") + path;
-    try
+    return response;
+}
+
+std::string HueCommandAPI::CombinedPath(const std::string& path) const
+{
+    std::string result = "/api/";
+    result.append(username);
+    // If path does not begin with '/', insert it unless it is empty
+    if (!path.empty() && path.front() != '/')
     {
-        nlohmann::json v = httpHandler->DELETEJson(combinedPath, request, ip);
-        timeout->timeout = now + minDelay;
-        return v;
+        result.append("/");
     }
-    catch (const std::system_error& e)
-    {
-        if (e.code() == std::errc::connection_reset || e.code() == std::errc::timed_out)
-        {
-            // Happens when hue is too busy, wait and try again (once)
-            std::this_thread::sleep_for(minDelay);
-            nlohmann::json v = httpHandler->DELETEJson(combinedPath, request, ip);
-            timeout->timeout = std::chrono::steady_clock::now() + minDelay;
-            return v;
-        }
-        // Cannot recover from other types of errors
-        throw;
-    }
+    result.append(path);
+    return result;
 }

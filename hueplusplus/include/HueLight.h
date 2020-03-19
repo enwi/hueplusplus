@@ -653,7 +653,7 @@ protected:
     //! \param request A nlohmann::json aka the request to send
     //! \param subPath A path that is appended to the uri, note it should always
     //! start with a slash ("/") \return The parsed reply
-    virtual nlohmann::json SendPutRequest(const nlohmann::json& request, const std::string& subPath);
+    virtual nlohmann::json SendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo);
 
     //! \brief Virtual function that refreshes the \ref state of the light.
     virtual void refreshState();
