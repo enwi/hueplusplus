@@ -25,7 +25,7 @@
 #include <string>
 #include <vector>
 
-#include "json/json.h"
+#include "json/json.hpp"
 
 //! Abstract class for classes that handle http requests and multicast requests
 class IHttpHandler {
@@ -155,53 +155,56 @@ public:
   //!
   //! Note body can also be left empty!
   //! \param uri String that contains the uniform resource identifier
-  //! \param body Json::Value that contains the data of the request
+  //! \param body nlohmann::json that contains the data of the request
   //! \param adr String that contains an ip or hostname in dotted decimal
   //! notation like "192.168.2.1" \param port Optional integer that specifies
   //! the port to which the request is sent to. Default is 80 \return
-  //! Json::Value containing the parsed body of the response of the host
-  virtual Json::Value GETJson(std::string uri, const Json::Value &body,
-                              const std::string &adr, int port = 80) const = 0;
+  //! nlohmann::json containing the parsed body of the response of the host
+  virtual nlohmann::json GETJson(std::string uri, const nlohmann::json &body,
+                                 const std::string &adr,
+                                 int port = 80) const = 0;
 
   //! \brief Virtual function that should send a HTTP POST request to the
   //! specified host and return the body of the response.
   //!
   //! Note body can also be left empty!
   //! \param uri String that contains the uniform resource identifier
-  //! \param body Json::Value that contains the data of the request
+  //! \param body nlohmann::json that contains the data of the request
   //! \param adr String that contains an ip or hostname in dotted decimal
   //! notation like "192.168.2.1" \param port Optional integer that specifies
   //! the port to which the request is sent to. Default is 80 \return
-  //! Json::Value containing the parsed body of the response of the host
-  virtual Json::Value POSTJson(std::string uri, const Json::Value &body,
-                               const std::string &adr, int port = 80) const = 0;
+  //! nlohmann::json containing the parsed body of the response of the host
+  virtual nlohmann::json POSTJson(std::string uri, const nlohmann::json &body,
+                                  const std::string &adr,
+                                  int port = 80) const = 0;
 
   //! \brief Virtual function that should send a HTTP PUT request to the
   //! specified host and return the body of the response.
   //!
   //! Note body can also be left empty!
   //! \param uri String that contains the uniform resource identifier
-  //! \param body Json::Value that contains the data of the request
+  //! \param body nlohmann::json that contains the data of the request
   //! \param adr String that contains an ip or hostname in dotted decimal
   //! notation like "192.168.2.1" \param port Optional integer that specifies
   //! the port to which the request is sent to. Default is 80 \return
-  //! Json::Value containing the parsed body of the response of the host
-  virtual Json::Value PUTJson(std::string uri, const Json::Value &body,
-                              const std::string &adr, int port = 80) const = 0;
+  //! nlohmann::json containing the parsed body of the response of the host
+  virtual nlohmann::json PUTJson(std::string uri, const nlohmann::json &body,
+                                 const std::string &adr,
+                                 int port = 80) const = 0;
 
   //! \brief Virtual function that should send a HTTP DELETE request to the
   //! specified host and return the body of the response.
   //!
   //! Note body can also be left empty!
   //! \param uri String that contains the uniform resource identifier
-  //! \param body Json::Value that contains the data of the request
+  //! \param body nlohmann::json that contains the data of the request
   //! \param adr String that contains an ip or hostname in dotted decimal
   //! notation like "192.168.2.1" \param port Optional integer that specifies
   //! the port to which the request is sent to. Default is 80 \return
-  //! Json::Value containing the parsed body of the response of the host
-  virtual Json::Value DELETEJson(std::string uri, const Json::Value &body,
-                                 const std::string &adr,
-                                 int port = 80) const = 0;
+  //! nlohmann::json containing the parsed body of the response of the host
+  virtual nlohmann::json DELETEJson(std::string uri, const nlohmann::json &body,
+                                    const std::string &adr,
+                                    int port = 80) const = 0;
 };
 
 #endif

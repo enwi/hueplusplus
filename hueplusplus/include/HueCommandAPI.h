@@ -66,8 +66,8 @@ public:
   //! (appended after /api/<username>) \param request Json value containing the
   //! request. May be empty \returns The return value of the underlying \ref
   //! IHttpHandler::PUTJson call
-  Json::Value PUTRequest(const std::string &path,
-                         const Json::Value &request) const;
+  nlohmann::json PUTRequest(const std::string &path,
+                            const nlohmann::json &request) const;
 
   //! \brief Sends a HTTP GET request via the \ref httpHandler to the bridge and
   //! returns the response
@@ -77,8 +77,8 @@ public:
   //! (appended after /api/<username>) \param request Json value containing the
   //! request. May be empty \returns The return value of the underlying \ref
   //! IHttpHandler::GETJson call
-  Json::Value GETRequest(const std::string &path,
-                         const Json::Value &request) const;
+  nlohmann::json GETRequest(const std::string &path,
+                            const nlohmann::json &request) const;
 
   //! \brief Sends a HTTP DELETE request via the \ref httpHandler to the bridge
   //! and returns the response
@@ -88,8 +88,8 @@ public:
   //! (appended after /api/<username>) \param request Json value containing the
   //! request. May be empty \returns The return value of the underlying \ref
   //! IHttpHandler::DELETEJson call
-  Json::Value DELETERequest(const std::string &path,
-                            const Json::Value &request) const;
+  nlohmann::json DELETERequest(const std::string &path,
+                               const nlohmann::json &request) const;
 
 private:
   struct TimeoutData {

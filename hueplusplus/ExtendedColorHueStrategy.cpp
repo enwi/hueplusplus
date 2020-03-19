@@ -27,11 +27,11 @@
 bool ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat,
                                                   HueLight &light) const {
   light.refreshState();
-  std::string cType = light.state["state"]["colormode"].asString();
-  bool on = light.state["state"]["on"].asBool();
+  std::string cType = light.state["state"]["colormode"];
+  bool on = light.state["state"]["on"];
   if (cType == "hs") {
-    uint16_t oldHue = light.state["state"]["hue"].asUInt();
-    uint8_t oldSat = light.state["state"]["sat"].asUInt();
+    uint16_t oldHue = light.state["state"]["hue"];
+    uint8_t oldSat = light.state["state"]["sat"];
     if (!light.setColorHueSaturation(hue, sat, 1)) {
       return false;
     }
@@ -47,8 +47,8 @@ bool ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat,
       return light.setColorHueSaturation(oldHue, oldSat, 1);
     }
   } else if (cType == "xy") {
-    float oldX = light.state["state"]["xy"][0].asFloat();
-    float oldY = light.state["state"]["xy"][1].asFloat();
+    float oldX = light.state["state"]["xy"][0];
+    float oldY = light.state["state"]["xy"][1];
     if (!light.setColorHueSaturation(hue, sat, 1)) {
       return false;
     }
@@ -64,7 +64,7 @@ bool ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat,
       return light.setColorXY(oldX, oldY, 1);
     }
   } else if (cType == "ct") {
-    uint16_t oldCT = light.state["state"]["ct"].asUInt();
+    uint16_t oldCT = light.state["state"]["ct"];
     if (!light.setColorHueSaturation(hue, sat, 1)) {
       return false;
     }
@@ -87,11 +87,11 @@ bool ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat,
 bool ExtendedColorHueStrategy::alertXY(float x, float y,
                                        HueLight &light) const {
   light.refreshState();
-  std::string cType = light.state["state"]["colormode"].asString();
-  bool on = light.state["state"]["on"].asBool();
+  std::string cType = light.state["state"]["colormode"];
+  bool on = light.state["state"]["on"];
   if (cType == "hs") {
-    uint16_t oldHue = light.state["state"]["hue"].asUInt();
-    uint8_t oldSat = light.state["state"]["sat"].asUInt();
+    uint16_t oldHue = light.state["state"]["hue"];
+    uint8_t oldSat = light.state["state"]["sat"];
     if (!light.setColorXY(x, y, 1)) {
       return false;
     }
@@ -107,8 +107,8 @@ bool ExtendedColorHueStrategy::alertXY(float x, float y,
       return light.setColorHueSaturation(oldHue, oldSat, 1);
     }
   } else if (cType == "xy") {
-    float oldX = light.state["state"]["xy"][0].asFloat();
-    float oldY = light.state["state"]["xy"][1].asFloat();
+    float oldX = light.state["state"]["xy"][0];
+    float oldY = light.state["state"]["xy"][1];
     if (!light.setColorXY(x, y, 1)) {
       return false;
     }
@@ -124,7 +124,7 @@ bool ExtendedColorHueStrategy::alertXY(float x, float y,
       return light.setColorXY(oldX, oldY, 1);
     }
   } else if (cType == "ct") {
-    uint16_t oldCT = light.state["state"]["ct"].asUInt();
+    uint16_t oldCT = light.state["state"]["ct"];
     if (!light.setColorXY(x, y, 1)) {
       return false;
     }
@@ -147,11 +147,11 @@ bool ExtendedColorHueStrategy::alertXY(float x, float y,
 bool ExtendedColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b,
                                         HueLight &light) const {
   light.refreshState();
-  std::string cType = light.state["state"]["colormode"].asString();
-  bool on = light.state["state"]["on"].asBool();
+  std::string cType = light.state["state"]["colormode"];
+  bool on = light.state["state"]["on"];
   if (cType == "hs") {
-    uint16_t oldHue = light.state["state"]["hue"].asUInt();
-    uint8_t oldSat = light.state["state"]["sat"].asUInt();
+    uint16_t oldHue = light.state["state"]["hue"];
+    uint8_t oldSat = light.state["state"]["sat"];
     if (!light.setColorRGB(r, g, b, 1)) {
       return false;
     }
@@ -167,8 +167,8 @@ bool ExtendedColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b,
       return light.setColorHueSaturation(oldHue, oldSat, 1);
     }
   } else if (cType == "xy") {
-    float oldX = light.state["state"]["xy"][0].asFloat();
-    float oldY = light.state["state"]["xy"][1].asFloat();
+    float oldX = light.state["state"]["xy"][0];
+    float oldY = light.state["state"]["xy"][1];
     if (!light.setColorRGB(r, g, b, 1)) {
       return false;
     }
@@ -184,7 +184,7 @@ bool ExtendedColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b,
       return light.setColorXY(oldX, oldY, 1);
     }
   } else if (cType == "ct") {
-    uint16_t oldCT = light.state["state"]["ct"].asUInt();
+    uint16_t oldCT = light.state["state"]["ct"];
     if (!light.setColorRGB(r, g, b, 1)) {
       return false;
     }

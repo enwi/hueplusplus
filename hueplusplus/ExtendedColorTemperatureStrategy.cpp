@@ -27,15 +27,15 @@
 bool ExtendedColorTemperatureStrategy::setColorTemperature(
     unsigned int mired, uint8_t transition, HueLight &light) const {
   light.refreshState();
-  Json::Value request(Json::objectValue);
+  nlohmann::json request({});
   if (transition != 4) {
     request["transitiontime"] = transition;
   }
-  if (light.state["state"]["on"].asBool() != true) {
+  if (light.state["state"]["on"] != true) {
     request["on"] = true;
   }
-  if (light.state["state"]["ct"].asUInt() != mired ||
-      light.state["state"]["colormode"].asString() != "ct") {
+  if (light.state["state"]["ct"] != mired ||
+      light.state["state"]["colormode"] != "ct") {
     if (mired > 500) {
       mired = 500;
     }
@@ -45,36 +45,34 @@ bool ExtendedColorTemperatureStrategy::setColorTemperature(
     request["ct"] = mired;
   }
 
-  if (!request.isMember("on") && !request.isMember("ct")) {
+  if (!request.count("on") && !request.count("ct")) {
     // Nothing needs to be changed
     return true;
   }
 
-  Json::Value reply = light.SendPutRequest(request, "/state");
+  nlohmann::json reply = light.SendPutRequest(request, "/state");
 
   // Check whether request was successful
   std::string path = "/lights/" + std::to_string(light.id) + "/state/";
   bool success = true;
   int i = 0;
-  if (success && request.isMember("transitiontime")) {
+  if (success && request.count("transitiontime")) {
     // Check if success was sent and the value was changed
-    success = !reply[i].isNull() && reply[i].isMember("success") &&
-              reply[i]["success"][path + "transitiontime"].asUInt() ==
-                  request["transitiontime"].asUInt();
+    success = reply.size() > i && reply[i].count("success") &&
+              reply[i]["success"][path + "transitiontime"] ==
+                  request["transitiontime"];
     ++i;
   }
-  if (success && request.isMember("on")) {
+  if (success && request.count("on")) {
     // Check if success was sent and the value was changed
-    success =
-        !reply[i].isNull() && reply[i].isMember("success") &&
-        reply[i]["success"][path + "on"].asBool() == request["on"].asBool();
+    success = reply.size() > i && reply[i].count("success") &&
+              reply[i]["success"][path + "on"] == request["on"];
     ++i;
   }
-  if (success && request.isMember("ct")) {
+  if (success && request.count("ct")) {
     // Check if success was sent and the value was changed
-    success =
-        !reply[i].isNull() && reply[i].isMember("success") &&
-        reply[i]["success"][path + "ct"].asUInt() == request["ct"].asUInt();
+    success = reply.size() > i && reply[i].count("success") &&
+              reply[i]["success"][path + "ct"] == request["ct"];
   }
   return success;
 }
@@ -82,11 +80,11 @@ bool ExtendedColorTemperatureStrategy::setColorTemperature(
 bool ExtendedColorTemperatureStrategy::alertTemperature(unsigned int mired,
                                                         HueLight &light) const {
   light.refreshState();
-  std::string cType = light.state["state"]["colormode"].asString();
-  bool on = light.state["state"]["on"].asBool();
+  std::string cType = light.state["state"]["colormode"];
+  bool on = light.state["state"]["on"];
   if (cType == "hs") {
-    uint16_t oldHue = light.state["state"]["hue"].asUInt();
-    uint8_t oldSat = light.state["state"]["sat"].asUInt();
+    uint16_t oldHue = light.state["state"]["hue"];
+    uint8_t oldSat = light.state["state"]["sat"];
     if (!light.setColorTemperature(mired, 1)) {
       return false;
     }
@@ -102,8 +100,8 @@ bool ExtendedColorTemperatureStrategy::alertTemperature(unsigned int mired,
       return light.setColorHueSaturation(oldHue, oldSat, 1);
     }
   } else if (cType == "xy") {
-    float oldX = light.state["state"]["xy"][0].asFloat();
-    float oldY = light.state["state"]["xy"][1].asFloat();
+    float oldX = light.state["state"]["xy"][0];
+    float oldY = light.state["state"]["xy"][1];
     if (!light.setColorTemperature(mired, 1)) {
       return false;
     }
@@ -119,7 +117,7 @@ bool ExtendedColorTemperatureStrategy::alertTemperature(unsigned int mired,
       return light.setColorXY(oldX, oldY, 1);
     }
   } else if (cType == "ct") {
-    uint16_t oldCT = light.state["state"]["ct"].asUInt();
+    uint16_t oldCT = light.state["state"]["ct"];
     if (!light.setColorTemperature(mired, 1)) {
       return false;
     }

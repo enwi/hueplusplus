@@ -27,49 +27,47 @@
 bool SimpleColorHueStrategy::setColorHue(uint16_t hue, uint8_t transition,
                                          HueLight &light) const {
   light.refreshState();
-  Json::Value request(Json::objectValue);
+  nlohmann::json request({});
   if (transition != 4) {
     request["transitiontime"] = transition;
   }
-  if (light.state["state"]["on"].asBool() != true) {
+  if (light.state["state"]["on"] != true) {
     request["on"] = true;
   }
-  if (light.state["state"]["hue"].asUInt() != hue ||
-      light.state["state"]["colormode"].asString() != "hs") {
+  if (light.state["state"]["hue"] != hue ||
+      light.state["state"]["colormode"] != "hs") {
     hue = hue % 65535;
     request["hue"] = hue;
   }
 
-  if (!request.isMember("on") && !request.isMember("hue")) {
+  if (!request.count("on") && !request.count("hue")) {
     // Nothing needs to be changed
     return true;
   }
 
-  Json::Value reply = light.SendPutRequest(request, "/state");
+  nlohmann::json reply = light.SendPutRequest(request, "/state");
 
   // Check whether request was successful
   std::string path = "/lights/" + std::to_string(light.id) + "/state/";
   bool success = true;
   int i = 0;
-  if (success && request.isMember("transitiontime")) {
+  if (success && request.count("transitiontime")) {
     // Check if success was sent and the value was changed
-    success = !reply[i].isNull() && reply[i].isMember("success") &&
-              reply[i]["success"][path + "transitiontime"].asUInt() ==
-                  request["transitiontime"].asUInt();
+    success = reply.size() > i && reply[i].count("success") &&
+              reply[i]["success"][path + "transitiontime"] ==
+                  request["transitiontime"];
     ++i;
   }
-  if (success && request.isMember("on")) {
+  if (success && request.count("on")) {
     // Check if success was sent and the value was changed
-    success =
-        !reply[i].isNull() && reply[i].isMember("success") &&
-        reply[i]["success"][path + "on"].asBool() == request["on"].asBool();
+    success = reply.size() > i && reply[i].count("success") &&
+              reply[i]["success"][path + "on"] == request["on"];
     ++i;
   }
-  if (success && request.isMember("hue")) {
+  if (success && request.count("hue")) {
     // Check if success was sent and the value was changed
-    success =
-        !reply[i].isNull() && reply[i].isMember("success") &&
-        reply[i]["success"][path + "hue"].asUInt() == request["hue"].asUInt();
+    success = reply[i].size() > i && reply[i].count("success") &&
+              reply[i]["success"][path + "hue"] == request["hue"];
   }
   return success;
 }
@@ -77,50 +75,48 @@ bool SimpleColorHueStrategy::setColorHue(uint16_t hue, uint8_t transition,
 bool SimpleColorHueStrategy::setColorSaturation(uint8_t sat, uint8_t transition,
                                                 HueLight &light) const {
   light.refreshState();
-  Json::Value request(Json::objectValue);
+  nlohmann::json request({});
   if (transition != 4) {
     request["transitiontime"] = transition;
   }
-  if (light.state["state"]["on"].asBool() != true) {
+  if (light.state["state"]["on"] != true) {
     request["on"] = true;
   }
-  if (light.state["state"]["sat"].asUInt() != sat) {
+  if (light.state["state"]["sat"] != sat) {
     if (sat > 254) {
       sat = 254;
     }
     request["sat"] = sat;
   }
 
-  if (!request.isMember("on") && !request.isMember("sat")) {
+  if (!request.count("on") && !request.count("sat")) {
     // Nothing needs to be changed
     return true;
   }
 
-  Json::Value reply = light.SendPutRequest(request, "/state");
+  nlohmann::json reply = light.SendPutRequest(request, "/state");
 
   // Check whether request was successful
   std::string path = "/lights/" + std::to_string(light.id) + "/state/";
   bool success = true;
   int i = 0;
-  if (success && request.isMember("transitiontime")) {
+  if (success && request.count("transitiontime")) {
     // Check if success was sent and the value was changed
-    success = !reply[i].isNull() && reply[i].isMember("success") &&
-              reply[i]["success"][path + "transitiontime"].asUInt() ==
-                  request["transitiontime"].asUInt();
+    success = reply[i].size() > i && reply[i].count("success") &&
+              reply[i]["success"][path + "transitiontime"] ==
+                  request["transitiontime"];
     ++i;
   }
-  if (success && request.isMember("on")) {
+  if (success && request.count("on")) {
     // Check if success was sent and the value was changed
-    success =
-        !reply[i].isNull() && reply[i].isMember("success") &&
-        reply[i]["success"][path + "on"].asBool() == request["on"].asBool();
+    success = reply[i].size() > i && reply[i].count("success") &&
+              reply[i]["success"][path + "on"] == request["on"];
     ++i;
   }
-  if (success && request.isMember("sat")) {
+  if (success && request.count("sat")) {
     // Check if success was sent and the value was changed
-    success =
-        !reply[i].isNull() && reply[i].isMember("success") &&
-        reply[i]["success"][path + "sat"].asUInt() == request["sat"].asUInt();
+    success = reply[i].size() > i && reply[i].count("success") &&
+              reply[i]["success"][path + "sat"] == request["sat"];
   }
   return success;
 }
@@ -129,65 +125,61 @@ bool SimpleColorHueStrategy::setColorHueSaturation(uint16_t hue, uint8_t sat,
                                                    uint8_t transition,
                                                    HueLight &light) const {
   light.refreshState();
-  Json::Value request(Json::objectValue);
+  nlohmann::json request({});
 
   if (transition != 4) {
     request["transitiontime"] = transition;
   }
-  if (light.state["state"]["on"].asBool() != true) {
+  if (light.state["state"]["on"] != true) {
     request["on"] = true;
   }
-  if (light.state["state"]["hue"].asUInt() != hue ||
-      light.state["state"]["colormode"].asString() != "hs") {
+  if (light.state["state"]["hue"] != hue ||
+      light.state["state"]["colormode"] != "hs") {
     hue = hue % 65535;
     request["hue"] = hue;
   }
-  if (light.state["state"]["sat"].asUInt() != sat ||
-      light.state["state"]["colormode"].asString() != "hs") {
+  if (light.state["state"]["sat"] != sat ||
+      light.state["state"]["colormode"] != "hs") {
     if (sat > 254) {
       sat = 254;
     }
     request["sat"] = sat;
   }
 
-  if (!request.isMember("on") && !request.isMember("hue") &&
-      !request.isMember("sat")) {
+  if (!request.count("on") && !request.count("hue") && !request.count("sat")) {
     // Nothing needs to be changed
     return true;
   }
 
-  Json::Value reply = light.SendPutRequest(request, "/state");
+  nlohmann::json reply = light.SendPutRequest(request, "/state");
 
   // Check whether request was successful
   std::string path = "/lights/" + std::to_string(light.id) + "/state/";
   bool success = true;
   int i = 0;
-  if (success && request.isMember("transitiontime")) {
+  if (success && request.count("transitiontime")) {
     // Check if success was sent and the value was changed
-    success = !reply[i].isNull() && reply[i].isMember("success") &&
-              reply[i]["success"][path + "transitiontime"].asUInt() ==
-                  request["transitiontime"].asUInt();
+    success = reply[i].size() > i && reply[i].count("success") &&
+              reply[i]["success"][path + "transitiontime"] ==
+                  request["transitiontime"];
     ++i;
   }
-  if (success && request.isMember("on")) {
+  if (success && request.count("on")) {
     // Check if success was sent and the value was changed
-    success =
-        !reply[i].isNull() && reply[i].isMember("success") &&
-        reply[i]["success"][path + "on"].asBool() == request["on"].asBool();
+    success = reply[i].size() > i && reply[i].count("success") &&
+              reply[i]["success"][path + "on"] == request["on"];
     ++i;
   }
-  if (success && request.isMember("hue")) {
+  if (success && request.count("hue")) {
     // Check if success was sent and the value was changed
-    success =
-        !reply[i].isNull() && reply[i].isMember("success") &&
-        reply[i]["success"][path + "hue"].asUInt() == request["hue"].asUInt();
+    success = reply[i].size() > i && reply[i].count("success") &&
+              reply[i]["success"][path + "hue"] == request["hue"];
     ++i;
   }
-  if (success && request.isMember("sat")) {
+  if (success && request.count("sat")) {
     // Check if success was sent and the value was changed
-    success =
-        !reply[i].isNull() && reply[i].isMember("success") &&
-        reply[i]["success"][path + "sat"].asUInt() == request["sat"].asUInt();
+    success = reply[i].size() > i && reply[i].count("success") &&
+              reply[i]["success"][path + "sat"] == request["sat"];
   }
   return success;
 }
@@ -195,59 +187,58 @@ bool SimpleColorHueStrategy::setColorHueSaturation(uint16_t hue, uint8_t sat,
 bool SimpleColorHueStrategy::setColorXY(float x, float y, uint8_t transition,
                                         HueLight &light) const {
   light.refreshState();
-  Json::Value request(Json::objectValue);
+  nlohmann::json request({});
 
   if (transition != 4) {
     request["transitiontime"] = transition;
   }
-  if (light.state["state"]["on"].asBool() != true) {
+  if (light.state["state"]["on"] != true) {
     request["on"] = true;
   }
-  if (light.state["state"]["xy"][0].asFloat() != x ||
-      light.state["state"]["xy"][1].asFloat() != y ||
-      light.state["state"]["colormode"].asString() != "xy") {
+  if (light.state["state"]["xy"][0] != x ||
+      light.state["state"]["xy"][1] != y ||
+      light.state["state"]["colormode"] != "xy") {
     request["xy"][0] = x;
     request["xy"][1] = y;
   }
 
-  if (!request.isMember("on") && !request.isMember("xy")) {
+  if (!request.count("on") && !request.count("xy")) {
     // Nothing needs to be changed
     return true;
   }
 
-  Json::Value reply = light.SendPutRequest(request, "/state");
+  nlohmann::json reply = light.SendPutRequest(request, "/state");
 
   // Check whether request was successful
   std::string path = "/lights/" + std::to_string(light.id) + "/state/";
   bool success = true;
   int i = 0;
-  if (success && request.isMember("transitiontime")) {
+  if (success && request.count("transitiontime")) {
     // Check if success was sent and the value was changed
-    success = !reply[i].isNull() && reply[i].isMember("success") &&
-              reply[i]["success"][path + "transitiontime"].asUInt() ==
-                  request["transitiontime"].asUInt();
+    success = reply[i].size() > i && reply[i].count("success") &&
+              reply[i]["success"][path + "transitiontime"] ==
+                  request["transitiontime"];
     ++i;
   }
-  if (success && request.isMember("on")) {
+  if (success && request.count("on")) {
     // Check if success was sent and the value was changed
-    success =
-        !reply[i].isNull() && reply[i].isMember("success") &&
-        reply[i]["success"][path + "on"].asBool() == request["on"].asBool();
+    success = reply[i].size() > i && reply[i].count("success") &&
+              reply[i]["success"][path + "on"] == request["on"];
     ++i;
   }
-  if (success && request.isMember("xy")) {
+  if (success && request.count("xy")) {
     // Check if success was sent and the value was changed
     success =
-        !reply[i].isNull() && reply[i].isMember("success") &&
-        static_cast<int>(reply[i]["success"][path + "xy"][0].asFloat() * 10000 +
-                         0.5) ==
-            static_cast<int>(request["xy"][0].asFloat() * 10000 + 0.5);
+        reply[i].size() > i && reply[i].count("success") &&
+        static_cast<int>(
+            reply[i]["success"][path + "xy"][0].get<float>() * 10000 + 0.5) ==
+            static_cast<int>(request["xy"][0].get<float>() * 10000 + 0.5);
     if (success) {
       success =
-          !reply[i].isNull() && reply[i].isMember("success") &&
+          reply[i].size() > i && reply[i].count("success") &&
           static_cast<int>(
-              reply[i]["success"][path + "xy"][1].asFloat() * 10000 + 0.5) ==
-              static_cast<int>(request["xy"][1].asFloat() * 10000 + 0.5);
+              reply[i]["success"][path + "xy"][1].get<float>() * 10000 + 0.5) ==
+              static_cast<int>(request["xy"][1].get<float>() * 10000 + 0.5);
     }
   }
   return success;
@@ -291,39 +282,36 @@ bool SimpleColorHueStrategy::setColorRGB(uint8_t r, uint8_t g, uint8_t b,
 bool SimpleColorHueStrategy::setColorLoop(bool on, HueLight &light) const {
   // colorloop
   light.refreshState();
-  Json::Value request(Json::objectValue);
+  nlohmann::json request({});
 
-  if (light.state["state"]["on"].asBool() != true) {
+  if (light.state["state"]["on"] != true) {
     request["on"] = true;
   }
   std::string effect;
-  if ((effect = on ? "colorloop" : "none") !=
-      light.state["state"]["effect"].asString()) {
+  if ((effect = on ? "colorloop" : "none") != light.state["state"]["effect"]) {
     request["effect"] = effect;
   }
-  if (!request.isMember("on") && !request.isMember("effect")) {
+  if (!request.count("on") && !request.count("effect")) {
     // Nothing needs to be changed
     return true;
   }
 
-  Json::Value reply = light.SendPutRequest(request, "/state");
+  nlohmann::json reply = light.SendPutRequest(request, "/state");
 
   // Check whether request was successful
   std::string path = "/lights/" + std::to_string(light.id) + "/state/";
   bool success = true;
   int i = 0;
-  if (success && request.isMember("on")) {
+  if (success && request.count("on")) {
     // Check if success was sent and the value was changed
-    success =
-        !reply[i].isNull() && reply[i].isMember("success") &&
-        reply[i]["success"][path + "on"].asBool() == request["on"].asBool();
+    success = reply[i].size() > i && reply[i].count("success") &&
+              reply[i]["success"][path + "on"] == request["on"];
     ++i;
   }
-  if (success && request.isMember("effect")) {
+  if (success && request.count("effect")) {
     // Check if success was sent and the value was changed
-    success = !reply[i].isNull() && reply[i].isMember("success") &&
-              reply[i]["success"][path + "effect"].asString() ==
-                  request["effect"].asString();
+    success = reply[i].size() > i && reply[i].count("success") &&
+              reply[i]["success"][path + "effect"] == request["effect"];
   }
   return success;
 }
@@ -331,11 +319,11 @@ bool SimpleColorHueStrategy::setColorLoop(bool on, HueLight &light) const {
 bool SimpleColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat,
                                                 HueLight &light) const {
   light.refreshState();
-  std::string cType = light.state["state"]["colormode"].asString();
-  bool on = light.state["state"]["on"].asBool();
+  std::string cType = light.state["state"]["colormode"];
+  bool on = light.state["state"]["on"];
   if (cType == "hs") {
-    uint16_t oldHue = light.state["state"]["hue"].asUInt();
-    uint8_t oldSat = light.state["state"]["sat"].asUInt();
+    uint16_t oldHue = light.state["state"]["hue"];
+    uint8_t oldSat = light.state["state"]["sat"];
     if (!light.setColorHueSaturation(hue, sat, 1)) {
       return false;
     }
@@ -351,8 +339,8 @@ bool SimpleColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat,
       return light.setColorHueSaturation(oldHue, oldSat, 1);
     }
   } else if (cType == "xy") {
-    float oldX = light.state["state"]["xy"][0].asFloat();
-    float oldY = light.state["state"]["xy"][1].asFloat();
+    float oldX = light.state["state"]["xy"][0];
+    float oldY = light.state["state"]["xy"][1];
     if (!light.setColorHueSaturation(hue, sat, 1)) {
       return false;
     }
@@ -374,11 +362,11 @@ bool SimpleColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat,
 
 bool SimpleColorHueStrategy::alertXY(float x, float y, HueLight &light) const {
   light.refreshState();
-  std::string cType = light.state["state"]["colormode"].asString();
-  bool on = light.state["state"]["on"].asBool();
+  std::string cType = light.state["state"]["colormode"];
+  bool on = light.state["state"]["on"];
   if (cType == "hs") {
-    uint16_t oldHue = light.state["state"]["hue"].asUInt();
-    uint8_t oldSat = light.state["state"]["sat"].asUInt();
+    uint16_t oldHue = light.state["state"]["hue"];
+    uint8_t oldSat = light.state["state"]["sat"];
     if (!light.setColorXY(x, y, 1)) {
       return false;
     }
@@ -394,8 +382,8 @@ bool SimpleColorHueStrategy::alertXY(float x, float y, HueLight &light) const {
       return light.setColorHueSaturation(oldHue, oldSat, 1);
     }
   } else if (cType == "xy") {
-    float oldX = light.state["state"]["xy"][0].asFloat();
-    float oldY = light.state["state"]["xy"][1].asFloat();
+    float oldX = light.state["state"]["xy"][0];
+    float oldY = light.state["state"]["xy"][1];
     if (!light.setColorXY(x, y, 1)) {
       return false;
     }
@@ -418,11 +406,11 @@ bool SimpleColorHueStrategy::alertXY(float x, float y, HueLight &light) const {
 bool SimpleColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b,
                                       HueLight &light) const {
   light.refreshState();
-  std::string cType = light.state["state"]["colormode"].asString();
-  bool on = light.state["state"]["on"].asBool();
+  std::string cType = light.state["state"]["colormode"];
+  bool on = light.state["state"]["on"];
   if (cType == "hs") {
-    uint16_t oldHue = light.state["state"]["hue"].asUInt();
-    uint8_t oldSat = light.state["state"]["sat"].asUInt();
+    uint16_t oldHue = light.state["state"]["hue"];
+    uint8_t oldSat = light.state["state"]["sat"];
     if (!light.setColorRGB(r, g, b, 1)) {
       return false;
     }
@@ -438,8 +426,8 @@ bool SimpleColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b,
       return light.setColorHueSaturation(oldHue, oldSat, 1);
     }
   } else if (cType == "xy") {
-    float oldX = light.state["state"]["xy"][0].asFloat();
-    float oldY = light.state["state"]["xy"][1].asFloat();
+    float oldX = light.state["state"]["xy"][0];
+    float oldY = light.state["state"]["xy"][1];
     if (!light.setColorRGB(r, g, b, 1)) {
       return false;
     }
@@ -463,28 +451,28 @@ std::pair<uint16_t, uint8_t>
 SimpleColorHueStrategy::getColorHueSaturation(HueLight &light) const {
   light.refreshState();
   return std::pair<uint16_t, uint8_t>(
-      static_cast<uint16_t>(light.state["state"]["hue"].asUInt()),
-      static_cast<uint8_t>(light.state["state"]["sat"].asUInt()));
+      static_cast<uint16_t>(light.state["state"]["hue"]),
+      static_cast<uint8_t>(light.state["state"]["sat"]));
 }
 
 std::pair<uint16_t, uint8_t>
 SimpleColorHueStrategy::getColorHueSaturation(const HueLight &light) const {
   return std::pair<uint16_t, uint8_t>(
-      static_cast<uint16_t>(light.state["state"]["hue"].asUInt()),
-      static_cast<uint8_t>(light.state["state"]["sat"].asUInt()));
+      static_cast<uint16_t>(light.state["state"]["hue"]),
+      static_cast<uint8_t>(light.state["state"]["sat"]));
 }
 
 std::pair<float, float>
 SimpleColorHueStrategy::getColorXY(HueLight &light) const {
   light.refreshState();
-  return std::pair<float, float>(light.state["state"]["xy"][0].asFloat(),
-                                 light.state["state"]["xy"][1].asFloat());
+  return std::pair<float, float>(light.state["state"]["xy"][0],
+                                 light.state["state"]["xy"][1]);
 }
 
 std::pair<float, float>
 SimpleColorHueStrategy::getColorXY(const HueLight &light) const {
-  return std::pair<float, float>(light.state["state"]["xy"][0].asFloat(),
-                                 light.state["state"]["xy"][1].asFloat());
+  return std::pair<float, float>(light.state["state"]["xy"][0],
+                                 light.state["state"]["xy"][1]);
 }
 /*bool SimpleColorHueStrategy::pointInTriangle(float pointx, float pointy, float
 x0, float y0, float x1, float y1, float x2, float y2)

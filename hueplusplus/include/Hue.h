@@ -33,7 +33,7 @@
 #include "HueLight.h"
 #include "IHttpHandler.h"
 
-#include "json/json.h"
+#include "json/json.hpp"
 
 // forward declarations
 class Hue;
@@ -89,14 +89,14 @@ private:
 
   //! \brief Parses mac address from description.xml
   //!
-  //! \param description Content of description.xml file as returned by GET request.
-  //! \returns Content of xml element \c serialNumber if description matches a Hue bridge,
-  //! otherwise an empty string.
-  static std::string ParseDescription(const std::string& description);
+  //! \param description Content of description.xml file as returned by GET
+  //! request. \returns Content of xml element \c serialNumber if description
+  //! matches a Hue bridge, otherwise an empty string.
+  static std::string ParseDescription(const std::string &description);
 
   std::map<std::string, std::string>
-    usernames; //!< Maps all macs to usernames added by \ref
-               //!< HueFinder::AddUsername
+      usernames; //!< Maps all macs to usernames added by \ref
+                 //!< HueFinder::AddUsername
   std::shared_ptr<const IHttpHandler> http_handler;
 };
 
@@ -233,7 +233,8 @@ private:
                   //!< like "192.168.2.1"
   int port;
   std::string username; //!< Username that is ussed to access the hue bridge
-  Json::Value state; //!< The state of the hue bridge as it is returned from it
+  nlohmann::json
+      state; //!< The state of the hue bridge as it is returned from it
   std::map<uint8_t, HueLight>
       lights; //!< Maps ids to HueLights that are controlled by this bridge
 

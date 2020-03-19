@@ -23,7 +23,7 @@
 #include <iostream>
 #include <thread>
 
-#include "include/json/json.h"
+#include "include/json/json.hpp"
 
 bool HueLight::On(uint8_t transition) {
   refreshState();
@@ -37,68 +37,66 @@ bool HueLight::Off(uint8_t transition) {
 
 bool HueLight::isOn() {
   refreshState();
-  return state["state"]["on"].asBool();
+  return state["state"]["on"];
 }
 
-bool HueLight::isOn() const { return state["state"]["on"].asBool(); }
+bool HueLight::isOn() const { return state["state"]["on"]; }
 
 int HueLight::getId() const { return id; }
 
-std::string HueLight::getType() const { return state["type"].asString(); }
+std::string HueLight::getType() const { return state["type"]; }
 
 std::string HueLight::getName() {
   refreshState();
-  return state["name"].asString();
+  return state["name"];
 }
 
-std::string HueLight::getName() const { return state["name"].asString(); }
+std::string HueLight::getName() const { return state["name"]; }
 
-std::string HueLight::getModelId() const { return state["modelid"].asString(); }
+std::string HueLight::getModelId() const { return state["modelid"]; }
 
 std::string HueLight::getUId() const {
-  if (state.isMember("uniqueid")) {
-    return state["uniqueid"].asString();
+  if (state.count("uniqueid")) {
+    return state["uniqueid"];
   }
   return std::string();
 }
 
 std::string HueLight::getManufacturername() const {
-  if (state.isMember("manufacturername")) {
-    return state["manufacturername"].asString();
+  if (state.count("manufacturername")) {
+    return state["manufacturername"];
   }
   return std::string();
 }
 
 std::string HueLight::getProductname() const {
-  if (state.isMember("productname")) {
-    return state["productname"].asString();
+  if (state.count("productname")) {
+    return state["productname"];
   }
   return std::string();
 }
 
 std::string HueLight::getLuminaireUId() const {
-  if (state.isMember("luminaireuniqueid")) {
-    return state["luminaireuniqueid"].asString();
+  if (state.count("luminaireuniqueid")) {
+    return state["luminaireuniqueid"];
   }
   return std::string();
 }
 
 std::string HueLight::getSwVersion() {
   refreshState();
-  return state["swversion"].asString();
+  return state["swversion"];
 }
 
-std::string HueLight::getSwVersion() const {
-  return state["swversion"].asString();
-}
+std::string HueLight::getSwVersion() const { return state["swversion"]; }
 
 bool HueLight::setName(const std::string &name) {
-  Json::Value request(Json::objectValue);
+  nlohmann::json request({});
   request["name"] = name;
-  Json::Value reply = SendPutRequest(request, "/name");
+  nlohmann::json reply = SendPutRequest(request, "/name");
 
   // Check whether request was successful
-  return !reply[0].isNull() && reply[0].isMember("success") &&
+  return reply.size() > 0 && reply[0].count("success") &&
          reply[0]["success"]["/lights/" + std::to_string(id) + "/name"] == name;
 }
 
@@ -113,13 +111,13 @@ unsigned int HueLight::MiredToKelvin(unsigned int mired) const {
 }
 
 bool HueLight::alert() {
-  Json::Value request;
+  nlohmann::json request;
   request["alert"] = "select";
 
-  Json::Value reply = SendPutRequest(request, "/state");
+  nlohmann::json reply = SendPutRequest(request, "/state");
 
-  if (reply[0]["success"]["/lights/" + std::to_string(id) + "/state/alert"]
-          .asString() == "select") {
+  if (reply[0]["success"]["/lights/" + std::to_string(id) + "/state/alert"] ==
+      "select") {
     return true;
   }
 
@@ -143,79 +141,77 @@ HueLight::HueLight(
 }
 
 bool HueLight::OnNoRefresh(uint8_t transition) {
-  Json::Value request(Json::objectValue);
+  nlohmann::json request({});
   if (transition != 4) {
     request["transitiontime"] = transition;
   }
-  if (state["state"]["on"].asBool() != true) {
+  if (state["state"]["on"] != true) {
     request["on"] = true;
   }
 
-  if (!request.isMember("on")) {
+  if (!request.count("on")) {
     // Nothing needs to be changed
     return true;
   }
 
-  Json::Value reply = SendPutRequest(request, "/state");
+  nlohmann::json reply = SendPutRequest(request, "/state");
 
   // Check whether request was successful
   std::string path = "/lights/" + std::to_string(id) + "/state/";
   bool success = true;
   int i = 0;
-  if (success && request.isMember("transitiontime")) {
+  if (success && request.count("transitiontime")) {
     // Check if success was sent and the value was changed
-    success = !reply[i].isNull() && reply[i].isMember("success") &&
-              reply[i]["success"][path + "transitiontime"].asUInt() ==
-                  request["transitiontime"].asUInt();
+    success = reply.size() > i && reply[i].count("success") &&
+              reply[i]["success"][path + "transitiontime"] ==
+                  request["transitiontime"];
     ++i;
   }
-  if (success && request.isMember("on")) {
+  if (success && request.count("on")) {
     // Check if success was sent and the value was changed
-    success =
-        !reply[i].isNull() && reply[i].isMember("success") &&
-        reply[i]["success"][path + "on"].asBool() == request["on"].asBool();
+    success = reply.size() > i && reply[i].count("success") &&
+              reply[i]["success"][path + "on"] == request["on"];
   }
   return success;
 }
 
 bool HueLight::OffNoRefresh(uint8_t transition) {
-  Json::Value request(Json::objectValue);
+  nlohmann::json request({});
   if (transition != 4) {
     request["transitiontime"] = transition;
   }
-  if (state["state"]["on"].asBool() != false) {
+  if (state["state"]["on"] != false) {
     request["on"] = false;
   }
 
-  if (!request.isMember("on")) {
+  if (!request.count("on")) {
     // Nothing needs to be changed
     return true;
   }
 
-  Json::Value reply = SendPutRequest(request, "/state");
+  nlohmann::json reply = SendPutRequest(request, "/state");
 
   // Check whether request was successful
   std::string path = "/lights/" + std::to_string(id) + "/state/";
   bool success = true;
   int i = 0;
-  if (success && request.isMember("transitiontime")) {
+  if (success && request.count("transitiontime")) {
     // Check if success was sent and the value was changed
-    success = !reply[i].isNull() && reply[i].isMember("success") &&
-              reply[i]["success"][path + "transitiontime"].asUInt() ==
-                  request["transitiontime"].asUInt();
+    success = reply.size() > i && reply[i].count("success") &&
+              reply[i]["success"][path + "transitiontime"] ==
+                  request["transitiontime"];
     ++i;
   }
-  if (success && request.isMember("on")) {
+  if (success && request.count("on")) {
     // Check if success was sent and the value was changed
-    success =
-        !reply[i].isNull() && reply[i].isMember("success") &&
-        reply[i]["success"][path + "on"].asBool() == request["on"].asBool();
+    success = reply.size() > i && reply[i].count("success") &&
+              reply[i]["success"][path + "on"] == request["on"];
   }
   return success;
 }
 
-Json::Value HueLight::SendPutRequest(const Json::Value &request,
-                                     const std::string &subPath) {
+nlohmann::json HueLight::SendPutRequest(const nlohmann::json &request,
+                                        const std::string &subPath) {
   return commands.PUTRequest("/lights/" + std::to_string(id) + subPath,
                              request);
 }
@@ -224,14 +220,14 @@ void HueLight::refreshState() {
   // std::chrono::steady_clock::time_point start =
   // std::chrono::steady_clock::now(); std::cout << "\tRefreshing lampstate of
   // lamp with id: " << id << ", ip: " << ip << "\n";
-  Json::Value answer =
-      commands.GETRequest("/lights/" + std::to_string(id), Json::objectValue);
-  if (answer.isObject() && answer.isMember("state")) {
+  nlohmann::json answer =
+      commands.GETRequest("/lights/" + std::to_string(id), {});
+  if (answer.is_object() && answer.count("state")) {
     state = answer;
   } else {
     std::cout << "Answer in HueLight::refreshState of "
                  "http_handler->GETJson(...) is not expected!\nAnswer:\n\t"
-              << answer.toStyledString() << std::endl;
+              << answer.dump() << std::endl;
   }
   // std::cout << "\tRefresh state took: " <<
   // std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()
