@@ -26,6 +26,7 @@
 #include <iostream>
 #include <thread>
 
+#include "include/HueExceptionMacro.h"
 #include "include/Utils.h"
 
 bool SimpleBrightnessStrategy::setBrightness(unsigned int bri, uint8_t transition, HueLight& light) const
@@ -68,7 +69,7 @@ bool SimpleBrightnessStrategy::setBrightness(unsigned int bri, uint8_t transitio
             return true;
         }
 
-        nlohmann::json reply = light.SendPutRequest(request, "/state");
+        nlohmann::json reply = light.SendPutRequest(request, "/state", CURRENT_FILE_INFO);
 
         // Check whether request was successful
         return utils::validateReplyForLight(request, reply, light.id);

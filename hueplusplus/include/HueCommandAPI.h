@@ -27,6 +27,7 @@
 #include <chrono>
 #include <mutex>
 
+#include "HueException.h"
 #include "IHttpHandler.h"
 
 //! Handles communication to the bridge via IHttpHandler and enforces a timeout
@@ -71,6 +72,7 @@ public:
     //! request. May be empty \returns The return value of the underlying \ref
     //! IHttpHandler::PUTJson call
     nlohmann::json PUTRequest(const std::string& path, const nlohmann::json& request) const;
+    nlohmann::json PUTRequest(const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const;
 
     //! \brief Sends a HTTP GET request via the \ref httpHandler to the bridge and
     //! returns the response
@@ -81,6 +83,7 @@ public:
     //! request. May be empty \returns The return value of the underlying \ref
     //! IHttpHandler::GETJson call
     nlohmann::json GETRequest(const std::string& path, const nlohmann::json& request) const;
+    nlohmann::json GETRequest(const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const;
 
     //! \brief Sends a HTTP DELETE request via the \ref httpHandler to the bridge
     //! and returns the response
@@ -91,6 +94,7 @@ public:
     //! request. May be empty \returns The return value of the underlying \ref
     //! IHttpHandler::DELETEJson call
     nlohmann::json DELETERequest(const std::string& path, const nlohmann::json& request) const;
+    nlohmann::json DELETERequest(const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const;
 
 private:
     struct TimeoutData
@@ -98,6 +102,12 @@ private:
         std::chrono::steady_clock::time_point timeout;
         std::mutex mutex;
     };
+
+    //! \brief Throws an exception if response contains an error, passes though value
+    nlohmann::json HandleError(FileInfo fileInfo, const nlohmann::json& response) const;
+
+    //! \brief Combines path with api prefix and username
+    std::string CombinedPath(const std::string& path) const;
 
 private:
     static constexpr std::chrono::steady_clock::duration minDelay = std::chrono::milliseconds(100);
