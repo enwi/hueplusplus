@@ -1,9 +1,5 @@
 /**
     \file HueException.h
-
-    This file contains a macro definition for getting the current line number.
-    It should only be included in cpp files and not in headers!
-
     Copyright Notice\n
     Copyright (C) 2020  Jan Rogall		- developer\n
     Copyright (C) 2020  Moritz Wirger	- developer\n
@@ -19,10 +15,13 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software Foundation,
     Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+
+    This file contains a macro definition for getting the current line number.
+    It should only be included in cpp files and not in headers!
 **/
 
 #include "HueException.h"
 
 #ifndef CURRENT_FILE_INFO
-#define CURRENT_FILE_INFO FileInfo{ __FILE__, __LINE__ }
+#define CURRENT_FILE_INFO (FileInfo{__FILE__, __LINE__, __func__})
 #endif

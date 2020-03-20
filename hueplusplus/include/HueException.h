@@ -23,10 +23,12 @@
 #include <exception>
 #include <string>
 
+//! \brief Contains information about error location, use CURRENT_FILE_INFO to create
 struct FileInfo
 {
     std::string filename;
     int line = -1;
+    std::string func;
 
     std::string ToString() const;
 };

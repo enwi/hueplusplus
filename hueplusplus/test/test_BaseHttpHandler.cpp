@@ -30,6 +30,7 @@
 
 #include "../include/json/json.hpp"
 #include "mocks/mock_BaseHttpHandler.h"
+#include "../include/HueException.h"
 
 TEST(BaseHttpHandler, sendGetHTTPBody)
 {
@@ -41,7 +42,7 @@ TEST(BaseHttpHandler, sendGetHTTPBody)
         .WillOnce(Return(""))
         .WillRepeatedly(Return("\r\n\r\ntestreply"));
 
-    EXPECT_THROW(handler.sendGetHTTPBody("testmsg", "192.168.2.1", 90), std::runtime_error);
+    EXPECT_THROW(handler.sendGetHTTPBody("testmsg", "192.168.2.1", 90), HueException);
     EXPECT_EQ("testreply", handler.sendGetHTTPBody("testmsg", "192.168.2.1", 90));
 }
 
@@ -58,7 +59,7 @@ TEST(BaseHttpHandler, sendHTTPRequest)
         .WillOnce(Return(""))
         .WillRepeatedly(Return("\r\n\r\ntestreply"));
 
-    EXPECT_THROW(handler.sendHTTPRequest("GET", "UrI", "text/html", "body", "192.168.2.1", 90), std::runtime_error);
+    EXPECT_THROW(handler.sendHTTPRequest("GET", "UrI", "text/html", "body", "192.168.2.1", 90), HueException);
     EXPECT_EQ("testreply", handler.sendHTTPRequest("GET", "UrI", "text/html", "body", "192.168.2.1", 90));
 }
 
@@ -75,7 +76,7 @@ TEST(BaseHttpHandler, GETString)
         .WillOnce(Return(""))
         .WillRepeatedly(Return("\r\n\r\ntestreply"));
 
-    EXPECT_THROW(handler.GETString("UrI", "text/html", "body", "192.168.2.1", 90), std::runtime_error);
+    EXPECT_THROW(handler.GETString("UrI", "text/html", "body", "192.168.2.1", 90), HueException);
     EXPECT_EQ("testreply", handler.GETString("UrI", "text/html", "body", "192.168.2.1", 90));
 }
 
@@ -92,7 +93,7 @@ TEST(BaseHttpHandler, POSTString)
         .WillOnce(Return(""))
         .WillRepeatedly(Return("\r\n\r\ntestreply"));
 
-    EXPECT_THROW(handler.POSTString("UrI", "text/html", "body", "192.168.2.1", 90), std::runtime_error);
+    EXPECT_THROW(handler.POSTString("UrI", "text/html", "body", "192.168.2.1", 90), HueException);
     EXPECT_EQ("testreply", handler.POSTString("UrI", "text/html", "body", "192.168.2.1", 90));
 }
 
@@ -109,7 +110,7 @@ TEST(BaseHttpHandler, PUTString)
         .WillOnce(Return(""))
         .WillRepeatedly(Return("\r\n\r\ntestreply"));
 
-    EXPECT_THROW(handler.PUTString("UrI", "text/html", "body", "192.168.2.1", 90), std::runtime_error);
+    EXPECT_THROW(handler.PUTString("UrI", "text/html", "body", "192.168.2.1", 90), HueException);
     EXPECT_EQ("testreply", handler.PUTString("UrI", "text/html", "body", "192.168.2.1", 90));
 }
 
@@ -126,7 +127,7 @@ TEST(BaseHttpHandler, DELETEString)
         .WillOnce(Return(""))
         .WillRepeatedly(Return("\r\n\r\ntestreply"));
 
-    EXPECT_THROW(handler.DELETEString("UrI", "text/html", "body", "192.168.2.1", 90), std::runtime_error);
+    EXPECT_THROW(handler.DELETEString("UrI", "text/html", "body", "192.168.2.1", 90), HueException);
     EXPECT_EQ("testreply", handler.DELETEString("UrI", "text/html", "body", "192.168.2.1", 90));
 }
 
@@ -151,7 +152,7 @@ TEST(BaseHttpHandler, GETJson)
     nlohmann::json expected;
     expected["test"] = "whatever";
 
-    EXPECT_THROW(handler.GETJson("UrI", testval, "192.168.2.1", 90), std::runtime_error);
+    EXPECT_THROW(handler.GETJson("UrI", testval, "192.168.2.1", 90), HueException);
     EXPECT_THROW(handler.GETJson("UrI", testval, "192.168.2.1", 90), nlohmann::json::parse_error);
     EXPECT_EQ(expected, handler.GETJson("UrI", testval, "192.168.2.1", 90));
 }
@@ -177,7 +178,7 @@ TEST(BaseHttpHandler, POSTJson)
     nlohmann::json expected;
     expected["test"] = "whatever";
 
-    EXPECT_THROW(handler.POSTJson("UrI", testval, "192.168.2.1", 90), std::runtime_error);
+    EXPECT_THROW(handler.POSTJson("UrI", testval, "192.168.2.1", 90), HueException);
     EXPECT_THROW(handler.POSTJson("UrI", testval, "192.168.2.1", 90), nlohmann::json::parse_error);
     EXPECT_EQ(expected, handler.POSTJson("UrI", testval, "192.168.2.1", 90));
 }
@@ -203,7 +204,7 @@ TEST(BaseHttpHandler, PUTJson)
     nlohmann::json expected;
     expected["test"] = "whatever";
 
-    EXPECT_THROW(handler.PUTJson("UrI", testval, "192.168.2.1", 90), std::runtime_error);
+    EXPECT_THROW(handler.PUTJson("UrI", testval, "192.168.2.1", 90), HueException);
     EXPECT_THROW(handler.PUTJson("UrI", testval, "192.168.2.1", 90), nlohmann::json::parse_error);
     EXPECT_EQ(expected, handler.PUTJson("UrI", testval, "192.168.2.1", 90));
 }
@@ -230,7 +231,7 @@ TEST(BaseHttpHandler, DELETEJson)
     nlohmann::json expected;
     expected["test"] = "whatever";
 
-    EXPECT_THROW(handler.DELETEJson("UrI", testval, "192.168.2.1", 90), std::runtime_error);
+    EXPECT_THROW(handler.DELETEJson("UrI", testval, "192.168.2.1", 90), HueException);
     EXPECT_THROW(handler.DELETEJson("UrI", testval, "192.168.2.1", 90), nlohmann::json::parse_error);
     EXPECT_EQ(expected, handler.DELETEJson("UrI", testval, "192.168.2.1", 90));
 }

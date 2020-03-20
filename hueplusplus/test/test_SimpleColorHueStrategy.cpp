@@ -54,7 +54,7 @@ TEST(SimpleColorHueStrategy, setColorHue)
     prep_ret[2] = nlohmann::json::object();
     prep_ret[2]["success"] = nlohmann::json::object();
     prep_ret[2]["success"]["/lights/1/state/hue"] = 30500;
-    EXPECT_CALL(test_light, SendPutRequest(_, "/state")).Times(1).WillOnce(Return(prep_ret));
+    EXPECT_CALL(test_light, SendPutRequest(_, "/state", _)).Times(1).WillOnce(Return(prep_ret));
 
     test_light.getState()["state"]["on"] = true;
     test_light.getState()["state"]["hue"] = 200;
@@ -86,7 +86,7 @@ TEST(SimpleColorHueStrategy, setColorSaturation)
     prep_ret[2] = nlohmann::json::object();
     prep_ret[2]["success"] = nlohmann::json::object();
     prep_ret[2]["success"]["/lights/1/state/sat"] = 254;
-    EXPECT_CALL(test_light, SendPutRequest(_, "/state")).Times(1).WillOnce(Return(prep_ret));
+    EXPECT_CALL(test_light, SendPutRequest(_, "/state", _)).Times(1).WillOnce(Return(prep_ret));
 
     test_light.getState()["state"]["on"] = true;
     test_light.getState()["state"]["sat"] = 100;
@@ -121,7 +121,7 @@ TEST(SimpleColorHueStrategy, setColorHueSaturation)
     prep_ret[3] = nlohmann::json::object();
     prep_ret[3]["success"] = nlohmann::json::object();
     prep_ret[3]["success"]["/lights/1/state/sat"] = 254;
-    EXPECT_CALL(test_light, SendPutRequest(_, "/state")).Times(1).WillOnce(Return(prep_ret));
+    EXPECT_CALL(test_light, SendPutRequest(_, "/state", _)).Times(1).WillOnce(Return(prep_ret));
 
     test_light.getState()["state"]["on"] = true;
     test_light.getState()["state"]["sat"] = 100;
@@ -155,7 +155,7 @@ TEST(SimpleColorHueStrategy, setColorXY)
     prep_ret[2]["success"] = nlohmann::json::object();
     prep_ret[2]["success"]["/lights/1/state/xy"][0] = 0.2355;
     prep_ret[2]["success"]["/lights/1/state/xy"][1] = 0.1234;
-    EXPECT_CALL(test_light, SendPutRequest(_, "/state")).Times(1).WillOnce(Return(prep_ret));
+    EXPECT_CALL(test_light, SendPutRequest(_, "/state", _)).Times(1).WillOnce(Return(prep_ret));
 
     test_light.getState()["state"]["on"] = true;
     test_light.getState()["state"]["xy"][0] = 0.1f;
@@ -204,7 +204,7 @@ TEST(SimpleColorHueStrategy, setColorLoop)
     prep_ret[1] = nlohmann::json::object();
     prep_ret[1]["success"] = nlohmann::json::object();
     prep_ret[1]["success"]["/lights/1/state/effect"] = "colorloop";
-    EXPECT_CALL(test_light, SendPutRequest(_, "/state")).Times(1).WillOnce(Return(prep_ret));
+    EXPECT_CALL(test_light, SendPutRequest(_, "/state", _)).Times(1).WillOnce(Return(prep_ret));
 
     test_light.getState()["state"]["on"] = true;
     test_light.getState()["state"]["effect"] = "colorloop";

@@ -56,7 +56,7 @@ TEST(SimpleBrightnessStrategy, setBrightness)
     prep_ret[2] = nlohmann::json::object();
     prep_ret[2]["success"] = nlohmann::json::object();
     prep_ret[2]["success"]["/lights/1/state/bri"] = 50;
-    EXPECT_CALL(test_light, SendPutRequest(_, "/state")).Times(1).WillOnce(Return(prep_ret));
+    EXPECT_CALL(test_light, SendPutRequest(_, "/state", _)).Times(1).WillOnce(Return(prep_ret));
 
     test_light.getState()["state"]["on"] = true;
     EXPECT_EQ(true, SimpleBrightnessStrategy().setBrightness(0, 4, test_light));
@@ -70,7 +70,7 @@ TEST(SimpleBrightnessStrategy, setBrightness)
     EXPECT_EQ(true, SimpleBrightnessStrategy().setBrightness(50, 6, test_light));
 
     prep_ret[2]["success"]["/lights/1/state/bri"] = 254;
-    EXPECT_CALL(test_light, SendPutRequest(_, "/state")).Times(1).WillOnce(Return(prep_ret));
+    EXPECT_CALL(test_light, SendPutRequest(_, "/state", _)).Times(1).WillOnce(Return(prep_ret));
     test_light.getState()["state"]["on"] = false;
     EXPECT_EQ(true, SimpleBrightnessStrategy().setBrightness(255, 6, test_light));
 }

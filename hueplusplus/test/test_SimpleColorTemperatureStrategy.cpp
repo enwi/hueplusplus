@@ -34,7 +34,6 @@
 #include "mocks/mock_HttpHandler.h"
 #include "mocks/mock_HueLight.h"
 
-
 TEST(SimpleColorTemperatureStrategy, setColorTemperature)
 {
     using namespace ::testing;
@@ -56,7 +55,7 @@ TEST(SimpleColorTemperatureStrategy, setColorTemperature)
     prep_ret[2] = nlohmann::json::object();
     prep_ret[2]["success"] = nlohmann::json::object();
     prep_ret[2]["success"]["/lights/1/state/ct"] = 155;
-    EXPECT_CALL(test_light, SendPutRequest(_, "/state")).Times(1).WillOnce(Return(prep_ret));
+    EXPECT_CALL(test_light, SendPutRequest(_, "/state", _)).Times(1).WillOnce(Return(prep_ret));
 
     test_light.getState()["state"]["on"] = true;
     test_light.getState()["state"]["ct"] = 200;
@@ -66,11 +65,11 @@ TEST(SimpleColorTemperatureStrategy, setColorTemperature)
     EXPECT_EQ(true, SimpleColorTemperatureStrategy().setColorTemperature(155, 6, test_light));
 
     prep_ret[2]["success"]["/lights/1/state/ct"] = 153;
-    EXPECT_CALL(test_light, SendPutRequest(_, "/state")).Times(1).WillOnce(Return(prep_ret));
+    EXPECT_CALL(test_light, SendPutRequest(_, "/state", _)).Times(1).WillOnce(Return(prep_ret));
     EXPECT_EQ(true, SimpleColorTemperatureStrategy().setColorTemperature(0, 6, test_light));
 
     prep_ret[2]["success"]["/lights/1/state/ct"] = 500;
-    EXPECT_CALL(test_light, SendPutRequest(_, "/state")).Times(1).WillOnce(Return(prep_ret));
+    EXPECT_CALL(test_light, SendPutRequest(_, "/state", _)).Times(1).WillOnce(Return(prep_ret));
     EXPECT_EQ(true, SimpleColorTemperatureStrategy().setColorTemperature(600, 6, test_light));
 }
 

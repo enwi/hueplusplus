@@ -17,7 +17,7 @@
     Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **/
 
-#include "HueException.h"
+#include "include/HueException.h"
 
 HueException::HueException(FileInfo fileInfo, const std::string& message)
     : HueException("Hue exception", std::move(fileInfo), message)
@@ -82,7 +82,9 @@ std::string FileInfo::ToString() const
     {
         return "Unknown file";
     }
-    std::string result = filename;
+    std::string result = func;
+    result.append(" in ");
+    result.append(filename);
     result.append(":");
     result.append(std::to_string(line));
     return result;
