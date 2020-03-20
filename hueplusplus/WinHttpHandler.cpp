@@ -86,6 +86,7 @@ std::string WinHttpHandler::send(const std::string& msg, const std::string& adr,
         throw(std::system_error(err, std::system_category(), "WinHttpHandler: getaddrinfo failed"));
     }
     SOCKET connect_socket = INVALID_SOCKET;
+    int connectError = 0;
     {
         AddrInfoFreer freeResult(result);
 
@@ -106,6 +107,7 @@ std::string WinHttpHandler::send(const std::string& msg, const std::string& adr,
         // Connect to server.
         if (connect(connect_socket, ptr->ai_addr, (int)ptr->ai_addrlen) == SOCKET_ERROR)
         {
+            connectError = WSAGetLastError();
             closesocket(connect_socket);
             connect_socket = INVALID_SOCKET;
         }
@@ -119,7 +121,7 @@ std::string WinHttpHandler::send(const std::string& msg, const std::string& adr,
     if (connect_socket == INVALID_SOCKET)
     {
         std::cerr << "WinHttpHandler: Unable to connect to server!" << std::endl;
-        throw(std::runtime_error("WinHttpHandler: Unable to connect to server!"));
+        throw std::system_error(connectError, std::system_category(), "WinHttpHandler: Unable to connect to server!");
     }
     SocketCloser closeSocket(connect_socket);
 
