@@ -9,6 +9,7 @@ set(hueplusplus_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/SimpleColorHueStrategy.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/SimpleColorTemperatureStrategy.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/UPnP.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Utils.cpp
 )
 
 # on windows we want to compile the WinHttpHandler
