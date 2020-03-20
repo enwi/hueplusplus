@@ -39,7 +39,7 @@ public:
     //! \brief Creates HueException with information about the thrown location
     HueException(FileInfo fileInfo, const std::string& message);
 
-    const char* what() const override;
+    const char* what() const noexcept override;
 
     //! \brief Filename and line where the exception was thrown or caused by
     const FileInfo& GetFile() const noexcept;
