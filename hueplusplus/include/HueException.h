@@ -35,7 +35,7 @@ class HueException : public std::exception
 {
 public:
     //! \brief Creates HueException with information about the thrown location
-    HueException(FileInfo fileInfo);
+    HueException(FileInfo fileInfo, const std::string& message);
 
     const char* what() const override;
 
@@ -46,10 +46,10 @@ protected:
     //! \brief Creates HueException with child class name
     //!
     //! Should be used by subclasses which can append additional information to the end of whatMessage.
-    HueException(const char* exceptionName, FileInfo fileInfo);
-    std::string whatMessage;
+    HueException(const char* exceptionName, FileInfo fileInfo, const std::string& message);
 
 private:
+    std::string whatMessage;
     FileInfo fileInfo;
 };
 
@@ -61,6 +61,9 @@ public:
     int GetErrorNumber() const noexcept;
     const std::string& GetAddress() const noexcept;
     const std::string& GetDescription() const noexcept;
+
+private:
+    static std::string GetMessage(int error, const std::string& addr, const std::string& description);
 
 private:
     int error;
