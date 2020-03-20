@@ -43,32 +43,36 @@ public:
         sendMulticast, std::vector<std::string>(const std::string& msg, const std::string& adr, int port, int timeout));
 
     MOCK_CONST_METHOD6(sendHTTPRequest,
-        std::string(std::string method, std::string uri, std::string content_type, std::string body,
-            const std::string& adr, int port));
+        std::string(const std::string& method, const std::string& uri, const std::string& content_type,
+            const std::string& body, const std::string& adr, int port));
 
     MOCK_CONST_METHOD5(GETString,
-        std::string(std::string uri, std::string content_type, std::string body, const std::string& adr, int port));
+        std::string(const std::string& uri, const std::string& content_type, const std::string& body,
+            const std::string& adr, int port));
 
     MOCK_CONST_METHOD5(POSTString,
-        std::string(std::string uri, std::string content_type, std::string body, const std::string& adr, int port));
+        std::string(const std::string& uri, const std::string& content_type, const std::string& body,
+            const std::string& adr, int port));
 
     MOCK_CONST_METHOD5(PUTString,
-        std::string(std::string uri, std::string content_type, std::string body, const std::string& adr, int port));
+        std::string(const std::string& uri, const std::string& content_type, const std::string& body,
+            const std::string& adr, int port));
 
     MOCK_CONST_METHOD5(DELETEString,
-        std::string(std::string uri, std::string content_type, std::string body, const std::string& adr, int port));
+        std::string(const std::string& uri, const std::string& content_type, const std::string& body,
+            const std::string& adr, int port));
 
     MOCK_CONST_METHOD4(
-        GETJson, nlohmann::json(std::string uri, const nlohmann::json& body, const std::string& adr, int port));
+        GETJson, nlohmann::json(const std::string& uri, const nlohmann::json& body, const std::string& adr, int port));
 
     MOCK_CONST_METHOD4(
-        POSTJson, nlohmann::json(std::string uri, const nlohmann::json& body, const std::string& adr, int port));
+        POSTJson, nlohmann::json(const std::string& uri, const nlohmann::json& body, const std::string& adr, int port));
 
     MOCK_CONST_METHOD4(
-        PUTJson, nlohmann::json(std::string uri, const nlohmann::json& body, const std::string& adr, int port));
+        PUTJson, nlohmann::json(const std::string& uri, const nlohmann::json& body, const std::string& adr, int port));
 
-    MOCK_CONST_METHOD4(
-        DELETEJson, nlohmann::json(std::string uri, const nlohmann::json& body, const std::string& adr, int port));
+    MOCK_CONST_METHOD4(DELETEJson,
+        nlohmann::json(const std::string& uri, const nlohmann::json& body, const std::string& adr, int port));
 };
 
 #endif

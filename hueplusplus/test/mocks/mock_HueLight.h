@@ -125,7 +125,8 @@ public:
 
     MOCK_METHOD1(OffNoRefresh, bool(uint8_t transition));
 
-    MOCK_METHOD2(SendPutRequest, nlohmann::json(const nlohmann::json& request, const std::string& subPath));
+    MOCK_METHOD3(
+        SendPutRequest, nlohmann::json(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo));
 
     MOCK_METHOD0(refreshState, void());
 };

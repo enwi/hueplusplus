@@ -83,7 +83,7 @@ Hue HueFinder::GetBridge(const HueIdentification& identification)
     if (bridge.getUsername().empty())
     {
         std::cerr << "Failed to request username for ip " << identification.ip << std::endl;
-        throw std::runtime_error("Failed to request username!");
+        throw HueException(CURRENT_FILE_INFO, "Failed to request username!");
     }
     AddUsername(normalizedMac, bridge.getUsername());
 
@@ -180,7 +180,7 @@ std::string Hue::requestUsername(const std::string& ip)
             lastCheck = std::chrono::steady_clock::now();
             answer = http_handler->POSTJson("/api", request, ip, port);
 
-            if (answer.size() > 0)
+            try
             {
                 nlohmann::json jsonUser = utils::safeGetMember(answer, 0, "success", "username");
                 if (jsonUser != nullptr)
@@ -194,11 +194,16 @@ std::string Hue::requestUsername(const std::string& ip)
                     std::cout << "Username is \"" << username << "\"\n";
                     break;
                 }
-                else if (answer[0].count("error"))
+            }
+            catch (const HueAPIResponseException& e)
+            {
+                // 101: Link button not pressed
+                if (e.GetErrorNumber() == 101)
                 {
                     std::cout << "Link button not pressed!\n";
                 }
             }
+            std::this_thread::sleep_until(lastCheck + std::chrono::seconds(1));
         }
     }
     return username;
@@ -231,7 +236,7 @@ HueLight& Hue::getLight(int id)
     if (!state["lights"].count(std::to_string(id)))
     {
         std::cerr << "Error in Hue getLight(): light with id " << id << " is not valid\n";
-        throw(std::runtime_error("Error in Hue getLight(): light id is not valid"));
+        throw HueException(CURRENT_FILE_INFO, "Light id is not valid");
     }
     // std::cout << state["lights"][std::to_string(id)] << std::endl;
     std::string type = state["lights"][std::to_string(id)]["modelid"];
@@ -287,12 +292,13 @@ HueLight& Hue::getLight(int id)
         return lights.find(id)->second;
     }
     std::cerr << "Could not determine HueLight type:" << type << "!\n";
-    throw(std::runtime_error("Could not determine HueLight type!"));
+    throw HueException(CURRENT_FILE_INFO, "Could not determine HueLight type!");
 }
 
 bool Hue::removeLight(int id)
 {
-    nlohmann::json result = commands.DELETERequest("/lights/" + std::to_string(id), nlohmann::json::object(), CURRENT_FILE_INFO);
+    nlohmann::json result
+        = commands.DELETERequest("/lights/" + std::to_string(id), nlohmann::json::object(), CURRENT_FILE_INFO);
     bool success = utils::safeGetMember(result, 0, "success") == "/lights/" + std::to_string(id) + " deleted";
     if (success && lights.count(id) != 0)
     {

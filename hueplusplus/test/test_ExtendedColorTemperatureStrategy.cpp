@@ -54,7 +54,7 @@ TEST(ExtendedColorTemperatureStrategy, setColorTemperature)
     prep_ret[2] = nlohmann::json::object();
     prep_ret[2]["success"] = nlohmann::json::object();
     prep_ret[2]["success"]["/lights/1/state/ct"] = 155;
-    EXPECT_CALL(test_light, SendPutRequest(_, "/state")).Times(1).WillOnce(Return(prep_ret));
+    EXPECT_CALL(test_light, SendPutRequest(_, "/state", _)).Times(1).WillOnce(Return(prep_ret));
 
     test_light.getState()["state"]["colormode"] = "ct";
     test_light.getState()["state"]["on"] = true;
@@ -65,11 +65,11 @@ TEST(ExtendedColorTemperatureStrategy, setColorTemperature)
     EXPECT_EQ(true, ExtendedColorTemperatureStrategy().setColorTemperature(155, 6, test_light));
 
     prep_ret[2]["success"]["/lights/1/state/ct"] = 153;
-    EXPECT_CALL(test_light, SendPutRequest(_, "/state")).Times(1).WillOnce(Return(prep_ret));
+    EXPECT_CALL(test_light, SendPutRequest(_, "/state", _)).Times(1).WillOnce(Return(prep_ret));
     EXPECT_EQ(true, ExtendedColorTemperatureStrategy().setColorTemperature(0, 6, test_light));
 
     prep_ret[2]["success"]["/lights/1/state/ct"] = 500;
-    EXPECT_CALL(test_light, SendPutRequest(_, "/state")).Times(1).WillOnce(Return(prep_ret));
+    EXPECT_CALL(test_light, SendPutRequest(_, "/state", _)).Times(1).WillOnce(Return(prep_ret));
     EXPECT_EQ(true, ExtendedColorTemperatureStrategy().setColorTemperature(600, 6, test_light));
 }
 
