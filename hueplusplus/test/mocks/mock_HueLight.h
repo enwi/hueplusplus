@@ -26,18 +26,18 @@
 #include <gmock/gmock.h>
 
 #include "../hueplusplus/include/HueLight.h"
-#include "../hueplusplus/include/json/json.h"
+#include "../hueplusplus/include/json/json.hpp"
 #include "../testhelper.h"
+
 
 //! Mock Class
 class MockHueLight : public HueLight
 {
 public:
-    MockHueLight(std::shared_ptr<const IHttpHandler> handler) : HueLight(1,
-        HueCommandAPI(getBridgeIp(), getBridgePort(), getBridgeUsername(),
-        handler)) {};
+    MockHueLight(std::shared_ptr<const IHttpHandler> handler) :
+        HueLight(1, HueCommandAPI(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler)) {};
 
-    Json::Value& getState() { return state; };
+    nlohmann::json& getState() { return state; };
 
     MOCK_METHOD1(On, bool(uint8_t transition));
 
@@ -123,7 +123,7 @@ public:
 
     MOCK_METHOD1(OffNoRefresh, bool(uint8_t transition));
 
-    MOCK_METHOD2(SendPutRequest, Json::Value(const Json::Value& request, const std::string& subPath));
+    MOCK_METHOD2(SendPutRequest, nlohmann::json(const nlohmann::json& request, const std::string& subPath));
 
     MOCK_METHOD0(refreshState, void());
 };
