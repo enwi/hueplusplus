@@ -112,8 +112,6 @@ std::string LinHttpHandler::send(const std::string& msg, const std::string& adr,
 
     // receive the response
     std::string response;
-    total = sizeof(response) - 1;
-    size_t received = 0;
     char buffer[128] = {};
     do
     {
@@ -131,16 +129,9 @@ std::string LinHttpHandler::send(const std::string& msg, const std::string& adr,
         }
         else
         {
-            received += bytes;
             response.append(buffer, bytes);
         }
     } while (true);
-
-    if (received == total)
-    {
-        std::cerr << "LinHttpHandler: Failed to store complete response from socket\n";
-        throw(std::runtime_error("LinHttpHandler: Failed to store complete response from socket"));
-    }
 
     return response;
 }
