@@ -106,19 +106,31 @@ public:
 
     //! \brief Function that turns the light on.
     //!
-    //! \param transition Optional parameter to set the transition from current
-    //! state to new, standard is 4 = 400ms \return Bool that is true on success
+    //! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
+    //! \return true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual bool On(uint8_t transition = 4);
 
     //! \brief Function that turns the light off.
     //!
-    //! \param transition Optional parameter to set the transition from current
-    //! state to new, standard is 4 = 400ms \return Bool that is true on success
+    //! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
+    //! \return Bool that is true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual bool Off(uint8_t transition = 4);
 
     //! \brief Function to check whether a light is on or off
     //!
     //! \return Bool that is true, when the light is on and false, when off
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual bool isOn();
 
     //! \brief Const function to check whether a light is on or off
@@ -140,6 +152,10 @@ public:
     //! \brief Function that returns the name of the light.
     //!
     //! \return String containig the name of the light
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual std::string getName();
 
     //! \brief Const function that returns the name of the light.
@@ -156,34 +172,34 @@ public:
     //! \brief Const function that returns the uniqueid of the light
     //!
     //! \note Only working on bridges with versions starting at 1.4
-    //! \return String containing the uniqueid or an empty string when the
-    //! function is not supported
+    //! \return String containing the uniqueid or an empty string when the function is not supported
     virtual std::string getUId() const;
 
     //! \brief Const function that returns the manufacturername of the light
     //!
     //! \note Only working on bridges with versions starting at 1.7
-    //! \return String containing the manufacturername or an empty string when the
-    //! function is not supported
+    //! \return String containing the manufacturername or an empty string when the function is not supported
     virtual std::string getManufacturername() const;
 
     //! \brief Const function that returns the productname of the light
     //!
     //! \note Only working on bridges with versions starting at 1.24
-    //! \return String containing the productname or an empty string when the
-    //! function is not supported
+    //! \return String containing the productname or an empty string when the function is not supported
     virtual std::string getProductname() const;
 
     //! \brief Const function that returns the luminaireuniqueid of the light
     //!
     //! \note Only working on bridges with versions starting at 1.9
-    //! \return String containing the luminaireuniqueid or an empty string when
-    //! the function is not supported
+    //! \return String containing the luminaireuniqueid or an empty string when the function is not supported
     virtual std::string getLuminaireUId() const;
 
     //! \brief Function that returns the software version of the light
     //!
     //! \return String containing the software version
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual std::string getSwVersion();
 
     //! \brief Const function that returns the software version of the light
@@ -195,6 +211,10 @@ public:
     //! \brief Function that sets the name of the light
     //!
     //! \return Bool that is true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual bool setName(const std::string& name);
 
     //! \brief Const function that returns the color type of the light.
@@ -237,9 +257,14 @@ public:
     //!
     //! \note The brightness will only be set if the light has a reference to a
     //! specific \ref BrightnessStrategy. The brightness can range from 0 = off to
-    //! 254 = fully lit. \param bri Unsigned int that specifies the brightness
-    //! \param transition Optional parameter to set the transition from current
-    //! state to new, standard is 4 = 400ms \return Bool that is true on success
+    //! 254 = fully lit.
+    //! \param bri Unsigned int that specifies the brightness
+    //! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
+    //! \return Bool that is true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual bool setBrightness(unsigned int bri, uint8_t transition = 4)
     {
         if (brightnessStrategy)
@@ -268,7 +293,12 @@ public:
     //!
     //! \note The brightness will only be returned if the light has a reference to
     //! a specific \ref BrightnessStrategy. The brightness can range from 0 = off
-    //! to 254 = fully lit. \return Unsigned int that is 0 when function failed
+    //! to 254 = fully lit.
+    //! \return Unsigned int that is 0 when function failed
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual unsigned int getBrightness()
     {
         if (brightnessStrategy)
@@ -282,10 +312,14 @@ public:
     //!
     //! \note The color temperature will only be set if the light has a reference
     //! to a specific \ref ColorTemperatureStrategy. The color temperature can
-    //! range from 153 to 500. \param mired Unsigned int that specifies the color
-    //! temperature in Mired \param transition Optional parameter to set the
-    //! transition from current state to new, standard is 4 = 400ms \return Bool
-    //! that is true on success
+    //! range from 153 to 500.
+    //! \param mired Unsigned int that specifies the color temperature in Mired
+    //! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
+    //! \return Bool that is true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual bool setColorTemperature(unsigned int mired, uint8_t transition = 4)
     {
         if (colorTemperatureStrategy)
@@ -319,8 +353,13 @@ public:
     //! reference to a specific \ref ColorTemperatureStrategy.
     //! Updates the lights state by calling refreshState()
     //! The color temperature in mired ranges from 153 to 500 whereas 153 is cold
-    //! and 500 is warm. \param light A reference of the light \return Unsigned
-    //! int representing the color temperature in mired or 0 when failed
+    //! and 500 is warm.
+    //! \param light A reference of the light
+    //! \return Unsigned int representing the color temperature in mired or 0 when failed
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual unsigned int getColorTemperature()
     {
         if (colorTemperatureStrategy)
@@ -334,10 +373,14 @@ public:
     //!
     //! \note The color will only be set if the light has a reference to a
     //! specific \ref ColorHueStrategy. The hue can range from 0 to 65535, whereas
-    //! 65535 and 0 are red, 25500 is green and 46920 is blue. \param hue uint16_t
-    //! that specifies the hue \param transition Optional parameter to set the
-    //! transition from current state to new, standard is 4 = 400ms \return Bool
-    //! that is true on success
+    //! 65535 and 0 are red, 25500 is green and 46920 is blue.
+    //! \param hue uint16_t that specifies the hue
+    //! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
+    //! \return Bool that is true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual bool setColorHue(uint16_t hue, uint8_t transition = 4)
     {
         if (colorHueStrategy)
@@ -351,10 +394,14 @@ public:
     //!
     //! \note The color will only be set if the light has a reference to a
     //! specific \ref ColorHueStrategy. The saturation can range from 0 to 254,
-    //! whereas 0 is least saturated (white) and 254 is most saturated. \param sat
-    //! uint8_t that specifies the saturation \param transition Optional parameter
-    //! to set the transition from current state to new, standard is 4 = 400ms
+    //! whereas 0 is least saturated (white) and 254 is most saturated.
+    //! \param sat uint8_t that specifies the saturation
+    //! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
     //! \return Bool that is true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual bool setColorSaturation(uint8_t sat, uint8_t transition = 4)
     {
         if (colorHueStrategy)
@@ -368,10 +415,15 @@ public:
     //! saturation.
     //!
     //! \note The color will only be set if the light has a reference to a
-    //! specific \ref ColorHueStrategy. \param hue uint16_t that specifies the hue
+    //! specific \ref ColorHueStrategy.
+    //! \param hue uint16_t that specifies the hue
     //! \param sat uint8_t that specifies the saturation
-    //! \param transition Optional parameter to set the transition from current
-    //! state to new, standard is 4 = 400ms. \return Bool that is true on success
+    //! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms.
+    //! \return Bool that is true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual bool setColorHueSaturation(uint16_t hue, uint8_t sat, uint8_t transition = 4)
     {
         if (colorHueStrategy)
@@ -388,8 +440,11 @@ public:
     //! has a reference to a specific \ref ColorHueStrategy.
     //! \note This will not refresh the light state
     //! \param light A reference of the light
-    //! \return Pair containing the hue as first value and saturation as second
-    //! value or an empty one when failed
+    //! \return Pair containing the hue as first value and saturation as second value or an empty one when failed
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual std::pair<uint16_t, uint8_t> getColorHueSaturation() const
     {
         if (colorHueStrategy)
@@ -406,8 +461,11 @@ public:
     //! has a reference to a specific \ref ColorHueStrategy. Updates the lights
     //! state by calling refreshState()
     //! \param light A const reference of the light
-    //! \return Pair containing the hue as first value and saturation as second
-    //! value or an empty one when failed
+    //! \return Pair containing the hue as first value and saturation as second value or an empty one when failed
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual std::pair<uint16_t, uint8_t> getColorHueSaturation()
     {
         if (colorHueStrategy)
@@ -420,11 +478,15 @@ public:
     //! \brief Function to set the color of this light in CIE with specified x y.
     //!
     //! \note The color will only be set if the light has a reference to a
-    //! specific \ref ColorHueStrategy. The values of x and y are ranging from 0
-    //! to 1. \param x float that specifies the x coordinate in CIE \param y float
-    //! that specifies the y coordinate in CIE \param transition Optional
-    //! parameter to set the transition from current state to new, standard is 4 =
-    //! 400ms \return Bool that is true on success
+    //! specific \ref ColorHueStrategy. The values of x and y are ranging from 0 to 1.
+    //! \param x float that specifies the x coordinate in CIE
+    //! \param y float that specifies the y coordinate in CIE
+    //! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
+    //! \return Bool that is true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual bool setColorXY(float x, float y, uint8_t transition = 4)
     {
         if (colorHueStrategy)
@@ -457,8 +519,11 @@ public:
     //! reference to a specific \ref ColorHueStrategy.
     //! Updates the lights state by calling refreshState()
     //! \param light A reference of the light
-    //! \return Pair containing the x as first value and y as second value or an
-    //! empty one when failed
+    //! \return Pair containing the x as first value and y as second value or an empty one when failed
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual std::pair<float, float> getColorXY()
     {
         if (colorHueStrategy)
@@ -476,8 +541,12 @@ public:
     //! ranging from 0 to 255. \param r uint8_t that specifies the red color value
     //! \param g uint8_t that specifies the green color value
     //! \param b uint8_t that specifies the blue color value
-    //! \param transition Optional parameter to set the transition from current
-    //! state to new, standard is 4 = 400ms \return Bool that is true on success
+    //! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms 
+    //! \return Bool that is true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual bool setColorRGB(uint8_t r, uint8_t g, uint8_t b, uint8_t transition = 4)
     {
         if (colorHueStrategy)
@@ -491,14 +560,23 @@ public:
     //!
     //! Can be used for locating a light.
     //! \return bool that is true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual bool alert();
 
     //! \brief Function that lets the light perform one breath cycle in specified
     //! color temperature.
     //!
     //! \note The breath cylce will only be performed if the light has a reference
-    //! to a specific \ref ColorTemperatureStrategy. \param mired Color
-    //! temperature in mired \return Bool that is true on success
+    //! to a specific \ref ColorTemperatureStrategy. 
+    //! \param mired Color temperature in mired 
+    //! \return Bool that is true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual bool alertTemperature(unsigned int mired)
     {
         if (colorTemperatureStrategy)
@@ -512,9 +590,14 @@ public:
     //! color.
     //!
     //! \note The breath cylce will only be performed if the light has a reference
-    //! to a specific \ref ColorHueStrategy. \param hue uint16_t that specifies
-    //! the hue \param sat uint8_t that specifies the saturation \return Bool that
-    //! is true on success
+    //! to a specific \ref ColorHueStrategy. 
+    //! \param hue uint16_t that specifies the hue 
+    //! \param sat uint8_t that specifies the saturation 
+    //! \return Bool that is true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual bool alertHueSaturation(uint16_t hue, uint8_t sat)
     {
         if (colorHueStrategy)
@@ -529,9 +612,14 @@ public:
     //!
     //! \note The breath cylce will only be performed if the light has a reference
     //! to a specific \ref ColorHueStrategy. The values of x and y are ranging
-    //! from 0 to 1. \param x float that specifies the x coordinate in CIE \param
-    //! y float that specifies the y coordinate in CIE \return Bool that is true
-    //! on success
+    //! from 0 to 1. 
+    //! \param x float that specifies the x coordinate in CIE
+    //! \param y float that specifies the y coordinate in CIE 
+    //! \return Bool that is true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual bool alertXY(float x, float y)
     {
         if (colorHueStrategy)
@@ -546,10 +634,15 @@ public:
     //!
     //! \note The breath cylce will only be performed if the light has a reference
     //! to a specific \ref ColorHueStrategy. The values of red, green and blue are
-    //! ranging from 0 to 255. \param r uint8_t that specifies the red color value
+    //! ranging from 0 to 255. 
+    //! \param r uint8_t that specifies the red color value
     //! \param g uint8_t that specifies the green color value
     //! \param b uint8_t that specifies the blue color value
     //! \return Bool that is true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual bool alertRGB(uint8_t r, uint8_t g, uint8_t b)
     {
         if (colorHueStrategy)
@@ -570,6 +663,10 @@ public:
     //! alternatively call Off() and then use any of the setter functions. \param
     //! on bool that enables this feature when true and disables it when false
     //! \return Bool that is true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual bool setColorLoop(bool on)
     {
         if (colorHueStrategy)
@@ -596,6 +693,10 @@ protected:
     //! \param brightnessStrategy Strategy for brightness. May be nullptr.
     //! \param colorTempStrategy Strategy for color temperature. May be nullptr.
     //! \param colorHueStrategy Strategy for color hue/saturation. May be nullptr.
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     HueLight(int id, const HueCommandAPI& commands, std::shared_ptr<const BrightnessStrategy> brightnessStrategy,
         std::shared_ptr<const ColorTemperatureStrategy> colorTempStrategy,
         std::shared_ptr<const ColorHueStrategy> colorHueStrategy);
@@ -637,25 +738,41 @@ protected:
 
     //! \brief Function that turns the light on without refreshing its state.
     //!
-    //! \param transition Optional parameter to set the transition from current
-    //! state to new standard is 4 = 400ms \return Bool that is true on success
+    //! \param transition Optional parameter to set the transition from current state to new standard is 4 = 400ms 
+    //! \return Bool that is true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual bool OnNoRefresh(uint8_t transition = 4);
 
     //! \brief Function that turns the light off without refreshing its state.
     //!
-    //! \param transition Optional parameter to set the transition from current
-    //! state to new standard is 4 = 400ms \return Bool that is true on success
+    //! \param transition Optional parameter to set the transition from current state to new standard is 4 = 400ms 
+    //! \return Bool that is true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual bool OffNoRefresh(uint8_t transition = 4);
 
     //! \brief Utility function to send a put request to the light.
     //!
     //! \throws nlohmann::json::parse_error if the reply could not be parsed
     //! \param request A nlohmann::json aka the request to send
-    //! \param subPath A path that is appended to the uri, note it should always
-    //! start with a slash ("/") \return The parsed reply
+    //! \param subPath A path that is appended to the uri, note it should always start with a slash ("/") 
+    //! \return The parsed reply
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual nlohmann::json SendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo);
 
     //! \brief Virtual function that refreshes the \ref state of the light.
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual void refreshState();
 
 protected:

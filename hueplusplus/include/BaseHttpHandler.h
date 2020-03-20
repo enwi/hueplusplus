@@ -40,15 +40,6 @@ public:
     //! \brief Virtual dtor
     virtual ~BaseHttpHandler() = default;
 
-    //! \brief Send a message to a specified host and return the response.
-    //!
-    //! \param msg The message that should be sent to the specified address
-    //! \param adr Ip or hostname in dotted decimal notation like "192.168.2.1"
-    //! \param port Optional port the request is sent to, default is 80
-    //! \return The response of the host as a string
-    //! \throws std::system_error when system or socket operations fail
-    virtual std::string send(const std::string& msg, const std::string& adr, int port = 80) const = 0;
-
     //! \brief Send a message to a specified host and return the body of the response.
     //!
     //! \param msg The message that should sent to the specified address
@@ -57,21 +48,7 @@ public:
     //! \return The body of the response of the host as a string
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
-    virtual std::string sendGetHTTPBody(const std::string& msg, const std::string& adr, int port = 80) const;
-
-    //! \brief Send a multicast request with a specified message.
-    //!
-    //! \param msg The message that should sent to the specified multicast address
-    //! \param adr Optional ip or hostname in dotted decimal notation, default is "239.255.255.250"
-    //! \param port Optional port the request is sent to, default is 1900
-    //! \param timeout Optional time to wait for responses in seconds, default is 5
-    //!
-    //! Blocks for the duration of the timeout.
-    //!
-    //! \return vector of strings containing each received answer
-    //! \throws std::system_error when system or socket operations fail
-    virtual std::vector<std::string> sendMulticast(
-        const std::string& msg, const std::string& adr = "239.255.255.250", int port = 1900, int timeout = 5) const = 0;
+    std::string sendGetHTTPBody(const std::string& msg, const std::string& adr, int port = 80) const override;
 
     //! \brief Send a HTTP request with the given method to the specified host and return the body of the response.
     //!
@@ -84,8 +61,8 @@ public:
     //! \return Body of the response of the host
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
-    virtual std::string sendHTTPRequest(const std::string& method, const std::string& uri,
-        const std::string& contentType, const std::string& body, const std::string& adr, int port = 80) const;
+    std::string sendHTTPRequest(const std::string& method, const std::string& uri, const std::string& contentType,
+        const std::string& body, const std::string& adr, int port = 80) const override;
 
     //! \brief Send a HTTP GET request to the specified host and return the body of the response.
     //!
@@ -98,8 +75,8 @@ public:
     //! \return Body of the response of the host
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
-    virtual std::string GETString(const std::string& uri, const std::string& contentType, const std::string& body,
-        const std::string& adr, int port = 80) const;
+    std::string GETString(const std::string& uri, const std::string& contentType, const std::string& body,
+        const std::string& adr, int port = 80) const override;
 
     //! \brief Send a HTTP POST request to the specified host and return the body of the response.
     //!
@@ -112,8 +89,8 @@ public:
     //! \return Body of the response of the host
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
-    virtual std::string POSTString(const std::string& uri, const std::string& contentType, const std::string& body,
-        const std::string& adr, int port = 80) const;
+    std::string POSTString(const std::string& uri, const std::string& contentType, const std::string& body,
+        const std::string& adr, int port = 80) const override;
 
     //! \brief Send a HTTP PUT request to the specified host and return the body of the response.
     //!
@@ -126,8 +103,8 @@ public:
     //! \return Body of the response of the host
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
-    virtual std::string PUTString(const std::string& uri, const std::string& contentType, const std::string& body,
-        const std::string& adr, int port = 80) const;
+    std::string PUTString(const std::string& uri, const std::string& contentType, const std::string& body,
+        const std::string& adr, int port = 80) const override;
 
     //! \brief Send a HTTP DELETE request to the specified host and return the body of the response.
     //!
@@ -140,8 +117,8 @@ public:
     //! \return Body of the response of the host
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
-    virtual std::string DELETEString(const std::string& uri, const std::string& contentType, const std::string& body,
-        const std::string& adr, int port = 80) const;
+    std::string DELETEString(const std::string& uri, const std::string& contentType, const std::string& body,
+        const std::string& adr, int port = 80) const override;
 
     //! \brief Send a HTTP GET request to the specified host and return the body of the response parsed as JSON.
     //!
@@ -153,8 +130,8 @@ public:
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws nlohmann::json::parse_error when the body could not be parsed
-    virtual nlohmann::json GETJson(
-        const std::string& uri, const nlohmann::json& body, const std::string& adr, int port = 80) const;
+    nlohmann::json GETJson(
+        const std::string& uri, const nlohmann::json& body, const std::string& adr, int port = 80) const override;
 
     //! \brief Send a HTTP POST request to the specified host and return the body of the response parsed as JSON.
     //!
@@ -166,8 +143,8 @@ public:
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws nlohmann::json::parse_error when the body could not be parsed
-    virtual nlohmann::json POSTJson(
-        const std::string& uri, const nlohmann::json& body, const std::string& adr, int port = 80) const;
+    nlohmann::json POSTJson(
+        const std::string& uri, const nlohmann::json& body, const std::string& adr, int port = 80) const override;
 
     //! \brief Send a HTTP PUT request to the specified host and return the body of the response parsed as JSON.
     //!
@@ -179,8 +156,8 @@ public:
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws nlohmann::json::parse_error when the body could not be parsed
-    virtual nlohmann::json PUTJson(
-        const std::string& uri, const nlohmann::json& body, const std::string& adr, int port = 80) const;
+    nlohmann::json PUTJson(
+        const std::string& uri, const nlohmann::json& body, const std::string& adr, int port = 80) const override;
 
     //! \brief Send a HTTP DELETE request to the specified host and return the body of the response parsed as JSON.
     //!
@@ -192,8 +169,8 @@ public:
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws nlohmann::json::parse_error when the body could not be parsed
-    virtual nlohmann::json DELETEJson(
-        const std::string& uri, const nlohmann::json& body, const std::string& adr, int port = 80) const;
+    nlohmann::json DELETEJson(
+        const std::string& uri, const nlohmann::json& body, const std::string& adr, int port = 80) const override;
 };
 
 #endif

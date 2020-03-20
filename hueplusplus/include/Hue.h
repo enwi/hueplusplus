@@ -57,21 +57,25 @@ public:
 public:
     //! \brief Constructor of HueFinder class
     //!
-    //! \param handler HttpHandler of type \ref IHttpHandler for communication
-    //! with the bridge
+    //! \param handler HttpHandler of type \ref IHttpHandler for communication with the bridge
     HueFinder(std::shared_ptr<const IHttpHandler> handler);
 
-    //! \brief Function that finds all bridges in the network and returns them.
+    //! \brief Finds all bridges in the network and returns them.
     //!
-    //! The user should be given the opportunity to select the correct one based
-    //! on the mac address. \return vector containing ip and mac of all found
-    //! bridges
+    //! The user should be given the opportunity to select the correct one based on the mac address.
+    //! \return vector containing ip and mac of all found bridges
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
     std::vector<HueIdentification> FindBridges() const;
 
-    //! \brief Function that gets a \ref Hue bridge based on its identification
+    //! \brief Gets a \ref Hue bridge based on its identification
     //!
     //! \param identification \ref HueIdentification that specifies a bridge
     //! \return \ref Hue class object
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body or username could not be requested
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     Hue GetBridge(const HueIdentification& identification);
 
     //! \brief Function that adds a username to the \ref usernames map
@@ -88,15 +92,14 @@ public:
     const std::map<std::string, std::string>& GetAllUsernames() const;
 
     //! \brief Normalizes mac address to plain hex number.
-    //! \returns \p input without separators and whitespace, in upper case.
+    //! \returns \p input without separators and whitespace, in lower case.
     static std::string NormalizeMac(std::string input);
 
 private:
     //! \brief Parses mac address from description.xml
     //!
-    //! \param description Content of description.xml file as returned by GET
-    //! request. \returns Content of xml element \c serialNumber if description
-    //! matches a Hue bridge, otherwise an empty string.
+    //! \param description Content of description.xml file as returned by GET request. 
+    //! \returns Content of xml element \c serialNumber if description matches a Hue bridge, otherwise an empty string.
     static std::string ParseDescription(const std::string& description);
 
     std::map<std::string, std::string> usernames; //!< Maps all macs to usernames added by \ref
@@ -129,15 +132,18 @@ public:
     //! \return integer containing port
     int getBridgePort();
 
-    //! \brief Function that sends a username request to the Hue bridge.
+    //! \brief Send a username request to the Hue bridge.
     //!
-    //! It does that for about 30 seconds and you have 5 seconds to prepare
-    //! It automatically sets the \ref username variable according to the username
-    //! received and returns the username received This function should only be
-    //! called once to acquire a username to control the bridge and the username
-    //! should be saved for future use \param ip String that specifies the ip (in
-    //! dotted decimal notation like "192.168.2.1") the request is send to \return
-    //! String containing username
+    //! Blocks for about 30 seconds and 5 seconds to prepare. 
+    //! It automatically sets the \ref username variable according to the username received and returns the username received. 
+    //! This function should only be called once to acquire a username to control the bridge and the username
+    //! should be saved for future use.
+    //! \param ip String that specifies the ip (in dotted decimal notation like "192.168.2.1") the request is send to 
+    //! \return username for API usage
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error except link button not pressed.
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     std::string requestUsername(const std::string& ip);
 
     //! \brief Function that returns the \ref username
@@ -147,8 +153,7 @@ public:
 
     //! \brief Function to set the ip address of this class representing a bridge
     //!
-    //! \param ip String that specifies the ip in dotted decimal notation like
-    //! "192.168.2.1"
+    //! \param ip String that specifies the ip in dotted decimal notation like "192.168.2.1"
     void setIP(const std::string& ip);
 
     //! \brief Function to set the port of this class representing a bridge
@@ -161,17 +166,24 @@ public:
     //!
     //! \param id Integer that specifies the ID of a Hue light
     //! \return \ref HueLight that can be controlled
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when id does not exist or type is unknown
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     HueLight& getLight(int id);
 
     //! \brief Function to remove a light from the bridge
     //!
-    //! \attention Any use of the light after it was successfully removed results
-    //! in undefined behavior \param id Id of the light to remove \return Bool
-    //! that is true on success
+    //! \attention Any use of the light after it was successfully removed results in undefined behavior 
+    //! \param id Id of the light to remove 
+    //! \return true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contains no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     bool removeLight(int id);
 
-    //! \brief Function that returns all light types that are associated with this
-    //! bridge
+    //! \brief Function that returns all light types that are associated with this bridge
     //!
     //! \return A map mapping light id's to light types for every light
     // const std::map<uint8_t, ColorType>& getAllLightTypes();
@@ -180,15 +192,21 @@ public:
     //! bridge
     //!
     //! \return A vector containing references to every HueLight
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contains no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     std::vector<std::reference_wrapper<HueLight>> getAllLights();
 
-    //! \brief Function that tells whether a given light id represents an existing
-    //! light
+    //! \brief Function that tells whether a given light id represents an existing light
     //!
     //! Calls refreshState to update the local bridge state
     //! \param id Id of a light to check for existance
-    //! \return Bool that is true when a light with the given id exists and false
-    //! when not
+    //! \return Bool that is true when a light with the given id exists and false when not
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contains no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     bool lightExists(int id);
 
     //! \brief Const function that tells whether a given light id represents an
@@ -231,6 +249,10 @@ public:
 
 private:
     //! \brief Function that refreshes the local \ref state of the Hue bridge
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     void refreshState();
 
 private:

@@ -37,62 +37,59 @@ class HueCommandAPI
 public:
     //! \brief Construct from ip, username and HttpHandler
     //!
-    //! \param ip String that specifies the ip address of the Hue bridge in dotted
-    //! decimal notation like "192.168.2.1" \param port of the hue bridge
-    //! \param username String that specifies the username that is used to control
-    //! the bridge \param handler HttpHandler of type \ref IHttpHandler for
-    //! communication with the bridge
-    HueCommandAPI(const std::string& ip, const int port, const std::string& username,
-        std::shared_ptr<const IHttpHandler> httpHandler);
+    //! \param ip ip address of the Hue bridge in dotted decimal notation like "192.168.2.1"
+    //! \param username username that is used to control the bridge
+    //! \param port of the hue bridge
+    //! \param handler HttpHandler for communication with the bridge
+    HueCommandAPI(const std::string& ip, const std::string& username, std::shared_ptr<const IHttpHandler> httpHandler);
 
     //! \brief Copy construct from other HueCommandAPI
-    //! \note All copies refer to the same timeout data, so even calls from
-    //! different objects will be delayed
+    //! \note All copies refer to the same timeout data, so even calls from different objects will be delayed
     HueCommandAPI(const HueCommandAPI&) = default;
     //! \brief Move construct from other HueCommandAPI
-    //! \note All copies refer to the same timeout data, so even calls from
-    //! different objects will be delayed
+    //! \note All copies refer to the same timeout data, so even calls from different objects will be delayed
     HueCommandAPI(HueCommandAPI&&) = default;
 
     //! \brief Copy assign from other HueCommandAPI
-    //! \note All copies refer to the same timeout data, so even calls from
-    //! different objects will be delayed
+    //! \note All copies refer to the same timeout data, so even calls from different objects will be delayed
     HueCommandAPI& operator=(const HueCommandAPI&) = default;
     //! \brief Move assign from other HueCommandAPI
-    //! \note All copies refer to the same timeout data, so even calls from
-    //! different objects will be delayed
+    //! \note All copies refer to the same timeout data, so even calls from different objects will be delayed
     HueCommandAPI& operator=(HueCommandAPI&&) = default;
 
-    //! \brief Sends a HTTP PUT request via the \ref httpHandler to the bridge and
-    //! returns the response
+    //! \brief Sends a HTTP PUT request via the \ref httpHandler to the bridge and returns the response
     //!
-    //! This function will block until at least \ref minDelay has passed to any
-    //! previous request \param path String that contains the request path
-    //! (appended after /api/<username>) \param request Json value containing the
-    //! request. May be empty \returns The return value of the underlying \ref
-    //! IHttpHandler::PUTJson call
+    //! This function will block until at least \ref minDelay has passed to any previous request
+    //! \param path API request path (appended after /api/<username>)
+    //! \param request Request to the api, may be empty
+    //! \returns The return value of the underlying \ref IHttpHandler::PUTJson call
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contains no body
+    //! \throws HueAPIResponseException when response contains an error
     nlohmann::json PUTRequest(const std::string& path, const nlohmann::json& request) const;
     nlohmann::json PUTRequest(const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const;
 
-    //! \brief Sends a HTTP GET request via the \ref httpHandler to the bridge and
-    //! returns the response
+    //! \brief Sends a HTTP GET request via the \ref httpHandler to the bridge and returns the response
     //!
-    //! This function will block until at least \ref minDelay has passed to any
-    //! previous request \param path String that contains the request path
-    //! (appended after /api/<username>) \param request Json value containing the
-    //! request. May be empty \returns The return value of the underlying \ref
-    //! IHttpHandler::GETJson call
+    //! This function will block until at least \ref minDelay has passed to any previous request
+    //! \param path API request path (appended after /api/<username>)
+    //! \param request Request to the api, may be empty
+    //! \returns The return value of the underlying \ref IHttpHandler::GETJson call
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contains no body
+    //! \throws HueAPIResponseException when response contains an error
     nlohmann::json GETRequest(const std::string& path, const nlohmann::json& request) const;
     nlohmann::json GETRequest(const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const;
 
-    //! \brief Sends a HTTP DELETE request via the \ref httpHandler to the bridge
-    //! and returns the response
+    //! \brief Sends a HTTP DELETE request via the \ref httpHandler to the bridge and returns the response
     //!
-    //! This function will block until at least \ref minDelay has passed to any
-    //! previous request \param path String that contains the request path
-    //! (appended after /api/<username>) \param request Json value containing the
-    //! request. May be empty \returns The return value of the underlying \ref
-    //! IHttpHandler::DELETEJson call
+    //! This function will block until at least \ref minDelay has passed to any previous request
+    //! \param path API request path (appended after /api/<username>)
+    //! \param request Request to the api, may be empty
+    //! \returns The return value of the underlying \ref IHttpHandler::DELETEJson call
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contains no body
+    //! \throws HueAPIResponseException when response contains an error
     nlohmann::json DELETERequest(const std::string& path, const nlohmann::json& request) const;
     nlohmann::json DELETERequest(const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const;
 
@@ -104,9 +101,12 @@ private:
     };
 
     //! \brief Throws an exception if response contains an error, passes though value
+    //! \throws HueAPIResponseException when response contains an error
+    //! \returns \ref response if there is no error
     nlohmann::json HandleError(FileInfo fileInfo, const nlohmann::json& response) const;
 
     //! \brief Combines path with api prefix and username
+    //! \returns "/api/<username>/<path>"
     std::string CombinedPath(const std::string& path) const;
 
 private:

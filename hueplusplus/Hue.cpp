@@ -202,6 +202,10 @@ std::string Hue::requestUsername(const std::string& ip)
                 {
                     std::cout << "Link button not pressed!\n";
                 }
+                else
+                {
+                    throw;
+                }
             }
             std::this_thread::sleep_until(lastCheck + std::chrono::seconds(1));
         }
