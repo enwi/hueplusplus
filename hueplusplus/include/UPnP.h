@@ -33,13 +33,13 @@
 class UPnP
 {
 public:
-    //! \brief Function that searches for UPnP devices and returns all found ones.
+    //! \brief Searches for UPnP devices and returns all found ones.
     //!
-    //! It does it by sending an m-search packet and waits for all responses.
-    //! Since responses can be received multiple times this function conveniently
-    //! removes all duplicates. \param handler HttpHandler of type \ref
-    //! IHttpHandler for communication with the bridge \return A vector containing
-    //! pairs of address and name of all found devices
+    //! It does it by sending an m-search packet and waits for all responses. 
+    //! Since responses can be received multiple times this function conveniently removes all duplicates. 
+    //! \param handler HttpHandler for communication 
+    //! \return A vector containing pairs of address and name of all found devices
+    //! \throws std::system_error when system or socket operations fail
     std::vector<std::pair<std::string, std::string>> getDevices(std::shared_ptr<const IHttpHandler> handler);
 };
 
