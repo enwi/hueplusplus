@@ -19,7 +19,9 @@
 
 #include "HueException.h"
 
-HueException::HueException(FileInfo fileInfo) : HueException("Hue exception", std::move(fileInfo)) {}
+HueException::HueException(FileInfo fileInfo, const std::string& message)
+    : HueException("Hue exception", std::move(fileInfo), message)
+{}
 
 const char* HueException::what() const
 {
@@ -31,27 +33,23 @@ const FileInfo& HueException::GetFile() const noexcept
     return fileInfo;
 }
 
-HueException::HueException(const char* exceptionName, FileInfo fileInfo) : fileInfo(std::move(fileInfo))
+HueException::HueException(const char* exceptionName, FileInfo fileInfo, const std::string& message)
+    : fileInfo(std::move(fileInfo))
 {
     whatMessage = exceptionName;
     whatMessage.append(" from");
     whatMessage.append(this->fileInfo.ToString());
+    whatMessage.append(" ");
+    whatMessage.append(message);
 }
 
 HueAPIResponseException::HueAPIResponseException(
     FileInfo fileInfo, int error, std::string address, std::string description)
-    : HueException("Hue api response exception", std::move(fileInfo)),
+    : HueException("Hue api response exception", std::move(fileInfo), GetMessage(error, address, description)),
       error(error),
       address(std::move(address)),
       description(std::move(description))
-{
-    whatMessage.append(" ");
-    whatMessage.append(std::to_string(error));
-    whatMessage.append(" ");
-    whatMessage.append(this->address);
-    whatMessage.append(" ");
-    whatMessage.append(this->description);
-}
+{}
 
 int HueAPIResponseException::GetErrorNumber() const noexcept
 {
@@ -66,6 +64,16 @@ const std::string& HueAPIResponseException::GetAddress() const noexcept
 const std::string& HueAPIResponseException::GetDescription() const noexcept
 {
     return description;
+}
+
+std::string HueAPIResponseException::GetMessage(int error, const std::string& addr, const std::string& description)
+{
+    std::string result = std::to_string(error);
+    result.append(" ");
+    result.append(addr);
+    result.append(" ");
+    result.append(description);
+    return result;
 }
 
 std::string FileInfo::ToString() const

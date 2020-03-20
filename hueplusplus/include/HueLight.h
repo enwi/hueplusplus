@@ -649,7 +649,7 @@ protected:
 
     //! \brief Utility function to send a put request to the light.
     //!
-    //! \throws std::runtime_error if the reply could not be parsed
+    //! \throws nlohmann::json::parse_error if the reply could not be parsed
     //! \param request A nlohmann::json aka the request to send
     //! \param subPath A path that is appended to the uri, note it should always
     //! start with a slash ("/") \return The parsed reply
