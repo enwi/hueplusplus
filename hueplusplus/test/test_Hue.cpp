@@ -104,7 +104,7 @@ TEST_F(HueFinderTest, GetBridge)
     HueFinder finder(handler);
     std::vector<HueFinder::HueIdentification> bridges = finder.FindBridges();
 
-    ASSERT_THROW(finder.GetBridge(bridges[0]), std::runtime_error);
+    ASSERT_THROW(finder.GetBridge(bridges[0]), HueException);
 
     nlohmann::json user_ret_suc;
     user_ret_suc = nlohmann::json::array();
@@ -252,7 +252,7 @@ TEST(Hue, getLight)
     Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
     // Test exception
-    ASSERT_THROW(test_bridge.getLight(1), std::runtime_error);
+    ASSERT_THROW(test_bridge.getLight(1), HueException);
 
     nlohmann::json hue_bridge_state;
     hue_bridge_state["lights"] = nlohmann::json::object();
@@ -370,7 +370,7 @@ TEST(Hue, getLight)
         .WillOnce(Return(hue_bridge_state));
     test_bridge = Hue(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
-    ASSERT_THROW(test_bridge.getLight(1), std::runtime_error);
+    ASSERT_THROW(test_bridge.getLight(1), HueException);
 }
 
 TEST(Hue, removeLight)

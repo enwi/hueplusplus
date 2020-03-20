@@ -155,7 +155,6 @@ public:
     //! \throws nlohmann::json::parse_error when the body could not be parsed
     virtual nlohmann::json GETJson(
         const std::string& uri, const nlohmann::json& body, const std::string& adr, int port = 80) const;
-    ;
 
     //! \brief Send a HTTP POST request to the specified host and return the body of the response parsed as JSON.
     //!
@@ -195,7 +194,6 @@ public:
     //! \throws nlohmann::json::parse_error when the body could not be parsed
     virtual nlohmann::json DELETEJson(
         const std::string& uri, const nlohmann::json& body, const std::string& adr, int port = 80) const;
-    ;
 };
 
 #endif
