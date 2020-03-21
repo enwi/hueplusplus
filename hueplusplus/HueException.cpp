@@ -23,7 +23,7 @@ HueException::HueException(FileInfo fileInfo, const std::string& message)
     : HueException("Hue exception", std::move(fileInfo), message)
 {}
 
-const char* HueException::what() const
+const char* HueException::what() const noexcept
 {
     return whatMessage.c_str();
 }
