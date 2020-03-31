@@ -1,3 +1,25 @@
+/**
+    \file testhelper.h
+    Copyright Notice\n
+    Copyright (C) 2017  Jan Rogall		- developer\n
+    Copyright (C) 2017  Moritz Wirger	- developer\n
+
+    This file is part of hueplusplus.
+
+    hueplusplus is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    hueplusplus is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
+**/
+
 #ifndef _TEST_HELPER_H
 #define _TEST_HELPER_H
 
@@ -7,11 +29,13 @@ inline std::string getBridgeIp()
                             //!< decimal notation like "192.168.2.1"
 }
 
-inline int getBridgePort() {
+inline int getBridgePort()
+{
     return 80;
 }
 
-inline std::string getBridgeUsername() {
+inline std::string getBridgeUsername()
+{
     return "83b7780291a6ceffbe0bd049104df"; //!< Username that is used to access
                                             //!< the fake hue bridge
 }
@@ -64,7 +88,7 @@ inline std::string getBridgeXml()
 
 inline std::vector<std::string> getMulticastReply()
 {
-    return { "HTTP/1.1 200 OK\r\n"
+    return {"HTTP/1.1 200 OK\r\n"
             "CACHE-CONTROL: max-age=300\r\n"
             "DATE: Wed, 21 Jan 1970 05:42:21 GMT\r\n"
             "EXT:\r\n"
@@ -254,6 +278,6 @@ inline std::vector<std::string> getMulticastReply()
         "SERVER: Linux/3.14.0 UPnP/1.0 IpBridge/1.21.0\r\n"
         "hue-bridgeid: 111111FFFE11E111\r\n"
         "ST: urn:schemas-upnp-org:device:basic:1\r\n"
-        "USN: uuid:1f111f11-da11-11e1-1b11-11111111e111" };
+        "USN: uuid:1f111f11-da11-11e1-1b11-11111111e111"};
 }
 #endif
