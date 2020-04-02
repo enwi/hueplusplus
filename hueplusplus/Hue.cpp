@@ -37,6 +37,7 @@
 #include "include/SimpleColorHueStrategy.h"
 #include "include/SimpleColorTemperatureStrategy.h"
 #include "include/UPnP.h"
+#include "include/Utils.h"
 
 HueFinder::HueFinder(std::shared_ptr<const IHttpHandler> handler) : http_handler(std::move(handler)) {}
 
@@ -180,10 +181,11 @@ std::string Hue::requestUsername(const std::string& ip)
 
             if (answer.size() > 0)
             {
-                if (answer[0].count("success"))
+                nlohmann::json jsonUser = utils::safeGetMember(answer, 0, "success", "username");
+                if (jsonUser != nullptr)
                 {
                     // [{"success":{"username": "<username>"}}]
-                    username = answer[0]["success"]["username"];
+                    username = jsonUser;
                     this->ip = ip;
                     // Update commands with new username and ip
                     commands = HueCommandAPI(ip, port, username, http_handler);
@@ -290,8 +292,7 @@ HueLight& Hue::getLight(int id)
 bool Hue::removeLight(int id)
 {
     nlohmann::json result = commands.DELETERequest("/lights/" + std::to_string(id), nlohmann::json::object());
-    bool success = result.is_array() && result.size() > 0 && result[0].count("success")
-        && result[0]["success"] == "/lights/" + std::to_string(id) + " deleted";
+    bool success = utils::safeGetMember(result, 0, "success") == "/lights/" + std::to_string(id) + " deleted";
     if (success && lights.count(id) != 0)
     {
         lights.erase(id);
