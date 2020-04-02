@@ -37,8 +37,7 @@ namespace utils
             {
                 // Traverse through first object
                 nlohmann::json successObject = it.value()["success"];
-                for (auto successIt = successObject.begin(); successIt != successObject.end();
-                     ++successIt)
+                for (auto successIt = successObject.begin(); successIt != successObject.end(); ++successIt)
                 {
                     const std::string successPath = successIt.key();
                     if (successPath.find(path) == 0)
