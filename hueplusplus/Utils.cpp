@@ -26,25 +26,25 @@
 
 namespace utils
 {
-    bool validateReplyForLight(nlohmann::json request, nlohmann::json reply, int lightId)
+    bool validateReplyForLight(const nlohmann::json& request, const nlohmann::json& reply, int lightId)
     {
         bool success = false;
         std::string path = "/lights/" + std::to_string(lightId) + "/state/";
-        for (nlohmann::json::iterator it = reply.begin(); it != reply.end(); ++it)
+        for (auto it = reply.begin(); it != reply.end(); ++it)
         {
             success = it.value().count("success");
             if (success)
             {
                 // Traverse through first object
                 nlohmann::json successObject = it.value()["success"];
-                for (nlohmann::json::iterator successIt = successObject.begin(); successIt != successObject.end();
+                for (auto successIt = successObject.begin(); successIt != successObject.end();
                      ++successIt)
                 {
                     const std::string successPath = successIt.key();
                     if (successPath.find(path) == 0)
                     {
                         const std::string valueKey = successPath.substr(path.size());
-                        nlohmann::json::iterator requestIt = request.find(valueKey);
+                        auto requestIt = request.find(valueKey);
                         success = requestIt != request.end();
                         if (success)
                         {

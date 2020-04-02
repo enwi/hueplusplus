@@ -30,7 +30,33 @@ namespace utils
     //! \param reply The reply that was received
     //! \param lightId The identifier of the light
     //! \return True if request was executed correctly
-    bool validateReplyForLight(nlohmann::json request, nlohmann::json reply, int lightId);
+    bool validateReplyForLight(const nlohmann::json& request, const nlohmann::json& reply, int lightId);
+
+    //! \brief Returns the object/array member or null if it does not exist
+    template<typename... Paths>
+    nlohmann::json safeGetMember(const nlohmann::json& json, std::size_t index, Paths&&... otherPaths)
+    {
+        if (!json.is_array() || json.size() <= index)
+        {
+            return nullptr;
+        }
+        return safeGetMember(json[index], std::forward<Paths>(otherPaths)...);
+    }
+    template<typename KeyT, typename... Paths, 
+        std::enable_if_t<!std::is_integral<std::remove_reference_t<KeyT>>::value>* = nullptr>
+    nlohmann::json safeGetMember(const nlohmann::json& json, KeyT&& key, Paths&&... otherPaths)
+    {
+        auto memberIt = json.find(std::forward<KeyT>(key));
+        if (memberIt == json.end())
+        {
+            return nullptr;
+        }
+        return safeGetMember(*memberIt, std::forward<Paths>(otherPaths)...);
+    }
+    inline nlohmann::json safeGetMember(const nlohmann::json& json)
+    {
+        return json;
+    }
 } // namespace utils
 
 #endif

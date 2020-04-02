@@ -132,8 +132,7 @@ bool HueLight::setName(const std::string& name)
     nlohmann::json reply = SendPutRequest(request, "/name");
 
     // Check whether request was successful
-    return reply.size() > 0 && reply[0].count("success")
-        && reply[0]["success"]["/lights/" + std::to_string(id) + "/name"] == name;
+    return utils::safeGetMember(reply, 0, "success", "/lights/" + std::to_string(id) + "/name") == name;
 }
 
 ColorType HueLight::getColorType() const
@@ -235,7 +234,7 @@ void HueLight::refreshState()
     // std::chrono::steady_clock::now(); std::cout << "\tRefreshing lampstate of
     // lamp with id: " << id << ", ip: " << ip << "\n";
     nlohmann::json answer = commands.GETRequest("/lights/" + std::to_string(id), nlohmann::json::object());
-    if (answer.is_object() && answer.count("state"))
+    if (answer.count("state"))
     {
         state = answer;
     }
