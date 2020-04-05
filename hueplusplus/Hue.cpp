@@ -179,33 +179,26 @@ std::string Hue::requestUsername()
         {
             lastCheck = std::chrono::steady_clock::now();
             answer = http_handler->POSTJson("/api", request, ip, port);
+            nlohmann::json jsonUser = utils::safeGetMember(answer, 0, "success", "username");
+            if (jsonUser != nullptr)
+            {
+                // [{"success":{"username": "<username>"}}]
+                username = jsonUser;
+                // Update commands with new username and ip
+                commands = HueCommandAPI(ip, port, username, http_handler);
+                std::cout << "Success! Link button was pressed!\n";
+                std::cout << "Username is \"" << username << "\"\n";
+                break;
+            }
+            else if (answer.size() > 0 && answer[0].count("error"))
+            {
+                // All errors except 101: Link button not pressed
+                if (utils::safeGetMember(answer, 0, "error", "type") != 101)
+                {
+                    throw HueAPIResponseException::Create(CURRENT_FILE_INFO, answer[0]);
+                }
+            }
 
-            try
-            {
-                nlohmann::json jsonUser = utils::safeGetMember(answer, 0, "success", "username");
-                if (jsonUser != nullptr)
-                {
-                    // [{"success":{"username": "<username>"}}]
-                    username = jsonUser;
-                    // Update commands with new username and ip
-                    commands = HueCommandAPI(ip, port, username, http_handler);
-                    std::cout << "Success! Link button was pressed!\n";
-                    std::cout << "Username is \"" << username << "\"\n";
-                    break;
-                }
-            }
-            catch (const HueAPIResponseException& e)
-            {
-                // 101: Link button not pressed
-                if (e.GetErrorNumber() == 101)
-                {
-                    std::cout << "Link button not pressed!\n";
-                }
-                else
-                {
-                    throw;
-                }
-            }
             std::this_thread::sleep_until(lastCheck + std::chrono::seconds(1));
         }
     }

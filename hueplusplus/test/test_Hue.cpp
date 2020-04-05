@@ -57,7 +57,7 @@ protected:
             .Times(AtLeast(1))
             .WillRepeatedly(Return(getBridgeXml()));
     }
-    ~HueFinderTest() {};
+    ~HueFinderTest(){};
 };
 
 TEST_F(HueFinderTest, FindBridges)
@@ -86,35 +86,25 @@ TEST_F(HueFinderTest, FindBridges)
 TEST_F(HueFinderTest, GetBridge)
 {
     using namespace ::testing;
-    nlohmann::json request;
-    request["devicetype"] = "HuePlusPlus#User";
+    nlohmann::json request{{"devicetype", "HuePlusPlus#User"}};
 
-    nlohmann::json user_ret_uns;
-    user_ret_uns = nlohmann::json::array();
-    user_ret_uns[0] = nlohmann::json::object();
-    user_ret_uns[0]["error"] = nlohmann::json::object();
-    user_ret_uns[0]["error"]["type"] = 101;
-    user_ret_uns[0]["error"]["address"] = "";
-    user_ret_uns[0]["error"]["description"] = "link button not pressed";
+    nlohmann::json errorResponse
+        = {{{"error", {{"type", 101}, {"address", ""}, {"description", "link button not pressed"}}}}};
 
     EXPECT_CALL(*handler, POSTJson("/api", request, getBridgeIp(), getBridgePort()))
         .Times(AtLeast(1))
-        .WillRepeatedly(Return(user_ret_uns));
+        .WillRepeatedly(Return(errorResponse));
 
     HueFinder finder(handler);
     std::vector<HueFinder::HueIdentification> bridges = finder.FindBridges();
 
     ASSERT_THROW(finder.GetBridge(bridges[0]), HueException);
 
-    nlohmann::json user_ret_suc;
-    user_ret_suc = nlohmann::json::array();
-    user_ret_suc[0] = nlohmann::json::object();
-    user_ret_suc[0]["success"] = nlohmann::json::object();
-    user_ret_suc[0]["success"]["username"] = getBridgeUsername();
+    nlohmann::json successResponse = {{{"success", {{"username", getBridgeUsername()}}}}};
 
     EXPECT_CALL(*handler, POSTJson("/api", request, getBridgeIp(), getBridgePort()))
         .Times(1)
-        .WillOnce(Return(user_ret_suc));
+        .WillOnce(Return(successResponse));
 
     finder = HueFinder(handler);
     bridges = finder.FindBridges();
@@ -126,8 +116,7 @@ TEST_F(HueFinderTest, GetBridge)
     EXPECT_EQ(test_bridge.getUsername(), getBridgeUsername()) << "Bridge username not matching";
 
     // Verify that username is correctly set in api requests
-    nlohmann::json hue_bridge_state;
-    hue_bridge_state["lights"] = {};
+    nlohmann::json hue_bridge_state{{"lights", {}}};
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .Times(1)
@@ -176,51 +165,59 @@ TEST(Hue, requestUsername)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
-    nlohmann::json request;
-    request["devicetype"] = "HuePlusPlus#User";
+    nlohmann::json request{{"devicetype", "HuePlusPlus#User"}};
 
-    nlohmann::json user_ret_uns;
-    user_ret_uns = nlohmann::json::array();
-    user_ret_uns[0] = nlohmann::json::object();
-    user_ret_uns[0]["error"] = nlohmann::json::object();
-    user_ret_uns[0]["error"]["type"] = 101;
-    user_ret_uns[0]["error"]["address"] = "";
-    user_ret_uns[0]["error"]["description"] = "link button not pressed";
+    {
+        nlohmann::json errorResponse
+            = {{{"error", {{"type", 101}, {"address", ""}, {"description", "link button not pressed"}}}}};
 
-    EXPECT_CALL(*handler, POSTJson("/api", request, getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(user_ret_uns));
+        EXPECT_CALL(*handler, POSTJson("/api", request, getBridgeIp(), getBridgePort()))
+            .Times(AtLeast(1))
+            .WillRepeatedly(Return(errorResponse));
 
-    Hue test_bridge(getBridgeIp(), getBridgePort(), "", handler);
+        Hue test_bridge(getBridgeIp(), getBridgePort(), "", handler);
 
-    test_bridge.requestUsername();
-    EXPECT_EQ(test_bridge.getUsername(), "") << "Bridge username not matching";
+        std::string username = test_bridge.requestUsername();
+        EXPECT_EQ(username, "") << "Returned username not matching";
+        EXPECT_EQ(test_bridge.getUsername(), "") << "Bridge username not matching";
+    }
 
-    nlohmann::json user_ret_suc;
-    user_ret_suc = nlohmann::json::array();
-    user_ret_suc[0] = nlohmann::json::object();
-    user_ret_suc[0]["success"] = nlohmann::json::object();
-    user_ret_suc[0]["success"]["username"] = getBridgeUsername();
-    EXPECT_CALL(*handler, POSTJson("/api", request, getBridgeIp(), getBridgePort()))
-        .Times(1)
-        .WillRepeatedly(Return(user_ret_suc));
+    {
+        // Other error code causes exception
+        int otherError = 1;
+        nlohmann::json exceptionResponse
+            = {{{"error", {{"type", otherError}, {"address", ""}, {"description", "some error"}}}}};
+        Hue testBridge(getBridgeIp(), getBridgePort(), "", handler);
 
-    test_bridge = Hue(getBridgeIp(), getBridgePort(), "", handler);
+        EXPECT_CALL(*handler, POSTJson("/api", request, getBridgeIp(), getBridgePort()))
+            .WillOnce(Return(exceptionResponse));
 
-    test_bridge.requestUsername();
+        EXPECT_THROW(testBridge.requestUsername(), HueAPIResponseException);
+    }
 
-    EXPECT_EQ(test_bridge.getBridgeIP(), getBridgeIp()) << "Bridge IP not matching";
-    EXPECT_EQ(test_bridge.getUsername(), getBridgeUsername()) << "Bridge username not matching";
+    {
+        nlohmann::json successResponse = {{{"success", {{"username", getBridgeUsername()}}}}};
+        EXPECT_CALL(*handler, POSTJson("/api", request, getBridgeIp(), getBridgePort()))
+            .Times(1)
+            .WillRepeatedly(Return(successResponse));
 
-    // Verify that username is correctly set in api requests
-    nlohmann::json hue_bridge_state;
-    hue_bridge_state["lights"] = {};
-    EXPECT_CALL(
-        *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(1)
-        .WillOnce(Return(hue_bridge_state));
+        Hue test_bridge(getBridgeIp(), getBridgePort(), "", handler);
 
-    test_bridge.getAllLights();
+        std::string username = test_bridge.requestUsername();
+
+        EXPECT_EQ(username, test_bridge.getUsername()) << "Returned username not matching";
+        EXPECT_EQ(test_bridge.getBridgeIP(), getBridgeIp()) << "Bridge IP not matching";
+        EXPECT_EQ(test_bridge.getUsername(), getBridgeUsername()) << "Bridge username not matching";
+
+        // Verify that username is correctly set in api requests
+        nlohmann::json hue_bridge_state{{"lights", {}}};
+        EXPECT_CALL(
+            *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+            .Times(1)
+            .WillOnce(Return(hue_bridge_state));
+
+        test_bridge.getAllLights();
+    }
 }
 
 TEST(Hue, setIP)

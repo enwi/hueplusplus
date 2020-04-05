@@ -112,10 +112,7 @@ nlohmann::json HueCommandAPI::HandleError(FileInfo fileInfo, const nlohmann::jso
 {
     if (response.count("error") != 0)
     {
-        int errorCode = response["type"];
-        std::string address = response["address"];
-        std::string description = response["description"];
-        throw HueAPIResponseException(std::move(fileInfo), errorCode, std::move(address), std::move(description));
+        throw HueAPIResponseException::Create(std::move(fileInfo), response);
     }
     return response;
 }
