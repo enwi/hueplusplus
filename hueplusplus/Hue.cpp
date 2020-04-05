@@ -79,7 +79,7 @@ Hue HueFinder::GetBridge(const HueIdentification& identification)
         return Hue(identification.ip, identification.port, pos->second, http_handler);
     }
     Hue bridge(identification.ip, identification.port, "", http_handler);
-    bridge.requestUsername(identification.ip);
+    bridge.requestUsername();
     if (bridge.getUsername().empty())
     {
         std::cerr << "Failed to request username for ip " << identification.ip << std::endl;
@@ -156,7 +156,7 @@ int Hue::getBridgePort()
     return port;
 }
 
-std::string Hue::requestUsername(const std::string& ip)
+std::string Hue::requestUsername()
 {
     std::cout << "Please press the link Button! You've got 35 secs!\n"; // when the link
                                                                         // button was
@@ -187,7 +187,6 @@ std::string Hue::requestUsername(const std::string& ip)
                 {
                     // [{"success":{"username": "<username>"}}]
                     username = jsonUser;
-                    this->ip = ip;
                     // Update commands with new username and ip
                     commands = HueCommandAPI(ip, port, username, http_handler);
                     std::cout << "Success! Link button was pressed!\n";
