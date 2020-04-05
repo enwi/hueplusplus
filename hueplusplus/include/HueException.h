@@ -26,6 +26,8 @@
 #include <exception>
 #include <string>
 
+#include "json/json.hpp"
+
 //! \brief Contains information about error location, use CURRENT_FILE_INFO to create
 struct FileInfo
 {
@@ -95,6 +97,12 @@ public:
     const std::string& GetAddress() const noexcept;
     //! \brief Error description
     const std::string& GetDescription() const noexcept;
+
+    //! \brief Creates exception from API response.
+    //! \param fileInfo Location of the cause
+    //! \param response Hue API response. Must contain a member "error" with "type", "address" and "description".
+    //! \returns HueAPIResponseException with info from the response.
+    static HueAPIResponseException Create(FileInfo fileInfo, const nlohmann::json& response);
 
 private:
     //! \brief Creates exception message containing the given information
