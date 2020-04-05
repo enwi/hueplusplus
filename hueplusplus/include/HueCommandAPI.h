@@ -38,10 +38,11 @@ public:
     //! \brief Construct from ip, username and HttpHandler
     //!
     //! \param ip ip address of the Hue bridge in dotted decimal notation like "192.168.2.1"
-    //! \param username username that is used to control the bridge
     //! \param port of the hue bridge
+    //! \param username username that is used to control the bridge
     //! \param handler HttpHandler for communication with the bridge
-    HueCommandAPI(const std::string& ip, const std::string& username, std::shared_ptr<const IHttpHandler> httpHandler);
+    HueCommandAPI(
+        const std::string& ip, int port, const std::string& username, std::shared_ptr<const IHttpHandler> httpHandler);
 
     //! \brief Copy construct from other HueCommandAPI
     //! \note All copies refer to the same timeout data, so even calls from different objects will be delayed

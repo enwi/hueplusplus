@@ -98,7 +98,7 @@ public:
 private:
     //! \brief Parses mac address from description.xml
     //!
-    //! \param description Content of description.xml file as returned by GET request. 
+    //! \param description Content of description.xml file as returned by GET request.
     //! \returns Content of xml element \c serialNumber if description matches a Hue bridge, otherwise an empty string.
     static std::string ParseDescription(const std::string& description);
 
@@ -115,10 +115,11 @@ class Hue
 public:
     //! \brief Constructor of Hue class
     //!
-    //! decimal notation like "192.168.2.1" \param port Port of the hue bridge
+    //! \param ip IP address in dotted decimal notation like "192.168.2.1"
+    //! \param port Port of the hue bridge
     //! \param username String that specifies the username that is used to control
-    //! the bridge. This needs to be acquired in \ref requestUsername \param handler
-    //!  HttpHandler of type \ref IHttpHandler for communication with the bridge
+    //! the bridge. This needs to be acquired in \ref requestUsername
+    //! \param handler HttpHandler for communication with the bridge
     Hue(const std::string& ip, const int port, const std::string& username,
         std::shared_ptr<const IHttpHandler> handler);
 
@@ -134,17 +135,16 @@ public:
 
     //! \brief Send a username request to the Hue bridge.
     //!
-    //! Blocks for about 30 seconds and 5 seconds to prepare. 
-    //! It automatically sets the \ref username variable according to the username received and returns the username received. 
-    //! This function should only be called once to acquire a username to control the bridge and the username
+    //! Blocks for about 30 seconds and 5 seconds to prepare.
+    //! It automatically sets the \ref username variable according to the username received and returns the username
+    //! received. This function should only be called once to acquire a username to control the bridge and the username
     //! should be saved for future use.
-    //! \param ip String that specifies the ip (in dotted decimal notation like "192.168.2.1") the request is send to 
     //! \return username for API usage
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error except link button not pressed.
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    std::string requestUsername(const std::string& ip);
+    std::string requestUsername();
 
     //! \brief Function that returns the \ref username
     //!
@@ -174,8 +174,8 @@ public:
 
     //! \brief Function to remove a light from the bridge
     //!
-    //! \attention Any use of the light after it was successfully removed results in undefined behavior 
-    //! \param id Id of the light to remove 
+    //! \attention Any use of the light after it was successfully removed results in undefined behavior
+    //! \param id Id of the light to remove
     //! \return true on success
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contains no body
@@ -245,7 +245,7 @@ public:
     {
         http_handler = std::move(handler);
         commands = HueCommandAPI(ip, port, username, http_handler);
-    };
+    }
 
 private:
     //! \brief Function that refreshes the local \ref state of the Hue bridge
