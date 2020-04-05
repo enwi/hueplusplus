@@ -193,7 +193,7 @@ TEST(Hue, requestUsername)
 
     Hue test_bridge(getBridgeIp(), getBridgePort(), "", handler);
 
-    test_bridge.requestUsername(test_bridge.getBridgeIP());
+    test_bridge.requestUsername();
     EXPECT_EQ(test_bridge.getUsername(), "") << "Bridge username not matching";
 
     nlohmann::json user_ret_suc;
@@ -207,7 +207,7 @@ TEST(Hue, requestUsername)
 
     test_bridge = Hue(getBridgeIp(), getBridgePort(), "", handler);
 
-    test_bridge.requestUsername(test_bridge.getBridgeIP());
+    test_bridge.requestUsername();
 
     EXPECT_EQ(test_bridge.getBridgeIP(), getBridgeIp()) << "Bridge IP not matching";
     EXPECT_EQ(test_bridge.getUsername(), getBridgeUsername()) << "Bridge username not matching";
