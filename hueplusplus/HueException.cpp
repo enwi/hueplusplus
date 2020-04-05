@@ -4,23 +4,26 @@
     Copyright (C) 2020  Jan Rogall		- developer\n
     Copyright (C) 2020  Moritz Wirger	- developer\n
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
+    This file is part of hueplusplus.
+
+    hueplusplus is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-    This program is distributed in the hope that it will be useful,
+
+    hueplusplus is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software Foundation,
-    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
 #include "include/HueException.h"
 
 HueException::HueException(FileInfo fileInfo, const std::string& message)
-    : HueException("Hue exception", std::move(fileInfo), message)
+    : HueException("HueException", std::move(fileInfo), message)
 {}
 
 const char* HueException::what() const noexcept
@@ -37,7 +40,7 @@ HueException::HueException(const char* exceptionName, FileInfo fileInfo, const s
     : fileInfo(std::move(fileInfo))
 {
     whatMessage = exceptionName;
-    whatMessage.append(" from");
+    whatMessage.append(" from ");
     whatMessage.append(this->fileInfo.ToString());
     whatMessage.append(" ");
     whatMessage.append(message);
@@ -45,7 +48,7 @@ HueException::HueException(const char* exceptionName, FileInfo fileInfo, const s
 
 HueAPIResponseException::HueAPIResponseException(
     FileInfo fileInfo, int error, std::string address, std::string description)
-    : HueException("Hue api response exception", std::move(fileInfo), GetMessage(error, address, description)),
+    : HueException("HueApiResponseException", std::move(fileInfo), GetMessage(error, address, description)),
       error(error),
       address(std::move(address)),
       description(std::move(description))
