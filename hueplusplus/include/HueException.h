@@ -102,6 +102,7 @@ public:
     //! \param fileInfo Location of the cause
     //! \param response Hue API response. Must contain a member "error" with "type", "address" and "description".
     //! \returns HueAPIResponseException with info from the response.
+    //! If response does not contain the required members, they are defaulted to -1 or "".
     static HueAPIResponseException Create(FileInfo fileInfo, const nlohmann::json& response);
 
 private:
