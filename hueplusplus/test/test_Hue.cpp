@@ -20,6 +20,7 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
+#include <atomic>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -192,7 +193,19 @@ TEST(Hue, requestUsername)
         EXPECT_CALL(*handler, POSTJson("/api", request, getBridgeIp(), getBridgePort()))
             .WillOnce(Return(exceptionResponse));
 
-        EXPECT_THROW(testBridge.requestUsername(), HueAPIResponseException);
+        try
+        {
+            testBridge.requestUsername();
+            FAIL() << "requestUsername did not throw";
+        }
+        catch (const HueAPIResponseException& e)
+        {
+            EXPECT_EQ(e.GetErrorNumber(), otherError);
+        }
+        catch (const std::exception& e)
+        {
+            FAIL() << "wrong exception: " << e.what();
+        }
     }
 
     {
@@ -251,25 +264,15 @@ TEST(Hue, getLight)
     // Test exception
     ASSERT_THROW(test_bridge.getLight(1), HueException);
 
-    nlohmann::json hue_bridge_state;
-    hue_bridge_state["lights"] = nlohmann::json::object();
-    hue_bridge_state["lights"]["1"] = nlohmann::json::object();
-    hue_bridge_state["lights"]["1"]["state"] = nlohmann::json::object();
-    hue_bridge_state["lights"]["1"]["state"]["on"] = true;
-    hue_bridge_state["lights"]["1"]["state"]["bri"] = 254;
-    hue_bridge_state["lights"]["1"]["state"]["ct"] = 366;
-    hue_bridge_state["lights"]["1"]["state"]["alert"] = "none";
-    hue_bridge_state["lights"]["1"]["state"]["colormode"] = "ct";
-    hue_bridge_state["lights"]["1"]["state"]["reachable"] = true;
-    hue_bridge_state["lights"]["1"]["swupdate"] = nlohmann::json::object();
-    hue_bridge_state["lights"]["1"]["swupdate"]["state"] = "noupdates";
-    hue_bridge_state["lights"]["1"]["swupdate"]["lastinstall"] = nullptr;
-    hue_bridge_state["lights"]["1"]["type"] = "Color temperature light";
-    hue_bridge_state["lights"]["1"]["name"] = "Hue ambiance lamp 1";
-    hue_bridge_state["lights"]["1"]["modelid"] = "LTW001";
-    hue_bridge_state["lights"]["1"]["manufacturername"] = "Philips";
-    hue_bridge_state["lights"]["1"]["uniqueid"] = "00:00:00:00:00:00:00:00-00";
-    hue_bridge_state["lights"]["1"]["swversion"] = "5.50.1.19085";
+    nlohmann::json hue_bridge_state{{"lights",
+        {{"1",
+            {{"state",
+                 {{"on", true}, {"bri", 254}, {"ct", 366}, {"alert", "none"}, {"colormode", "ct"},
+                     {"reachable", true}}},
+                {"swupdate", {{"state", "noupdates"}, {"lastinstall", nullptr}}}, {"type", "Color temperature light"},
+                {"name", "Hue ambiance lamp 1"}, {"modelid", "LTW001"}, {"manufacturername", "Philips"},
+                {"uniqueid", "00:00:00:00:00:00:00:00-00"}, {"swversion", "5.50.1.19085"}}}}}};
+
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .Times(1)
@@ -366,7 +369,6 @@ TEST(Hue, getLight)
         .Times(1)
         .WillOnce(Return(hue_bridge_state));
     test_bridge = Hue(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
-
     ASSERT_THROW(test_bridge.getLight(1), HueException);
 }
 
@@ -374,25 +376,14 @@ TEST(Hue, removeLight)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
-    nlohmann::json hue_bridge_state;
-    hue_bridge_state["lights"] = nlohmann::json::object();
-    hue_bridge_state["lights"]["1"] = nlohmann::json::object();
-    hue_bridge_state["lights"]["1"]["state"] = nlohmann::json::object();
-    hue_bridge_state["lights"]["1"]["state"]["on"] = true;
-    hue_bridge_state["lights"]["1"]["state"]["bri"] = 254;
-    hue_bridge_state["lights"]["1"]["state"]["ct"] = 366;
-    hue_bridge_state["lights"]["1"]["state"]["alert"] = "none";
-    hue_bridge_state["lights"]["1"]["state"]["colormode"] = "ct";
-    hue_bridge_state["lights"]["1"]["state"]["reachable"] = true;
-    hue_bridge_state["lights"]["1"]["swupdate"] = nlohmann::json::object();
-    hue_bridge_state["lights"]["1"]["swupdate"]["state"] = "noupdates";
-    hue_bridge_state["lights"]["1"]["swupdate"]["lastinstall"] = nullptr;
-    hue_bridge_state["lights"]["1"]["type"] = "Color temperature light";
-    hue_bridge_state["lights"]["1"]["name"] = "Hue ambiance lamp 1";
-    hue_bridge_state["lights"]["1"]["modelid"] = "LTW001";
-    hue_bridge_state["lights"]["1"]["manufacturername"] = "Philips";
-    hue_bridge_state["lights"]["1"]["uniqueid"] = "00:00:00:00:00:00:00:00-00";
-    hue_bridge_state["lights"]["1"]["swversion"] = "5.50.1.19085";
+    nlohmann::json hue_bridge_state{ {"lights",
+        {{"1",
+            {{"state",
+                 {{"on", true}, {"bri", 254}, {"ct", 366}, {"alert", "none"}, {"colormode", "ct"},
+                     {"reachable", true}}},
+                {"swupdate", {{"state", "noupdates"}, {"lastinstall", nullptr}}}, {"type", "Color temperature light"},
+                {"name", "Hue ambiance lamp 1"}, {"modelid", "LTW001"}, {"manufacturername", "Philips"},
+                {"uniqueid", "00:00:00:00:00:00:00:00-00"}, {"swversion", "5.50.1.19085"}}}}} };
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .Times(1)
@@ -428,25 +419,15 @@ TEST(Hue, getAllLights)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
-    nlohmann::json hue_bridge_state;
-    hue_bridge_state["lights"] = nlohmann::json::object();
-    hue_bridge_state["lights"]["1"] = nlohmann::json::object();
-    hue_bridge_state["lights"]["1"]["state"] = nlohmann::json::object();
-    hue_bridge_state["lights"]["1"]["state"]["on"] = true;
-    hue_bridge_state["lights"]["1"]["state"]["bri"] = 254;
-    hue_bridge_state["lights"]["1"]["state"]["ct"] = 366;
-    hue_bridge_state["lights"]["1"]["state"]["alert"] = "none";
-    hue_bridge_state["lights"]["1"]["state"]["colormode"] = "ct";
-    hue_bridge_state["lights"]["1"]["state"]["reachable"] = true;
-    hue_bridge_state["lights"]["1"]["swupdate"] = nlohmann::json::object();
-    hue_bridge_state["lights"]["1"]["swupdate"]["state"] = "noupdates";
-    hue_bridge_state["lights"]["1"]["swupdate"]["lastinstall"] = nullptr;
-    hue_bridge_state["lights"]["1"]["type"] = "Color temperature light";
-    hue_bridge_state["lights"]["1"]["name"] = "Hue ambiance lamp 1";
-    hue_bridge_state["lights"]["1"]["modelid"] = "LTW001";
-    hue_bridge_state["lights"]["1"]["manufacturername"] = "Philips";
-    hue_bridge_state["lights"]["1"]["uniqueid"] = "00:00:00:00:00:00:00:00-00";
-    hue_bridge_state["lights"]["1"]["swversion"] = "5.50.1.19085";
+    nlohmann::json hue_bridge_state{ {"lights",
+        {{"1",
+            {{"state",
+                 {{"on", true}, {"bri", 254}, {"ct", 366}, {"alert", "none"}, {"colormode", "ct"},
+                     {"reachable", true}}},
+                {"swupdate", {{"state", "noupdates"}, {"lastinstall", nullptr}}}, {"type", "Color temperature light"},
+                {"name", "Hue ambiance lamp 1"}, {"modelid", "LTW001"}, {"manufacturername", "Philips"},
+                {"uniqueid", "00:00:00:00:00:00:00:00-00"}, {"swversion", "5.50.1.19085"}}}}} };
+
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .Times(2)
@@ -469,25 +450,14 @@ TEST(Hue, lightExists)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
-    nlohmann::json hue_bridge_state;
-    hue_bridge_state["lights"] = nlohmann::json::object();
-    hue_bridge_state["lights"]["1"] = nlohmann::json::object();
-    hue_bridge_state["lights"]["1"]["state"] = nlohmann::json::object();
-    hue_bridge_state["lights"]["1"]["state"]["on"] = true;
-    hue_bridge_state["lights"]["1"]["state"]["bri"] = 254;
-    hue_bridge_state["lights"]["1"]["state"]["ct"] = 366;
-    hue_bridge_state["lights"]["1"]["state"]["alert"] = "none";
-    hue_bridge_state["lights"]["1"]["state"]["colormode"] = "ct";
-    hue_bridge_state["lights"]["1"]["state"]["reachable"] = true;
-    hue_bridge_state["lights"]["1"]["swupdate"] = nlohmann::json::object();
-    hue_bridge_state["lights"]["1"]["swupdate"]["state"] = "noupdates";
-    hue_bridge_state["lights"]["1"]["swupdate"]["lastinstall"] = nullptr;
-    hue_bridge_state["lights"]["1"]["type"] = "Color temperature light";
-    hue_bridge_state["lights"]["1"]["name"] = "Hue ambiance lamp 1";
-    hue_bridge_state["lights"]["1"]["modelid"] = "LTW001";
-    hue_bridge_state["lights"]["1"]["manufacturername"] = "Philips";
-    hue_bridge_state["lights"]["1"]["uniqueid"] = "00:00:00:00:00:00:00:00-00";
-    hue_bridge_state["lights"]["1"]["swversion"] = "5.50.1.19085";
+    nlohmann::json hue_bridge_state{ {"lights",
+        {{"1",
+            {{"state",
+                 {{"on", true}, {"bri", 254}, {"ct", 366}, {"alert", "none"}, {"colormode", "ct"},
+                     {"reachable", true}}},
+                {"swupdate", {{"state", "noupdates"}, {"lastinstall", nullptr}}}, {"type", "Color temperature light"},
+                {"name", "Hue ambiance lamp 1"}, {"modelid", "LTW001"}, {"manufacturername", "Philips"},
+                {"uniqueid", "00:00:00:00:00:00:00:00-00"}, {"swversion", "5.50.1.19085"}}}}} };
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .Times(AtLeast(2))
@@ -516,25 +486,14 @@ TEST(Hue, getPictureOfLight)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
-    nlohmann::json hue_bridge_state;
-    hue_bridge_state["lights"] = nlohmann::json::object();
-    hue_bridge_state["lights"]["1"] = nlohmann::json::object();
-    hue_bridge_state["lights"]["1"]["state"] = nlohmann::json::object();
-    hue_bridge_state["lights"]["1"]["state"]["on"] = true;
-    hue_bridge_state["lights"]["1"]["state"]["bri"] = 254;
-    hue_bridge_state["lights"]["1"]["state"]["ct"] = 366;
-    hue_bridge_state["lights"]["1"]["state"]["alert"] = "none";
-    hue_bridge_state["lights"]["1"]["state"]["colormode"] = "ct";
-    hue_bridge_state["lights"]["1"]["state"]["reachable"] = true;
-    hue_bridge_state["lights"]["1"]["swupdate"] = nlohmann::json::object();
-    hue_bridge_state["lights"]["1"]["swupdate"]["state"] = "noupdates";
-    hue_bridge_state["lights"]["1"]["swupdate"]["lastinstall"] = nullptr;
-    hue_bridge_state["lights"]["1"]["type"] = "Color temperature light";
-    hue_bridge_state["lights"]["1"]["name"] = "Hue ambiance lamp 1";
-    hue_bridge_state["lights"]["1"]["modelid"] = "LTW001";
-    hue_bridge_state["lights"]["1"]["manufacturername"] = "Philips";
-    hue_bridge_state["lights"]["1"]["uniqueid"] = "00:00:00:00:00:00:00:00-00";
-    hue_bridge_state["lights"]["1"]["swversion"] = "5.50.1.19085";
+    nlohmann::json hue_bridge_state{ {"lights",
+        {{"1",
+            {{"state",
+                 {{"on", true}, {"bri", 254}, {"ct", 366}, {"alert", "none"}, {"colormode", "ct"},
+                     {"reachable", true}}},
+                {"swupdate", {{"state", "noupdates"}, {"lastinstall", nullptr}}}, {"type", "Color temperature light"},
+                {"name", "Hue ambiance lamp 1"}, {"modelid", "LTW001"}, {"manufacturername", "Philips"},
+                {"uniqueid", "00:00:00:00:00:00:00:00-00"}, {"swversion", "5.50.1.19085"}}}}} };
 
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))

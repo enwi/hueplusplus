@@ -110,9 +110,13 @@ nlohmann::json HueCommandAPI::DELETERequest(
 
 nlohmann::json HueCommandAPI::HandleError(FileInfo fileInfo, const nlohmann::json& response) const
 {
-    if (response.count("error") != 0)
+    if (response.count("error"))
     {
         throw HueAPIResponseException::Create(std::move(fileInfo), response);
+    }
+    else if (response.is_array() && response.size() > 0 && response[0].count("error"))
+    {
+        throw HueAPIResponseException::Create(std::move(fileInfo), response[0]);
     }
     return response;
 }
