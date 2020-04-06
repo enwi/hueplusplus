@@ -88,6 +88,15 @@ TEST(HueCommandAPI, PUTRequest)
         EXPECT_THROW(api.PUTRequest(path, request), std::system_error);
         Mock::VerifyAndClearExpectations(httpHandler.get());
     }
+    // api returns error
+    {
+        const std::string path = "/test";
+        const nlohmann::json errorResponse{{"error", {{"type", 10}, {"address", path}, {"description", "Stuff"}}}};
+        EXPECT_CALL(*httpHandler, PUTJson("/api/" + getBridgeUsername() + path, request, getBridgeIp(), 80))
+            .WillOnce(Return(errorResponse));
+        EXPECT_THROW(api.PUTRequest(path, request), HueAPIResponseException);
+        Mock::VerifyAndClearExpectations(httpHandler.get());
+    }
 }
 
 TEST(HueCommandAPI, GETRequest)
@@ -149,6 +158,15 @@ TEST(HueCommandAPI, GETRequest)
         EXPECT_THROW(api.GETRequest(path, request), std::system_error);
         Mock::VerifyAndClearExpectations(httpHandler.get());
     }
+    // api returns error
+    {
+        const std::string path = "/test";
+        const nlohmann::json errorResponse{ {"error", {{"type", 10}, {"address", path}, {"description", "Stuff"}}} };
+        EXPECT_CALL(*httpHandler, GETJson("/api/" + getBridgeUsername() + path, request, getBridgeIp(), 80))
+            .WillOnce(Return(errorResponse));
+        EXPECT_THROW(api.GETRequest(path, request), HueAPIResponseException);
+        Mock::VerifyAndClearExpectations(httpHandler.get());
+    }
 }
 
 TEST(HueCommandAPI, DELETERequest)
@@ -205,9 +223,18 @@ TEST(HueCommandAPI, DELETERequest)
     // unrecoverable error
     {
         const std::string path = "/test";
-        EXPECT_CALL(*httpHandler, GETJson("/api/" + getBridgeUsername() + path, request, getBridgeIp(), 80))
+        EXPECT_CALL(*httpHandler, DELETEJson("/api/" + getBridgeUsername() + path, request, getBridgeIp(), 80))
             .WillOnce(Throw(std::system_error(std::make_error_code(std::errc::not_enough_memory))));
-        EXPECT_THROW(api.GETRequest(path, request), std::system_error);
+        EXPECT_THROW(api.DELETERequest(path, request), std::system_error);
+        Mock::VerifyAndClearExpectations(httpHandler.get());
+    }
+    // api returns error
+    {
+        const std::string path = "/test";
+        const nlohmann::json errorResponse{ {"error", {{"type", 10}, {"address", path}, {"description", "Stuff"}}} };
+        EXPECT_CALL(*httpHandler, DELETEJson("/api/" + getBridgeUsername() + path, request, getBridgeIp(), 80))
+            .WillOnce(Return(errorResponse));
+        EXPECT_THROW(api.DELETERequest(path, request), HueAPIResponseException);
         Mock::VerifyAndClearExpectations(httpHandler.get());
     }
 }

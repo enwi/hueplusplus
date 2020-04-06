@@ -71,10 +71,10 @@ const std::string& HueAPIResponseException::GetDescription() const noexcept
 
 HueAPIResponseException HueAPIResponseException::Create(FileInfo fileInfo, const nlohmann::json& response)
 {
-    const nlohmann::json error = response["error"];
-    int errorCode = error["type"];
-    std::string address = error["address"];
-    std::string description = error["description"];
+    const nlohmann::json error = response.at("error");
+    int errorCode = error.value("type", -1);
+    std::string address = error.value("address", "");
+    std::string description = error.value("description", "");
     return HueAPIResponseException(std::move(fileInfo), errorCode, std::move(address), std::move(description));
 }
 
