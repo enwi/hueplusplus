@@ -541,7 +541,7 @@ public:
     //! ranging from 0 to 255. \param r uint8_t that specifies the red color value
     //! \param g uint8_t that specifies the green color value
     //! \param b uint8_t that specifies the blue color value
-    //! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms 
+    //! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
     //! \return Bool that is true on success
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
@@ -570,8 +570,8 @@ public:
     //! color temperature.
     //!
     //! \note The breath cylce will only be performed if the light has a reference
-    //! to a specific \ref ColorTemperatureStrategy. 
-    //! \param mired Color temperature in mired 
+    //! to a specific \ref ColorTemperatureStrategy.
+    //! \param mired Color temperature in mired
     //! \return Bool that is true on success
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
@@ -590,9 +590,9 @@ public:
     //! color.
     //!
     //! \note The breath cylce will only be performed if the light has a reference
-    //! to a specific \ref ColorHueStrategy. 
-    //! \param hue uint16_t that specifies the hue 
-    //! \param sat uint8_t that specifies the saturation 
+    //! to a specific \ref ColorHueStrategy.
+    //! \param hue uint16_t that specifies the hue
+    //! \param sat uint8_t that specifies the saturation
     //! \return Bool that is true on success
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
@@ -612,9 +612,9 @@ public:
     //!
     //! \note The breath cylce will only be performed if the light has a reference
     //! to a specific \ref ColorHueStrategy. The values of x and y are ranging
-    //! from 0 to 1. 
+    //! from 0 to 1.
     //! \param x float that specifies the x coordinate in CIE
-    //! \param y float that specifies the y coordinate in CIE 
+    //! \param y float that specifies the y coordinate in CIE
     //! \return Bool that is true on success
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
@@ -634,7 +634,7 @@ public:
     //!
     //! \note The breath cylce will only be performed if the light has a reference
     //! to a specific \ref ColorHueStrategy. The values of red, green and blue are
-    //! ranging from 0 to 255. 
+    //! ranging from 0 to 255.
     //! \param r uint8_t that specifies the red color value
     //! \param g uint8_t that specifies the green color value
     //! \param b uint8_t that specifies the blue color value
@@ -738,7 +738,7 @@ protected:
 
     //! \brief Function that turns the light on without refreshing its state.
     //!
-    //! \param transition Optional parameter to set the transition from current state to new standard is 4 = 400ms 
+    //! \param transition Optional parameter to set the transition from current state to new standard is 4 = 400ms
     //! \return Bool that is true on success
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
@@ -748,7 +748,7 @@ protected:
 
     //! \brief Function that turns the light off without refreshing its state.
     //!
-    //! \param transition Optional parameter to set the transition from current state to new standard is 4 = 400ms 
+    //! \param transition Optional parameter to set the transition from current state to new standard is 4 = 400ms
     //! \return Bool that is true on success
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
@@ -760,7 +760,7 @@ protected:
     //!
     //! \throws nlohmann::json::parse_error if the reply could not be parsed
     //! \param request A nlohmann::json aka the request to send
-    //! \param subPath A path that is appended to the uri, note it should always start with a slash ("/") 
+    //! \param subPath A path that is appended to the uri, note it should always start with a slash ("/")
     //! \return The parsed reply
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body

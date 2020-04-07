@@ -26,9 +26,9 @@
 #include <iostream>
 #include <thread>
 
+#include "include/HueExceptionMacro.h"
 #include "include/Utils.h"
 #include "include/json/json.hpp"
-#include "include/HueExceptionMacro.h"
 
 bool HueLight::On(uint8_t transition)
 {
@@ -167,10 +167,10 @@ HueLight::HueLight(int id, const HueCommandAPI& commands, std::shared_ptr<const 
     std::shared_ptr<const ColorTemperatureStrategy> colorTempStrategy,
     std::shared_ptr<const ColorHueStrategy> colorHueStrategy)
     : id(id),
-    brightnessStrategy(std::move(brightnessStrategy)),
-    colorTemperatureStrategy(std::move(colorTempStrategy)),
-    colorHueStrategy(std::move(colorHueStrategy)),
-    commands(commands)
+      brightnessStrategy(std::move(brightnessStrategy)),
+      colorTemperatureStrategy(std::move(colorTempStrategy)),
+      colorHueStrategy(std::move(colorHueStrategy)),
+      commands(commands)
 
 {
     refreshState();
@@ -224,10 +224,9 @@ bool HueLight::OffNoRefresh(uint8_t transition)
     return utils::validateReplyForLight(request, reply, id);
 }
 
-nlohmann::json HueLight::SendPutRequest(const nlohmann::json &request, const std::string &subPath, FileInfo fileInfo)
+nlohmann::json HueLight::SendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo)
 {
-    return commands.PUTRequest("/lights/" + std::to_string(id) + subPath,
-        request, std::move(fileInfo));
+    return commands.PUTRequest("/lights/" + std::to_string(id) + subPath, request, std::move(fileInfo));
 }
 
 void HueLight::refreshState()
@@ -235,7 +234,8 @@ void HueLight::refreshState()
     // std::chrono::steady_clock::time_point start =
     // std::chrono::steady_clock::now(); std::cout << "\tRefreshing lampstate of
     // lamp with id: " << id << ", ip: " << ip << "\n";
-    nlohmann::json answer = commands.GETRequest("/lights/" + std::to_string(id), nlohmann::json::object(), CURRENT_FILE_INFO);
+    nlohmann::json answer
+        = commands.GETRequest("/lights/" + std::to_string(id), nlohmann::json::object(), CURRENT_FILE_INFO);
     if (answer.count("state"))
     {
         state = answer;
@@ -243,8 +243,8 @@ void HueLight::refreshState()
     else
     {
         std::cout << "Answer in HueLight::refreshState of "
-            "http_handler->GETJson(...) is not expected!\nAnswer:\n\t"
-            << answer.dump() << std::endl;
+                     "http_handler->GETJson(...) is not expected!\nAnswer:\n\t"
+                  << answer.dump() << std::endl;
     }
     // std::cout << "\tRefresh state took: " <<
     // std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()
