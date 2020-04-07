@@ -37,7 +37,7 @@ namespace utils
 
         template <typename KeyT, typename... Paths,
             std::enable_if_t<!std::is_integral<std::remove_reference_t<KeyT>>::value>* = nullptr>
-            nlohmann::json safeGetMemberHelper(const nlohmann::json& json, KeyT&& key, Paths&&... otherPaths)
+        nlohmann::json safeGetMemberHelper(const nlohmann::json& json, KeyT&& key, Paths&&... otherPaths)
         {
             auto memberIt = json.find(std::forward<KeyT>(key));
             if (memberIt == json.end())
@@ -57,7 +57,7 @@ namespace utils
             }
             return safeGetMemberHelper(json[index], std::forward<Paths>(otherPaths)...);
         }
-    }
+    } // namespace detail
 
     //! \brief Function for validating that a request was executed correctly
     //!
@@ -68,11 +68,11 @@ namespace utils
     bool validateReplyForLight(const nlohmann::json& request, const nlohmann::json& reply, int lightId);
 
     //! \brief Returns the object/array member or null if it does not exist
-    //! 
+    //!
     //! \param json The base json value
     //! \param paths Any number of child accesses (e.g. 0, "key" would access json[0]["key"])
     //! \returns The specified member or null if any intermediate object does not contain the specified child.
-    template<typename... Paths>
+    template <typename... Paths>
     nlohmann::json safeGetMember(const nlohmann::json& json, Paths&&... paths)
     {
         return detail::safeGetMemberHelper(json, std::forward<Paths>(paths)...);

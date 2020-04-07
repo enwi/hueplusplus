@@ -32,7 +32,6 @@
 
 #include "json/json.hpp"
 
-
 //! Base class for classes that handle http requests and multicast requests
 class BaseHttpHandler : public IHttpHandler
 {
