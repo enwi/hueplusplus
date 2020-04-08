@@ -78,7 +78,7 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     Hue GetBridge(const HueIdentification& identification);
 
-    //! \brief Function that adds a username to the \ref usernames map
+    //! \brief Function that adds a username to the usernames map
     //!
     //! \param mac MAC address of Hue bridge
     //! \param username Username that is used to control the Hue bridge
@@ -136,7 +136,7 @@ public:
     //! \brief Send a username request to the Hue bridge.
     //!
     //! Blocks for about 30 seconds and 5 seconds to prepare.
-    //! It automatically sets the \ref username variable according to the username received and returns the username
+    //! It automatically sets the username variable according to the username received and returns the username
     //! received. This function should only be called once to acquire a username to control the bridge and the username
     //! should be saved for future use.
     //! \return username for API usage
@@ -146,9 +146,9 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     std::string requestUsername();
 
-    //! \brief Function that returns the \ref username
+    //! \brief Function that returns the username
     //!
-    //! \return String containing \ref username
+    //! \return The username used for API access
     std::string getUsername();
 
     //! \brief Function to set the ip address of this class representing a bridge
@@ -162,7 +162,7 @@ public:
     //! "192.168.2.1:8080"
     void setPort(const int port);
 
-    //! \brief Function that returns a \ref Hue::HueLight of specified id
+    //! \brief Function that returns a \ref HueLight of specified id
     //!
     //! \param id Integer that specifies the ID of a Hue light
     //! \return \ref HueLight that can be controlled
