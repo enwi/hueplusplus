@@ -27,6 +27,7 @@ matrix:
            - g++-5
            # Misc
            - python-yaml
+           - doxygen
          sources: &sources
            - ubuntu-toolchain-r-test
            - llvm-toolchain-trusty-6.0
@@ -66,8 +67,18 @@ script:
      - cd build
      - cmake .. -Dhueplusplus_TESTS=ON
      - make coveragetest
+     - doxygen Doxyfile
 
 
 after_success:
     # upload result to codecov
     - bash <(curl -s https://codecov.io/bash)
+    
+deploy:
+    provider: pages
+    skip_cleanup: true
+    local_dir: doc/html
+    github_token: $GH_REPO_TOKEN
+    on:
+        branch: development
+    
