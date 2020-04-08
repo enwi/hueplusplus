@@ -1,10 +1,10 @@
 # hueplusplus
 A simple and easy to use library for Philips Hue Lights
 
-| Branch | Travis CI | Codecov | Codacy | LGTM
-|:-|:-|:-|:-|:-|
-| [Master](https://github.com/enwi/hueplusplus/tree/master) | [![Build Status](https://travis-ci.com/enwi/hueplusplus.svg?branch=master)](https://travis-ci.com/enwi/hueplusplus) | [![codecov](https://codecov.io/gh/enwi/hueplusplus/branch/master/graph/badge.svg)](https://codecov.io/gh/enwi/hueplusplus) | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/558c343dddf4418c85a4b2d52538be04?branch=master)](https://www.codacy.com/app/enwi/hueplusplus?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=enwi/hueplusplus&amp;utm_campaign=Badge_Grade) | [![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/enwi/hueplusplus.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/enwi/hueplusplus/context:cpp) |
-| [Development](https://github.com/enwi/hueplusplus/tree/development) | [![Build Status](https://travis-ci.com/enwi/hueplusplus.svg?branch=development)](https://travis-ci.com/enwi/hueplusplus) | [![codecov](https://codecov.io/gh/enwi/hueplusplus/branch/development/graph/badge.svg)](https://codecov.io/gh/enwi/hueplusplus) | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/558c343dddf4418c85a4b2d52538be04?branch=development)](https://www.codacy.com/app/enwi/hueplusplus?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=enwi/hueplusplus&amp;utm_campaign=Badge_Grade) | |
+| Branch | Travis CI | Codecov | LGTM
+|:-|:-|:-|:-|
+| [Master](https://github.com/enwi/hueplusplus/tree/master) | [![Build Status](https://travis-ci.com/enwi/hueplusplus.svg?branch=master)](https://travis-ci.com/enwi/hueplusplus) | [![codecov](https://codecov.io/gh/enwi/hueplusplus/branch/master/graph/badge.svg)](https://codecov.io/gh/enwi/hueplusplus) | [![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/enwi/hueplusplus.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/enwi/hueplusplus/context:cpp) |
+| [Development](https://github.com/enwi/hueplusplus/tree/development) | [![Build Status](https://travis-ci.com/enwi/hueplusplus.svg?branch=development)](https://travis-ci.com/enwi/hueplusplus) | [![codecov](https://codecov.io/gh/enwi/hueplusplus/branch/development/graph/badge.svg)](https://codecov.io/gh/enwi/hueplusplus) | |
 
 ## Features
 * find bridges with SSDP or set an ip manually
