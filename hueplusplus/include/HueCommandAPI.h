@@ -40,7 +40,7 @@ public:
     //! \param ip ip address of the Hue bridge in dotted decimal notation like "192.168.2.1"
     //! \param port of the hue bridge
     //! \param username username that is used to control the bridge
-    //! \param handler HttpHandler for communication with the bridge
+    //! \param httpHandler HttpHandler for communication with the bridge
     HueCommandAPI(
         const std::string& ip, int port, const std::string& username, std::shared_ptr<const IHttpHandler> httpHandler);
 
@@ -58,10 +58,10 @@ public:
     //! \note All copies refer to the same timeout data, so even calls from different objects will be delayed
     HueCommandAPI& operator=(HueCommandAPI&&) = default;
 
-    //! \brief Sends a HTTP PUT request via the \ref httpHandler to the bridge and returns the response
+    //! \brief Sends a HTTP PUT request to the bridge and returns the response
     //!
     //! This function will block until at least \ref minDelay has passed to any previous request
-    //! \param path API request path (appended after /api/<username>)
+    //! \param path API request path (appended after /api/{username})
     //! \param request Request to the api, may be empty
     //! \returns The return value of the underlying \ref IHttpHandler::PUTJson call
     //! \throws std::system_error when system or socket operations fail
@@ -70,10 +70,10 @@ public:
     nlohmann::json PUTRequest(const std::string& path, const nlohmann::json& request) const;
     nlohmann::json PUTRequest(const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const;
 
-    //! \brief Sends a HTTP GET request via the \ref httpHandler to the bridge and returns the response
+    //! \brief Sends a HTTP GET request to the bridge and returns the response
     //!
     //! This function will block until at least \ref minDelay has passed to any previous request
-    //! \param path API request path (appended after /api/<username>)
+    //! \param path API request path (appended after /api/{username})
     //! \param request Request to the api, may be empty
     //! \returns The return value of the underlying \ref IHttpHandler::GETJson call
     //! \throws std::system_error when system or socket operations fail
@@ -82,10 +82,10 @@ public:
     nlohmann::json GETRequest(const std::string& path, const nlohmann::json& request) const;
     nlohmann::json GETRequest(const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const;
 
-    //! \brief Sends a HTTP DELETE request via the \ref httpHandler to the bridge and returns the response
+    //! \brief Sends a HTTP DELETE request to the bridge and returns the response
     //!
     //! This function will block until at least \ref minDelay has passed to any previous request
-    //! \param path API request path (appended after /api/<username>)
+    //! \param path API request path (appended after /api/{username})
     //! \param request Request to the api, may be empty
     //! \returns The return value of the underlying \ref IHttpHandler::DELETEJson call
     //! \throws std::system_error when system or socket operations fail
@@ -110,8 +110,9 @@ private:
     //! \returns "/api/<username>/<path>"
     std::string CombinedPath(const std::string& path) const;
 
-private:
+public:
     static constexpr std::chrono::steady_clock::duration minDelay = std::chrono::milliseconds(100);
+private:
     std::string ip;
     int port;
     std::string username;

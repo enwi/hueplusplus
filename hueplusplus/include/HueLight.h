@@ -333,11 +333,11 @@ public:
     //! light
     //!
     //! \note The color temperature will only be returned when the light has a
-    //! reference to a specific \ref ColorTemperatureStrategy. \note This will not
-    //! refresh the light state
+    //! reference to a specific \ref ColorTemperatureStrategy. 
+    //! \note This will not refresh the light state
     //! The color temperature in mired ranges from 153 to 500 whereas 153 is cold
-    //! and 500 is warm. \param light A reference of the light \return Unsigned
-    //! int representing the color temperature in mired or 0 when failed
+    //! and 500 is warm. 
+    //! \return Unsigned int representing the color temperature in mired or 0 when failed
     virtual unsigned int getColorTemperature() const
     {
         if (colorTemperatureStrategy)
@@ -354,7 +354,6 @@ public:
     //! Updates the lights state by calling refreshState()
     //! The color temperature in mired ranges from 153 to 500 whereas 153 is cold
     //! and 500 is warm.
-    //! \param light A reference of the light
     //! \return Unsigned int representing the color temperature in mired or 0 when failed
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
@@ -439,7 +438,6 @@ public:
     //! \note The color hue and saturation will only be returned when the light
     //! has a reference to a specific \ref ColorHueStrategy.
     //! \note This will not refresh the light state
-    //! \param light A reference of the light
     //! \return Pair containing the hue as first value and saturation as second value or an empty one when failed
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
@@ -460,7 +458,6 @@ public:
     //! \note The color hue and saturation will only be returned when the light
     //! has a reference to a specific \ref ColorHueStrategy. Updates the lights
     //! state by calling refreshState()
-    //! \param light A const reference of the light
     //! \return Pair containing the hue as first value and saturation as second value or an empty one when failed
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
@@ -501,7 +498,6 @@ public:
     //! \note The color x and y will only be returned when the light has a
     //! reference to a specific \ref ColorHueStrategy.
     //! \note This does not update the lights state
-    //! \param light A const reference of the light
     //! \return Pair containing the x as first value and y as second value or an
     //! empty one when failed
     virtual std::pair<float, float> getColorXY() const
@@ -518,7 +514,6 @@ public:
     //! \note The color x and y will only be returned when the light has a
     //! reference to a specific \ref ColorHueStrategy.
     //! Updates the lights state by calling refreshState()
-    //! \param light A reference of the light
     //! \return Pair containing the x as first value and y as second value or an empty one when failed
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
@@ -538,7 +533,8 @@ public:
     //!
     //! \note The color will only be set if the light has a reference to a
     //! specific \ref ColorHueStrategy. The values of red, green and blue are
-    //! ranging from 0 to 255. \param r uint8_t that specifies the red color value
+    //! ranging from 0 to 255. 
+    //! \param r uint8_t that specifies the red color value
     //! \param g uint8_t that specifies the green color value
     //! \param b uint8_t that specifies the blue color value
     //! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
@@ -660,8 +656,8 @@ public:
     //! setter functions check whether this feature is enabled and the colorloop
     //! can only be disabled with this function or by simply calling
     //! Off()/OffNoRefresh() and then On()/OnNoRefresh(), so you could
-    //! alternatively call Off() and then use any of the setter functions. \param
-    //! on bool that enables this feature when true and disables it when false
+    //! alternatively call Off() and then use any of the setter functions. 
+    //! \param on bool that enables this feature when true and disables it when false
     //! \return Bool that is true on success
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
@@ -761,6 +757,7 @@ protected:
     //! \throws nlohmann::json::parse_error if the reply could not be parsed
     //! \param request A nlohmann::json aka the request to send
     //! \param subPath A path that is appended to the uri, note it should always start with a slash ("/")
+    //! \param fileInfo FileInfo from calling function for exception details.
     //! \return The parsed reply
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
