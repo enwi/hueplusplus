@@ -20,15 +20,15 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include "include/HueLight.h"
+#include "hueplusplus/HueLight.h"
 
 #include <cmath>
 #include <iostream>
 #include <thread>
 
-#include "include/HueExceptionMacro.h"
-#include "include/Utils.h"
-#include "include/json/json.hpp"
+#include "hueplusplus/HueExceptionMacro.h"
+#include "hueplusplus/Utils.h"
+#include "json/json.hpp"
 
 bool HueLight::On(uint8_t transition)
 {

@@ -20,7 +20,7 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include "include/WinHttpHandler.h"
+#include "hueplusplus/WinHttpHandler.h"
 
 #include <chrono>
 #include <iostream>

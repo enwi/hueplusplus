@@ -29,8 +29,8 @@
 
 #include "testhelper.h"
 
-#include "../include/SimpleBrightnessStrategy.h"
-#include "../include/json/json.hpp"
+#include "hueplusplus/SimpleBrightnessStrategy.h"
+#include "json/json.hpp"
 #include "mocks/mock_HttpHandler.h"
 #include "mocks/mock_HueLight.h"
 

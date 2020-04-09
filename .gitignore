@@ -29,7 +29,7 @@
 *.app
 
 # build directory
-/build
+/build*
 
 
 # General

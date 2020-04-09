@@ -20,14 +20,14 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include "include/SimpleBrightnessStrategy.h"
+#include "hueplusplus/SimpleBrightnessStrategy.h"
 
 #include <cmath>
 #include <iostream>
 #include <thread>
 
-#include "include/HueExceptionMacro.h"
-#include "include/Utils.h"
+#include "hueplusplus/HueExceptionMacro.h"
+#include "hueplusplus/Utils.h"
 
 bool SimpleBrightnessStrategy::setBrightness(unsigned int bri, uint8_t transition, HueLight& light) const
 {

@@ -20,7 +20,7 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include "include/UPnP.h"
+#include "hueplusplus/UPnP.h"
 
 #include <algorithm>
 #include <iostream>

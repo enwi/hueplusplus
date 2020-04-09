@@ -20,15 +20,15 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include "include/ExtendedColorTemperatureStrategy.h"
+#include "hueplusplus/ExtendedColorTemperatureStrategy.h"
 
 #include <cmath>
 #include <iostream>
 #include <thread>
 
-#include "include/HueConfig.h"
-#include "include/HueExceptionMacro.h"
-#include "include/Utils.h"
+#include "hueplusplus/HueConfig.h"
+#include "hueplusplus/HueExceptionMacro.h"
+#include "hueplusplus/Utils.h"
 
 bool ExtendedColorTemperatureStrategy::setColorTemperature(
     unsigned int mired, uint8_t transition, HueLight& light) const

@@ -28,8 +28,8 @@
 
 #include "testhelper.h"
 
-#include "../include/SimpleColorHueStrategy.h"
-#include "../include/json/json.hpp"
+#include "hueplusplus/SimpleColorHueStrategy.h"
+#include "json/json.hpp"
 #include "mocks/mock_HttpHandler.h"
 #include "mocks/mock_HueLight.h"
 
