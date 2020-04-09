@@ -20,13 +20,13 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include "include/ExtendedColorHueStrategy.h"
+#include "hueplusplus/ExtendedColorHueStrategy.h"
 
 #include <cmath>
 #include <iostream>
 #include <thread>
 
-#include "include/HueConfig.h"
+#include "hueplusplus/HueConfig.h"
 
 bool ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, HueLight& light) const
 {

@@ -20,11 +20,11 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include "include/HueCommandAPI.h"
+#include "hueplusplus/HueCommandAPI.h"
 
 #include <thread>
 
-#include "include/HueExceptionMacro.h"
+#include "hueplusplus/HueExceptionMacro.h"
 
 constexpr std::chrono::steady_clock::duration HueCommandAPI::minDelay;
 

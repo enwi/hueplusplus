@@ -20,7 +20,7 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include "include/Utils.h"
+#include "hueplusplus/Utils.h"
 
 #include <iostream>
 

@@ -26,8 +26,8 @@
 #include "iostream"
 #include "testhelper.h"
 
-#include "../include/UPnP.h"
-#include "../include/json/json.hpp"
+#include "hueplusplus/UPnP.h"
+#include "json/json.hpp"
 #include "mocks/mock_HttpHandler.h"
 
 const std::vector<std::pair<std::string, std::string>> expected_uplug_dev

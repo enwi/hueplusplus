@@ -28,8 +28,8 @@
 
 #include <gmock/gmock.h>
 
-#include "../hueplusplus/include/IHttpHandler.h"
-#include "../hueplusplus/include/json/json.hpp"
+#include "hueplusplus/IHttpHandler.h"
+#include "json/json.hpp"
 
 //! Mock Class
 class MockHttpHandler : public IHttpHandler

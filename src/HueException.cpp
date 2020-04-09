@@ -20,7 +20,7 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include "include/HueException.h"
+#include "hueplusplus/HueException.h"
 
 HueException::HueException(FileInfo fileInfo, const std::string& message)
     : HueException("HueException", std::move(fileInfo), message)

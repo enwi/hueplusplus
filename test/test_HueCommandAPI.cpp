@@ -25,8 +25,8 @@
 
 #include "testhelper.h"
 
-#include "../include/Hue.h"
-#include "../include/json/json.hpp"
+#include "hueplusplus/Hue.h"
+#include "json/json.hpp"
 #include "mocks/mock_HttpHandler.h"
 
 TEST(HueCommandAPI, PUTRequest)
