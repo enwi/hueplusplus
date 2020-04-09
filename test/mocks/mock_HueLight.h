@@ -28,8 +28,8 @@
 
 #include <gmock/gmock.h>
 
-#include "../hueplusplus/include/HueLight.h"
-#include "../hueplusplus/include/json/json.hpp"
+#include "hueplusplus/HueLight.h"
+#include "json/json.hpp"
 #include "../testhelper.h"
 
 //! Mock Class

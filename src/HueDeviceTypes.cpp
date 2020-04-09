@@ -22,8 +22,8 @@
 
 #include <set>
 
-#include "include/HueDeviceTypes.h"
-#include "include/HueExceptionMacro.h"
+#include "hueplusplus/HueDeviceTypes.h"
+#include "hueplusplus/HueExceptionMacro.h"
 
 const std::set<std::string> getGamutBTypes() 
 {

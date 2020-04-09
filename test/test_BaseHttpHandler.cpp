@@ -28,9 +28,9 @@
 
 #include "testhelper.h"
 
-#include "../include/json/json.hpp"
+#include "json/json.hpp"
 #include "mocks/mock_BaseHttpHandler.h"
-#include "../include/HueException.h"
+#include "hueplusplus/HueException.h"
 
 TEST(BaseHttpHandler, sendGetHTTPBody)
 {

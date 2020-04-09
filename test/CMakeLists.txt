@@ -1,6 +1,3 @@
-# Set cmake cxx standard to 14
-set(CMAKE_CXX_STANDARD 14)
-
 # Download and unpack googletest at configure time
 configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
 execute_process(COMMAND ${CMAKE_COMMAND} -G ${CMAKE_GENERATOR} .
@@ -28,13 +25,6 @@ add_subdirectory(${CMAKE_BINARY_DIR}/googletest-src EXCLUDE_FROM_ALL
                  ${CMAKE_BINARY_DIR}/googletest-build EXCLUDE_FROM_ALL
 )
 
-# The gtest/gtest_main targets carry header search path
-# dependencies automatically when using CMake 2.8.11 or
-# later. Otherwise we have to add them here ourselves.
-if (CMAKE_VERSION VERSION_LESS 2.8.11)
-    include_directories("${gtest_SOURCE_DIR}/include" EXCLUDE_FROM_ALL)
-endif()
-
 # define all test sources
 set(TEST_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/test_BaseHttpHandler.cpp
@@ -50,15 +40,19 @@ set(TEST_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/test_UPnP.cpp
 )
 
+set(HuePlusPlus_INCLUDE_DIR "${hueplusplus_SOURCE_DIR}/include")
+
 # test executable
 add_executable(test_HuePlusPlus ${TEST_SOURCES} ${hueplusplus_SOURCES})
+if(DO_CLANG_TIDY)
+	set_target_properties(test_HuePlusPlus PROPERTIES CXX_CLANG_TIDY ${DO_CLANG_TIDY})
+endif()
+target_compile_features(test_HuePlusPlus PUBLIC cxx_std_14)
+set_property(TARGET test_HuePlusPlus PROPERTY CXX_EXTENSIONS OFF)
+
 target_link_libraries(test_HuePlusPlus gtest gmock)
 target_include_directories(test_HuePlusPlus PUBLIC ${GTest_INCLUDE_DIRS})
 target_include_directories(test_HuePlusPlus PUBLIC ${HuePlusPlus_INCLUDE_DIR})
-set_property(TARGET test_HuePlusPlus PROPERTY CXX_STANDARD 14)
-set_property(TARGET test_HuePlusPlus PROPERTY CXX_EXTENSIONS OFF)
-set_property(TARGET gmock PROPERTY CXX_STANDARD 14)
-set_property(TARGET gtest PROPERTY CXX_STANDARD 14)
 # add custom target to make it simple to run the tests
 add_custom_target("unittest"
     # Run the executable
