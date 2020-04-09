@@ -2,14 +2,14 @@
 configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
 execute_process(COMMAND ${CMAKE_COMMAND} -G ${CMAKE_GENERATOR} .
     RESULT_VARIABLE result
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/hueplusplus/test/googletest-download"
+    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/test/googletest-download"
 )
 if(result)
     message(FATAL_ERROR "CMake step for googletest failed: ${result}")
 endif()
 execute_process(COMMAND "${CMAKE_COMMAND}" --build .
     RESULT_VARIABLE result
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/hueplusplus/test/googletest-download"
+    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/test/googletest-download"
 )
 if(result)
     message(FATAL_ERROR "Build step for googletest failed: ${result}")
@@ -27,32 +27,32 @@ add_subdirectory(${CMAKE_BINARY_DIR}/googletest-src EXCLUDE_FROM_ALL
 
 # define all test sources
 set(TEST_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_BaseHttpHandler.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_ExtendedColorHueStrategy.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_ExtendedColorTemperatureStrategy.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_Hue.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_HueLight.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_HueCommandAPI.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_Main.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_SimpleBrightnessStrategy.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_SimpleColorHueStrategy.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_SimpleColorTemperatureStrategy.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_UPnP.cpp
+    test_BaseHttpHandler.cpp
+    test_ExtendedColorHueStrategy.cpp
+    test_ExtendedColorTemperatureStrategy.cpp
+    test_Hue.cpp
+    test_HueLight.cpp
+    test_HueCommandAPI.cpp
+    test_Main.cpp
+    test_SimpleBrightnessStrategy.cpp
+    test_SimpleColorHueStrategy.cpp
+    test_SimpleColorTemperatureStrategy.cpp
+    test_UPnP.cpp
 )
 
-set(HuePlusPlus_INCLUDE_DIR "${hueplusplus_SOURCE_DIR}/include")
+set(HuePlusPlus_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
 
 # test executable
-add_executable(test_HuePlusPlus ${TEST_SOURCES} ${hueplusplus_SOURCES})
+add_executable(test_HuePlusPlus ${TEST_SOURCES})
 if(DO_CLANG_TIDY)
 	set_target_properties(test_HuePlusPlus PROPERTIES CXX_CLANG_TIDY ${DO_CLANG_TIDY})
 endif()
 target_compile_features(test_HuePlusPlus PUBLIC cxx_std_14)
 set_property(TARGET test_HuePlusPlus PROPERTY CXX_EXTENSIONS OFF)
 
-target_link_libraries(test_HuePlusPlus gtest gmock)
+target_link_libraries(test_HuePlusPlus PUBLIC hueplusplusstatic)
+target_link_libraries(test_HuePlusPlus PUBLIC gtest gmock)
 target_include_directories(test_HuePlusPlus PUBLIC ${GTest_INCLUDE_DIRS})
-target_include_directories(test_HuePlusPlus PUBLIC ${HuePlusPlus_INCLUDE_DIR})
 # add custom target to make it simple to run the tests
 add_custom_target("unittest"
     # Run the executable
