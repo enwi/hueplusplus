@@ -1,5 +1,15 @@
-cmake_minimum_required(VERSION 2.8.3)
-project(hueplusplus)
+cmake_minimum_required(VERSION 3.2)
+
+if(${CMAKE_VERSION} VERSION_LESS 3.11)
+	cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
+else()
+	cmake_policy(VERSION 3.11)
+endif()
+
+# Add cmake dir to module path, so Find*.cmake can be found
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+
+project(hueplusplus LANGUAGES CXX)
 
 # options to set
 option(hueplusplus_TESTS "Build tests" OFF)
