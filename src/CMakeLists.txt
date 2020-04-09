@@ -36,21 +36,11 @@ if(ESP_PLATFORM)
     )
 endif()
 
-
-# Set global includes BEFORE adding any targets for legacy CMake versions
-if(CMAKE_VERSION VERSION_LESS 2.8.12)
-  include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
-  include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/json")
-endif()
-
-
 # hueplusplus shared library
 add_library(hueplusplusshared SHARED ${hueplusplus_SOURCES})
 set_property(TARGET hueplusplusshared PROPERTY CXX_STANDARD 14)
 set_property(TARGET hueplusplusshared PROPERTY CXX_EXTENSIONS OFF)
-if (NOT CMAKE_VERSION VERSION_LESS 2.8.12)
-    target_include_directories(hueplusplusshared PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
-endif()
+target_include_directories(hueplusplusshared PUBLIC $<BUILD_INTERFACE:"${CMAKE_CURRENT_SOURCE_DIR}/include"> $<INSTALL_INTERFACE:include/hueplusplus>)
 install(TARGETS hueplusplusshared DESTINATION lib)
 
 # hueplusplus static library
@@ -58,9 +48,7 @@ add_library(hueplusplusstatic STATIC ${hueplusplus_SOURCES})
 set_property(TARGET hueplusplusstatic PROPERTY CXX_STANDARD 14)
 set_property(TARGET hueplusplusstatic PROPERTY CXX_EXTENSIONS OFF)
 install(TARGETS hueplusplusstatic DESTINATION lib)
-if (NOT CMAKE_VERSION VERSION_LESS 2.8.12)
-    target_include_directories(hueplusplusstatic PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
-endif()
+target_include_directories(hueplusplusstatic PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 install(FILES ${hueplusplus_HEADERS} DESTINATION include/hueplusplus)
 
 # Export the package for use from the build-tree
