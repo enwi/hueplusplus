@@ -20,9 +20,9 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include "include/BaseHttpHandler.h"
+#include "hueplusplus/BaseHttpHandler.h"
 
-#include "include/HueExceptionMacro.h"
+#include "hueplusplus/HueExceptionMacro.h"
 
 std::string BaseHttpHandler::sendGetHTTPBody(const std::string& msg, const std::string& adr, int port) const
 {

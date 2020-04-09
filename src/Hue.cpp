@@ -20,7 +20,7 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include "include/Hue.h"
+#include "hueplusplus/Hue.h"
 
 #include <algorithm>
 #include <cctype>
@@ -31,15 +31,15 @@
 #include <stdexcept>
 #include <thread>
 
-#include "include/HueDeviceTypes.h"
-#include "include/ExtendedColorHueStrategy.h"
-#include "include/ExtendedColorTemperatureStrategy.h"
-#include "include/HueExceptionMacro.h"
-#include "include/SimpleBrightnessStrategy.h"
-#include "include/SimpleColorHueStrategy.h"
-#include "include/SimpleColorTemperatureStrategy.h"
-#include "include/UPnP.h"
-#include "include/Utils.h"
+#include "hueplusplus/HueDeviceTypes.h"
+#include "hueplusplus/ExtendedColorHueStrategy.h"
+#include "hueplusplus/ExtendedColorTemperatureStrategy.h"
+#include "hueplusplus/HueExceptionMacro.h"
+#include "hueplusplus/SimpleBrightnessStrategy.h"
+#include "hueplusplus/SimpleColorHueStrategy.h"
+#include "hueplusplus/SimpleColorTemperatureStrategy.h"
+#include "hueplusplus/UPnP.h"
+#include "hueplusplus/Utils.h"
 
 HueFinder::HueFinder(std::shared_ptr<const IHttpHandler> handler) : http_handler(std::move(handler)) {}
 
