@@ -24,59 +24,55 @@
 
 #include <iostream>
 
-namespace utils
+bool hueplusplus::utils::validateReplyForLight(const nlohmann::json& request, const nlohmann::json& reply, int lightId)
 {
-    bool validateReplyForLight(const nlohmann::json& request, const nlohmann::json& reply, int lightId)
+    bool success = false;
+    std::string path = "/lights/" + std::to_string(lightId) + "/state/";
+    for (auto it = reply.begin(); it != reply.end(); ++it)
     {
-        bool success = false;
-        std::string path = "/lights/" + std::to_string(lightId) + "/state/";
-        for (auto it = reply.begin(); it != reply.end(); ++it)
+        success = it.value().count("success");
+        if (success)
         {
-            success = it.value().count("success");
-            if (success)
+            // Traverse through first object
+            nlohmann::json successObject = it.value()["success"];
+            for (auto successIt = successObject.begin(); successIt != successObject.end(); ++successIt)
             {
-                // Traverse through first object
-                nlohmann::json successObject = it.value()["success"];
-                for (auto successIt = successObject.begin(); successIt != successObject.end(); ++successIt)
+                const std::string successPath = successIt.key();
+                if (successPath.find(path) == 0)
                 {
-                    const std::string successPath = successIt.key();
-                    if (successPath.find(path) == 0)
+                    const std::string valueKey = successPath.substr(path.size());
+                    auto requestIt = request.find(valueKey);
+                    success = requestIt != request.end();
+                    if (success)
                     {
-                        const std::string valueKey = successPath.substr(path.size());
-                        auto requestIt = request.find(valueKey);
-                        success = requestIt != request.end();
-                        if (success)
+                        if (valueKey == "xy")
                         {
-                            if (valueKey == "xy")
-                            {
-                                success
-                                    = std::abs(requestIt.value()[0].get<float>() - successIt.value()[0].get<float>())
-                                        <= 1E-4f
-                                    && std::abs(requestIt.value()[1].get<float>() - successIt.value()[1].get<float>())
-                                        <= 1E-4f;
-                            }
-                            else
-                            {
-                                success = requestIt.value() == successIt.value();
-                            }
-                            if (!success)
-                            {
-                                std::cout << "Value " << requestIt.value() << " does not match reply "
-                                          << successIt.value() << std::endl;
-                            }
+                            success = std::abs(requestIt.value()[0].get<float>() - successIt.value()[0].get<float>())
+                                    <= 1E-4f
+                                && std::abs(requestIt.value()[1].get<float>() - successIt.value()[1].get<float>())
+                                    <= 1E-4f;
+                        }
+                        else
+                        {
+                            success = requestIt.value() == successIt.value();
+                        }
+                        if (!success)
+                        {
+                            std::cout << "Value " << requestIt.value() << " does not match reply " << successIt.value()
+                                      << std::endl;
                         }
                     }
-                    else
-                    {
-                        success = false;
-                    }
+                }
+                else
+                {
+                    success = false;
                 }
             }
-            if (!success) // Fail fast
-            {
-                break;
-            }
         }
-        return success;
+        if (!success) // Fail fast
+        {
+            break;
+        }
     }
-} // namespace utils
+    return success;
+}

@@ -33,11 +33,11 @@
 #include "../testhelper.h"
 
 //! Mock Class
-class MockHueLight : public HueLight
+class MockHueLight : public hueplusplus::HueLight
 {
 public:
-    MockHueLight(std::shared_ptr<const IHttpHandler> handler)
-        : HueLight(1, HueCommandAPI(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler)) {};
+    MockHueLight(std::shared_ptr<const hueplusplus::IHttpHandler> handler)
+        : HueLight(1, hueplusplus::HueCommandAPI(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler)) {};
 
     nlohmann::json& getState() { return state; };
 
@@ -71,7 +71,7 @@ public:
 
     MOCK_METHOD1(setName, bool(std::string& name));
 
-    MOCK_CONST_METHOD0(getColorType, ColorType());
+    MOCK_CONST_METHOD0(getColorType, hueplusplus::ColorType());
 
     MOCK_CONST_METHOD0(hasBrightnessControl, bool());
 
@@ -126,7 +126,7 @@ public:
     MOCK_METHOD1(OffNoRefresh, bool(uint8_t transition));
 
     MOCK_METHOD3(
-        SendPutRequest, nlohmann::json(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo));
+        SendPutRequest, nlohmann::json(const nlohmann::json& request, const std::string& subPath, hueplusplus::FileInfo fileInfo));
 
     MOCK_METHOD0(refreshState, void());
 };

@@ -30,56 +30,56 @@
 #include "hueplusplus/Utils.h"
 #include "json/json.hpp"
 
-bool HueLight::On(uint8_t transition)
+bool hueplusplus::HueLight::On(uint8_t transition)
 {
     refreshState();
     return OnNoRefresh(transition);
 }
 
-bool HueLight::Off(uint8_t transition)
+bool hueplusplus::HueLight::Off(uint8_t transition)
 {
     refreshState();
     return OffNoRefresh(transition);
 }
 
-bool HueLight::isOn()
+bool hueplusplus::HueLight::isOn()
 {
     refreshState();
     return state["state"]["on"];
 }
 
-bool HueLight::isOn() const
+bool hueplusplus::HueLight::isOn() const
 {
     return state["state"]["on"];
 }
 
-int HueLight::getId() const
+int hueplusplus::HueLight::getId() const
 {
     return id;
 }
 
-std::string HueLight::getType() const
+std::string hueplusplus::HueLight::getType() const
 {
     return state["type"];
 }
 
-std::string HueLight::getName()
+std::string hueplusplus::HueLight::getName()
 {
     refreshState();
     return state["name"];
 }
 
-std::string HueLight::getName() const
+std::string hueplusplus::HueLight::getName() const
 {
     return state["name"];
 }
 
-std::string HueLight::getModelId() const
+std::string hueplusplus::HueLight::getModelId() const
 {
     return state["modelid"];
 }
 
-std::string HueLight::getUId() const
+std::string hueplusplus::HueLight::getUId() const
 {
     if (state.count("uniqueid"))
     {
@@ -88,7 +88,7 @@ std::string HueLight::getUId() const
     return std::string();
 }
 
-std::string HueLight::getManufacturername() const
+std::string hueplusplus::HueLight::getManufacturername() const
 {
     if (state.count("manufacturername"))
     {
@@ -97,7 +97,7 @@ std::string HueLight::getManufacturername() const
     return std::string();
 }
 
-std::string HueLight::getProductname() const
+std::string hueplusplus::HueLight::getProductname() const
 {
     if (state.count("productname"))
     {
@@ -106,7 +106,7 @@ std::string HueLight::getProductname() const
     return std::string();
 }
 
-std::string HueLight::getLuminaireUId() const
+std::string hueplusplus::HueLight::getLuminaireUId() const
 {
     if (state.count("luminaireuniqueid"))
     {
@@ -115,18 +115,18 @@ std::string HueLight::getLuminaireUId() const
     return std::string();
 }
 
-std::string HueLight::getSwVersion()
+std::string hueplusplus::HueLight::getSwVersion()
 {
     refreshState();
     return state["swversion"];
 }
 
-std::string HueLight::getSwVersion() const
+std::string hueplusplus::HueLight::getSwVersion() const
 {
     return state["swversion"];
 }
 
-bool HueLight::setName(const std::string& name)
+bool hueplusplus::HueLight::setName(const std::string& name)
 {
     nlohmann::json request = nlohmann::json::object();
     request["name"] = name;
@@ -136,22 +136,22 @@ bool HueLight::setName(const std::string& name)
     return utils::safeGetMember(reply, 0, "success", "/lights/" + std::to_string(id) + "/name") == name;
 }
 
-ColorType HueLight::getColorType() const
+hueplusplus::ColorType hueplusplus::HueLight::getColorType() const
 {
     return colorType;
 }
 
-unsigned int HueLight::KelvinToMired(unsigned int kelvin) const
+unsigned int hueplusplus::HueLight::KelvinToMired(unsigned int kelvin) const
 {
     return int(0.5f + (1000000 / kelvin));
 }
 
-unsigned int HueLight::MiredToKelvin(unsigned int mired) const
+unsigned int hueplusplus::HueLight::MiredToKelvin(unsigned int mired) const
 {
     return int(0.5f + (1000000 / mired));
 }
 
-bool HueLight::alert()
+bool hueplusplus::HueLight::alert()
 {
     nlohmann::json request;
     request["alert"] = "select";
@@ -161,9 +161,9 @@ bool HueLight::alert()
     return utils::validateReplyForLight(request, reply, id);
 }
 
-HueLight::HueLight(int id, const HueCommandAPI& commands) : HueLight(id, commands, nullptr, nullptr, nullptr) {}
+hueplusplus::HueLight::HueLight(int id, const HueCommandAPI& commands) : HueLight(id, commands, nullptr, nullptr, nullptr) {}
 
-HueLight::HueLight(int id, const HueCommandAPI& commands, std::shared_ptr<const BrightnessStrategy> brightnessStrategy,
+hueplusplus::HueLight::HueLight(int id, const HueCommandAPI& commands, std::shared_ptr<const BrightnessStrategy> brightnessStrategy,
     std::shared_ptr<const ColorTemperatureStrategy> colorTempStrategy,
     std::shared_ptr<const ColorHueStrategy> colorHueStrategy)
     : id(id),
@@ -176,7 +176,7 @@ HueLight::HueLight(int id, const HueCommandAPI& commands, std::shared_ptr<const 
     refreshState();
 }
 
-bool HueLight::OnNoRefresh(uint8_t transition)
+bool hueplusplus::HueLight::OnNoRefresh(uint8_t transition)
 {
     nlohmann::json request = nlohmann::json::object();
     if (transition != 4)
@@ -200,7 +200,7 @@ bool HueLight::OnNoRefresh(uint8_t transition)
     return utils::validateReplyForLight(request, reply, id);
 }
 
-bool HueLight::OffNoRefresh(uint8_t transition)
+bool hueplusplus::HueLight::OffNoRefresh(uint8_t transition)
 {
     nlohmann::json request = nlohmann::json::object();
     if (transition != 4)
@@ -224,12 +224,12 @@ bool HueLight::OffNoRefresh(uint8_t transition)
     return utils::validateReplyForLight(request, reply, id);
 }
 
-nlohmann::json HueLight::SendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo)
+nlohmann::json hueplusplus::HueLight::SendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo)
 {
     return commands.PUTRequest("/lights/" + std::to_string(id) + subPath, request, std::move(fileInfo));
 }
 
-void HueLight::refreshState()
+void hueplusplus::HueLight::refreshState()
 {
     // std::chrono::steady_clock::time_point start =
     // std::chrono::steady_clock::now(); std::cout << "\tRefreshing lampstate of

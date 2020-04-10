@@ -32,7 +32,7 @@
 #include "json/json.hpp"
 
 //! Mock Class
-class MockHttpHandler : public IHttpHandler
+class MockHttpHandler : public hueplusplus::IHttpHandler
 {
 public:
     MOCK_CONST_METHOD3(send, std::string(const std::string& msg, const std::string& adr, int port));

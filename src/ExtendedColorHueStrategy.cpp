@@ -28,7 +28,7 @@
 
 #include "hueplusplus/HueConfig.h"
 
-bool ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, HueLight& light) const
+bool hueplusplus::ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, HueLight& light) const
 {
     light.refreshState();
     std::string cType = light.state["state"]["colormode"];
@@ -110,7 +110,7 @@ bool ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, Hue
     }
 }
 
-bool ExtendedColorHueStrategy::alertXY(float x, float y, HueLight& light) const
+bool hueplusplus::ExtendedColorHueStrategy::alertXY(float x, float y, HueLight& light) const
 {
     light.refreshState();
     std::string cType = light.state["state"]["colormode"];
@@ -192,7 +192,7 @@ bool ExtendedColorHueStrategy::alertXY(float x, float y, HueLight& light) const
     }
 }
 
-bool ExtendedColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLight& light) const
+bool hueplusplus::ExtendedColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLight& light) const
 {
     light.refreshState();
     std::string cType = light.state["state"]["colormode"];
