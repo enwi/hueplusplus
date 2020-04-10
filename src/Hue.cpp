@@ -41,9 +41,9 @@
 #include "hueplusplus/UPnP.h"
 #include "hueplusplus/Utils.h"
 
-HueFinder::HueFinder(std::shared_ptr<const IHttpHandler> handler) : http_handler(std::move(handler)) {}
+hueplusplus::HueFinder::HueFinder(std::shared_ptr<const IHttpHandler> handler) : http_handler(std::move(handler)) {}
 
-std::vector<HueFinder::HueIdentification> HueFinder::FindBridges() const
+std::vector<hueplusplus::HueFinder::HueIdentification> hueplusplus::HueFinder::FindBridges() const
 {
     UPnP uplug;
     std::vector<std::pair<std::string, std::string>> foundDevices = uplug.getDevices(http_handler);
@@ -71,7 +71,7 @@ std::vector<HueFinder::HueIdentification> HueFinder::FindBridges() const
     return foundBridges;
 }
 
-Hue HueFinder::GetBridge(const HueIdentification& identification)
+hueplusplus::Hue hueplusplus::HueFinder::GetBridge(const HueIdentification& identification)
 {
     std::string normalizedMac = NormalizeMac(identification.mac);
     auto pos = usernames.find(normalizedMac);
@@ -91,17 +91,17 @@ Hue HueFinder::GetBridge(const HueIdentification& identification)
     return bridge;
 }
 
-void HueFinder::AddUsername(const std::string& mac, const std::string& username)
+void hueplusplus::HueFinder::AddUsername(const std::string& mac, const std::string& username)
 {
     usernames[NormalizeMac(mac)] = username;
 }
 
-const std::map<std::string, std::string>& HueFinder::GetAllUsernames() const
+const std::map<std::string, std::string>& hueplusplus::HueFinder::GetAllUsernames() const
 {
     return usernames;
 }
 
-std::string HueFinder::NormalizeMac(std::string input)
+std::string hueplusplus::HueFinder::NormalizeMac(std::string input)
 {
     // Remove any non alphanumeric characters (e.g. ':' and whitespace)
     input.erase(std::remove_if(input.begin(), input.end(), [](char c) { return !std::isalnum(c, std::locale()); }),
@@ -111,7 +111,7 @@ std::string HueFinder::NormalizeMac(std::string input)
     return input;
 }
 
-std::string HueFinder::ParseDescription(const std::string& description)
+std::string hueplusplus::HueFinder::ParseDescription(const std::string& description)
 {
     const char* model = "<modelName>Philips hue bridge";
     const char* serialBegin = "<serialNumber>";
@@ -133,7 +133,7 @@ std::string HueFinder::ParseDescription(const std::string& description)
     return std::string();
 }
 
-Hue::Hue(
+hueplusplus::Hue::Hue(
     const std::string& ip, const int port, const std::string& username, std::shared_ptr<const IHttpHandler> handler)
     : ip(ip),
       port(port),
@@ -147,17 +147,17 @@ Hue::Hue(
       commands(ip, port, username, http_handler)
 {}
 
-std::string Hue::getBridgeIP()
+std::string hueplusplus::Hue::getBridgeIP()
 {
     return ip;
 }
 
-int Hue::getBridgePort()
+int hueplusplus::Hue::getBridgePort()
 {
     return port;
 }
 
-std::string Hue::requestUsername()
+std::string hueplusplus::Hue::requestUsername()
 {
     std::cout << "Please press the link Button! You've got 35 secs!\n"; // when the link
                                                                         // button was
@@ -206,22 +206,22 @@ std::string Hue::requestUsername()
     return username;
 }
 
-std::string Hue::getUsername()
+std::string hueplusplus::Hue::getUsername()
 {
     return username;
 }
 
-void Hue::setIP(const std::string& ip)
+void hueplusplus::Hue::setIP(const std::string& ip)
 {
     this->ip = ip;
 }
 
-void Hue::setPort(const int port)
+void hueplusplus::Hue::setPort(const int port)
 {
     this->port = port;
 }
 
-HueLight& Hue::getLight(int id)
+hueplusplus::HueLight& hueplusplus::Hue::getLight(int id)
 {
     auto pos = lights.find(id);
     if (pos != lights.end())
@@ -245,7 +245,7 @@ HueLight& Hue::getLight(int id)
     return lights.find(id)->second;
 }
 
-bool Hue::removeLight(int id)
+bool hueplusplus::Hue::removeLight(int id)
 {
     nlohmann::json result
         = commands.DELETERequest("/lights/" + std::to_string(id), nlohmann::json::object(), CURRENT_FILE_INFO);
@@ -257,7 +257,7 @@ bool Hue::removeLight(int id)
     return success;
 }
 
-std::vector<std::reference_wrapper<HueLight>> Hue::getAllLights()
+std::vector<std::reference_wrapper<hueplusplus::HueLight>> hueplusplus::Hue::getAllLights()
 {
     refreshState();
     nlohmann::json lightsState = state["lights"];
@@ -273,7 +273,7 @@ std::vector<std::reference_wrapper<HueLight>> Hue::getAllLights()
     return result;
 }
 
-bool Hue::lightExists(int id)
+bool hueplusplus::Hue::lightExists(int id)
 {
     refreshState();
     auto pos = lights.find(id);
@@ -288,7 +288,7 @@ bool Hue::lightExists(int id)
     return false;
 }
 
-bool Hue::lightExists(int id) const
+bool hueplusplus::Hue::lightExists(int id) const
 {
     auto pos = lights.find(id);
     if (pos != lights.end())
@@ -302,7 +302,7 @@ bool Hue::lightExists(int id) const
     return false;
 }
 
-std::string Hue::getPictureOfLight(int id) const
+std::string hueplusplus::Hue::getPictureOfLight(int id) const
 {
     std::string ret = "";
     auto pos = lights.find(id);
@@ -313,7 +313,7 @@ std::string Hue::getPictureOfLight(int id) const
     return ret;
 }
 
-std::string Hue::getPictureOfModel(const std::string& model_id) const
+std::string hueplusplus::Hue::getPictureOfModel(const std::string& model_id) const
 {
     std::string ret = "";
     if (model_id == "LCT001" || model_id == "LCT007" || model_id == "LCT010" || model_id == "LCT014"
@@ -437,7 +437,7 @@ std::string Hue::getPictureOfModel(const std::string& model_id) const
     return ret;
 }
 
-void Hue::refreshState()
+void hueplusplus::Hue::refreshState()
 {
     if (username.empty())
     {

@@ -29,6 +29,8 @@
 #include "json/json.hpp"
 #include "mocks/mock_HttpHandler.h"
 
+using namespace hueplusplus;
+
 TEST(HueCommandAPI, PUTRequest)
 {
     using namespace ::testing;

@@ -23,7 +23,10 @@
 #ifndef _HUE_CONFIG_H
 #define _HUE_CONFIG_H
 
-const uint16_t c_PRE_ALERT_DELAY = 120; //!< Delay for advanced alerts before the actual alert
-const uint16_t c_POST_ALERT_DELAY = 1600; //!< Delay for advanced alerts after the actual alert
+namespace hueplusplus
+{
+    constexpr uint16_t c_PRE_ALERT_DELAY = 120; //!< Delay for advanced alerts before the actual alert
+    constexpr uint16_t c_POST_ALERT_DELAY = 1600; //!< Delay for advanced alerts after the actual alert
+} // namespace hueplusplus
 
 #endif

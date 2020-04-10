@@ -30,7 +30,7 @@
 #include "hueplusplus/HueExceptionMacro.h"
 #include "hueplusplus/Utils.h"
 
-bool ExtendedColorTemperatureStrategy::setColorTemperature(
+bool hueplusplus::ExtendedColorTemperatureStrategy::setColorTemperature(
     unsigned int mired, uint8_t transition, HueLight& light) const
 {
     light.refreshState();
@@ -68,7 +68,7 @@ bool ExtendedColorTemperatureStrategy::setColorTemperature(
     return utils::validateReplyForLight(request, reply, light.id);
 }
 
-bool ExtendedColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLight& light) const
+bool hueplusplus::ExtendedColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLight& light) const
 {
     light.refreshState();
     std::string cType = light.state["state"]["colormode"];

@@ -48,7 +48,7 @@ private:
     int s;
 };
 
-std::string LinHttpHandler::send(const std::string& msg, const std::string& adr, int port) const
+std::string hueplusplus::LinHttpHandler::send(const std::string& msg, const std::string& adr, int port) const
 {
     // create socket
     int socketFD = socket(AF_INET, SOCK_STREAM, 0);
@@ -136,7 +136,7 @@ std::string LinHttpHandler::send(const std::string& msg, const std::string& adr,
     return response;
 }
 
-std::vector<std::string> LinHttpHandler::sendMulticast(
+std::vector<std::string> hueplusplus::LinHttpHandler::sendMulticast(
     const std::string& msg, const std::string& adr, int port, int timeout) const
 {
     hostent* server; // host information

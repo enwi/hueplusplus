@@ -34,6 +34,8 @@
 #include "mocks/mock_HttpHandler.h"
 #include "mocks/mock_HueLight.h"
 
+using namespace hueplusplus;
+
 TEST(SimpleColorTemperatureStrategy, setColorTemperature)
 {
     using namespace ::testing;

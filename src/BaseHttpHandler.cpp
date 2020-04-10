@@ -24,7 +24,7 @@
 
 #include "hueplusplus/HueExceptionMacro.h"
 
-std::string BaseHttpHandler::sendGetHTTPBody(const std::string& msg, const std::string& adr, int port) const
+std::string hueplusplus::BaseHttpHandler::sendGetHTTPBody(const std::string& msg, const std::string& adr, int port) const
 {
     std::string response = send(msg, adr, port);
     size_t start = response.find("\r\n\r\n");
@@ -41,7 +41,7 @@ std::string BaseHttpHandler::sendGetHTTPBody(const std::string& msg, const std::
     return response;
 }
 
-std::string BaseHttpHandler::sendHTTPRequest(const std::string& method, const std::string& uri,
+std::string hueplusplus::BaseHttpHandler::sendHTTPRequest(const std::string& method, const std::string& uri,
     const std::string& contentType, const std::string& body, const std::string& adr, int port) const
 {
     std::string request;
@@ -68,49 +68,49 @@ std::string BaseHttpHandler::sendHTTPRequest(const std::string& method, const st
     return sendGetHTTPBody(request.c_str(), adr, port);
 }
 
-std::string BaseHttpHandler::GETString(const std::string& uri, const std::string& contentType, const std::string& body,
+std::string hueplusplus::BaseHttpHandler::GETString(const std::string& uri, const std::string& contentType, const std::string& body,
     const std::string& adr, int port) const
 {
     return sendHTTPRequest("GET", uri, contentType, body, adr, port);
 }
 
-std::string BaseHttpHandler::POSTString(const std::string& uri, const std::string& contentType, const std::string& body,
+std::string hueplusplus::BaseHttpHandler::POSTString(const std::string& uri, const std::string& contentType, const std::string& body,
     const std::string& adr, int port) const
 {
     return sendHTTPRequest("POST", uri, contentType, body, adr, port);
 }
 
-std::string BaseHttpHandler::PUTString(const std::string& uri, const std::string& contentType, const std::string& body,
+std::string hueplusplus::BaseHttpHandler::PUTString(const std::string& uri, const std::string& contentType, const std::string& body,
     const std::string& adr, int port) const
 {
     return sendHTTPRequest("PUT", uri, contentType, body, adr, port);
 }
 
-std::string BaseHttpHandler::DELETEString(const std::string& uri, const std::string& contentType,
+std::string hueplusplus::BaseHttpHandler::DELETEString(const std::string& uri, const std::string& contentType,
     const std::string& body, const std::string& adr, int port) const
 {
     return sendHTTPRequest("DELETE", uri, contentType, body, adr, port);
 }
 
-nlohmann::json BaseHttpHandler::GETJson(
+nlohmann::json hueplusplus::BaseHttpHandler::GETJson(
     const std::string& uri, const nlohmann::json& body, const std::string& adr, int port) const
 {
     return nlohmann::json::parse(GETString(uri, "application/json", body.dump(), adr, port));
 }
 
-nlohmann::json BaseHttpHandler::POSTJson(
+nlohmann::json hueplusplus::BaseHttpHandler::POSTJson(
     const std::string& uri, const nlohmann::json& body, const std::string& adr, int port) const
 {
     return nlohmann::json::parse(POSTString(uri, "application/json", body.dump(), adr, port));
 }
 
-nlohmann::json BaseHttpHandler::PUTJson(
+nlohmann::json hueplusplus::BaseHttpHandler::PUTJson(
     const std::string& uri, const nlohmann::json& body, const std::string& adr, int port) const
 {
     return nlohmann::json::parse(PUTString(uri, "application/json", body.dump(), adr, port));
 }
 
-nlohmann::json BaseHttpHandler::DELETEJson(
+nlohmann::json hueplusplus::BaseHttpHandler::DELETEJson(
     const std::string& uri, const nlohmann::json& body, const std::string& adr, int port) const
 {
     return nlohmann::json::parse(DELETEString(uri, "application/json", body.dump(), adr, port));

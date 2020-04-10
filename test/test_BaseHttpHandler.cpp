@@ -32,6 +32,8 @@
 #include "mocks/mock_BaseHttpHandler.h"
 #include "hueplusplus/HueException.h"
 
+using namespace hueplusplus;
+
 TEST(BaseHttpHandler, sendGetHTTPBody)
 {
     using namespace ::testing;

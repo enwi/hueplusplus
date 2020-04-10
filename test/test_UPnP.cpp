@@ -30,6 +30,8 @@
 #include "json/json.hpp"
 #include "mocks/mock_HttpHandler.h"
 
+using namespace hueplusplus;
+
 const std::vector<std::pair<std::string, std::string>> expected_uplug_dev
     = {{"http://192.168.2.1:1900/gatedesc.xml", "Linux/2.6.36, UPnP/1.0, Portable SDK for UPnP devices/1.6.19"},
         {"http://192.168.2.116:80/description.xml", "Linux/3.14.0 UPnP/1.0 IpBridge/1.21.0"}};
