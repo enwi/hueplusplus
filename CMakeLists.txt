@@ -11,6 +11,15 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 project(hueplusplus LANGUAGES CXX)
 
+# check whether hueplusplus is compiled directly or included as a subdirectory
+if(NOT DEFINED hueplusplus_master_project)
+	if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+		set(hueplusplus_master_project ON)
+	else()
+		set(hueplusplus_master_project OFF)
+	endif()
+endif()
+
 # options to set
 option(hueplusplus_TESTS "Build tests" OFF)
 
@@ -27,7 +36,7 @@ endif()
 
 # Set default build type if none was specified
 set(default_build_type "Release")
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+if(hueplusplus_master_project AND (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES))
 	message(STATUS "Setting build type to '${default_build_type}' as none was specified")
 	set(CMAKE_BUILD_TYPE "${default_build_type}" CACHE STRING "Choose the type of build." FORCE)
 	# Set possible values for cmake-gui

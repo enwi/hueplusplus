@@ -22,21 +22,21 @@
 
 #include "hueplusplus/HueException.h"
 
-HueException::HueException(FileInfo fileInfo, const std::string& message)
+hueplusplus::HueException::HueException(FileInfo fileInfo, const std::string& message)
     : HueException("HueException", std::move(fileInfo), message)
 {}
 
-const char* HueException::what() const noexcept
+const char* hueplusplus::HueException::what() const noexcept
 {
     return whatMessage.c_str();
 }
 
-const FileInfo& HueException::GetFile() const noexcept
+const hueplusplus::FileInfo& hueplusplus::HueException::GetFile() const noexcept
 {
     return fileInfo;
 }
 
-HueException::HueException(const char* exceptionName, FileInfo fileInfo, const std::string& message)
+hueplusplus::HueException::HueException(const char* exceptionName, FileInfo fileInfo, const std::string& message)
     : fileInfo(std::move(fileInfo))
 {
     whatMessage = exceptionName;
@@ -46,7 +46,7 @@ HueException::HueException(const char* exceptionName, FileInfo fileInfo, const s
     whatMessage.append(message);
 }
 
-HueAPIResponseException::HueAPIResponseException(
+hueplusplus::HueAPIResponseException::HueAPIResponseException(
     FileInfo fileInfo, int error, std::string address, std::string description)
     : HueException("HueApiResponseException", std::move(fileInfo), GetMessage(error, address, description)),
       error(error),
@@ -54,22 +54,22 @@ HueAPIResponseException::HueAPIResponseException(
       description(std::move(description))
 {}
 
-int HueAPIResponseException::GetErrorNumber() const noexcept
+int hueplusplus::HueAPIResponseException::GetErrorNumber() const noexcept
 {
     return error;
 }
 
-const std::string& HueAPIResponseException::GetAddress() const noexcept
+const std::string& hueplusplus::HueAPIResponseException::GetAddress() const noexcept
 {
     return address;
 }
 
-const std::string& HueAPIResponseException::GetDescription() const noexcept
+const std::string& hueplusplus::HueAPIResponseException::GetDescription() const noexcept
 {
     return description;
 }
 
-HueAPIResponseException HueAPIResponseException::Create(FileInfo fileInfo, const nlohmann::json& response)
+hueplusplus::HueAPIResponseException hueplusplus::HueAPIResponseException::Create(FileInfo fileInfo, const nlohmann::json& response)
 {
     const nlohmann::json error = response.at("error");
     int errorCode = error.value("type", -1);
@@ -78,7 +78,7 @@ HueAPIResponseException HueAPIResponseException::Create(FileInfo fileInfo, const
     return HueAPIResponseException(std::move(fileInfo), errorCode, std::move(address), std::move(description));
 }
 
-std::string HueAPIResponseException::GetMessage(int error, const std::string& addr, const std::string& description)
+std::string hueplusplus::HueAPIResponseException::GetMessage(int error, const std::string& addr, const std::string& description)
 {
     std::string result = std::to_string(error);
     result.append(" ");
@@ -88,7 +88,7 @@ std::string HueAPIResponseException::GetMessage(int error, const std::string& ad
     return result;
 }
 
-std::string FileInfo::ToString() const
+std::string hueplusplus::FileInfo::ToString() const
 {
     if (filename.empty() || line < 0)
     {

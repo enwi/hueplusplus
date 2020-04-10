@@ -23,5 +23,5 @@
 #include "HueException.h"
 
 #ifndef CURRENT_FILE_INFO
-#define CURRENT_FILE_INFO (FileInfo{__FILE__, __LINE__, __func__})
+#define CURRENT_FILE_INFO (::hueplusplus::FileInfo{__FILE__, __LINE__, __func__})
 #endif
