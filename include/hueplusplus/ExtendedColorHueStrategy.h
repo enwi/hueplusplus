@@ -26,38 +26,41 @@
 #include "HueLight.h"
 #include "SimpleColorHueStrategy.h"
 
-//! Class extending the implementation of SimpleColorHueStrategy
-class ExtendedColorHueStrategy : public SimpleColorHueStrategy
+namespace hueplusplus
 {
-public:
-    //! \brief Function that lets the light perform one breath cycle in the
-    //! specified color.
-    //!
-    //! It uses this_thread::sleep_for to accomodate for the time an \ref
-    //! HueLight::alert() needs The hue ranges from 0 to 65535, whereas 65535 and
-    //! 0 are red, 25500 is green and 46920 is blue. The saturation ranges from 0
-    //! to 254, whereas 0 is least saturated (white) and 254 is most saturated
-    //! (vibrant). \param hue The hue of the color \param sat The saturation of
-    //! the color \param light A reference of the light
-    bool alertHueSaturation(uint16_t hue, uint8_t sat, HueLight& light) const override;
-    //! \brief Function that lets the light perform one breath cycle in the
-    //! specified color.
-    //!
-    //! It uses this_thread::sleep_for to accomodate for the time an \ref
-    //! HueLight::alert() needs \param x The x coordinate in CIE, ranging from 0
-    //! to 1 \param y The y coordinate in CIE, ranging from 0 to 1 \param light A
-    //! reference of the light
-    bool alertXY(float x, float y, HueLight& light) const override;
-    //! \brief Function that lets the light perform one breath cycle in the
-    //! specified color.
-    //!
-    //! It uses this_thread::sleep_for to accomodate for the time an \ref
-    //! HueLight::alert() needs Red, green and blue are ranging from 0 to 255.
-    //! \param r The red portion of the color
-    //! \param g The green portion of the color
-    //! \param b The blue portion of the color
-    //! \param light A reference of the light
-    bool alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLight& light) const override;
-};
+    //! Class extending the implementation of SimpleColorHueStrategy
+    class ExtendedColorHueStrategy : public SimpleColorHueStrategy
+    {
+    public:
+        //! \brief Function that lets the light perform one breath cycle in the
+        //! specified color.
+        //!
+        //! It uses this_thread::sleep_for to accomodate for the time an \ref
+        //! HueLight::alert() needs The hue ranges from 0 to 65535, whereas 65535 and
+        //! 0 are red, 25500 is green and 46920 is blue. The saturation ranges from 0
+        //! to 254, whereas 0 is least saturated (white) and 254 is most saturated
+        //! (vibrant). \param hue The hue of the color \param sat The saturation of
+        //! the color \param light A reference of the light
+        bool alertHueSaturation(uint16_t hue, uint8_t sat, HueLight& light) const override;
+        //! \brief Function that lets the light perform one breath cycle in the
+        //! specified color.
+        //!
+        //! It uses this_thread::sleep_for to accomodate for the time an \ref
+        //! HueLight::alert() needs \param x The x coordinate in CIE, ranging from 0
+        //! to 1 \param y The y coordinate in CIE, ranging from 0 to 1 \param light A
+        //! reference of the light
+        bool alertXY(float x, float y, HueLight& light) const override;
+        //! \brief Function that lets the light perform one breath cycle in the
+        //! specified color.
+        //!
+        //! It uses this_thread::sleep_for to accomodate for the time an \ref
+        //! HueLight::alert() needs Red, green and blue are ranging from 0 to 255.
+        //! \param r The red portion of the color
+        //! \param g The green portion of the color
+        //! \param b The blue portion of the color
+        //! \param light A reference of the light
+        bool alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLight& light) const override;
+    };
+} // namespace hueplusplus
 
 #endif

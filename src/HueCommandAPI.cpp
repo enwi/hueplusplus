@@ -26,7 +26,7 @@
 
 #include "hueplusplus/HueExceptionMacro.h"
 
-constexpr std::chrono::steady_clock::duration HueCommandAPI::minDelay;
+constexpr std::chrono::steady_clock::duration hueplusplus::HueCommandAPI::minDelay;
 
 namespace
 {
@@ -63,7 +63,7 @@ namespace
     }
 } // namespace
 
-HueCommandAPI::HueCommandAPI(
+hueplusplus::HueCommandAPI::HueCommandAPI(
     const std::string& ip, const int port, const std::string& username, std::shared_ptr<const IHttpHandler> httpHandler)
     : ip(ip),
       port(port),
@@ -72,43 +72,43 @@ HueCommandAPI::HueCommandAPI(
       timeout(new TimeoutData{std::chrono::steady_clock::now(), {}})
 {}
 
-nlohmann::json HueCommandAPI::PUTRequest(const std::string& path, const nlohmann::json& request) const
+nlohmann::json hueplusplus::HueCommandAPI::PUTRequest(const std::string& path, const nlohmann::json& request) const
 {
     return PUTRequest(path, request, CURRENT_FILE_INFO);
 }
 
-nlohmann::json HueCommandAPI::PUTRequest(
+nlohmann::json hueplusplus::HueCommandAPI::PUTRequest(
     const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const
 {
     return HandleError(fileInfo,
         RunWithTimeout(timeout, minDelay, [&]() { return httpHandler->PUTJson(CombinedPath(path), request, ip); }));
 }
 
-nlohmann::json HueCommandAPI::GETRequest(const std::string& path, const nlohmann::json& request) const
+nlohmann::json hueplusplus::HueCommandAPI::GETRequest(const std::string& path, const nlohmann::json& request) const
 {
     return GETRequest(path, request, CURRENT_FILE_INFO);
 }
 
-nlohmann::json HueCommandAPI::GETRequest(
+nlohmann::json hueplusplus::HueCommandAPI::GETRequest(
     const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const
 {
     return HandleError(fileInfo,
         RunWithTimeout(timeout, minDelay, [&]() { return httpHandler->GETJson(CombinedPath(path), request, ip); }));
 }
 
-nlohmann::json HueCommandAPI::DELETERequest(const std::string& path, const nlohmann::json& request) const
+nlohmann::json hueplusplus::HueCommandAPI::DELETERequest(const std::string& path, const nlohmann::json& request) const
 {
     return DELETERequest(path, request, CURRENT_FILE_INFO);
 }
 
-nlohmann::json HueCommandAPI::DELETERequest(
+nlohmann::json hueplusplus::HueCommandAPI::DELETERequest(
     const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const
 {
     return HandleError(fileInfo,
         RunWithTimeout(timeout, minDelay, [&]() { return httpHandler->DELETEJson(CombinedPath(path), request, ip); }));
 }
 
-nlohmann::json HueCommandAPI::HandleError(FileInfo fileInfo, const nlohmann::json& response) const
+nlohmann::json hueplusplus::HueCommandAPI::HandleError(FileInfo fileInfo, const nlohmann::json& response) const
 {
     if (response.count("error"))
     {
@@ -121,7 +121,7 @@ nlohmann::json HueCommandAPI::HandleError(FileInfo fileInfo, const nlohmann::jso
     return response;
 }
 
-std::string HueCommandAPI::CombinedPath(const std::string& path) const
+std::string hueplusplus::HueCommandAPI::CombinedPath(const std::string& path) const
 {
     std::string result = "/api/";
     result.append(username);

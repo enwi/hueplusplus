@@ -30,31 +30,34 @@
 
 #include "json/json.hpp"
 
-//! Class to handle http requests and multicast requests on linux systems
-class LinHttpHandler : public BaseHttpHandler
+namespace hueplusplus
 {
-public:
-    //! \brief Function that sends a given message to the specified host and
-    //! returns the response.
-    //!
-    //! \param msg String that contains the message that is sent to the specified
-    //! address \param adr String that contains an ip or hostname in dotted
-    //! decimal notation like "192.168.2.1" \param port Optional integer that
-    //! specifies the port to which the request is sent to. Default is 80 \return
-    //! String containing the response of the host
-    virtual std::string send(const std::string& msg, const std::string& adr, int port = 80) const;
+    //! Class to handle http requests and multicast requests on linux systems
+    class LinHttpHandler : public BaseHttpHandler
+    {
+    public:
+        //! \brief Function that sends a given message to the specified host and
+        //! returns the response.
+        //!
+        //! \param msg String that contains the message that is sent to the specified
+        //! address \param adr String that contains an ip or hostname in dotted
+        //! decimal notation like "192.168.2.1" \param port Optional integer that
+        //! specifies the port to which the request is sent to. Default is 80 \return
+        //! String containing the response of the host
+        virtual std::string send(const std::string& msg, const std::string& adr, int port = 80) const;
 
-    //! \brief Function that sends a multicast request with the specified message.
-    //!
-    //! \param msg String that contains the request that is sent to the specified
-    //! address \param adr Optional String that contains an ip or hostname in
-    //! dotted decimal notation, default is "239.255.255.250" \param port Optional
-    //! integer that specifies the port to which the request is sent. Default is
-    //! 1900 \param timeout Optional Integer that specifies the timeout of the
-    //! request in seconds. Default is 5 \return Vector containing strings of each
-    //! answer received
-    virtual std::vector<std::string> sendMulticast(
-        const std::string& msg, const std::string& adr = "239.255.255.250", int port = 1900, int timeout = 5) const;
-};
+        //! \brief Function that sends a multicast request with the specified message.
+        //!
+        //! \param msg String that contains the request that is sent to the specified
+        //! address \param adr Optional String that contains an ip or hostname in
+        //! dotted decimal notation, default is "239.255.255.250" \param port Optional
+        //! integer that specifies the port to which the request is sent. Default is
+        //! 1900 \param timeout Optional Integer that specifies the timeout of the
+        //! request in seconds. Default is 5 \return Vector containing strings of each
+        //! answer received
+        virtual std::vector<std::string> sendMulticast(
+            const std::string& msg, const std::string& adr = "239.255.255.250", int port = 1900, int timeout = 5) const;
+    };
+} // namespace hueplusplus
 
 #endif
