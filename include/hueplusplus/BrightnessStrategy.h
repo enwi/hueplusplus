@@ -20,8 +20,8 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef _BRIGHTNESS_STRATEGY_H
-#define _BRIGHTNESS_STRATEGY_H
+#ifndef INCLUDE_HUEPLUSPLUS_BRIGHTNESS_STRATEGY_H
+#define INCLUDE_HUEPLUSPLUS_BRIGHTNESS_STRATEGY_H
 
 #include <cstdint>
 

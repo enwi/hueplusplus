@@ -2,14 +2,14 @@
 configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
 execute_process(COMMAND ${CMAKE_COMMAND} -G ${CMAKE_GENERATOR} .
     RESULT_VARIABLE result
-    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/test/googletest-download"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/googletest-download"
 )
 if(result)
     message(FATAL_ERROR "CMake step for googletest failed: ${result}")
 endif()
 execute_process(COMMAND "${CMAKE_COMMAND}" --build .
     RESULT_VARIABLE result
-    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/test/googletest-download"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/googletest-download"
 )
 if(result)
     message(FATAL_ERROR "Build step for googletest failed: ${result}")
@@ -21,8 +21,8 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
 # Add googletest directly to our build. This defines
 # the gtest and gtest_main targets.
-add_subdirectory(${CMAKE_BINARY_DIR}/googletest-src EXCLUDE_FROM_ALL
-                 ${CMAKE_BINARY_DIR}/googletest-build EXCLUDE_FROM_ALL
+add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src EXCLUDE_FROM_ALL
+                 ${CMAKE_CURRENT_BINARY_DIR}/googletest-build EXCLUDE_FROM_ALL
 )
 
 # define all test sources

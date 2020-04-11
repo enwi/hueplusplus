@@ -20,8 +20,8 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef _HUEDEVICETYPES_H
-#define _HUEDEVICETYPES_H
+#ifndef INCLUDE_HUEPLUSPLUS_HUEDEVICETYPES_H
+#define INCLUDE_HUEPLUSPLUS_HUEDEVICETYPES_H
 
 #include <memory>
 #include <string>
