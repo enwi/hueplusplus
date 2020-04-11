@@ -20,8 +20,8 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef _COLOR_TEMPERATURE_STRATEGY_H
-#define _COLOR_TEMPERATURE_STRATEGY_H
+#ifndef INCLUDE_HUEPLUSPLUS_COLOR_TEMPERATURE_STRATEGY_H
+#define INCLUDE_HUEPLUSPLUS_COLOR_TEMPERATURE_STRATEGY_H
 
 #include <stdint.h>
 

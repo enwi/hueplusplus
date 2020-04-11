@@ -20,8 +20,8 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef _UTILS_H
-#define _UTILS_H
+#ifndef INCLUDE_HUEPLUSPLUS_UTILS_H
+#define INCLUDE_HUEPLUSPLUS_UTILS_H
 
 #include "json/json.hpp"
 

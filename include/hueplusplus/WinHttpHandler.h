@@ -20,8 +20,8 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef _WINHTTPHANDLER_H
-#define _WINHTTPHANDLER_H
+#ifndef INCLUDE_HUEPLUSPLUS_WINHTTPHANDLER_H
+#define INCLUDE_HUEPLUSPLUS_WINHTTPHANDLER_H
 
 #include <string>
 #include <vector>
