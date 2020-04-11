@@ -20,8 +20,8 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef _SIMPLE_BRIGHTNESS_STRATEGY_H
-#define _SIMPLE_BRIGHTNESS_STRATEGY_H
+#ifndef INCLUDE_HUEPLUSPLUS_SIMPLE_BRIGHTNESS_STRATEGY_H
+#define INCLUDE_HUEPLUSPLUS_SIMPLE_BRIGHTNESS_STRATEGY_H
 
 #include "BrightnessStrategy.h"
 #include "HueLight.h"

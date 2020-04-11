@@ -20,8 +20,8 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef _HUE_H
-#define _HUE_H
+#ifndef INCLUDE_HUEPLUSPLUS_HUE_H
+#define INCLUDE_HUEPLUSPLUS_HUE_H
 
 #include <map>
 #include <memory>

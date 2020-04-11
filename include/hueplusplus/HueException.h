@@ -20,8 +20,8 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef _HUE_EXCEPTION_H
-#define _HUE_EXCEPTION_H
+#ifndef INCLUDE_HUEPLUSPLUS_HUE_EXCEPTION_H
+#define INCLUDE_HUEPLUSPLUS_HUE_EXCEPTION_H
 
 #include <exception>
 #include <string>
