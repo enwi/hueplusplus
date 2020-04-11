@@ -20,8 +20,8 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef _UNITS_H
-#define _UNITS_H
+#ifndef INCLUDE_HUEPLUSPLUS_UNITS_H
+#define INCLUDE_HUEPLUSPLUS_UNITS_H
 
 namespace hueplusplus
 {

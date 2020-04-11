@@ -20,8 +20,8 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef _BASE_HTTPHANDLER_H
-#define _BASE_HTTPHANDLER_H
+#ifndef INCLUDE_HUEPLUSPLUS_BASE_HTTP_HANDLER_H
+#define INCLUDE_HUEPLUSPLUS_BASE_HTTP_HANDLER_H
 
 #include <iostream>
 #include <memory>
