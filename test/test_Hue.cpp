@@ -20,8 +20,6 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include <atomic>
-#include <iostream>
 #include <memory>
 #include <string>
 
@@ -285,6 +283,9 @@ TEST(Hue, getLight)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(hue_bridge_state["lights"]["1"]));
 
+    // Refresh cache
+    test_bridge = Hue(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+
     // Test when correct data is sent
     HueLight test_light_1 = test_bridge.getLight(1);
     EXPECT_EQ(test_light_1.getName(), "Hue ambiance lamp 1");
@@ -479,7 +480,7 @@ TEST(Hue, lightExists)
                 {"uniqueid", "00:00:00:00:00:00:00:00-00"}, {"swversion", "5.50.1.19085"}}}}}};
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(2))
+        .Times(AtLeast(1))
         .WillRepeatedly(Return(hue_bridge_state));
     EXPECT_CALL(*handler,
         GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))

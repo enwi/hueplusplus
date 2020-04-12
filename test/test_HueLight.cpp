@@ -54,6 +54,7 @@ protected:
         hue_bridge_state["lights"]["1"]["state"]["alert"] = "none";
         hue_bridge_state["lights"]["1"]["state"]["colormode"] = "ct";
         hue_bridge_state["lights"]["1"]["state"]["reachable"] = true;
+        hue_bridge_state["lights"]["1"]["state"]["effect"] = "none";
         hue_bridge_state["lights"]["1"]["swupdate"] = nlohmann::json::object();
         hue_bridge_state["lights"]["1"]["swupdate"]["state"] = "noupdates";
         hue_bridge_state["lights"]["1"]["swupdate"]["lastinstall"] = nullptr;
@@ -77,6 +78,7 @@ protected:
         hue_bridge_state["lights"]["2"]["state"]["alert"] = "none";
         hue_bridge_state["lights"]["2"]["state"]["colormode"] = "ct";
         hue_bridge_state["lights"]["2"]["state"]["reachable"] = true;
+        hue_bridge_state["lights"]["2"]["state"]["effect"] = "none";
         hue_bridge_state["lights"]["2"]["swupdate"] = nlohmann::json::object();
         hue_bridge_state["lights"]["2"]["swupdate"]["state"] = "noupdates";
         hue_bridge_state["lights"]["2"]["swupdate"]["lastinstall"] = nullptr;
@@ -97,6 +99,7 @@ protected:
         hue_bridge_state["lights"]["3"]["state"]["alert"] = "none";
         hue_bridge_state["lights"]["3"]["state"]["colormode"] = "ct";
         hue_bridge_state["lights"]["3"]["state"]["reachable"] = true;
+        hue_bridge_state["lights"]["3"]["state"]["effect"] = "none";
         hue_bridge_state["lights"]["3"]["swupdate"] = nlohmann::json::object();
         hue_bridge_state["lights"]["3"]["swupdate"]["state"] = "noupdates";
         hue_bridge_state["lights"]["3"]["swupdate"]["lastinstall"] = nullptr;
