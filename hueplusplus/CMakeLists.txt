@@ -5,6 +5,7 @@ set(hueplusplus_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/ExtendedColorTemperatureStrategy.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Hue.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/HueCommandAPI.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/HueDeviceTypes.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/HueException.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/HueLight.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/SimpleBrightnessStrategy.cpp
