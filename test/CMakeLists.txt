@@ -25,6 +25,9 @@ add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src EXCLUDE_FROM_ALL
                  ${CMAKE_CURRENT_BINARY_DIR}/googletest-build EXCLUDE_FROM_ALL
 )
 
+target_compile_features(gmock PUBLIC cxx_std_14)
+target_compile_features(gtest PUBLIC cxx_std_14)
+
 # define all test sources
 set(TEST_SOURCES
     test_BaseHttpHandler.cpp
