@@ -29,6 +29,7 @@
 #include <utility>
 #include <vector>
 
+#include "APICache.h"
 #include "BrightnessStrategy.h"
 #include "ColorHueStrategy.h"
 #include "ColorTemperatureStrategy.h"
@@ -123,8 +124,8 @@ public:
     //! \param username String that specifies the username that is used to control
     //! the bridge. This needs to be acquired in \ref requestUsername
     //! \param handler HttpHandler for communication with the bridge
-    Hue(const std::string& ip, const int port, const std::string& username,
-        std::shared_ptr<const IHttpHandler> handler);
+    Hue(const std::string& ip, const int port, const std::string& username, std::shared_ptr<const IHttpHandler> handler,
+        std::chrono::steady_clock::duration refreshDuration = std::chrono::seconds(10));
 
     //! \brief Function to get the ip address of the hue bridge
     //!
@@ -249,19 +250,10 @@ public:
     }
 
 private:
-    //! \brief Function that refreshes the local \ref state of the Hue bridge
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    void refreshState();
-
-private:
     std::string ip; //!< IP-Address of the hue bridge in dotted decimal notation
                     //!< like "192.168.2.1"
     std::string username; //!< Username that is ussed to access the hue bridge
     int port;
-    nlohmann::json state; //!< The state of the hue bridge as it is returned from it
     std::map<uint8_t, HueLight> lights; //!< Maps ids to HueLights that are controlled by this bridge
 
     std::shared_ptr<BrightnessStrategy> simpleBrightnessStrategy; //!< Strategy that is used for controlling the
@@ -278,6 +270,7 @@ private:
     std::shared_ptr<const IHttpHandler> http_handler; //!< A IHttpHandler that is used to communicate with the
                                                       //!< bridge
     HueCommandAPI commands; //!< A HueCommandAPI that is used to communicate with the bridge
+    APICache stateCache; //!< The state of the hue bridge as it is returned from it
 };
 } // namespace hueplusplus
 
