@@ -44,7 +44,6 @@ TEST(ExtendedColorHueStrategy, alertHueSaturation)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
     MockHueLight test_light(handler);
-    EXPECT_CALL(test_light, refreshState()).Times(AtLeast(1)).WillRepeatedly(Return());
 
     test_light.getState()["state"]["colormode"] = "invalid";
     test_light.getState()["state"]["on"] = false;
@@ -65,7 +64,7 @@ TEST(ExtendedColorHueStrategy, alertHueSaturation)
 
     EXPECT_EQ(true, ExtendedColorHueStrategy().alertHueSaturation(200, 100, test_light));
 
-    EXPECT_CALL(test_light, OffNoRefresh(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
+    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
     test_light.getState()["state"]["on"] = false;
     EXPECT_EQ(true, ExtendedColorHueStrategy().alertHueSaturation(200, 100, test_light));
 
@@ -85,7 +84,7 @@ TEST(ExtendedColorHueStrategy, alertHueSaturation)
     EXPECT_CALL(test_light, setColorXY(_, _, 1)).Times(AtLeast(2)).WillRepeatedly(Return(true));
     EXPECT_EQ(true, ExtendedColorHueStrategy().alertHueSaturation(200, 100, test_light));
 
-    EXPECT_CALL(test_light, OffNoRefresh(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
+    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
     test_light.getState()["state"]["on"] = false;
     EXPECT_EQ(true, ExtendedColorHueStrategy().alertHueSaturation(200, 100, test_light));
 
@@ -104,7 +103,7 @@ TEST(ExtendedColorHueStrategy, alertHueSaturation)
     EXPECT_CALL(test_light, setColorTemperature(_, 1)).Times(AtLeast(2)).WillRepeatedly(Return(true));
     EXPECT_EQ(true, ExtendedColorHueStrategy().alertHueSaturation(200, 100, test_light));
 
-    EXPECT_CALL(test_light, OffNoRefresh(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
+    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
     test_light.getState()["state"]["on"] = false;
     EXPECT_EQ(true, ExtendedColorHueStrategy().alertHueSaturation(200, 100, test_light));
 }
@@ -118,7 +117,6 @@ TEST(ExtendedColorHueStrategy, alertXY)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
     MockHueLight test_light(handler);
-    EXPECT_CALL(test_light, refreshState()).Times(AtLeast(1)).WillRepeatedly(Return());
 
     test_light.getState()["state"]["colormode"] = "invalid";
     test_light.getState()["state"]["on"] = false;
@@ -139,7 +137,7 @@ TEST(ExtendedColorHueStrategy, alertXY)
     EXPECT_CALL(test_light, setColorHueSaturation(_, _, 1)).Times(AtLeast(2)).WillRepeatedly(Return(true));
     EXPECT_EQ(true, ExtendedColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
 
-    EXPECT_CALL(test_light, OffNoRefresh(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
+    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
     test_light.getState()["state"]["on"] = false;
     EXPECT_EQ(true, ExtendedColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
 
@@ -153,7 +151,7 @@ TEST(ExtendedColorHueStrategy, alertXY)
 
     EXPECT_EQ(true, ExtendedColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
 
-    EXPECT_CALL(test_light, OffNoRefresh(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
+    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
     test_light.getState()["state"]["on"] = false;
     EXPECT_EQ(true, ExtendedColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
 
@@ -169,7 +167,7 @@ TEST(ExtendedColorHueStrategy, alertXY)
     EXPECT_CALL(test_light, setColorTemperature(_, 1)).Times(AtLeast(2)).WillRepeatedly(Return(true));
     EXPECT_EQ(true, ExtendedColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
 
-    EXPECT_CALL(test_light, OffNoRefresh(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
+    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
     test_light.getState()["state"]["on"] = false;
     EXPECT_EQ(true, ExtendedColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
 }
@@ -183,7 +181,6 @@ TEST(ExtendedColorHueStrategy, alertRGB)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
     MockHueLight test_light(handler);
-    EXPECT_CALL(test_light, refreshState()).Times(AtLeast(1)).WillRepeatedly(Return());
 
     test_light.getState()["state"]["colormode"] = "invalid";
     test_light.getState()["state"]["on"] = false;
@@ -205,7 +202,7 @@ TEST(ExtendedColorHueStrategy, alertRGB)
     EXPECT_CALL(test_light, setColorHueSaturation(_, _, 1)).Times(AtLeast(2)).WillRepeatedly(Return(true));
     EXPECT_EQ(true, ExtendedColorHueStrategy().alertRGB(128, 128, 128, test_light));
 
-    EXPECT_CALL(test_light, OffNoRefresh(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
+    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
     test_light.getState()["state"]["on"] = false;
     EXPECT_EQ(true, ExtendedColorHueStrategy().alertRGB(128, 128, 128, test_light));
 
@@ -225,7 +222,7 @@ TEST(ExtendedColorHueStrategy, alertRGB)
     EXPECT_CALL(test_light, setColorXY(_, _, 1)).Times(AtLeast(2)).WillRepeatedly(Return(true));
     EXPECT_EQ(true, ExtendedColorHueStrategy().alertRGB(128, 128, 128, test_light));
 
-    EXPECT_CALL(test_light, OffNoRefresh(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
+    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
     test_light.getState()["state"]["on"] = false;
     EXPECT_EQ(true, ExtendedColorHueStrategy().alertRGB(128, 128, 128, test_light));
 
@@ -244,7 +241,7 @@ TEST(ExtendedColorHueStrategy, alertRGB)
     EXPECT_CALL(test_light, setColorTemperature(_, 1)).Times(AtLeast(2)).WillRepeatedly(Return(true));
     EXPECT_EQ(true, ExtendedColorHueStrategy().alertRGB(128, 128, 128, test_light));
 
-    EXPECT_CALL(test_light, OffNoRefresh(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
+    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
     test_light.getState()["state"]["on"] = false;
     EXPECT_EQ(true, ExtendedColorHueStrategy().alertRGB(128, 128, 128, test_light));
 }

@@ -44,7 +44,7 @@ TEST(SimpleColorHueStrategy, setColorHue)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
     MockHueLight test_light(handler);
-    EXPECT_CALL(test_light, refreshState()).Times(AtLeast(1)).WillRepeatedly(Return());
+
     nlohmann::json prep_ret;
     prep_ret = nlohmann::json::array();
     prep_ret[0] = nlohmann::json::object();
@@ -76,7 +76,7 @@ TEST(SimpleColorHueStrategy, setColorSaturation)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
     MockHueLight test_light(handler);
-    EXPECT_CALL(test_light, refreshState()).Times(AtLeast(1)).WillRepeatedly(Return());
+
     nlohmann::json prep_ret;
     prep_ret = nlohmann::json::array();
     prep_ret[0] = nlohmann::json::object();
@@ -108,7 +108,7 @@ TEST(SimpleColorHueStrategy, setColorHueSaturation)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
     MockHueLight test_light(handler);
-    EXPECT_CALL(test_light, refreshState()).Times(AtLeast(1)).WillRepeatedly(Return());
+
     nlohmann::json prep_ret;
     prep_ret = nlohmann::json::array();
     prep_ret[0] = nlohmann::json::object();
@@ -144,7 +144,7 @@ TEST(SimpleColorHueStrategy, setColorXY)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
     MockHueLight test_light(handler);
-    EXPECT_CALL(test_light, refreshState()).Times(AtLeast(1)).WillRepeatedly(Return());
+
     nlohmann::json prep_ret;
     prep_ret = nlohmann::json::array();
     prep_ret[0] = nlohmann::json::object();
@@ -184,7 +184,7 @@ TEST(SimpleColorHueStrategy, setColorRGB)
 
     EXPECT_EQ(true, SimpleColorHueStrategy().setColorRGB(255, 255, 255, 4, test_light));
 
-    EXPECT_CALL(test_light, OffNoRefresh(4)).Times(1).WillOnce(Return(true));
+    EXPECT_CALL(test_light, Off(4)).Times(1).WillOnce(Return(true));
     EXPECT_EQ(true, SimpleColorHueStrategy().setColorRGB(0, 0, 0, 4, test_light));
 }
 
@@ -197,7 +197,7 @@ TEST(SimpleColorHueStrategy, setColorLoop)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
     MockHueLight test_light(handler);
-    EXPECT_CALL(test_light, refreshState()).Times(AtLeast(1)).WillRepeatedly(Return());
+
     nlohmann::json prep_ret;
     prep_ret = nlohmann::json::array();
     prep_ret[0] = nlohmann::json::object();
@@ -226,7 +226,6 @@ TEST(SimpleColorHueStrategy, alertHueSaturation)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
     MockHueLight test_light(handler);
-    EXPECT_CALL(test_light, refreshState()).Times(AtLeast(1)).WillRepeatedly(Return());
 
     test_light.getState()["state"]["colormode"] = "invalid";
     test_light.getState()["state"]["on"] = false;
@@ -247,7 +246,7 @@ TEST(SimpleColorHueStrategy, alertHueSaturation)
 
     EXPECT_EQ(true, SimpleColorHueStrategy().alertHueSaturation(200, 100, test_light));
 
-    EXPECT_CALL(test_light, OffNoRefresh(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
+    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
     test_light.getState()["state"]["on"] = false;
     EXPECT_EQ(true, SimpleColorHueStrategy().alertHueSaturation(200, 100, test_light));
 
@@ -267,7 +266,7 @@ TEST(SimpleColorHueStrategy, alertHueSaturation)
     EXPECT_CALL(test_light, setColorXY(_, _, 1)).Times(AtLeast(2)).WillRepeatedly(Return(true));
     EXPECT_EQ(true, SimpleColorHueStrategy().alertHueSaturation(200, 100, test_light));
 
-    EXPECT_CALL(test_light, OffNoRefresh(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
+    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
     test_light.getState()["state"]["on"] = false;
     EXPECT_EQ(true, SimpleColorHueStrategy().alertHueSaturation(200, 100, test_light));
 }
@@ -281,7 +280,6 @@ TEST(SimpleColorHueStrategy, alertXY)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
     MockHueLight test_light(handler);
-    EXPECT_CALL(test_light, refreshState()).Times(AtLeast(1)).WillRepeatedly(Return());
 
     test_light.getState()["state"]["colormode"] = "invalid";
     test_light.getState()["state"]["on"] = false;
@@ -302,7 +300,7 @@ TEST(SimpleColorHueStrategy, alertXY)
     EXPECT_CALL(test_light, setColorHueSaturation(_, _, 1)).Times(AtLeast(2)).WillRepeatedly(Return(true));
     EXPECT_EQ(true, SimpleColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
 
-    EXPECT_CALL(test_light, OffNoRefresh(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
+    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
     test_light.getState()["state"]["on"] = false;
     EXPECT_EQ(true, SimpleColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
 
@@ -316,7 +314,7 @@ TEST(SimpleColorHueStrategy, alertXY)
 
     EXPECT_EQ(true, SimpleColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
 
-    EXPECT_CALL(test_light, OffNoRefresh(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
+    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
     test_light.getState()["state"]["on"] = false;
     EXPECT_EQ(true, SimpleColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
 }
@@ -330,7 +328,6 @@ TEST(SimpleColorHueStrategy, alertRGB)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
     MockHueLight test_light(handler);
-    EXPECT_CALL(test_light, refreshState()).Times(AtLeast(1)).WillRepeatedly(Return());
 
     test_light.getState()["state"]["colormode"] = "invalid";
     test_light.getState()["state"]["on"] = false;
@@ -352,7 +349,7 @@ TEST(SimpleColorHueStrategy, alertRGB)
     EXPECT_CALL(test_light, setColorHueSaturation(_, _, 1)).Times(AtLeast(2)).WillRepeatedly(Return(true));
     EXPECT_EQ(true, SimpleColorHueStrategy().alertRGB(128, 128, 128, test_light));
 
-    EXPECT_CALL(test_light, OffNoRefresh(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
+    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
     test_light.getState()["state"]["on"] = false;
     EXPECT_EQ(true, SimpleColorHueStrategy().alertRGB(128, 128, 128, test_light));
 
@@ -372,7 +369,7 @@ TEST(SimpleColorHueStrategy, alertRGB)
     EXPECT_CALL(test_light, setColorXY(_, _, 1)).Times(AtLeast(2)).WillRepeatedly(Return(true));
     EXPECT_EQ(true, SimpleColorHueStrategy().alertRGB(128, 128, 128, test_light));
 
-    EXPECT_CALL(test_light, OffNoRefresh(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
+    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
     test_light.getState()["state"]["on"] = false;
     EXPECT_EQ(true, SimpleColorHueStrategy().alertRGB(128, 128, 128, test_light));
 }
@@ -386,7 +383,6 @@ TEST(SimpleColorHueStrategy, getColorHueSaturation)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
     MockHueLight test_light(handler);
-    EXPECT_CALL(test_light, refreshState()).Times(AtLeast(1)).WillRepeatedly(Return());
 
     test_light.getState()["state"]["hue"] = 5000;
     test_light.getState()["state"]["sat"] = 128;
@@ -407,7 +403,6 @@ TEST(SimpleColorHueStrategy, getColorXY)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
     MockHueLight test_light(handler);
-    EXPECT_CALL(test_light, refreshState()).Times(AtLeast(1)).WillRepeatedly(Return());
 
     test_light.getState()["state"]["xy"][0] = 0.1234;
     test_light.getState()["state"]["xy"][1] = 0.1234;
