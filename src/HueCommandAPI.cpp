@@ -81,7 +81,7 @@ nlohmann::json HueCommandAPI::PUTRequest(const std::string& path, const nlohmann
 nlohmann::json HueCommandAPI::PUTRequest(
     const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const
 {
-    return HandleError(fileInfo,
+    return HandleError(std::move(fileInfo),
         RunWithTimeout(timeout, minDelay, [&]() { return httpHandler->PUTJson(CombinedPath(path), request, ip); }));
 }
 
@@ -93,7 +93,7 @@ nlohmann::json HueCommandAPI::GETRequest(const std::string& path, const nlohmann
 nlohmann::json HueCommandAPI::GETRequest(
     const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const
 {
-    return HandleError(fileInfo,
+    return HandleError(std::move(fileInfo),
         RunWithTimeout(timeout, minDelay, [&]() { return httpHandler->GETJson(CombinedPath(path), request, ip); }));
 }
 
@@ -105,7 +105,7 @@ nlohmann::json HueCommandAPI::DELETERequest(const std::string& path, const nlohm
 nlohmann::json HueCommandAPI::DELETERequest(
     const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const
 {
-    return HandleError(fileInfo,
+    return HandleError(std::move(fileInfo),
         RunWithTimeout(timeout, minDelay, [&]() { return httpHandler->DELETEJson(CombinedPath(path), request, ip); }));
 }
 

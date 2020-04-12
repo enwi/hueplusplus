@@ -34,17 +34,18 @@ namespace hueplusplus
 {
 bool SimpleColorTemperatureStrategy::setColorTemperature(unsigned int mired, uint8_t transition, HueLight& light) const
 {
-    light.refreshState();
+    // Careful, only use state until any light function might refresh the value and invalidate the reference
+    const nlohmann::json& state = light.state.GetValue()["state"];
     nlohmann::json request = nlohmann::json::object();
     if (transition != 4)
     {
         request["transitiontime"] = transition;
     }
-    if (light.state["state"]["on"] != true)
+    if (state["on"] != true)
     {
         request["on"] = true;
     }
-    if (light.state["state"]["ct"] != mired)
+    if (state["ct"] != mired)
     {
         if (mired > 500)
         {
@@ -71,12 +72,13 @@ bool SimpleColorTemperatureStrategy::setColorTemperature(unsigned int mired, uin
 
 bool SimpleColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLight& light) const
 {
-    light.refreshState();
-    std::string cType = light.state["state"]["colormode"].get<std::string>();
-    bool on = light.state["state"]["on"].get<bool>();
+    // Careful, only use state until any light function might refresh the value and invalidate the reference
+    const nlohmann::json& state = light.state.GetValue()["state"];
+    std::string cType = state["colormode"].get<std::string>();
+    bool on = state["on"].get<bool>();
     if (cType == "ct")
     {
-        uint16_t oldCT = light.state["state"]["ct"].get<uint16_t>();
+        uint16_t oldCT = state["ct"].get<uint16_t>();
         if (!light.setColorTemperature(mired, 1))
         {
             return false;
@@ -90,7 +92,7 @@ bool SimpleColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLig
         if (!on)
         {
             light.setColorTemperature(oldCT, 1);
-            return light.OffNoRefresh(1);
+            return light.Off(1);
         }
         else
         {
@@ -105,12 +107,11 @@ bool SimpleColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLig
 
 unsigned int SimpleColorTemperatureStrategy::getColorTemperature(HueLight& light) const
 {
-    light.refreshState();
-    return light.state["state"]["ct"].get<unsigned int>();
+    return light.state.GetValue()["state"]["ct"].get<unsigned int>();
 }
 
 unsigned int SimpleColorTemperatureStrategy::getColorTemperature(const HueLight& light) const
 {
-    return light.state["state"]["ct"].get<unsigned int>();
+    return light.state.GetValue()["state"]["ct"].get<unsigned int>();
 }
 } // namespace hueplusplus

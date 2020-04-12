@@ -449,12 +449,12 @@ TEST(Hue, getAllLights)
 
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(2)
+        .Times(AtLeast(1))
         .WillRepeatedly(Return(hue_bridge_state));
 
     EXPECT_CALL(*handler,
         GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(2)
+        .Times(AtLeast(1))
         .WillRepeatedly(Return(hue_bridge_state["lights"]["1"]));
 
     Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
@@ -530,13 +530,4 @@ TEST(Hue, getPictureOfLight)
     EXPECT_EQ("", test_bridge.getPictureOfLight(2));
 
     EXPECT_EQ("e27_waca", test_bridge.getPictureOfLight(1));
-}
-
-TEST(Hue, refreshState)
-{
-    std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
-    Hue test_bridge(getBridgeIp(), getBridgePort(), "", handler); // NULL as username leads to segfault
-
-    std::vector<std::reference_wrapper<HueLight>> test_lights = test_bridge.getAllLights();
-    EXPECT_EQ(test_lights.size(), 0);
 }

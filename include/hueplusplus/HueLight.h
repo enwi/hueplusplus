@@ -25,6 +25,7 @@
 
 #include <memory>
 
+#include "APICache.h"
 #include "BrightnessStrategy.h"
 #include "ColorHueStrategy.h"
 #include "ColorTemperatureStrategy.h"
@@ -698,7 +699,8 @@ protected:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     HueLight(int id, const HueCommandAPI& commands, std::shared_ptr<const BrightnessStrategy> brightnessStrategy,
         std::shared_ptr<const ColorTemperatureStrategy> colorTempStrategy,
-        std::shared_ptr<const ColorHueStrategy> colorHueStrategy);
+        std::shared_ptr<const ColorHueStrategy> colorHueStrategy,
+        std::chrono::steady_clock::duration refreshDuration = std::chrono::seconds(10));
 
     //! \brief Protected function that sets the brightness strategy.
     //!
@@ -735,26 +737,6 @@ protected:
     //! \param commandAPI the new HueCommandAPI
     virtual void setCommandAPI(const HueCommandAPI& commandAPI) { commands = commandAPI; };
 
-    //! \brief Function that turns the light on without refreshing its state.
-    //!
-    //! \param transition Optional parameter to set the transition from current state to new standard is 4 = 400ms
-    //! \return Bool that is true on success
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual bool OnNoRefresh(uint8_t transition = 4);
-
-    //! \brief Function that turns the light off without refreshing its state.
-    //!
-    //! \param transition Optional parameter to set the transition from current state to new standard is 4 = 400ms
-    //! \return Bool that is true on success
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual bool OffNoRefresh(uint8_t transition = 4);
-
     //! \brief Utility function to send a put request to the light.
     //!
     //! \throws nlohmann::json::parse_error if the reply could not be parsed
@@ -768,16 +750,9 @@ protected:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual nlohmann::json SendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo);
 
-    //! \brief Virtual function that refreshes the \ref state of the light.
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual void refreshState();
-
 protected:
     int id; //!< holds the id of the light
-    nlohmann::json state; //!< holds the current state of the light updated by \ref refreshState
+    APICache state; //!< holds the current state of the light updated by \ref refreshState
     ColorType colorType; //!< holds the \ref ColorType of the light
 
     std::shared_ptr<const BrightnessStrategy>

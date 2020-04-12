@@ -1,4 +1,5 @@
 set(hueplusplus_SOURCES
+	APICache.cpp
     BaseHttpHandler.cpp
     ExtendedColorHueStrategy.cpp
     ExtendedColorTemperatureStrategy.cpp
