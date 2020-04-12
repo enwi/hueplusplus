@@ -3,7 +3,7 @@ language: generic
 env:
   global:
     # Ubuntu version
-    - LINUX_DIST=trusty
+    - LINUX_DIST=xenial
     - DEPS_DIR=${TRAVIS_BUILD_DIR}/deps
     # compiler settings
     - COMPILER_NAME=gcc
@@ -17,7 +17,7 @@ env:
 matrix:
   include:
     - os: linux
-      dist: trusty
+      dist: xenial
       sudo: true
       compiler: gcc
       addons:
@@ -31,7 +31,7 @@ matrix:
            - graphviz
          sources: &sources
            - ubuntu-toolchain-r-test
-           - llvm-toolchain-trusty-6.0
+           - llvm-toolchain-xenial-6.0
 
 before_install:
     # Combine global build options with OS/compiler-dependent options
