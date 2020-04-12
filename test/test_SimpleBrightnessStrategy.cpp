@@ -45,8 +45,8 @@ TEST(SimpleBrightnessStrategy, setBrightness)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
     MockHueLight test_light(handler);
-    EXPECT_CALL(test_light, refreshState()).Times(AtLeast(1)).WillRepeatedly(Return());
-    EXPECT_CALL(test_light, OffNoRefresh(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
+
+    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
     nlohmann::json prep_ret;
     prep_ret = nlohmann::json::array();
     prep_ret[0] = nlohmann::json::object();
@@ -86,7 +86,6 @@ TEST(SimpleBrightnessStrategy, getBrightness)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
     MockHueLight test_light(handler);
-    EXPECT_CALL(test_light, refreshState()).Times(AtLeast(1)).WillRepeatedly(Return());
 
     test_light.getState()["state"]["bri"] = 200;
     EXPECT_EQ(200, SimpleBrightnessStrategy().getBrightness(test_light));

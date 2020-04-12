@@ -32,13 +32,14 @@ namespace hueplusplus
 {
 bool ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, HueLight& light) const
 {
-    light.refreshState();
-    std::string cType = light.state["state"]["colormode"];
-    bool on = light.state["state"]["on"];
+    // Careful, only use state until any light function might refresh the value and invalidate the reference
+    const nlohmann::json& state = light.state.GetValue()["state"];
+    std::string cType = state["colormode"];
+    bool on = state["on"];
     if (cType == "hs")
     {
-        uint16_t oldHue = light.state["state"]["hue"];
-        uint8_t oldSat = light.state["state"]["sat"];
+        uint16_t oldHue = state["hue"];
+        uint8_t oldSat = state["sat"];
         if (!light.setColorHueSaturation(hue, sat, 1))
         {
             return false;
@@ -52,7 +53,7 @@ bool ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, Hue
         if (!on)
         {
             light.setColorHueSaturation(oldHue, oldSat, 1);
-            return light.OffNoRefresh(1);
+            return light.Off(1);
         }
         else
         {
@@ -61,8 +62,8 @@ bool ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, Hue
     }
     else if (cType == "xy")
     {
-        float oldX = light.state["state"]["xy"][0];
-        float oldY = light.state["state"]["xy"][1];
+        float oldX = state["xy"][0];
+        float oldY = state["xy"][1];
         if (!light.setColorHueSaturation(hue, sat, 1))
         {
             return false;
@@ -76,7 +77,7 @@ bool ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, Hue
         if (!on)
         {
             light.setColorXY(oldX, oldY, 1);
-            return light.OffNoRefresh(1);
+            return light.Off(1);
         }
         else
         {
@@ -85,7 +86,7 @@ bool ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, Hue
     }
     else if (cType == "ct")
     {
-        uint16_t oldCT = light.state["state"]["ct"];
+        uint16_t oldCT = light.state.GetValue()["state"]["ct"];
         if (!light.setColorHueSaturation(hue, sat, 1))
         {
             return false;
@@ -99,7 +100,7 @@ bool ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, Hue
         if (!on)
         {
             light.setColorTemperature(oldCT, 1);
-            return light.OffNoRefresh(1);
+            return light.Off(1);
         }
         else
         {
@@ -114,13 +115,14 @@ bool ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, Hue
 
 bool ExtendedColorHueStrategy::alertXY(float x, float y, HueLight& light) const
 {
-    light.refreshState();
-    std::string cType = light.state["state"]["colormode"];
-    bool on = light.state["state"]["on"];
+    // Careful, only use state until any light function might refresh the value and invalidate the reference
+    const nlohmann::json& state = light.state.GetValue()["state"];
+    std::string cType = state["colormode"];
+    bool on = state["on"];
     if (cType == "hs")
     {
-        uint16_t oldHue = light.state["state"]["hue"];
-        uint8_t oldSat = light.state["state"]["sat"];
+        uint16_t oldHue = state["hue"];
+        uint8_t oldSat = state["sat"];
         if (!light.setColorXY(x, y, 1))
         {
             return false;
@@ -134,7 +136,7 @@ bool ExtendedColorHueStrategy::alertXY(float x, float y, HueLight& light) const
         if (!on)
         {
             light.setColorHueSaturation(oldHue, oldSat, 1);
-            return light.OffNoRefresh(1);
+            return light.Off(1);
         }
         else
         {
@@ -143,8 +145,8 @@ bool ExtendedColorHueStrategy::alertXY(float x, float y, HueLight& light) const
     }
     else if (cType == "xy")
     {
-        float oldX = light.state["state"]["xy"][0];
-        float oldY = light.state["state"]["xy"][1];
+        float oldX = state["xy"][0];
+        float oldY = state["xy"][1];
         if (!light.setColorXY(x, y, 1))
         {
             return false;
@@ -158,7 +160,7 @@ bool ExtendedColorHueStrategy::alertXY(float x, float y, HueLight& light) const
         if (!on)
         {
             light.setColorXY(oldX, oldY, 1);
-            return light.OffNoRefresh(1);
+            return light.Off(1);
         }
         else
         {
@@ -167,7 +169,7 @@ bool ExtendedColorHueStrategy::alertXY(float x, float y, HueLight& light) const
     }
     else if (cType == "ct")
     {
-        uint16_t oldCT = light.state["state"]["ct"];
+        uint16_t oldCT = state["ct"];
         if (!light.setColorXY(x, y, 1))
         {
             return false;
@@ -181,7 +183,7 @@ bool ExtendedColorHueStrategy::alertXY(float x, float y, HueLight& light) const
         if (!on)
         {
             light.setColorTemperature(oldCT, 1);
-            return light.OffNoRefresh(1);
+            return light.Off(1);
         }
         else
         {
@@ -196,13 +198,14 @@ bool ExtendedColorHueStrategy::alertXY(float x, float y, HueLight& light) const
 
 bool ExtendedColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLight& light) const
 {
-    light.refreshState();
-    std::string cType = light.state["state"]["colormode"];
-    bool on = light.state["state"]["on"];
+    // Careful, only use state until any light function might refresh the value and invalidate the reference
+    const nlohmann::json& state = light.state.GetValue()["state"];
+    std::string cType = state["colormode"];
+    bool on = state["on"];
     if (cType == "hs")
     {
-        uint16_t oldHue = light.state["state"]["hue"];
-        uint8_t oldSat = light.state["state"]["sat"];
+        uint16_t oldHue = state["hue"];
+        uint8_t oldSat = state["sat"];
         if (!light.setColorRGB(r, g, b, 1))
         {
             return false;
@@ -216,7 +219,7 @@ bool ExtendedColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLigh
         if (!on)
         {
             light.setColorHueSaturation(oldHue, oldSat, 1);
-            return light.OffNoRefresh(1);
+            return light.Off(1);
         }
         else
         {
@@ -225,8 +228,8 @@ bool ExtendedColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLigh
     }
     else if (cType == "xy")
     {
-        float oldX = light.state["state"]["xy"][0];
-        float oldY = light.state["state"]["xy"][1];
+        float oldX = state["xy"][0];
+        float oldY = state["xy"][1];
         if (!light.setColorRGB(r, g, b, 1))
         {
             return false;
@@ -240,7 +243,7 @@ bool ExtendedColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLigh
         if (!on)
         {
             light.setColorXY(oldX, oldY, 1);
-            return light.OffNoRefresh(1);
+            return light.Off(1);
         }
         else
         {
@@ -249,7 +252,7 @@ bool ExtendedColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLigh
     }
     else if (cType == "ct")
     {
-        uint16_t oldCT = light.state["state"]["ct"];
+        uint16_t oldCT = state["ct"];
         if (!light.setColorRGB(r, g, b, 1))
         {
             return false;
@@ -263,7 +266,7 @@ bool ExtendedColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLigh
         if (!on)
         {
             light.setColorTemperature(oldCT, 1);
-            return light.OffNoRefresh(1);
+            return light.Off(1);
         }
         else
         {

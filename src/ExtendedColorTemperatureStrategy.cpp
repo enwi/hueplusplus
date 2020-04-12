@@ -35,17 +35,18 @@ namespace hueplusplus
 bool ExtendedColorTemperatureStrategy::setColorTemperature(
     unsigned int mired, uint8_t transition, HueLight& light) const
 {
-    light.refreshState();
+    // Careful, only use state until any light function might refresh the value and invalidate the reference
+    const nlohmann::json& state = light.state.GetValue()["state"];
     nlohmann::json request = nlohmann::json::object();
     if (transition != 4)
     {
         request["transitiontime"] = transition;
     }
-    if (light.state["state"]["on"] != true)
+    if (state["on"] != true)
     {
         request["on"] = true;
     }
-    if (light.state["state"]["ct"] != mired || light.state["state"]["colormode"] != "ct")
+    if (state["ct"] != mired || state["colormode"] != "ct")
     {
         if (mired > 500)
         {
@@ -72,13 +73,14 @@ bool ExtendedColorTemperatureStrategy::setColorTemperature(
 
 bool ExtendedColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLight& light) const
 {
-    light.refreshState();
-    std::string cType = light.state["state"]["colormode"];
-    bool on = light.state["state"]["on"];
+    // Careful, only use state until any light function might refresh the value and invalidate the reference
+    const nlohmann::json& state = light.state.GetValue()["state"];
+    std::string cType = state["colormode"];
+    bool on = state["on"];
     if (cType == "hs")
     {
-        uint16_t oldHue = light.state["state"]["hue"];
-        uint8_t oldSat = light.state["state"]["sat"];
+        uint16_t oldHue = state["hue"];
+        uint8_t oldSat = state["sat"];
         if (!light.setColorTemperature(mired, 1))
         {
             return false;
@@ -92,7 +94,7 @@ bool ExtendedColorTemperatureStrategy::alertTemperature(unsigned int mired, HueL
         if (!on)
         {
             light.setColorHueSaturation(oldHue, oldSat, 1);
-            return light.OffNoRefresh(1);
+            return light.Off(1);
         }
         else
         {
@@ -101,8 +103,8 @@ bool ExtendedColorTemperatureStrategy::alertTemperature(unsigned int mired, HueL
     }
     else if (cType == "xy")
     {
-        float oldX = light.state["state"]["xy"][0];
-        float oldY = light.state["state"]["xy"][1];
+        float oldX = state["xy"][0];
+        float oldY = state["xy"][1];
         if (!light.setColorTemperature(mired, 1))
         {
             return false;
@@ -116,7 +118,7 @@ bool ExtendedColorTemperatureStrategy::alertTemperature(unsigned int mired, HueL
         if (!on)
         {
             light.setColorXY(oldX, oldY, 1);
-            return light.OffNoRefresh(1);
+            return light.Off(1);
         }
         else
         {
@@ -125,7 +127,7 @@ bool ExtendedColorTemperatureStrategy::alertTemperature(unsigned int mired, HueL
     }
     else if (cType == "ct")
     {
-        uint16_t oldCT = light.state["state"]["ct"];
+        uint16_t oldCT = state["ct"];
         if (!light.setColorTemperature(mired, 1))
         {
             return false;
@@ -139,7 +141,7 @@ bool ExtendedColorTemperatureStrategy::alertTemperature(unsigned int mired, HueL
         if (!on)
         {
             light.setColorTemperature(oldCT, 1);
-            return light.OffNoRefresh(1);
+            return light.Off(1);
         }
         else
         {

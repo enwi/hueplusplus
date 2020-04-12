@@ -135,8 +135,8 @@ std::string HueFinder::ParseDescription(const std::string& description)
     return std::string();
 }
 
-Hue::Hue(
-    const std::string& ip, const int port, const std::string& username, std::shared_ptr<const IHttpHandler> handler)
+Hue::Hue(const std::string& ip, const int port, const std::string& username,
+    std::shared_ptr<const IHttpHandler> handler, std::chrono::steady_clock::duration refreshDuration)
     : ip(ip),
       port(port),
       username(username),
@@ -146,7 +146,8 @@ Hue::Hue(
       simpleColorTemperatureStrategy(std::make_shared<SimpleColorTemperatureStrategy>()),
       extendedColorTemperatureStrategy(std::make_shared<ExtendedColorTemperatureStrategy>()),
       http_handler(std::move(handler)),
-      commands(ip, port, username, http_handler)
+      commands(ip, port, username, http_handler),
+      stateCache("", commands, refreshDuration)
 {}
 
 std::string Hue::getBridgeIP()
@@ -189,6 +190,7 @@ std::string Hue::requestUsername()
                 username = jsonUser.get<std::string>();
                 // Update commands with new username and ip
                 commands = HueCommandAPI(ip, port, username, http_handler);
+                stateCache = APICache("", commands, stateCache.GetRefreshDuration());
                 std::cout << "Success! Link button was pressed!\n";
                 std::cout << "Username is \"" << username << "\"\n";
                 break;
@@ -228,18 +230,16 @@ HueLight& Hue::getLight(int id)
     auto pos = lights.find(id);
     if (pos != lights.end())
     {
-        pos->second.refreshState();
+        pos->second.state.Refresh();
         return pos->second;
     }
-    refreshState();
-    if (!state["lights"].count(std::to_string(id)))
+    const nlohmann::json& lightsCache = stateCache.GetValue()["lights"];
+    if (!lightsCache.count(std::to_string(id)))
     {
         std::cerr << "Error in Hue getLight(): light with id " << id << " is not valid\n";
         throw HueException(CURRENT_FILE_INFO, "Light id is not valid");
     }
-    // std::cout << state["lights"][std::to_string(id)] << std::endl;
-    std::string type = state["lights"][std::to_string(id)]["modelid"];
-    // std::cout << type << std::endl;
+    std::string type = lightsCache[std::to_string(id)]["modelid"];
     auto light = MakeHueLight()(type, id, commands, simpleBrightnessStrategy, extendedColorTemperatureStrategy,
         simpleColorTemperatureStrategy, extendedColorHueStrategy, simpleColorHueStrategy);
     lights.emplace(id, light);
@@ -260,9 +260,9 @@ bool Hue::removeLight(int id)
 
 std::vector<std::reference_wrapper<HueLight>> Hue::getAllLights()
 {
-    refreshState();
-    nlohmann::json lightsState = state["lights"];
-    for (nlohmann::json::iterator it = lightsState.begin(); it != lightsState.end(); ++it)
+    // No reference because getLight may invalidate it
+    nlohmann::json lightsState = stateCache.GetValue()["lights"];
+    for (auto it = lightsState.begin(); it != lightsState.end(); ++it)
     {
         getLight(std::stoi(it.key()));
     }
@@ -276,13 +276,12 @@ std::vector<std::reference_wrapper<HueLight>> Hue::getAllLights()
 
 bool Hue::lightExists(int id)
 {
-    refreshState();
     auto pos = lights.find(id);
     if (pos != lights.end())
     {
         return true;
     }
-    if (state["lights"].count(std::to_string(id)))
+    if (stateCache.GetValue()["lights"].count(std::to_string(id)))
     {
         return true;
     }
@@ -296,7 +295,7 @@ bool Hue::lightExists(int id) const
     {
         return true;
     }
-    if (state["lights"].count(std::to_string(id)))
+    if (stateCache.GetValue()["lights"].count(std::to_string(id)))
     {
         return true;
     }
@@ -436,24 +435,5 @@ std::string Hue::getPictureOfModel(const std::string& model_id) const
         ret.append("motion_sensor");
     }
     return ret;
-}
-
-void Hue::refreshState()
-{
-    if (username.empty())
-    {
-        return;
-    }
-    nlohmann::json answer = commands.GETRequest("", nlohmann::json::object(), CURRENT_FILE_INFO);
-    if (answer.is_object() && answer.count("lights"))
-    {
-        state = answer;
-    }
-    else
-    {
-        std::cout << "Answer in Hue::refreshState of http_handler->GETJson(...) is "
-                     "not expected!\nAnswer:\n\t"
-                  << answer.dump() << std::endl;
-    }
 }
 } // namespace hueplusplus

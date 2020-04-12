@@ -888,19 +888,3 @@ TEST_F(HueLightTest, setColorLoop)
     EXPECT_EQ(false, test_light_2.setColorLoop(false));
     EXPECT_EQ(false, test_light_3.setColorLoop(true));
 }
-
-TEST_F(HueLightTest, refreshState)
-{
-    using namespace ::testing;
-    test_bridge.getLight(1);
-    test_bridge.getLight(2);
-    test_bridge.getLight(3);
-
-    EXPECT_CALL(
-        *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
-        .Times(2)
-        .WillRepeatedly(Return(nlohmann::json::object()));
-
-    const HueLight ctest_light_1 = test_bridge.getLight(1);
-    HueLight test_light_1 = test_bridge.getLight(1);
-}

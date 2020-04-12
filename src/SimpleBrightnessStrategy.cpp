@@ -33,12 +33,13 @@ namespace hueplusplus
 {
 bool SimpleBrightnessStrategy::setBrightness(unsigned int bri, uint8_t transition, HueLight& light) const
 {
-    light.refreshState();
+    // Careful, only use state until any light function might refresh the value and invalidate the reference
+    const nlohmann::json& state = light.state.GetValue()["state"];
     if (bri == 0)
     {
-        if (light.state["state"]["on"] == true)
+        if (state["on"] == true)
         {
-            return light.OffNoRefresh(transition);
+            return light.Off(transition);
         }
         else
         {
@@ -52,11 +53,11 @@ bool SimpleBrightnessStrategy::setBrightness(unsigned int bri, uint8_t transitio
         {
             request["transitiontime"] = transition;
         }
-        if (light.state["state"]["on"] != true)
+        if (state["on"] != true)
         {
             request["on"] = true;
         }
-        if (light.state["state"]["bri"] != bri)
+        if (state["bri"] != bri)
         {
             if (bri > 254)
             {
@@ -80,12 +81,11 @@ bool SimpleBrightnessStrategy::setBrightness(unsigned int bri, uint8_t transitio
 
 unsigned int SimpleBrightnessStrategy::getBrightness(HueLight& light) const
 {
-    light.refreshState();
-    return light.state["state"]["bri"];
+    return light.state.GetValue()["state"]["bri"];
 }
 
 unsigned int SimpleBrightnessStrategy::getBrightness(const HueLight& light) const
 {
-    return light.state["state"]["bri"];
+    return light.state.GetValue()["state"]["bri"];
 }
 } // namespace hueplusplus
