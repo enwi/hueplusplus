@@ -30,6 +30,7 @@ target_compile_features(gtest PUBLIC cxx_std_14)
 
 # define all test sources
 set(TEST_SOURCES
+    test_APICache.cpp
     test_BaseHttpHandler.cpp
     test_ExtendedColorHueStrategy.cpp
     test_ExtendedColorTemperatureStrategy.cpp
