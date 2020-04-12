@@ -94,6 +94,7 @@ enum ColorType
 class HueLight
 {
     friend class Hue;
+    friend struct MakeHueLight;
     friend class SimpleBrightnessStrategy;
     friend class SimpleColorHueStrategy;
     friend class ExtendedColorHueStrategy;

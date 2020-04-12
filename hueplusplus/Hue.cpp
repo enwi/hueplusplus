@@ -31,6 +31,7 @@
 #include <stdexcept>
 #include <thread>
 
+#include "include/HueDeviceTypes.h"
 #include "include/ExtendedColorHueStrategy.h"
 #include "include/ExtendedColorTemperatureStrategy.h"
 #include "include/HueExceptionMacro.h"
@@ -237,58 +238,11 @@ HueLight& Hue::getLight(int id)
     // std::cout << state["lights"][std::to_string(id)] << std::endl;
     std::string type = state["lights"][std::to_string(id)]["modelid"].get<std::string>();
     // std::cout << type << std::endl;
-    if (type == "LCT001" || type == "LCT002" || type == "LCT003" || type == "LCT007" || type == "LLM001")
-    {
-        // HueExtendedColorLight Gamut B
-        HueLight light = HueLight(
-            id, commands, simpleBrightnessStrategy, extendedColorTemperatureStrategy, extendedColorHueStrategy);
-        light.colorType = ColorType::GAMUT_B;
-        lights.emplace(id, light);
-        return lights.find(id)->second;
-    }
-    else if (type == "LCT010" || type == "LCT011" || type == "LCT012" || type == "LCT014" || type == "LCT015"
-        || type == "LCT016" || type == "LLC020" || type == "LST002")
-    {
-        // HueExtendedColorLight Gamut C
-        HueLight light = HueLight(
-            id, commands, simpleBrightnessStrategy, extendedColorTemperatureStrategy, extendedColorHueStrategy);
-        light.colorType = ColorType::GAMUT_C;
-        lights.emplace(id, light);
-        return lights.find(id)->second;
-    }
-    else if (type == "LST001" || type == "LLC005" || type == "LLC006" || type == "LLC007" || type == "LLC010"
-        || type == "LLC011" || type == "LLC012" || type == "LLC013" || type == "LLC014")
-    {
-        // HueColorLight Gamut A
-        HueLight light = HueLight(id, commands, simpleBrightnessStrategy, nullptr, simpleColorHueStrategy);
-        light.colorType = ColorType::GAMUT_A;
-        lights.emplace(id, light);
-        return lights.find(id)->second;
-    }
-    else if (type == "LWB004" || type == "LWB006" || type == "LWB007" || type == "LWB010" || type == "LWB014"
-        || type == "LDF001" || type == "LDF002" || type == "LDD001" || type == "LDD002" || type == "MWM001")
-    {
-        // HueDimmableLight No Color Type
-        HueLight light = HueLight(id, commands, simpleBrightnessStrategy, nullptr, nullptr);
-        light.colorType = ColorType::NONE;
-        lights.emplace(id, light);
-        return lights.find(id)->second;
-    }
-    else if (type == "LLM010" || type == "LLM011" || type == "LLM012" || type == "LTW001" || type == "LTW004"
-        || type == "LTW010" || type == "LTW011" || type == "LTW012" || type == "LTW013" || type == "LTW014"
-        || type == "LTW015" || type == "LTP001" || type == "LTP002" || type == "LTP003" || type == "LTP004"
-        || type == "LTP005" || type == "LTD003" || type == "LTF001" || type == "LTF002" || type == "LTC001"
-        || type == "LTC002" || type == "LTC003" || type == "LTC004" || type == "LTC011" || type == "LTC012"
-        || type == "LTD001" || type == "LTD002" || type == "LFF001" || type == "LTT001" || type == "LDT001")
-    {
-        // HueTemperatureLight
-        HueLight light = HueLight(id, commands, simpleBrightnessStrategy, simpleColorTemperatureStrategy, nullptr);
-        light.colorType = ColorType::TEMPERATURE;
-        lights.emplace(id, light);
-        return lights.find(id)->second;
-    }
-    std::cerr << "Could not determine HueLight type:" << type << "!\n";
-    throw HueException(CURRENT_FILE_INFO, "Could not determine HueLight type!");
+    auto light = MakeHueLight()(type, id, commands, simpleBrightnessStrategy,
+        extendedColorTemperatureStrategy, simpleColorTemperatureStrategy, extendedColorHueStrategy,
+        simpleColorHueStrategy);
+    lights.emplace(id, light);
+    return lights.find(id)->second;
 }
 
 bool Hue::removeLight(int id)
