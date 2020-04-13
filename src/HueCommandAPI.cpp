@@ -115,9 +115,15 @@ nlohmann::json HueCommandAPI::HandleError(FileInfo fileInfo, const nlohmann::jso
     {
         throw HueAPIResponseException::Create(std::move(fileInfo), response);
     }
-    else if (response.is_array() && response.size() > 0 && response[0].count("error"))
+    else if (response.is_array())
     {
-        throw HueAPIResponseException::Create(std::move(fileInfo), response[0]);
+        // Check if array contains error response
+        auto it
+            = std::find_if(response.begin(), response.end(), [](const nlohmann::json& v) { return v.count("error"); });
+        if (it != response.end())
+        {
+            throw HueAPIResponseException::Create(std::move(fileInfo), it.value());
+        }
     }
     return response;
 }
