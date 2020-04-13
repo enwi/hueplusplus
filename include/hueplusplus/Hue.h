@@ -33,6 +33,7 @@
 #include "BrightnessStrategy.h"
 #include "ColorHueStrategy.h"
 #include "ColorTemperatureStrategy.h"
+#include "Group.h"
 #include "HueCommandAPI.h"
 #include "HueLight.h"
 #include "IHttpHandler.h"
@@ -220,6 +221,12 @@ public:
     //! when not
     bool lightExists(int id) const;
 
+    std::vector<std::reference_wrapper<Group>> getAllGroups();
+
+    Group& getGroup(int id);
+    bool groupExists(int id);
+    bool groupExists(int id) const;
+
     //! \brief Const function that returns the picture name of a given light id
     //!
     //! \note This will not update the local state of the bridge.
@@ -255,6 +262,7 @@ private:
     std::string username; //!< Username that is ussed to access the hue bridge
     int port;
     std::map<uint8_t, HueLight> lights; //!< Maps ids to HueLights that are controlled by this bridge
+    std::map<uint8_t, Group> groups; //!< Maps ids to Groups
 
     std::shared_ptr<BrightnessStrategy> simpleBrightnessStrategy; //!< Strategy that is used for controlling the
                                                                   //!< brightness of lights

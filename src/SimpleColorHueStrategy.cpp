@@ -151,8 +151,7 @@ bool SimpleColorHueStrategy::setColorXY(float x, float y, uint8_t transition, Hu
     {
         request["on"] = true;
     }
-    if (std::abs(state["xy"][0].get<float>() - x) > 1E-4f
-        || std::abs(state["xy"][1].get<float>() - y) > 1E-4f
+    if (std::abs(state["xy"][0].get<float>() - x) > 1E-4f || std::abs(state["xy"][1].get<float>() - y) > 1E-4f
         || state["colormode"] != "xy")
     {
         request["xy"][0] = x;
@@ -409,14 +408,13 @@ std::pair<uint16_t, uint8_t> SimpleColorHueStrategy::getColorHueSaturation(HueLi
 {
     // Save value, so there are no inconsistent results if it is refreshed between two calls
     const nlohmann::json& state = light.state.GetValue()["state"];
-    return std::pair<uint16_t, uint8_t>(
-        static_cast<uint16_t>(state["hue"]), static_cast<uint8_t>(state["sat"]));
+    return std::pair<uint16_t, uint8_t>(static_cast<uint16_t>(state["hue"]), static_cast<uint8_t>(state["sat"]));
 }
 
 std::pair<uint16_t, uint8_t> SimpleColorHueStrategy::getColorHueSaturation(const HueLight& light) const
 {
-    return std::pair<uint16_t, uint8_t>(
-        static_cast<uint16_t>(light.state.GetValue()["state"]["hue"]), static_cast<uint8_t>(light.state.GetValue()["state"]["sat"]));
+    return std::pair<uint16_t, uint8_t>(static_cast<uint16_t>(light.state.GetValue()["state"]["hue"]),
+        static_cast<uint8_t>(light.state.GetValue()["state"]["sat"]));
 }
 
 std::pair<float, float> SimpleColorHueStrategy::getColorXY(HueLight& light) const
