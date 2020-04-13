@@ -24,7 +24,8 @@
 
 #include "hueplusplus/HueExceptionMacro.h"
 
-std::string hueplusplus::BaseHttpHandler::sendGetHTTPBody(const std::string& msg, const std::string& adr, int port) const
+std::string hueplusplus::BaseHttpHandler::sendGetHTTPBody(
+    const std::string& msg, const std::string& adr, int port) const
 {
     std::string response = send(msg, adr, port);
     size_t start = response.find("\r\n\r\n");
@@ -68,20 +69,20 @@ std::string hueplusplus::BaseHttpHandler::sendHTTPRequest(const std::string& met
     return sendGetHTTPBody(request.c_str(), adr, port);
 }
 
-std::string hueplusplus::BaseHttpHandler::GETString(const std::string& uri, const std::string& contentType, const std::string& body,
-    const std::string& adr, int port) const
+std::string hueplusplus::BaseHttpHandler::GETString(const std::string& uri, const std::string& contentType,
+    const std::string& body, const std::string& adr, int port) const
 {
     return sendHTTPRequest("GET", uri, contentType, body, adr, port);
 }
 
-std::string hueplusplus::BaseHttpHandler::POSTString(const std::string& uri, const std::string& contentType, const std::string& body,
-    const std::string& adr, int port) const
+std::string hueplusplus::BaseHttpHandler::POSTString(const std::string& uri, const std::string& contentType,
+    const std::string& body, const std::string& adr, int port) const
 {
     return sendHTTPRequest("POST", uri, contentType, body, adr, port);
 }
 
-std::string hueplusplus::BaseHttpHandler::PUTString(const std::string& uri, const std::string& contentType, const std::string& body,
-    const std::string& adr, int port) const
+std::string hueplusplus::BaseHttpHandler::PUTString(const std::string& uri, const std::string& contentType,
+    const std::string& body, const std::string& adr, int port) const
 {
     return sendHTTPRequest("PUT", uri, contentType, body, adr, port);
 }

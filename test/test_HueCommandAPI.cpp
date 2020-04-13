@@ -163,7 +163,7 @@ TEST(HueCommandAPI, GETRequest)
     // api returns error
     {
         const std::string path = "/test";
-        const nlohmann::json errorResponse{ {"error", {{"type", 10}, {"address", path}, {"description", "Stuff"}}} };
+        const nlohmann::json errorResponse{{"error", {{"type", 10}, {"address", path}, {"description", "Stuff"}}}};
         EXPECT_CALL(*httpHandler, GETJson("/api/" + getBridgeUsername() + path, request, getBridgeIp(), 80))
             .WillOnce(Return(errorResponse));
         EXPECT_THROW(api.GETRequest(path, request), HueAPIResponseException);
@@ -233,7 +233,7 @@ TEST(HueCommandAPI, DELETERequest)
     // api returns error
     {
         const std::string path = "/test";
-        const nlohmann::json errorResponse{ {"error", {{"type", 10}, {"address", path}, {"description", "Stuff"}}} };
+        const nlohmann::json errorResponse{{"error", {{"type", 10}, {"address", path}, {"description", "Stuff"}}}};
         EXPECT_CALL(*httpHandler, DELETEJson("/api/" + getBridgeUsername() + path, request, getBridgeIp(), 80))
             .WillOnce(Return(errorResponse));
         EXPECT_THROW(api.DELETERequest(path, request), HueAPIResponseException);

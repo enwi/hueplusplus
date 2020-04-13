@@ -28,42 +28,42 @@
 
 namespace
 {
-    const std::set<std::string> getGamutBTypes()
-    {
-        static const std::set<std::string> c_EXTENDEDCOLORLIGHT_GAMUTB_TYPES
-            = {"LCT001", "LCT002", "LCT003", "LCT007", "LLM001"};
-        return c_EXTENDEDCOLORLIGHT_GAMUTB_TYPES;
-    };
+const std::set<std::string> getGamutBTypes()
+{
+    static const std::set<std::string> c_EXTENDEDCOLORLIGHT_GAMUTB_TYPES
+        = {"LCT001", "LCT002", "LCT003", "LCT007", "LLM001"};
+    return c_EXTENDEDCOLORLIGHT_GAMUTB_TYPES;
+};
 
-    const std::set<std::string> getGamutCTypes()
-    {
-        static const std::set<std::string> c_EXTENDEDCOLORLIGHT_GAMUTC_TYPES
-            = {"LCT010", "LCT011", "LCT012", "LCT014", "LCT015", "LCT016", "LLC020", "LST002"};
-        return c_EXTENDEDCOLORLIGHT_GAMUTC_TYPES;
-    }
+const std::set<std::string> getGamutCTypes()
+{
+    static const std::set<std::string> c_EXTENDEDCOLORLIGHT_GAMUTC_TYPES
+        = {"LCT010", "LCT011", "LCT012", "LCT014", "LCT015", "LCT016", "LLC020", "LST002"};
+    return c_EXTENDEDCOLORLIGHT_GAMUTC_TYPES;
+}
 
-    const std::set<std::string> getGamutATypes()
-    {
-        static const std::set<std::string> c_EXTENDEDCOLORLIGHT_GAMUTA_TYPES
-            = {"LST001", "LLC005", "LLC006", "LLC007", "LLC010", "LLC011", "LLC012", "LLC013", "LLC014"};
-        return c_EXTENDEDCOLORLIGHT_GAMUTA_TYPES;
-    }
+const std::set<std::string> getGamutATypes()
+{
+    static const std::set<std::string> c_EXTENDEDCOLORLIGHT_GAMUTA_TYPES
+        = {"LST001", "LLC005", "LLC006", "LLC007", "LLC010", "LLC011", "LLC012", "LLC013", "LLC014"};
+    return c_EXTENDEDCOLORLIGHT_GAMUTA_TYPES;
+}
 
-    const std::set<std::string> getNoColorTypes()
-    {
-        static const std::set<std::string> c_DIMMABLELIGHT_NO_COLOR_TYPES
-            = {"LWB004", "LWB006", "LWB007", "LWB010", "LWB014", "LDF001", "LDF002", "LDD001", "LDD002", "MWM001"};
-        return c_DIMMABLELIGHT_NO_COLOR_TYPES;
-    }
+const std::set<std::string> getNoColorTypes()
+{
+    static const std::set<std::string> c_DIMMABLELIGHT_NO_COLOR_TYPES
+        = {"LWB004", "LWB006", "LWB007", "LWB010", "LWB014", "LDF001", "LDF002", "LDD001", "LDD002", "MWM001"};
+    return c_DIMMABLELIGHT_NO_COLOR_TYPES;
+}
 
-    const std::set<std::string> getTemperatureLightTypes()
-    {
-        static const std::set<std::string> c_TEMPERATURELIGHT_TYPES
-            = {"LLM010", "LLM011", "LLM012", "LTW001", "LTW004", "LTW010", "LTW011", "LTW012", "LTW013", "LTW014",
-                "LTW015", "LTP001", "LTP002", "LTP003", "LTP004", "LTP005", "LTD003", "LTF001", "LTF002", "LTC001",
-                "LTC002", "LTC003", "LTC004", "LTC011", "LTC012", "LTD001", "LTD002", "LFF001", "LTT001", "LDT001"};
-        return c_TEMPERATURELIGHT_TYPES;
-    }
+const std::set<std::string> getTemperatureLightTypes()
+{
+    static const std::set<std::string> c_TEMPERATURELIGHT_TYPES
+        = {"LLM010", "LLM011", "LLM012", "LTW001", "LTW004", "LTW010", "LTW011", "LTW012", "LTW013", "LTW014", "LTW015",
+            "LTP001", "LTP002", "LTP003", "LTP004", "LTP005", "LTD003", "LTF001", "LTF002", "LTC001", "LTC002",
+            "LTC003", "LTC004", "LTC011", "LTC012", "LTD001", "LTD002", "LFF001", "LTT001", "LDT001"};
+    return c_TEMPERATURELIGHT_TYPES;
+}
 } // namespace
 
 auto hueplusplus::MakeHueLight::operator()(std::string type, int id, HueCommandAPI commands,

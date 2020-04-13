@@ -69,7 +69,8 @@ const std::string& hueplusplus::HueAPIResponseException::GetDescription() const 
     return description;
 }
 
-hueplusplus::HueAPIResponseException hueplusplus::HueAPIResponseException::Create(FileInfo fileInfo, const nlohmann::json& response)
+hueplusplus::HueAPIResponseException hueplusplus::HueAPIResponseException::Create(
+    FileInfo fileInfo, const nlohmann::json& response)
 {
     const nlohmann::json error = response.at("error");
     int errorCode = error.value("type", -1);
@@ -78,7 +79,8 @@ hueplusplus::HueAPIResponseException hueplusplus::HueAPIResponseException::Creat
     return HueAPIResponseException(std::move(fileInfo), errorCode, std::move(address), std::move(description));
 }
 
-std::string hueplusplus::HueAPIResponseException::GetMessage(int error, const std::string& addr, const std::string& description)
+std::string hueplusplus::HueAPIResponseException::GetMessage(
+    int error, const std::string& addr, const std::string& description)
 {
     std::string result = std::to_string(error);
     result.append(" ");

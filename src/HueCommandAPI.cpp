@@ -30,37 +30,36 @@ constexpr std::chrono::steady_clock::duration hueplusplus::HueCommandAPI::minDel
 
 namespace
 {
-    // Runs functor with appropriate timeout and retries when timed out or connection reset
-    template <typename Timeout, typename Fun>
-    nlohmann::json RunWithTimeout(
-        std::shared_ptr<Timeout> timeout, std::chrono::steady_clock::duration minDelay, Fun fun)
+// Runs functor with appropriate timeout and retries when timed out or connection reset
+template <typename Timeout, typename Fun>
+nlohmann::json RunWithTimeout(std::shared_ptr<Timeout> timeout, std::chrono::steady_clock::duration minDelay, Fun fun)
+{
+    auto now = std::chrono::steady_clock::now();
+    std::lock_guard<std::mutex> lock(timeout->mutex);
+    if (timeout->timeout > now)
     {
-        auto now = std::chrono::steady_clock::now();
-        std::lock_guard<std::mutex> lock(timeout->mutex);
-        if (timeout->timeout > now)
-        {
-            std::this_thread::sleep_until(timeout->timeout);
-        }
-        try
-        {
-            nlohmann::json response = fun();
-            timeout->timeout = now + minDelay;
-            return response;
-        }
-        catch (const std::system_error& e)
-        {
-            if (e.code() == std::errc::connection_reset || e.code() == std::errc::timed_out)
-            {
-                // Happens when hue is too busy, wait and try again (once)
-                std::this_thread::sleep_for(minDelay);
-                nlohmann::json v = fun();
-                timeout->timeout = std::chrono::steady_clock::now() + minDelay;
-                return v;
-            }
-            // Cannot recover from other types of errors
-            throw;
-        }
+        std::this_thread::sleep_until(timeout->timeout);
     }
+    try
+    {
+        nlohmann::json response = fun();
+        timeout->timeout = now + minDelay;
+        return response;
+    }
+    catch (const std::system_error& e)
+    {
+        if (e.code() == std::errc::connection_reset || e.code() == std::errc::timed_out)
+        {
+            // Happens when hue is too busy, wait and try again (once)
+            std::this_thread::sleep_for(minDelay);
+            nlohmann::json v = fun();
+            timeout->timeout = std::chrono::steady_clock::now() + minDelay;
+            return v;
+        }
+        // Cannot recover from other types of errors
+        throw;
+    }
+}
 } // namespace
 
 hueplusplus::HueCommandAPI::HueCommandAPI(

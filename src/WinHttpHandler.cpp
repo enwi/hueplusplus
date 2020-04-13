@@ -34,24 +34,24 @@
 
 namespace
 {
-    class AddrInfoFreer
-    {
-    public:
-        explicit AddrInfoFreer(addrinfo* p) : p(p) {}
-        ~AddrInfoFreer() { freeaddrinfo(p); }
+class AddrInfoFreer
+{
+public:
+    explicit AddrInfoFreer(addrinfo* p) : p(p) {}
+    ~AddrInfoFreer() { freeaddrinfo(p); }
 
-    private:
-        addrinfo* p;
-    };
-    class SocketCloser
-    {
-    public:
-        explicit SocketCloser(SOCKET s) : s(s) {}
-        ~SocketCloser() { closesocket(s); }
+private:
+    addrinfo* p;
+};
+class SocketCloser
+{
+public:
+    explicit SocketCloser(SOCKET s) : s(s) {}
+    ~SocketCloser() { closesocket(s); }
 
-    private:
-        SOCKET s;
-    };
+private:
+    SOCKET s;
+};
 } // namespace
 
 hueplusplus::WinHttpHandler::WinHttpHandler()
