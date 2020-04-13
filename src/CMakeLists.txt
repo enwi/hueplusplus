@@ -3,6 +3,7 @@ set(hueplusplus_SOURCES
     BaseHttpHandler.cpp
     ExtendedColorHueStrategy.cpp
     ExtendedColorTemperatureStrategy.cpp
+	Group.cpp
     Hue.cpp
     HueCommandAPI.cpp
 	HueDeviceTypes.cpp
