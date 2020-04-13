@@ -30,7 +30,8 @@
 #include "hueplusplus/HueExceptionMacro.h"
 #include "hueplusplus/Utils.h"
 
-bool hueplusplus::SimpleColorTemperatureStrategy::setColorTemperature(unsigned int mired, uint8_t transition, HueLight& light) const
+bool hueplusplus::SimpleColorTemperatureStrategy::setColorTemperature(
+    unsigned int mired, uint8_t transition, HueLight& light) const
 {
     light.refreshState();
     nlohmann::json request = nlohmann::json::object();

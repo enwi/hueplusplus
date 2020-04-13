@@ -27,60 +27,63 @@
 
 namespace hueplusplus
 {
-    namespace utils
+namespace utils
+{
+namespace detail
+{
+// Forward declaration
+template <typename KeyT, typename... Paths>
+nlohmann::json safeGetMemberHelper(const nlohmann::json& json, std::size_t index, Paths&&... otherPaths);
+
+inline nlohmann::json safeGetMemberHelper(const nlohmann::json& json)
+{
+    return json;
+}
+
+template <typename KeyT, typename... Paths,
+    std::enable_if_t<!std::is_integral<std::remove_reference_t<KeyT>>::value>* = nullptr>
+nlohmann::json safeGetMemberHelper(const nlohmann::json& json, KeyT&& key, Paths&&... otherPaths)
+{
+    auto memberIt = json.find(std::forward<KeyT>(key));
+    if (memberIt == json.end())
     {
-        namespace detail
-        {
-            // Forward declaration
-            template <typename KeyT, typename... Paths>
-            nlohmann::json safeGetMemberHelper(const nlohmann::json& json, std::size_t index, Paths&&... otherPaths);
+        return nullptr;
+    }
+    return safeGetMemberHelper(*memberIt, std::forward<Paths>(otherPaths)...);
+}
 
-            inline nlohmann::json safeGetMemberHelper(const nlohmann::json& json) { return json; }
+// Needs to be after the other safeGetMemberHelper, otherwise another forward declaration is needed
+template <typename... Paths>
+nlohmann::json safeGetMemberHelper(const nlohmann::json& json, std::size_t index, Paths&&... otherPaths)
+{
+    if (!json.is_array() || json.size() <= index)
+    {
+        return nullptr;
+    }
+    return safeGetMemberHelper(json[index], std::forward<Paths>(otherPaths)...);
+}
+} // namespace detail
 
-            template <typename KeyT, typename... Paths,
-                std::enable_if_t<!std::is_integral<std::remove_reference_t<KeyT>>::value>* = nullptr>
-            nlohmann::json safeGetMemberHelper(const nlohmann::json& json, KeyT&& key, Paths&&... otherPaths)
-            {
-                auto memberIt = json.find(std::forward<KeyT>(key));
-                if (memberIt == json.end())
-                {
-                    return nullptr;
-                }
-                return safeGetMemberHelper(*memberIt, std::forward<Paths>(otherPaths)...);
-            }
+//! \brief Function for validating that a request was executed correctly
+//!
+//! \param request The request that was sent initially
+//! \param reply The reply that was received
+//! \param lightId The identifier of the light
+//! \return True if request was executed correctly
+bool validateReplyForLight(const nlohmann::json& request, const nlohmann::json& reply, int lightId);
 
-            // Needs to be after the other safeGetMemberHelper, otherwise another forward declaration is needed
-            template <typename... Paths>
-            nlohmann::json safeGetMemberHelper(const nlohmann::json& json, std::size_t index, Paths&&... otherPaths)
-            {
-                if (!json.is_array() || json.size() <= index)
-                {
-                    return nullptr;
-                }
-                return safeGetMemberHelper(json[index], std::forward<Paths>(otherPaths)...);
-            }
-        } // namespace detail
+//! \brief Returns the object/array member or null if it does not exist
+//!
+//! \param json The base json value
+//! \param paths Any number of child accesses (e.g. 0, "key" would access json[0]["key"])
+//! \returns The specified member or null if any intermediate object does not contain the specified child.
+template <typename... Paths>
+nlohmann::json safeGetMember(const nlohmann::json& json, Paths&&... paths)
+{
+    return detail::safeGetMemberHelper(json, std::forward<Paths>(paths)...);
+}
 
-        //! \brief Function for validating that a request was executed correctly
-        //!
-        //! \param request The request that was sent initially
-        //! \param reply The reply that was received
-        //! \param lightId The identifier of the light
-        //! \return True if request was executed correctly
-        bool validateReplyForLight(const nlohmann::json& request, const nlohmann::json& reply, int lightId);
-
-        //! \brief Returns the object/array member or null if it does not exist
-        //!
-        //! \param json The base json value
-        //! \param paths Any number of child accesses (e.g. 0, "key" would access json[0]["key"])
-        //! \returns The specified member or null if any intermediate object does not contain the specified child.
-        template <typename... Paths>
-        nlohmann::json safeGetMember(const nlohmann::json& json, Paths&&... paths)
-        {
-            return detail::safeGetMemberHelper(json, std::forward<Paths>(paths)...);
-        }
-
-    } // namespace utils
+} // namespace utils
 } // namespace hueplusplus
 
 #endif
