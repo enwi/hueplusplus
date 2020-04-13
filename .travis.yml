@@ -59,7 +59,7 @@ script:
     ############################################################################
      - mkdir -p build
      - cd build
-     - cmake .. -Dhueplusplus_TESTS=ON
+     - cmake .. -Dhueplusplus_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
      - make coveragetest
      - cd ..
      - doxygen Doxyfile
