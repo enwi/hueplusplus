@@ -93,7 +93,8 @@ bool hueplusplus::SimpleColorHueStrategy::setColorSaturation(uint8_t sat, uint8_
     return utils::validateReplyForLight(request, reply, light.id);
 }
 
-bool hueplusplus::SimpleColorHueStrategy::setColorHueSaturation(uint16_t hue, uint8_t sat, uint8_t transition, HueLight& light) const
+bool hueplusplus::SimpleColorHueStrategy::setColorHueSaturation(
+    uint16_t hue, uint8_t sat, uint8_t transition, HueLight& light) const
 {
     light.refreshState();
     nlohmann::json request = nlohmann::json::object();
@@ -165,7 +166,8 @@ bool hueplusplus::SimpleColorHueStrategy::setColorXY(float x, float y, uint8_t t
     return utils::validateReplyForLight(request, reply, light.id);
 }
 
-bool hueplusplus::SimpleColorHueStrategy::setColorRGB(uint8_t r, uint8_t g, uint8_t b, uint8_t transition, HueLight& light) const
+bool hueplusplus::SimpleColorHueStrategy::setColorRGB(
+    uint8_t r, uint8_t g, uint8_t b, uint8_t transition, HueLight& light) const
 {
     if ((r == 0) && (g == 0) && (b == 0))
     {

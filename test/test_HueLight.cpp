@@ -123,7 +123,7 @@ protected:
             .Times(AtLeast(1))
             .WillRepeatedly(Return(hue_bridge_state["lights"]["3"]));
     }
-    ~HueLightTest() {};
+    ~HueLightTest(){};
 };
 
 TEST_F(HueLightTest, Constructor)

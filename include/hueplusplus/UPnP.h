@@ -31,19 +31,19 @@
 
 namespace hueplusplus
 {
-    //! Class that looks for UPnP devices using an m-search package
-    class UPnP
-    {
-    public:
-        //! \brief Searches for UPnP devices and returns all found ones.
-        //!
-        //! It does it by sending an m-search packet and waits for all responses.
-        //! Since responses can be received multiple times this function conveniently removes all duplicates.
-        //! \param handler HttpHandler for communication
-        //! \return A vector containing pairs of address and name of all found devices
-        //! \throws std::system_error when system or socket operations fail
-        std::vector<std::pair<std::string, std::string>> getDevices(std::shared_ptr<const IHttpHandler> handler);
-    };
+//! Class that looks for UPnP devices using an m-search package
+class UPnP
+{
+public:
+    //! \brief Searches for UPnP devices and returns all found ones.
+    //!
+    //! It does it by sending an m-search packet and waits for all responses.
+    //! Since responses can be received multiple times this function conveniently removes all duplicates.
+    //! \param handler HttpHandler for communication
+    //! \return A vector containing pairs of address and name of all found devices
+    //! \throws std::system_error when system or socket operations fail
+    std::vector<std::pair<std::string, std::string>> getDevices(std::shared_ptr<const IHttpHandler> handler);
+};
 } // namespace hueplusplus
 
 #endif
