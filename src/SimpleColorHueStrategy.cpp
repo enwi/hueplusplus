@@ -151,8 +151,7 @@ bool SimpleColorHueStrategy::setColorXY(float x, float y, uint8_t transition, Hu
     {
         request["on"] = true;
     }
-    if (std::abs(state["xy"][0].get<float>() - x) > 1E-4f
-        || std::abs(state["xy"][1].get<float>() - y) > 1E-4f
+    if (std::abs(state["xy"][0].get<float>() - x) > 1E-4f || std::abs(state["xy"][1].get<float>() - y) > 1E-4f
         || state["colormode"] != "xy")
     {
         request["xy"][0] = x;

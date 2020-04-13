@@ -33,54 +33,71 @@
 
 namespace hueplusplus
 {
-    class Group
-    {
-    public:
-        Group(int id, const HueCommandAPI& commands);
+class Group
+{
+public:
+    Group(int id, const HueCommandAPI& commands);
 
-        virtual ~Group() = default;
+    virtual ~Group() = default;
 
-        int getId() const;
-        std::string getName() const;
-        std::string getType() const;
-        std::vector<int> getLightIds() const;
+    void Refresh();
 
-        void setName(const std::string& name);
-        void setLights(const std::vector<int>& ids);
+    int getId() const;
+    std::string getName() const;
+    std::string getType() const;
+    std::vector<int> getLightIds() const;
 
-        std::string getRoomType() const;
-        void setRoomType(const std::string& type);
+    void setName(const std::string& name);
+    void setLights(const std::vector<int>& ids);
 
-        bool getAllOn() const;
-        bool getAnyOn() const;
+    // Only for type room
+    std::string getRoomType() const;
+    void setRoomType(const std::string& type);
 
-        bool getActionOn() const;
-        std::pair<uint16_t, uint8_t> getActionHueSaturation() const;
-        unsigned int getActionBrightness() const;
-        unsigned int getActionColorTemperature() const;
-        std::pair<float, float> getActionColorXY() const;
-        std::string getActionColorMode() const;
+    // Only for type luminaire
+    std::string getModelId() const;
+    // For luminaire or lightsource
+    std::string getUniqueId() const;
 
-        void setOn(bool on, uint8_t transition = 4);
-        void setBrightness(uint8_t brightness, uint8_t transition = 4);
-        void setColorHueSaturation(uint16_t hue, uint8_t saturation, uint8_t transition = 4);
-        void setColorXY(float x, float y, uint8_t transition = 4);
-        void setColorTemperature(unsigned int mired, uint8_t transition = 4);
-        void setColorLoop(bool on, uint8_t transition = 4);
-        void incrementBrightness(int increment, uint8_t transition = 4);
-        void incrementSaturation(int increment, uint8_t transition = 4);
-        void incrementHue(int increment, uint8_t transition = 4);
-        void incrementColorTemperature(int increment, uint8_t transition = 4);
-        void incrementColorXY(float increment, uint8_t transition = 4);
-        void setScene(const std::string& scene, uint8_t transition = 4);
-    protected:
-        nlohmann::json SendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo);
+    bool getAllOn();
+    bool getAllOn() const;
+    bool getAnyOn();
+    bool getAnyOn() const;
 
-    protected:
-        int id;
-        APICache state;
-        HueCommandAPI commands;
-    };
+    bool getActionOn();
+    bool getActionOn() const;
+    std::pair<uint16_t, uint8_t> getActionHueSaturation();
+    std::pair<uint16_t, uint8_t> getActionHueSaturation() const;
+    unsigned int getActionBrightness();
+    unsigned int getActionBrightness() const;
+    unsigned int getActionColorTemperature();
+    unsigned int getActionColorTemperature() const;
+    std::pair<float, float> getActionColorXY();
+    std::pair<float, float> getActionColorXY() const;
+    std::string getActionColorMode();
+    std::string getActionColorMode() const;
+
+    void setOn(bool on, uint8_t transition = 4);
+    void setBrightness(uint8_t brightness, uint8_t transition = 4);
+    void setColorHueSaturation(uint16_t hue, uint8_t saturation, uint8_t transition = 4);
+    void setColorXY(float x, float y, uint8_t transition = 4);
+    void setColorTemperature(unsigned int mired, uint8_t transition = 4);
+    void setColorLoop(bool on, uint8_t transition = 4);
+    void incrementBrightness(int increment, uint8_t transition = 4);
+    void incrementSaturation(int increment, uint8_t transition = 4);
+    void incrementHue(int increment, uint8_t transition = 4);
+    void incrementColorTemperature(int increment, uint8_t transition = 4);
+    void incrementColorXY(float increment, uint8_t transition = 4);
+    void setScene(const std::string& scene, uint8_t transition = 4);
+
+protected:
+    nlohmann::json SendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo);
+
+protected:
+    int id;
+    APICache state;
+    HueCommandAPI commands;
+};
 } // namespace hueplusplus
 
 #endif
