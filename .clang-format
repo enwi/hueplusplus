@@ -48,7 +48,7 @@ IncludeCategories:
     - Regex: '"[[:alnum:]_/.-]+"'
       Priority: 4
 IndentCaseLabels: false
-NamespaceIndentation: All
+NamespaceIndentation: None
 SortIncludes: true
 SortUsingDeclarations: true
 SpaceAfterTemplateKeyword: true
