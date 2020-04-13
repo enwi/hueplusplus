@@ -71,14 +71,13 @@ find_program( LCOV_PATH lcov )
 if(LCOV_PATH AND GCOV_PATH)
     # GCov
     include(CodeCoverage.cmake)
-    add_executable(testcov_HuePlusPlus ${TEST_SOURCES} ${hueplusplus_SOURCES})
-    target_link_libraries(testcov_HuePlusPlus gtest gmock)
-    # prevent Main.cpp from defining main()
-    target_compile_definitions(testcov_HuePlusPlus PUBLIC MAIN_CPP_NO_MAIN_FUNCTION)
-    target_include_directories(testcov_HuePlusPlus PUBLIC ${GTest_INCLUDE_DIRS})
-    target_include_directories(testcov_HuePlusPlus PUBLIC ${HuePlusPlus_INCLUDE_DIR})
-    set_property(TARGET testcov_HuePlusPlus PROPERTY CXX_STANDARD 14)
-    set_property(TARGET testcov_HuePlusPlus PROPERTY CXX_EXTENSIONS OFF)
+    add_executable(testcov_HuePlusPlus ${TEST_SOURCES})
+    target_compile_features(testcov_HuePlusPlus PUBLIC cxx_std_14)
+	set_property(TARGET testcov_HuePlusPlus PROPERTY CXX_EXTENSIONS OFF)
+
+	target_link_libraries(testcov_HuePlusPlus PUBLIC hueplusplusstatic)
+	target_link_libraries(testcov_HuePlusPlus PUBLIC gtest gmock)
+	target_include_directories(testcov_HuePlusPlus PUBLIC ${GTest_INCLUDE_DIRS})
     # this will be already done by APPEND_COVERAGE_COMPILER_FLAGS()
     #set_target_properties(
     #        testcov_HuePlusPlus PROPERTIES
