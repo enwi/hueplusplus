@@ -25,7 +25,8 @@
 #include <algorithm>
 #include <iostream>
 
-std::vector<std::pair<std::string, std::string>> hueplusplus::UPnP::getDevices(std::shared_ptr<const IHttpHandler> handler)
+std::vector<std::pair<std::string, std::string>> hueplusplus::UPnP::getDevices(
+    std::shared_ptr<const IHttpHandler> handler)
 {
     // send UPnP M-Search request
     std::vector<std::string> foundDevices

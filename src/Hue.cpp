@@ -31,9 +31,9 @@
 #include <stdexcept>
 #include <thread>
 
-#include "hueplusplus/HueDeviceTypes.h"
 #include "hueplusplus/ExtendedColorHueStrategy.h"
 #include "hueplusplus/ExtendedColorTemperatureStrategy.h"
+#include "hueplusplus/HueDeviceTypes.h"
 #include "hueplusplus/HueExceptionMacro.h"
 #include "hueplusplus/SimpleBrightnessStrategy.h"
 #include "hueplusplus/SimpleColorHueStrategy.h"
@@ -238,9 +238,8 @@ hueplusplus::HueLight& hueplusplus::Hue::getLight(int id)
     // std::cout << state["lights"][std::to_string(id)] << std::endl;
     std::string type = state["lights"][std::to_string(id)]["modelid"];
     // std::cout << type << std::endl;
-    auto light = MakeHueLight()(type, id, commands, simpleBrightnessStrategy,
-        extendedColorTemperatureStrategy, simpleColorTemperatureStrategy, extendedColorHueStrategy,
-        simpleColorHueStrategy);
+    auto light = MakeHueLight()(type, id, commands, simpleBrightnessStrategy, extendedColorTemperatureStrategy,
+        simpleColorTemperatureStrategy, extendedColorHueStrategy, simpleColorHueStrategy);
     lights.emplace(id, light);
     return lights.find(id)->second;
 }

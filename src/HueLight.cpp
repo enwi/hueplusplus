@@ -161,9 +161,12 @@ bool hueplusplus::HueLight::alert()
     return utils::validateReplyForLight(request, reply, id);
 }
 
-hueplusplus::HueLight::HueLight(int id, const HueCommandAPI& commands) : HueLight(id, commands, nullptr, nullptr, nullptr) {}
+hueplusplus::HueLight::HueLight(int id, const HueCommandAPI& commands)
+    : HueLight(id, commands, nullptr, nullptr, nullptr)
+{}
 
-hueplusplus::HueLight::HueLight(int id, const HueCommandAPI& commands, std::shared_ptr<const BrightnessStrategy> brightnessStrategy,
+hueplusplus::HueLight::HueLight(int id, const HueCommandAPI& commands,
+    std::shared_ptr<const BrightnessStrategy> brightnessStrategy,
     std::shared_ptr<const ColorTemperatureStrategy> colorTempStrategy,
     std::shared_ptr<const ColorHueStrategy> colorHueStrategy)
     : id(id),
@@ -224,7 +227,8 @@ bool hueplusplus::HueLight::OffNoRefresh(uint8_t transition)
     return utils::validateReplyForLight(request, reply, id);
 }
 
-nlohmann::json hueplusplus::HueLight::SendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo)
+nlohmann::json hueplusplus::HueLight::SendPutRequest(
+    const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo)
 {
     return commands.PUTRequest("/lights/" + std::to_string(id) + subPath, request, std::move(fileInfo));
 }
