@@ -274,6 +274,67 @@ std::vector<std::reference_wrapper<HueLight>> Hue::getAllLights()
     return result;
 }
 
+std::vector<std::reference_wrapper<Group>> Hue::getAllGroups()
+{
+    nlohmann::json groupsState = stateCache.GetValue().at("groups");
+    for (auto it = groupsState.begin(); it != groupsState.end(); ++it)
+    {
+        getGroup(std::stoi(it.key()));
+    }
+    std::vector<std::reference_wrapper<Group>> result;
+    result.reserve(result.size());
+    for (auto& entry : groups)
+    {
+        result.emplace_back(entry.second);
+    }
+    return result;
+}
+
+Group& Hue::getGroup(int id)
+{
+    auto pos = groups.find(id);
+    if (pos != groups.end())
+    {
+        pos->second.Refresh();
+        return pos->second;
+    }
+    const nlohmann::json& groupsCache = stateCache.GetValue()["groups"];
+    if (!groupsCache.count(std::to_string(id)))
+    {
+        std::cerr << "Error in Hue getGroup(): group with id " << id << " is not valid\n";
+        throw HueException(CURRENT_FILE_INFO, "Group id is not valid");
+    }
+    return groups.emplace(id, Group(id, commands)).first->second;
+}
+
+bool Hue::groupExists(int id)
+{
+    auto pos = lights.find(id);
+    if (pos != lights.end())
+    {
+        return true;
+    }
+    if (stateCache.GetValue()["groups"].count(std::to_string(id)))
+    {
+        return true;
+    }
+    return false;
+}
+
+bool Hue::groupExists(int id) const
+{
+    auto pos = lights.find(id);
+    if (pos != lights.end())
+    {
+        return true;
+    }
+    if (stateCache.GetValue()["groups"].count(std::to_string(id)))
+    {
+        return true;
+    }
+    return false;
+}
+
 bool Hue::lightExists(int id)
 {
     auto pos = lights.find(id);
