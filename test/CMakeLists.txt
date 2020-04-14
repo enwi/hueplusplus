@@ -34,6 +34,7 @@ set(TEST_SOURCES
     test_BaseHttpHandler.cpp
     test_ExtendedColorHueStrategy.cpp
     test_ExtendedColorTemperatureStrategy.cpp
+	test_Group.cpp
     test_Hue.cpp
     test_HueLight.cpp
     test_HueCommandAPI.cpp
