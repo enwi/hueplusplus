@@ -2,8 +2,8 @@
 
 #include "hueplusplus/HueExceptionMacro.h"
 
-hueplusplus::Group::Group(int id, const HueCommandAPI& commands)
-    : id(id), state("/groups/" + std::to_string(id), commands, std::chrono::seconds(10)), commands(commands)
+hueplusplus::Group::Group(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration)
+    : id(id), state("/groups/" + std::to_string(id), commands, refreshDuration), commands(commands)
 {
     state.Refresh();
 }
