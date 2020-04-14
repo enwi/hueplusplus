@@ -33,6 +33,39 @@
 
 namespace hueplusplus
 {
+class StateTransaction
+{
+public:
+    StateTransaction(const HueCommandAPI& commands, const std::string& path, const nlohmann::json& currentState);
+
+    StateTransaction(const StateTransaction&) = delete;
+    StateTransaction(StateTransaction&&) = default;
+
+    bool commit() &&;
+
+    StateTransaction&& setOn(bool on) &&;
+    StateTransaction&& setBrightness(uint8_t brightness) &&;
+    StateTransaction&& setColorHue(uint16_t hue) &&;
+    StateTransaction&& setColorSaturation(uint8_t saturation) &&;
+    StateTransaction&& setColorHueSaturation(uint16_t hue, uint8_t saturation) &&;
+    StateTransaction&& setColorXY(float x, float y) &&;
+    StateTransaction&& setColorTemperature(unsigned int mired) &&;
+    StateTransaction&& setColorLoop(bool on) &&;
+    StateTransaction&& incrementBrightness(int increment) &&;
+    StateTransaction&& incrementSaturation(int increment) &&;
+    StateTransaction&& incrementHue(int increment) &&;
+    StateTransaction&& incrementColorTemperature(int increment) &&;
+    StateTransaction&& incrementColorXY(float xInc, float yInc) &&;
+    StateTransaction&& setScene(const std::string& scene) &&;
+    StateTransaction&& setTransition(uint16_t transition) &&;
+
+private:
+    const HueCommandAPI& commands;
+    std::string path;
+    nlohmann::json state;
+    nlohmann::json request;
+};
+
 class Group
 {
 public:
@@ -77,6 +110,8 @@ public:
     std::string getActionColorMode();
     std::string getActionColorMode() const;
 
+    StateTransaction transaction();
+
     void setOn(bool on, uint8_t transition = 4);
     void setBrightness(uint8_t brightness, uint8_t transition = 4);
     void setColorHueSaturation(uint16_t hue, uint8_t saturation, uint8_t transition = 4);
@@ -87,7 +122,7 @@ public:
     void incrementSaturation(int increment, uint8_t transition = 4);
     void incrementHue(int increment, uint8_t transition = 4);
     void incrementColorTemperature(int increment, uint8_t transition = 4);
-    void incrementColorXY(float increment, uint8_t transition = 4);
+    void incrementColorXY(float incX, float incY, uint8_t transition = 4);
     void setScene(const std::string& scene, uint8_t transition = 4);
 
 protected:

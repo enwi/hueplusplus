@@ -2,6 +2,132 @@
 
 #include "hueplusplus/HueExceptionMacro.h"
 
+hueplusplus::StateTransaction::StateTransaction(
+    const HueCommandAPI& commands, const std::string& path, const nlohmann::json& currentState)
+    : commands(commands), path(path), state(state), request(nlohmann::json::object())
+{}
+
+bool hueplusplus::StateTransaction::commit() &&
+{
+    // Empty request or request with only transition makes no sense
+    if (!request.empty() || (request.size() == 1 && request.count("transition")))
+    {
+        if (!request.count("on"))
+        {
+            if (request.value("bri", 254) == 0)
+            {
+                // Turn off if brightness is 0
+                request["on"] = false;
+            }
+            else if (request.value("bri", 0) != 0 || request.count("colorloop") || request.count("hue")
+                || request.count("sat") || request.count("xy"))
+            {
+                // Turn on if it was turned off
+                request["on"] = true;
+            }
+        }
+
+        commands.PUTRequest(path, request, CURRENT_FILE_INFO);
+        return true;
+    }
+    return false;
+}
+
+hueplusplus::StateTransaction&& hueplusplus::StateTransaction::setOn(bool on) &&
+{
+    request["on"] = on;
+    return std::move(*this);
+}
+
+hueplusplus::StateTransaction&& hueplusplus::StateTransaction::setBrightness(uint8_t brightness) &&
+{
+    request["bri"] = std::min<uint8_t>(brightness, 254);
+    return std::move(*this);
+}
+
+hueplusplus::StateTransaction&& hueplusplus::StateTransaction::setColorSaturation(uint8_t saturation) &&
+{
+    request["sat"] = std::min<uint8_t>(saturation, 254);
+    return std::move(*this);
+}
+
+hueplusplus::StateTransaction&& hueplusplus::StateTransaction::setColorHue(uint16_t hue) &&
+{
+    request["hue"] = hue;
+    return std::move(*this);
+}
+
+hueplusplus::StateTransaction&& hueplusplus::StateTransaction::setColorHueSaturation(
+    uint16_t hue, uint8_t saturation) &&
+{
+    request["hue"] = hue;
+    request["sat"] = std::min<uint8_t>(saturation, 254);
+    return std::move(*this);
+}
+
+hueplusplus::StateTransaction&& hueplusplus::StateTransaction::setColorXY(float x, float y) &&
+{
+    request["xy"] = {x, y};
+    return std::move(*this);
+}
+
+hueplusplus::StateTransaction&& hueplusplus::StateTransaction::setColorTemperature(unsigned int mired) &&
+{
+    request["ct"] = mired;
+    return std::move(*this);
+}
+
+hueplusplus::StateTransaction&& hueplusplus::StateTransaction::setColorLoop(bool on) &&
+{
+    request["effect"] = on ? "colorloop" : "none";
+    return std::move(*this);
+}
+
+hueplusplus::StateTransaction&& hueplusplus::StateTransaction::incrementBrightness(int increment) &&
+{
+    request["bri_inc"] = std::max(-254, std::min(increment, 254));
+    return std::move(*this);
+}
+
+hueplusplus::StateTransaction&& hueplusplus::StateTransaction::incrementSaturation(int increment) &&
+{
+    request["sat_inc"] = std::max(-254, std::min(increment, 254));
+    return std::move(*this);
+}
+
+hueplusplus::StateTransaction&& hueplusplus::StateTransaction::incrementHue(int increment) &&
+{
+    request["hue_inc"] = std::max(-65534, std::min(increment, 65534));
+    return std::move(*this);
+}
+
+hueplusplus::StateTransaction&& hueplusplus::StateTransaction::incrementColorTemperature(int increment) &&
+{
+    request["ct_inc"] = std::max(-65534, std::min(increment, 65534));
+    return std::move(*this);
+}
+
+hueplusplus::StateTransaction&& hueplusplus::StateTransaction::incrementColorXY(float xInc, float yInc) &&
+{
+    request["xy_inc"] = {std::min(-0.5f, std::max(xInc, 0.5f)), std::min(-0.5f, std::max(yInc, 0.5f))};
+    return std::move(*this);
+}
+
+hueplusplus::StateTransaction&& hueplusplus::StateTransaction::setScene(const std::string& scene) &&
+{
+    request["scene"] = scene;
+    return std::move(*this);
+}
+
+hueplusplus::StateTransaction&& hueplusplus::StateTransaction::setTransition(uint16_t transition) &&
+{
+    if (transition != 4)
+    {
+        request["transitiontime"] = transition;
+    }
+    return std::move(*this);
+}
+
 hueplusplus::Group::Group(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration)
     : id(id), state("/groups/" + std::to_string(id), commands, refreshDuration), commands(commands)
 {
@@ -134,6 +260,11 @@ std::string hueplusplus::Group::getActionColorMode() const
     return state.GetValue().at("action").at("colormode").get<std::string>();
 }
 
+hueplusplus::StateTransaction hueplusplus::Group::transaction()
+{
+    return StateTransaction(commands, "/groups/" + std::to_string(id) + "/action", state.GetValue());
+}
+
 void hueplusplus::Group::setOn(bool on, uint8_t transition)
 {
     nlohmann::json request = {{"on", on}};
@@ -146,113 +277,57 @@ void hueplusplus::Group::setOn(bool on, uint8_t transition)
 
 void hueplusplus::Group::setBrightness(uint8_t brightness, uint8_t transition)
 {
-    // TODO: turn on/off
-    nlohmann::json request = {{"bri", brightness}};
-    if (transition != 4)
-    {
-        request["transition"] = transition;
-    }
-    SendPutRequest(request, "/action", CURRENT_FILE_INFO);
+    transaction().setBrightness(brightness).setTransition(transition).commit();
 }
 
 void hueplusplus::Group::setColorHueSaturation(uint16_t hue, uint8_t saturation, uint8_t transition)
 {
-    nlohmann::json request = {{"hue", hue}, {"sat", saturation}};
-    if (transition != 4)
-    {
-        request["transition"] = transition;
-    }
-    SendPutRequest(request, "/action", CURRENT_FILE_INFO);
+    transaction().setColorHueSaturation(hue, saturation).setTransition(transition).commit();
 }
 
 void hueplusplus::Group::setColorXY(float x, float y, uint8_t transition)
 {
-    nlohmann::json request = {{"xy", {x, y}}};
-    if (transition != 4)
-    {
-        request["transition"] = transition;
-    }
-    SendPutRequest(request, "/action", CURRENT_FILE_INFO);
+    transaction().setColorXY(x, y).setTransition(transition).commit();
 }
 
 void hueplusplus::Group::setColorTemperature(unsigned int mired, uint8_t transition)
 {
-    nlohmann::json request = {{"ct", mired}};
-    if (transition != 4)
-    {
-        request["transition"] = transition;
-    }
-    SendPutRequest(request, "/action", CURRENT_FILE_INFO);
+    transaction().setColorTemperature(mired).setTransition(transition).commit();
 }
 
 void hueplusplus::Group::setColorLoop(bool on, uint8_t transition)
 {
-    nlohmann::json request = {{"effect", on ? "colorloop" : "none"}};
-    if (transition != 4)
-    {
-        request["transition"] = transition;
-    }
-    SendPutRequest(request, "/action", CURRENT_FILE_INFO);
+    transaction().setColorLoop(on).setTransition(transition);
 }
 
 void hueplusplus::Group::incrementBrightness(int increment, uint8_t transition)
 {
-    nlohmann::json request = {{"bri_inc", increment}};
-    if (transition != 4)
-    {
-        request["transition"] = transition;
-    }
-    SendPutRequest(request, "/action", CURRENT_FILE_INFO);
+    transaction().incrementBrightness(increment).setTransition(transition).commit();
 }
 
 void hueplusplus::Group::incrementSaturation(int increment, uint8_t transition)
 {
-    nlohmann::json request = {{"sat_inc", increment}};
-    if (transition != 4)
-    {
-        request["transition"] = transition;
-    }
-    SendPutRequest(request, "/action", CURRENT_FILE_INFO);
+    transaction().incrementSaturation(increment).setTransition(transition).commit();
 }
 
 void hueplusplus::Group::incrementHue(int increment, uint8_t transition)
 {
-    nlohmann::json request = {{"hue_inc", increment}};
-    if (transition != 4)
-    {
-        request["transition"] = transition;
-    }
-    SendPutRequest(request, "/action", CURRENT_FILE_INFO);
+    transaction().incrementHue(increment).setTransition(transition).commit();
 }
 
 void hueplusplus::Group::incrementColorTemperature(int increment, uint8_t transition)
 {
-    nlohmann::json request = {{"ct_inc", increment}};
-    if (transition != 4)
-    {
-        request["transition"] = transition;
-    }
-    SendPutRequest(request, "/action", CURRENT_FILE_INFO);
+    transaction().incrementColorTemperature(increment).setTransition(transition).commit();
 }
 
-void hueplusplus::Group::incrementColorXY(float increment, uint8_t transition)
+void hueplusplus::Group::incrementColorXY(float incX, float incY, uint8_t transition)
 {
-    nlohmann::json request = {{"xy_inc", increment}};
-    if (transition != 4)
-    {
-        request["transition"] = transition;
-    }
-    SendPutRequest(request, "/action", CURRENT_FILE_INFO);
+    transaction().incrementColorXY(incX, incY).setTransition(transition).commit();
 }
 
 void hueplusplus::Group::setScene(const std::string& scene, uint8_t transition)
 {
-    nlohmann::json request = {{"scene", scene}};
-    if (transition != 4)
-    {
-        request["transition"] = transition;
-    }
-    SendPutRequest(request, "/action", CURRENT_FILE_INFO);
+    transaction().setScene(scene).setTransition(transition).commit();
 }
 
 nlohmann::json hueplusplus::Group::SendPutRequest(
