@@ -46,7 +46,7 @@ add_library(hueplusplusstatic STATIC ${hueplusplus_SOURCES})
 target_compile_features(hueplusplusstatic PUBLIC cxx_std_14)
 install(TARGETS hueplusplusstatic DESTINATION lib)
 target_include_directories(hueplusplusstatic PUBLIC $<BUILD_INTERFACE:${hueplusplus_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
-#install(FILES ${hueplusplus_HEADERS} DESTINATION include/hueplusplus)
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/" DESTINATION include)
 
 # Export the package for use from the build-tree
 # (this registers the build-tree with a global CMake-registry)
@@ -54,4 +54,4 @@ export(PACKAGE hueplusplus)
 # Create the hueplusplus-config.cmake
 configure_file ("${PROJECT_SOURCE_DIR}/cmake/hueplusplus-config.cmake.in" "${hueplusplus_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/hueplusplus-config.cmake" @ONLY)
 # Install hueplusplus-config.cmake
-install(FILES "${PROJECT_BINARY}${CMAKE_FILES_DIRECTORY}/hueplusplus-config.cmake" DESTINATION "${INSTALL_CMAKE_DIR}" COMPONENT dev)
+install(FILES "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/hueplusplus-config.cmake" DESTINATION "${INSTALL_CMAKE_DIR}" COMPONENT dev)
