@@ -36,7 +36,7 @@ namespace hueplusplus
 class Group
 {
 public:
-    Group(int id, const HueCommandAPI& commands);
+    Group(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration);
 
     virtual ~Group() = default;
 

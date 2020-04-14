@@ -304,7 +304,7 @@ Group& Hue::getGroup(int id)
         std::cerr << "Error in Hue getGroup(): group with id " << id << " is not valid\n";
         throw HueException(CURRENT_FILE_INFO, "Group id is not valid");
     }
-    return groups.emplace(id, Group(id, commands)).first->second;
+    return groups.emplace(id, Group(id, commands, stateCache.GetRefreshDuration())).first->second;
 }
 
 bool Hue::groupExists(int id)
