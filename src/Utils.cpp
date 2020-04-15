@@ -24,7 +24,11 @@
 
 #include <iostream>
 
-bool hueplusplus::utils::validateReplyForLight(const nlohmann::json& request, const nlohmann::json& reply, int lightId)
+namespace hueplusplus
+{
+namespace utils
+{
+bool validateReplyForLight(const nlohmann::json& request, const nlohmann::json& reply, int lightId)
 {
     bool success = false;
     std::string path = "/lights/" + std::to_string(lightId) + "/state/";
@@ -76,3 +80,5 @@ bool hueplusplus::utils::validateReplyForLight(const nlohmann::json& request, co
     }
     return success;
 }
+} // namespace utils
+} // namespace hueplusplus
