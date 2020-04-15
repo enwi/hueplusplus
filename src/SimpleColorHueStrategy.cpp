@@ -34,140 +34,22 @@ namespace hueplusplus
 {
 bool SimpleColorHueStrategy::setColorHue(uint16_t hue, uint8_t transition, HueLight& light) const
 {
-    // Careful, only use state until any light function might refresh the value and invalidate the reference
-    const nlohmann::json& state = light.state.GetValue()["state"];
-    nlohmann::json request = nlohmann::json::object();
-    if (transition != 4)
-    {
-        request["transitiontime"] = transition;
-    }
-    if (state["on"] != true)
-    {
-        request["on"] = true;
-    }
-    if (state["hue"] != hue || state["colormode"] != "hs")
-    {
-        hue = hue % 65535;
-        request["hue"] = hue;
-    }
-
-    if (!request.count("on") && !request.count("hue"))
-    {
-        // Nothing needs to be changed
-        return true;
-    }
-
-    nlohmann::json reply = light.SendPutRequest(request, "/state", CURRENT_FILE_INFO);
-
-    // Check whether request was successful
-    return utils::validateReplyForLight(request, reply, light.id);
+    return light.transaction().setColorHue(hue).setTransition(transition).commit();
 }
 
 bool SimpleColorHueStrategy::setColorSaturation(uint8_t sat, uint8_t transition, HueLight& light) const
 {
-    // Careful, only use state until any light function might refresh the value and invalidate the reference
-    const nlohmann::json& state = light.state.GetValue()["state"];
-    nlohmann::json request = nlohmann::json::object();
-    if (transition != 4)
-    {
-        request["transitiontime"] = transition;
-    }
-    if (state["on"] != true)
-    {
-        request["on"] = true;
-    }
-    if (state["sat"] != sat)
-    {
-        if (sat > 254)
-        {
-            sat = 254;
-        }
-        request["sat"] = sat;
-    }
-
-    if (!request.count("on") && !request.count("sat"))
-    {
-        // Nothing needs to be changed
-        return true;
-    }
-
-    nlohmann::json reply = light.SendPutRequest(request, "/state", CURRENT_FILE_INFO);
-
-    // Check whether request was successful
-    return utils::validateReplyForLight(request, reply, light.id);
+    return light.transaction().setColorSaturation(sat).setTransition(transition).commit();
 }
 
 bool SimpleColorHueStrategy::setColorHueSaturation(uint16_t hue, uint8_t sat, uint8_t transition, HueLight& light) const
 {
-    // Careful, only use state until any light function might refresh the value and invalidate the reference
-    const nlohmann::json& state = light.state.GetValue()["state"];
-    nlohmann::json request = nlohmann::json::object();
-
-    if (transition != 4)
-    {
-        request["transitiontime"] = transition;
-    }
-    if (state["on"] != true)
-    {
-        request["on"] = true;
-    }
-    if (state["hue"] != hue || state["colormode"] != "hs")
-    {
-        hue = hue % 65535;
-        request["hue"] = hue;
-    }
-    if (state["sat"] != sat || state["colormode"] != "hs")
-    {
-        if (sat > 254)
-        {
-            sat = 254;
-        }
-        request["sat"] = sat;
-    }
-
-    if (!request.count("on") && !request.count("hue") && !request.count("sat"))
-    {
-        // Nothing needs to be changed
-        return true;
-    }
-
-    nlohmann::json reply = light.SendPutRequest(request, "/state", CURRENT_FILE_INFO);
-
-    // Check whether request was successful
-    return utils::validateReplyForLight(request, reply, light.id);
+    return light.transaction().setColorHueSaturation(hue, sat).setTransition(transition).commit();
 }
 
 bool SimpleColorHueStrategy::setColorXY(float x, float y, uint8_t transition, HueLight& light) const
 {
-    // Careful, only use state until any light function might refresh the value and invalidate the reference
-    const nlohmann::json& state = light.state.GetValue()["state"];
-    nlohmann::json request = nlohmann::json::object();
-
-    if (transition != 4)
-    {
-        request["transitiontime"] = transition;
-    }
-    if (state["on"] != true)
-    {
-        request["on"] = true;
-    }
-    if (std::abs(state["xy"][0].get<float>() - x) > 1E-4f || std::abs(state["xy"][1].get<float>() - y) > 1E-4f
-        || state["colormode"] != "xy")
-    {
-        request["xy"][0] = x;
-        request["xy"][1] = y;
-    }
-
-    if (!request.count("on") && !request.count("xy"))
-    {
-        // Nothing needs to be changed
-        return true;
-    }
-
-    nlohmann::json reply = light.SendPutRequest(request, "/state", CURRENT_FILE_INFO);
-
-    // Check whether request was successful
-    return utils::validateReplyForLight(request, reply, light.id);
+    return light.transaction().setColorXY(x, y).setTransition(transition).commit();
 }
 
 bool SimpleColorHueStrategy::setColorRGB(uint8_t r, uint8_t g, uint8_t b, uint8_t transition, HueLight& light) const
@@ -198,30 +80,7 @@ bool SimpleColorHueStrategy::setColorRGB(uint8_t r, uint8_t g, uint8_t b, uint8_
 
 bool SimpleColorHueStrategy::setColorLoop(bool on, HueLight& light) const
 {
-    // colorloop
-    // Careful, only use state until any light function might refresh the value and invalidate the reference
-    const nlohmann::json& state = light.state.GetValue()["state"];
-    nlohmann::json request = nlohmann::json::object();
-
-    if (state["on"] != true)
-    {
-        request["on"] = true;
-    }
-    std::string effect;
-    if ((effect = on ? "colorloop" : "none") != state["effect"])
-    {
-        request["effect"] = effect;
-    }
-    if (!request.count("on") && !request.count("effect"))
-    {
-        // Nothing needs to be changed
-        return true;
-    }
-
-    nlohmann::json reply = light.SendPutRequest(request, "/state", CURRENT_FILE_INFO);
-
-    // Check whether request was successful
-    return utils::validateReplyForLight(request, reply, light.id);
+    return light.transaction().setColorLoop(true).commit();
 }
 
 bool SimpleColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, HueLight& light) const

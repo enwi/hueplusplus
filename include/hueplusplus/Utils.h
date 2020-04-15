@@ -66,11 +66,21 @@ nlohmann::json safeGetMemberHelper(const nlohmann::json& json, std::size_t index
 
 //! \brief Function for validating that a request was executed correctly
 //!
+//! \param path The path the PUT request was made to
 //! \param request The request that was sent initially
 //! \param reply The reply that was received
-//! \param lightId The identifier of the light
 //! \return True if request was executed correctly
+bool validatePUTReply(const std::string& path, const nlohmann::json& request, const nlohmann::json& reply);
+
 bool validateReplyForLight(const nlohmann::json& request, const nlohmann::json& reply, int lightId);
+
+//! \brief Checks equality to 4 decimal places
+//!
+//! Floats in Hue json responses are rounded to 4 decimal places.
+inline bool floatEquals(float lhs, float rhs)
+{
+    return std::abs(lhs - rhs) <= 1E-4f;
+}
 
 //! \brief Returns the object/array member or null if it does not exist
 //!

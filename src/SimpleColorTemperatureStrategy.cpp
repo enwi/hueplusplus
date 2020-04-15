@@ -34,40 +34,7 @@ namespace hueplusplus
 {
 bool SimpleColorTemperatureStrategy::setColorTemperature(unsigned int mired, uint8_t transition, HueLight& light) const
 {
-    // Careful, only use state until any light function might refresh the value and invalidate the reference
-    const nlohmann::json& state = light.state.GetValue()["state"];
-    nlohmann::json request = nlohmann::json::object();
-    if (transition != 4)
-    {
-        request["transitiontime"] = transition;
-    }
-    if (state["on"] != true)
-    {
-        request["on"] = true;
-    }
-    if (state["ct"] != mired)
-    {
-        if (mired > 500)
-        {
-            mired = 500;
-        }
-        if (mired < 153)
-        {
-            mired = 153;
-        }
-        request["ct"] = mired;
-    }
-
-    if (!request.count("on") && !request.count("ct"))
-    {
-        // Nothing needs to be changed
-        return true;
-    }
-
-    nlohmann::json reply = light.SendPutRequest(request, "/state", CURRENT_FILE_INFO);
-
-    // Check whether request was successful
-    return utils::validateReplyForLight(request, reply, light.id);
+    return light.transaction().setColorTemperature(mired).setTransition(transition).commit();
 }
 
 bool SimpleColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLight& light) const

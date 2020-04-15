@@ -200,8 +200,8 @@ bool ExtendedColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLigh
 {
     // Careful, only use state until any light function might refresh the value and invalidate the reference
     const nlohmann::json& state = light.state.GetValue()["state"];
-    std::string cType = state["colormode"];
-    bool on = state["on"];
+    std::string cType = state["colormode"].get<std::string>();
+    bool on = state["on"].get<bool>();
     if (cType == "hs")
     {
         uint16_t oldHue = state["hue"].get<uint16_t>();
