@@ -29,7 +29,9 @@
 #include "hueplusplus/HueExceptionMacro.h"
 #include "hueplusplus/Utils.h"
 
-bool hueplusplus::SimpleBrightnessStrategy::setBrightness(unsigned int bri, uint8_t transition, HueLight& light) const
+namespace hueplusplus
+{
+bool SimpleBrightnessStrategy::setBrightness(unsigned int bri, uint8_t transition, HueLight& light) const
 {
     light.refreshState();
     if (bri == 0)
@@ -76,13 +78,14 @@ bool hueplusplus::SimpleBrightnessStrategy::setBrightness(unsigned int bri, uint
     }
 }
 
-unsigned int hueplusplus::SimpleBrightnessStrategy::getBrightness(HueLight& light) const
+unsigned int SimpleBrightnessStrategy::getBrightness(HueLight& light) const
 {
     light.refreshState();
     return light.state["state"]["bri"];
 }
 
-unsigned int hueplusplus::SimpleBrightnessStrategy::getBrightness(const HueLight& light) const
+unsigned int SimpleBrightnessStrategy::getBrightness(const HueLight& light) const
 {
     return light.state["state"]["bri"];
 }
+} // namespace hueplusplus

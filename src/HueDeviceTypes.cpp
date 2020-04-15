@@ -26,6 +26,8 @@
 
 #include "hueplusplus/HueExceptionMacro.h"
 
+namespace hueplusplus
+{
 namespace
 {
 const std::set<std::string> getGamutBTypes()
@@ -66,7 +68,7 @@ const std::set<std::string> getTemperatureLightTypes()
 }
 } // namespace
 
-auto hueplusplus::MakeHueLight::operator()(std::string type, int id, HueCommandAPI commands,
+auto MakeHueLight::operator()(std::string type, int id, HueCommandAPI commands,
     std::shared_ptr<BrightnessStrategy> simpleBrightnessStrategy,
     std::shared_ptr<ColorTemperatureStrategy> extendedColorTemperatureStrategy,
     std::shared_ptr<ColorTemperatureStrategy> simpleColorTemperatureStrategy,
@@ -112,3 +114,4 @@ auto hueplusplus::MakeHueLight::operator()(std::string type, int id, HueCommandA
     std::cerr << "Could not determine HueLight type:" << type << "!\n";
     throw HueException(CURRENT_FILE_INFO, "Could not determine HueLight type!");
 }
+} // namespace hueplusplus

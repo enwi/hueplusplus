@@ -30,8 +30,9 @@
 #include "hueplusplus/HueExceptionMacro.h"
 #include "hueplusplus/Utils.h"
 
-bool hueplusplus::SimpleColorTemperatureStrategy::setColorTemperature(
-    unsigned int mired, uint8_t transition, HueLight& light) const
+namespace hueplusplus
+{
+bool SimpleColorTemperatureStrategy::setColorTemperature(unsigned int mired, uint8_t transition, HueLight& light) const
 {
     light.refreshState();
     nlohmann::json request = nlohmann::json::object();
@@ -68,7 +69,7 @@ bool hueplusplus::SimpleColorTemperatureStrategy::setColorTemperature(
     return utils::validateReplyForLight(request, reply, light.id);
 }
 
-bool hueplusplus::SimpleColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLight& light) const
+bool SimpleColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLight& light) const
 {
     light.refreshState();
     std::string cType = light.state["state"]["colormode"];
@@ -102,13 +103,14 @@ bool hueplusplus::SimpleColorTemperatureStrategy::alertTemperature(unsigned int 
     }
 }
 
-unsigned int hueplusplus::SimpleColorTemperatureStrategy::getColorTemperature(HueLight& light) const
+unsigned int SimpleColorTemperatureStrategy::getColorTemperature(HueLight& light) const
 {
     light.refreshState();
     return light.state["state"]["ct"];
 }
 
-unsigned int hueplusplus::SimpleColorTemperatureStrategy::getColorTemperature(const HueLight& light) const
+unsigned int SimpleColorTemperatureStrategy::getColorTemperature(const HueLight& light) const
 {
     return light.state["state"]["ct"];
 }
+} // namespace hueplusplus
