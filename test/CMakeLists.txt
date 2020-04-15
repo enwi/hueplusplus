@@ -70,6 +70,9 @@ add_custom_target("unittest"
 find_program( GCOV_PATH gcov )
 find_program( LCOV_PATH lcov )
 
+mark_as_advanced(GCOV_PATH)
+mark_as_advanced(LCOV_PATH)
+
 if(LCOV_PATH AND GCOV_PATH)
     # GCov
     include(CodeCoverage.cmake)
