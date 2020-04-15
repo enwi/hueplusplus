@@ -30,6 +30,7 @@
 #include "ColorHueStrategy.h"
 #include "ColorTemperatureStrategy.h"
 #include "HueCommandAPI.h"
+#include "StateTransaction.h"
 
 #include "json/json.hpp"
 
@@ -78,7 +79,7 @@ LLC020		// Hue Go, Color Gamut C, ECL
 };*/
 
 //! enum that specifies the color type of all HueLights
-enum ColorType
+enum class ColorType
 {
     UNDEFINED, //!< ColorType for this light is unknown or undefined
     NONE, //!< light has no specific ColorType
@@ -675,6 +676,8 @@ public:
         }
         return false;
     };
+
+    virtual StateTransaction transaction();
 
 protected:
     //! \brief Protected ctor that is used by \ref Hue class.

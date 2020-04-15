@@ -34,49 +34,7 @@ namespace hueplusplus
 bool SimpleBrightnessStrategy::setBrightness(unsigned int bri, uint8_t transition, HueLight& light) const
 {
     // Careful, only use state until any light function might refresh the value and invalidate the reference
-    const nlohmann::json& state = light.state.GetValue()["state"];
-    if (bri == 0)
-    {
-        if (state["on"] == true)
-        {
-            return light.Off(transition);
-        }
-        else
-        {
-            return true;
-        }
-    }
-    else
-    {
-        nlohmann::json request = nlohmann::json::object();
-        if (transition != 4)
-        {
-            request["transitiontime"] = transition;
-        }
-        if (state["on"] != true)
-        {
-            request["on"] = true;
-        }
-        if (state["bri"] != bri)
-        {
-            if (bri > 254)
-            {
-                bri = 254;
-            }
-            request["bri"] = bri;
-        }
-
-        if (!request.count("on") && !request.count("bri"))
-        {
-            // Nothing needs to be changed
-            return true;
-        }
-
-        nlohmann::json reply = light.SendPutRequest(request, "/state", CURRENT_FILE_INFO);
-
-        // Check whether request was successful
-        return utils::validateReplyForLight(request, reply, light.id);
-    }
+    return light.transaction().setBrightness(bri).setTransition(transition).commit();
 }
 
 unsigned int SimpleBrightnessStrategy::getBrightness(HueLight& light) const
