@@ -30,7 +30,9 @@
 #include "hueplusplus/HueExceptionMacro.h"
 #include "hueplusplus/Utils.h"
 
-bool hueplusplus::SimpleColorHueStrategy::setColorHue(uint16_t hue, uint8_t transition, HueLight& light) const
+namespace hueplusplus
+{
+bool SimpleColorHueStrategy::setColorHue(uint16_t hue, uint8_t transition, HueLight& light) const
 {
     light.refreshState();
     nlohmann::json request = nlohmann::json::object();
@@ -60,7 +62,7 @@ bool hueplusplus::SimpleColorHueStrategy::setColorHue(uint16_t hue, uint8_t tran
     return utils::validateReplyForLight(request, reply, light.id);
 }
 
-bool hueplusplus::SimpleColorHueStrategy::setColorSaturation(uint8_t sat, uint8_t transition, HueLight& light) const
+bool SimpleColorHueStrategy::setColorSaturation(uint8_t sat, uint8_t transition, HueLight& light) const
 {
     light.refreshState();
     nlohmann::json request = nlohmann::json::object();
@@ -93,8 +95,7 @@ bool hueplusplus::SimpleColorHueStrategy::setColorSaturation(uint8_t sat, uint8_
     return utils::validateReplyForLight(request, reply, light.id);
 }
 
-bool hueplusplus::SimpleColorHueStrategy::setColorHueSaturation(
-    uint16_t hue, uint8_t sat, uint8_t transition, HueLight& light) const
+bool SimpleColorHueStrategy::setColorHueSaturation(uint16_t hue, uint8_t sat, uint8_t transition, HueLight& light) const
 {
     light.refreshState();
     nlohmann::json request = nlohmann::json::object();
@@ -133,7 +134,7 @@ bool hueplusplus::SimpleColorHueStrategy::setColorHueSaturation(
     return utils::validateReplyForLight(request, reply, light.id);
 }
 
-bool hueplusplus::SimpleColorHueStrategy::setColorXY(float x, float y, uint8_t transition, HueLight& light) const
+bool SimpleColorHueStrategy::setColorXY(float x, float y, uint8_t transition, HueLight& light) const
 {
     light.refreshState();
     nlohmann::json request = nlohmann::json::object();
@@ -166,8 +167,7 @@ bool hueplusplus::SimpleColorHueStrategy::setColorXY(float x, float y, uint8_t t
     return utils::validateReplyForLight(request, reply, light.id);
 }
 
-bool hueplusplus::SimpleColorHueStrategy::setColorRGB(
-    uint8_t r, uint8_t g, uint8_t b, uint8_t transition, HueLight& light) const
+bool SimpleColorHueStrategy::setColorRGB(uint8_t r, uint8_t g, uint8_t b, uint8_t transition, HueLight& light) const
 {
     if ((r == 0) && (g == 0) && (b == 0))
     {
@@ -193,7 +193,7 @@ bool hueplusplus::SimpleColorHueStrategy::setColorRGB(
     return light.setColorXY(x, y, transition);
 }
 
-bool hueplusplus::SimpleColorHueStrategy::setColorLoop(bool on, HueLight& light) const
+bool SimpleColorHueStrategy::setColorLoop(bool on, HueLight& light) const
 {
     // colorloop
     light.refreshState();
@@ -220,7 +220,7 @@ bool hueplusplus::SimpleColorHueStrategy::setColorLoop(bool on, HueLight& light)
     return utils::validateReplyForLight(request, reply, light.id);
 }
 
-bool hueplusplus::SimpleColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, HueLight& light) const
+bool SimpleColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, HueLight& light) const
 {
     light.refreshState();
     std::string cType = light.state["state"]["colormode"];
@@ -279,7 +279,7 @@ bool hueplusplus::SimpleColorHueStrategy::alertHueSaturation(uint16_t hue, uint8
     }
 }
 
-bool hueplusplus::SimpleColorHueStrategy::alertXY(float x, float y, HueLight& light) const
+bool SimpleColorHueStrategy::alertXY(float x, float y, HueLight& light) const
 {
     light.refreshState();
     std::string cType = light.state["state"]["colormode"];
@@ -338,7 +338,7 @@ bool hueplusplus::SimpleColorHueStrategy::alertXY(float x, float y, HueLight& li
     }
 }
 
-bool hueplusplus::SimpleColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLight& light) const
+bool SimpleColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLight& light) const
 {
     light.refreshState();
     std::string cType = light.state["state"]["colormode"];
@@ -397,26 +397,26 @@ bool hueplusplus::SimpleColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t
     }
 }
 
-std::pair<uint16_t, uint8_t> hueplusplus::SimpleColorHueStrategy::getColorHueSaturation(HueLight& light) const
+std::pair<uint16_t, uint8_t> SimpleColorHueStrategy::getColorHueSaturation(HueLight& light) const
 {
     light.refreshState();
     return std::pair<uint16_t, uint8_t>(
         static_cast<uint16_t>(light.state["state"]["hue"]), static_cast<uint8_t>(light.state["state"]["sat"]));
 }
 
-std::pair<uint16_t, uint8_t> hueplusplus::SimpleColorHueStrategy::getColorHueSaturation(const HueLight& light) const
+std::pair<uint16_t, uint8_t> SimpleColorHueStrategy::getColorHueSaturation(const HueLight& light) const
 {
     return std::pair<uint16_t, uint8_t>(
         static_cast<uint16_t>(light.state["state"]["hue"]), static_cast<uint8_t>(light.state["state"]["sat"]));
 }
 
-std::pair<float, float> hueplusplus::SimpleColorHueStrategy::getColorXY(HueLight& light) const
+std::pair<float, float> SimpleColorHueStrategy::getColorXY(HueLight& light) const
 {
     light.refreshState();
     return std::pair<float, float>(light.state["state"]["xy"][0], light.state["state"]["xy"][1]);
 }
 
-std::pair<float, float> hueplusplus::SimpleColorHueStrategy::getColorXY(const HueLight& light) const
+std::pair<float, float> SimpleColorHueStrategy::getColorXY(const HueLight& light) const
 {
     return std::pair<float, float>(light.state["state"]["xy"][0], light.state["state"]["xy"][1]);
 }
@@ -430,3 +430,4 @@ float t = (x0 * y1 - y0 * x1 + (y0 - y1) * pointx + (x1 - x0) * pointy) * sign;
 
 return s > 0 && t > 0 && (s + t) < A * sign;
 }*/
+} // namespace hueplusplus

@@ -32,6 +32,8 @@
 
 #pragma comment(lib, "Ws2_32.lib")
 
+namespace hueplusplus
+{
 namespace
 {
 class AddrInfoFreer
@@ -54,7 +56,7 @@ private:
 };
 } // namespace
 
-hueplusplus::WinHttpHandler::WinHttpHandler()
+WinHttpHandler::WinHttpHandler()
 {
     // Initialize Winsock
     int return_code = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -65,12 +67,12 @@ hueplusplus::WinHttpHandler::WinHttpHandler()
     }
 }
 
-hueplusplus::WinHttpHandler::~WinHttpHandler()
+WinHttpHandler::~WinHttpHandler()
 {
     WSACleanup();
 }
 
-std::string hueplusplus::WinHttpHandler::send(const std::string& msg, const std::string& adr, int port) const
+std::string WinHttpHandler::send(const std::string& msg, const std::string& adr, int port) const
 {
     struct addrinfo hints = {};
     hints.ai_family = AF_INET;
@@ -171,7 +173,7 @@ std::string hueplusplus::WinHttpHandler::send(const std::string& msg, const std:
     return response;
 }
 
-std::vector<std::string> hueplusplus::WinHttpHandler::sendMulticast(
+std::vector<std::string> WinHttpHandler::sendMulticast(
     const std::string& msg, const std::string& adr, int port, int timeout) const
 {
     struct addrinfo hints = {};
@@ -296,3 +298,4 @@ std::vector<std::string> hueplusplus::WinHttpHandler::sendMulticast(
 
     return returnString;
 }
+} // namespace hueplusplus
