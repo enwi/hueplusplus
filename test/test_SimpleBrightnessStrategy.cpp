@@ -46,33 +46,30 @@ TEST(SimpleBrightnessStrategy, setBrightness)
         .WillRepeatedly(Return(nlohmann::json::object()));
     MockHueLight test_light(handler);
 
-    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
-    nlohmann::json prep_ret;
-    prep_ret = nlohmann::json::array();
-    prep_ret[0] = nlohmann::json::object();
-    prep_ret[0]["success"] = nlohmann::json::object();
-    prep_ret[0]["success"]["/lights/1/state/transitiontime"] = 6;
-    prep_ret[1] = nlohmann::json::object();
-    prep_ret[1]["success"] = nlohmann::json::object();
-    prep_ret[1]["success"]["/lights/1/state/on"] = true;
-    prep_ret[2] = nlohmann::json::object();
-    prep_ret[2]["success"] = nlohmann::json::object();
-    prep_ret[2]["success"]["/lights/1/state/bri"] = 50;
-    EXPECT_CALL(test_light, SendPutRequest(_, "/state", _)).Times(1).WillOnce(Return(prep_ret));
+    const std::string statePath = "/api/" + getBridgeUsername() + "/lights/1/state";
 
+    nlohmann::json prep_ret
+        = {{{"success", {{"/lights/1/state/on", false}}}}, {{"success", {{"/lights/1/state/bri", 0}}}}};
+    EXPECT_CALL(*handler, PUTJson(statePath, _, getBridgeIp(), getBridgePort())).Times(1).WillOnce(Return(prep_ret));
     test_light.getState()["state"]["on"] = true;
     EXPECT_EQ(true, SimpleBrightnessStrategy().setBrightness(0, 4, test_light));
+    // Only set brightness, already off
     test_light.getState()["state"]["on"] = false;
+    prep_ret = {{{"success", {{"/lights/1/state/bri", 0}}}}};
+    EXPECT_CALL(*handler, PUTJson(statePath, _, getBridgeIp(), getBridgePort())).Times(1).WillOnce(Return(prep_ret));
     EXPECT_EQ(true, SimpleBrightnessStrategy().setBrightness(0, 4, test_light));
 
+    prep_ret = {{{"success", {{"/lights/1/state/on", true}}}}, {{"success", {{"/lights/1/state/bri", 50}}}}};
+    EXPECT_CALL(*handler, PUTJson(statePath, _, getBridgeIp(), getBridgePort())).Times(1).WillOnce(Return(prep_ret));
     test_light.getState()["state"]["bri"] = 0;
     EXPECT_EQ(true, SimpleBrightnessStrategy().setBrightness(50, 6, test_light));
     test_light.getState()["state"]["on"] = true;
     test_light.getState()["state"]["bri"] = 50;
+    // No request because state matches
     EXPECT_EQ(true, SimpleBrightnessStrategy().setBrightness(50, 6, test_light));
 
-    prep_ret[2]["success"]["/lights/1/state/bri"] = 254;
-    EXPECT_CALL(test_light, SendPutRequest(_, "/state", _)).Times(1).WillOnce(Return(prep_ret));
+    prep_ret[1]["success"]["/lights/1/state/bri"] = 254;
+    EXPECT_CALL(*handler, PUTJson(statePath, _, getBridgeIp(), getBridgePort())).Times(1).WillOnce(Return(prep_ret));
     test_light.getState()["state"]["on"] = false;
     EXPECT_EQ(true, SimpleBrightnessStrategy().setBrightness(255, 6, test_light));
 }

@@ -69,7 +69,7 @@ protected:
         hue_bridge_state["lights"]["2"] = nlohmann::json::object();
         hue_bridge_state["lights"]["2"]["state"] = nlohmann::json::object();
         hue_bridge_state["lights"]["2"]["state"]["on"] = false;
-        hue_bridge_state["lights"]["2"]["state"]["bri"] = 254;
+        hue_bridge_state["lights"]["2"]["state"]["bri"] = 0;
         hue_bridge_state["lights"]["2"]["state"]["ct"] = 366;
         hue_bridge_state["lights"]["2"]["state"]["hue"] = 123456;
         hue_bridge_state["lights"]["2"]["state"]["sat"] = 123;
@@ -514,7 +514,7 @@ TEST_F(HueLightTest, setBrightness)
     prep_ret[1]["success"]["/lights/3/state/on"] = true;
     prep_ret[2] = nlohmann::json::object();
     prep_ret[2]["success"] = nlohmann::json::object();
-    prep_ret[2]["success"]["/lights/3/state/bri"] = 254;
+    prep_ret[2]["success"]["/lights/3/state/bri"] = 253;
     EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/3/state", _, getBridgeIp(), 80))
         .Times(1)
         .WillOnce(Return(prep_ret));
@@ -525,7 +525,7 @@ TEST_F(HueLightTest, setBrightness)
 
     EXPECT_EQ(false, test_light_1.setBrightness(200));
     EXPECT_EQ(true, test_light_2.setBrightness(0, 2));
-    EXPECT_EQ(true, test_light_3.setBrightness(255, 0));
+    EXPECT_EQ(true, test_light_3.setBrightness(253, 0));
 }
 
 TEST_F(HueLightTest, getBrightness)
@@ -538,10 +538,10 @@ TEST_F(HueLightTest, getBrightness)
     HueLight test_light_3 = test_bridge.getLight(3);
 
     EXPECT_EQ(254, ctest_light_1.getBrightness());
-    EXPECT_EQ(254, ctest_light_2.getBrightness());
+    EXPECT_EQ(0, ctest_light_2.getBrightness());
     EXPECT_EQ(254, ctest_light_3.getBrightness());
     EXPECT_EQ(254, test_light_1.getBrightness());
-    EXPECT_EQ(254, test_light_2.getBrightness());
+    EXPECT_EQ(0, test_light_2.getBrightness());
     EXPECT_EQ(254, test_light_3.getBrightness());
 }
 

@@ -34,60 +34,22 @@ namespace hueplusplus
 {
 bool HueLight::On(uint8_t transition)
 {
-    nlohmann::json request = nlohmann::json::object();
-    if (transition != 4)
-    {
-        request["transitiontime"] = transition;
-    }
-    if (state.GetValue()["state"]["on"] != true)
-    {
-        request["on"] = true;
-    }
-
-    if (!request.count("on"))
-    {
-        // Nothing needs to be changed
-        return true;
-    }
-
-    nlohmann::json reply = SendPutRequest(request, "/state", CURRENT_FILE_INFO);
-
-    // Check whether request was successful
-    return utils::validateReplyForLight(request, reply, id);
+    return transaction().setOn(true).setTransition(transition).commit();
 }
 
 bool HueLight::Off(uint8_t transition)
 {
-    nlohmann::json request = nlohmann::json::object();
-    if (transition != 4)
-    {
-        request["transitiontime"] = transition;
-    }
-    if (state.GetValue()["state"]["on"] != false)
-    {
-        request["on"] = false;
-    }
-
-    if (!request.count("on"))
-    {
-        // Nothing needs to be changed
-        return true;
-    }
-
-    nlohmann::json reply = SendPutRequest(request, "/state", CURRENT_FILE_INFO);
-
-    // Check whether request was successful
-    return utils::validateReplyForLight(request, reply, id);
+    return transaction().setOn(false).setTransition(transition).commit();
 }
 
 bool HueLight::isOn()
 {
-    return state.GetValue()["state"]["on"];
+    return state.GetValue().at("state").at("on").get<bool>();
 }
 
 bool HueLight::isOn() const
 {
-    return state.GetValue()["state"]["on"];
+    return state.GetValue().at("state").at("on").get<bool>();
 }
 
 int HueLight::getId() const
@@ -173,12 +135,12 @@ unsigned int HueLight::MiredToKelvin(unsigned int mired) const
 
 bool HueLight::alert()
 {
-    nlohmann::json request;
-    request["alert"] = "select";
+    return transaction().alert().commit();
+}
 
-    nlohmann::json reply = SendPutRequest(request, "/state", CURRENT_FILE_INFO);
-
-    return utils::validateReplyForLight(request, reply, id);
+StateTransaction HueLight::transaction()
+{
+    return StateTransaction(commands, "/lights/" + std::to_string(id) + "/state", state.GetValue().at("state"));
 }
 
 HueLight::HueLight(int id, const HueCommandAPI& commands) : HueLight(id, commands, nullptr, nullptr, nullptr) {}
@@ -187,12 +149,12 @@ HueLight::HueLight(int id, const HueCommandAPI& commands, std::shared_ptr<const 
     std::shared_ptr<const ColorTemperatureStrategy> colorTempStrategy,
     std::shared_ptr<const ColorHueStrategy> colorHueStrategy, std::chrono::steady_clock::duration refreshDuration)
     : id(id),
+      state("/lights/" + std::to_string(id), commands, refreshDuration),
+      colorType(ColorType::NONE),
       brightnessStrategy(std::move(brightnessStrategy)),
       colorTemperatureStrategy(std::move(colorTempStrategy)),
       colorHueStrategy(std::move(colorHueStrategy)),
-      commands(commands),
-      state("/lights/" + std::to_string(id), commands, refreshDuration)
-
+      commands(commands)
 {
     state.Refresh();
 }

@@ -28,10 +28,14 @@ namespace hueplusplus
 {
 namespace utils
 {
-bool validateReplyForLight(const nlohmann::json& request, const nlohmann::json& reply, int lightId)
+bool validatePUTReply(const std::string& path, const nlohmann::json& request, const nlohmann::json& reply)
 {
+    std::string pathAppend = path;
+    if (pathAppend.back() != '/')
+    {
+        pathAppend.push_back('/');
+    }
     bool success = false;
-    std::string path = "/lights/" + std::to_string(lightId) + "/state/";
     for (auto it = reply.begin(); it != reply.end(); ++it)
     {
         success = it.value().count("success");
@@ -42,9 +46,9 @@ bool validateReplyForLight(const nlohmann::json& request, const nlohmann::json& 
             for (auto successIt = successObject.begin(); successIt != successObject.end(); ++successIt)
             {
                 const std::string successPath = successIt.key();
-                if (successPath.find(path) == 0)
+                if (successPath.find(pathAppend) == 0)
                 {
-                    const std::string valueKey = successPath.substr(path.size());
+                    const std::string valueKey = successPath.substr(pathAppend.size());
                     auto requestIt = request.find(valueKey);
                     success = requestIt != request.end();
                     if (success)
@@ -58,7 +62,8 @@ bool validateReplyForLight(const nlohmann::json& request, const nlohmann::json& 
                         }
                         else
                         {
-                            success = requestIt.value() == successIt.value();
+                            success = requestIt.value() == successIt.value()
+                                || (successIt.value().is_string() && successIt.value() == "Updated.");
                         }
                         if (!success)
                         {
@@ -79,6 +84,11 @@ bool validateReplyForLight(const nlohmann::json& request, const nlohmann::json& 
         }
     }
     return success;
+}
+
+bool validateReplyForLight(const nlohmann::json& request, const nlohmann::json& reply, int lightId)
+{
+    return validatePUTReply("/lights/" + std::to_string(lightId) + "/state/", request, reply);
 }
 } // namespace utils
 } // namespace hueplusplus

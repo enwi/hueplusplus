@@ -46,6 +46,8 @@ TEST(SimpleColorTemperatureStrategy, setColorTemperature)
         .WillRepeatedly(Return(nlohmann::json::object()));
     MockHueLight test_light(handler);
 
+    const std::string statePath = "/api/" + getBridgeUsername() + "/lights/1/state";
+
     nlohmann::json prep_ret;
     prep_ret = nlohmann::json::array();
     prep_ret[0] = nlohmann::json::object();
@@ -57,21 +59,22 @@ TEST(SimpleColorTemperatureStrategy, setColorTemperature)
     prep_ret[2] = nlohmann::json::object();
     prep_ret[2]["success"] = nlohmann::json::object();
     prep_ret[2]["success"]["/lights/1/state/ct"] = 155;
-    EXPECT_CALL(test_light, SendPutRequest(_, "/state", _)).Times(1).WillOnce(Return(prep_ret));
+    EXPECT_CALL(*handler, PUTJson(statePath, _, getBridgeIp(), getBridgePort())).Times(1).WillOnce(Return(prep_ret));
 
     test_light.getState()["state"]["on"] = true;
     test_light.getState()["state"]["ct"] = 200;
+    test_light.getState()["state"]["colormode"] = "ct";
     EXPECT_EQ(true, SimpleColorTemperatureStrategy().setColorTemperature(200, 4, test_light));
 
     test_light.getState()["state"]["on"] = false;
     EXPECT_EQ(true, SimpleColorTemperatureStrategy().setColorTemperature(155, 6, test_light));
 
-    prep_ret[2]["success"]["/lights/1/state/ct"] = 153;
-    EXPECT_CALL(test_light, SendPutRequest(_, "/state", _)).Times(1).WillOnce(Return(prep_ret));
+    prep_ret = {{{"success", {{"/lights/1/state/transitiontime", 6}}}}, {{"success", {{"/lights/1/state/ct", 153}}}}};
+    EXPECT_CALL(*handler, PUTJson(statePath, _, getBridgeIp(), getBridgePort())).Times(1).WillOnce(Return(prep_ret));
     EXPECT_EQ(true, SimpleColorTemperatureStrategy().setColorTemperature(0, 6, test_light));
 
-    prep_ret[2]["success"]["/lights/1/state/ct"] = 500;
-    EXPECT_CALL(test_light, SendPutRequest(_, "/state", _)).Times(1).WillOnce(Return(prep_ret));
+    prep_ret[1]["success"]["/lights/1/state/ct"] = 500;
+    EXPECT_CALL(*handler, PUTJson(statePath, _, getBridgeIp(), getBridgePort())).Times(1).WillOnce(Return(prep_ret));
     EXPECT_EQ(true, SimpleColorTemperatureStrategy().setColorTemperature(600, 6, test_light));
 }
 
