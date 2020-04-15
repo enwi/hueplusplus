@@ -22,21 +22,23 @@
 
 #include "hueplusplus/HueException.h"
 
-hueplusplus::HueException::HueException(FileInfo fileInfo, const std::string& message)
+namespace hueplusplus
+{
+HueException::HueException(FileInfo fileInfo, const std::string& message)
     : HueException("HueException", std::move(fileInfo), message)
 {}
 
-const char* hueplusplus::HueException::what() const noexcept
+const char* HueException::what() const noexcept
 {
     return whatMessage.c_str();
 }
 
-const hueplusplus::FileInfo& hueplusplus::HueException::GetFile() const noexcept
+const FileInfo& HueException::GetFile() const noexcept
 {
     return fileInfo;
 }
 
-hueplusplus::HueException::HueException(const char* exceptionName, FileInfo fileInfo, const std::string& message)
+HueException::HueException(const char* exceptionName, FileInfo fileInfo, const std::string& message)
     : fileInfo(std::move(fileInfo))
 {
     whatMessage = exceptionName;
@@ -46,7 +48,7 @@ hueplusplus::HueException::HueException(const char* exceptionName, FileInfo file
     whatMessage.append(message);
 }
 
-hueplusplus::HueAPIResponseException::HueAPIResponseException(
+HueAPIResponseException::HueAPIResponseException(
     FileInfo fileInfo, int error, std::string address, std::string description)
     : HueException("HueApiResponseException", std::move(fileInfo), GetMessage(error, address, description)),
       error(error),
@@ -54,23 +56,22 @@ hueplusplus::HueAPIResponseException::HueAPIResponseException(
       description(std::move(description))
 {}
 
-int hueplusplus::HueAPIResponseException::GetErrorNumber() const noexcept
+int HueAPIResponseException::GetErrorNumber() const noexcept
 {
     return error;
 }
 
-const std::string& hueplusplus::HueAPIResponseException::GetAddress() const noexcept
+const std::string& HueAPIResponseException::GetAddress() const noexcept
 {
     return address;
 }
 
-const std::string& hueplusplus::HueAPIResponseException::GetDescription() const noexcept
+const std::string& HueAPIResponseException::GetDescription() const noexcept
 {
     return description;
 }
 
-hueplusplus::HueAPIResponseException hueplusplus::HueAPIResponseException::Create(
-    FileInfo fileInfo, const nlohmann::json& response)
+HueAPIResponseException HueAPIResponseException::Create(FileInfo fileInfo, const nlohmann::json& response)
 {
     const nlohmann::json error = response.at("error");
     int errorCode = error.value("type", -1);
@@ -79,8 +80,7 @@ hueplusplus::HueAPIResponseException hueplusplus::HueAPIResponseException::Creat
     return HueAPIResponseException(std::move(fileInfo), errorCode, std::move(address), std::move(description));
 }
 
-std::string hueplusplus::HueAPIResponseException::GetMessage(
-    int error, const std::string& addr, const std::string& description)
+std::string HueAPIResponseException::GetMessage(int error, const std::string& addr, const std::string& description)
 {
     std::string result = std::to_string(error);
     result.append(" ");
@@ -90,7 +90,7 @@ std::string hueplusplus::HueAPIResponseException::GetMessage(
     return result;
 }
 
-std::string hueplusplus::FileInfo::ToString() const
+std::string FileInfo::ToString() const
 {
     if (filename.empty() || line < 0)
     {
@@ -103,3 +103,4 @@ std::string hueplusplus::FileInfo::ToString() const
     result.append(std::to_string(line));
     return result;
 }
+} // namespace hueplusplus
