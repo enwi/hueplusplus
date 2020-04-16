@@ -58,7 +58,7 @@ protected:
             .Times(AtLeast(1))
             .WillRepeatedly(Return(getBridgeXml()));
     }
-    ~HueFinderTest(){};
+    ~HueFinderTest() {};
 };
 
 TEST_F(HueFinderTest, FindBridges)
@@ -87,7 +87,7 @@ TEST_F(HueFinderTest, FindBridges)
 TEST_F(HueFinderTest, GetBridge)
 {
     using namespace ::testing;
-    nlohmann::json request{{"devicetype", "HuePlusPlus#User"}};
+    nlohmann::json request {{"devicetype", "HuePlusPlus#User"}};
 
     nlohmann::json errorResponse
         = {{{"error", {{"type", 101}, {"address", ""}, {"description", "link button not pressed"}}}}};
@@ -117,7 +117,7 @@ TEST_F(HueFinderTest, GetBridge)
     EXPECT_EQ(test_bridge.getUsername(), getBridgeUsername()) << "Bridge username not matching";
 
     // Verify that username is correctly set in api requests
-    nlohmann::json hue_bridge_state{{"lights", {}}};
+    nlohmann::json hue_bridge_state {{"lights", {}}};
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .Times(1)
@@ -166,7 +166,7 @@ TEST(Hue, requestUsername)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
-    nlohmann::json request{{"devicetype", "HuePlusPlus#User"}};
+    nlohmann::json request {{"devicetype", "HuePlusPlus#User"}};
 
     {
         nlohmann::json errorResponse
@@ -223,7 +223,7 @@ TEST(Hue, requestUsername)
         EXPECT_EQ(test_bridge.getUsername(), getBridgeUsername()) << "Bridge username not matching";
 
         // Verify that username is correctly set in api requests
-        nlohmann::json hue_bridge_state{{"lights", {}}};
+        nlohmann::json hue_bridge_state {{"lights", {}}};
         EXPECT_CALL(
             *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
             .Times(1)
@@ -264,7 +264,7 @@ TEST(Hue, getLight)
     // Test exception
     ASSERT_THROW(test_bridge.getLight(1), HueException);
 
-    nlohmann::json hue_bridge_state{{"lights",
+    nlohmann::json hue_bridge_state {{"lights",
         {{"1",
             {{"state",
                  {{"on", true}, {"bri", 254}, {"ct", 366}, {"alert", "none"}, {"colormode", "ct"},
@@ -396,7 +396,7 @@ TEST(Hue, removeLight)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
-    nlohmann::json hue_bridge_state{{"lights",
+    nlohmann::json hue_bridge_state {{"lights",
         {{"1",
             {{"state",
                  {{"on", true}, {"bri", 254}, {"ct", 366}, {"alert", "none"}, {"colormode", "ct"},
@@ -439,7 +439,7 @@ TEST(Hue, getAllLights)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
-    nlohmann::json hue_bridge_state{{"lights",
+    nlohmann::json hue_bridge_state {{"lights",
         {{"1",
             {{"state",
                  {{"on", true}, {"bri", 254}, {"ct", 366}, {"alert", "none"}, {"colormode", "ct"},
@@ -470,7 +470,7 @@ TEST(Hue, lightExists)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
-    nlohmann::json hue_bridge_state{{"lights",
+    nlohmann::json hue_bridge_state {{"lights",
         {{"1",
             {{"state",
                  {{"on", true}, {"bri", 254}, {"ct", 366}, {"alert", "none"}, {"colormode", "ct"},
@@ -502,11 +502,182 @@ TEST(Hue, lightExists)
     EXPECT_EQ(true, const_test_bridge2.lightExists(1));
 }
 
+TEST(Hue, getGroup)
+{
+    using namespace ::testing;
+    std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
+    EXPECT_CALL(
+        *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+        .Times(1);
+
+    Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+
+    // Test exception
+    ASSERT_THROW(test_bridge.getGroup(1), HueException);
+
+    nlohmann::json hue_bridge_state {{"groups",
+        {{"1",
+            {{"name", "Group 1"}, {"type", "LightGroup"}, {"lights", {"1", "2", "3"}},
+                {"action",
+                    {{"on", true}, {"bri", 254}, {"ct", 366}, {"alert", "none"}, {"colormode", "ct"}, {"hue", 200},
+                        {"sat", 254}, {"effect", "none"}, {"xy", {0.f, 0.f}}}},
+                {"state", {{"any_on", true}, {"all_on", true}}}}}}}};
+
+    EXPECT_CALL(
+        *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+        .Times(1)
+        .WillOnce(Return(hue_bridge_state));
+
+    EXPECT_CALL(*handler,
+        GETJson("/api/" + getBridgeUsername() + "/groups/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+        .Times(AtLeast(1))
+        .WillRepeatedly(Return(hue_bridge_state["groups"]["1"]));
+
+    // Refresh cache
+    test_bridge = Hue(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+
+    // Test when correct data is sent
+    Group test_group_1 = test_bridge.getGroup(1);
+    EXPECT_EQ(test_group_1.getName(), "Group 1");
+    EXPECT_EQ(test_group_1.getType(), "LightGroup");
+
+    // Test again to check whether group is returned directly
+    test_group_1 = test_bridge.getGroup(1);
+    EXPECT_EQ(test_group_1.getName(), "Group 1");
+    EXPECT_EQ(test_group_1.getType(), "LightGroup");
+}
+
+TEST(Hue, removeGroup)
+{
+    using namespace ::testing;
+    std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
+    nlohmann::json hue_bridge_state {{"groups",
+        {{"1",
+            {{"name", "Group 1"}, {"type", "LightGroup"}, {"lights", {"1", "2", "3"}},
+                {"action",
+                    {{"on", true}, {"bri", 254}, {"ct", 366}, {"alert", "none"}, {"colormode", "ct"}, {"hue", 200},
+                        {"sat", 254}, {"effect", "none"}, {"xy", {0.f, 0.f}}}},
+                {"state", {{"any_on", true}, {"all_on", true}}}}}}}};
+    EXPECT_CALL(
+        *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+        .Times(1)
+        .WillOnce(Return(hue_bridge_state));
+
+    Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+
+    EXPECT_CALL(*handler,
+        GETJson("/api/" + getBridgeUsername() + "/groups/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+        .Times(1)
+        .WillRepeatedly(Return(hue_bridge_state["groups"]["1"]));
+
+    nlohmann::json return_answer;
+    return_answer = nlohmann::json::array();
+    return_answer[0] = nlohmann::json::object();
+    return_answer[0]["success"] = "/groups/1 deleted";
+    EXPECT_CALL(*handler,
+        DELETEJson(
+            "/api/" + getBridgeUsername() + "/groups/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+        .Times(2)
+        .WillOnce(Return(return_answer))
+        .WillOnce(Return(nlohmann::json()));
+
+    // Test when correct data is sent
+    Group test_group_1 = test_bridge.getGroup(1);
+
+    EXPECT_EQ(test_bridge.removeGroup(1), true);
+
+    EXPECT_EQ(test_bridge.removeGroup(1), false);
+}
+
+TEST(Hue, groupExists)
+{
+    using namespace ::testing;
+    std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
+    nlohmann::json hue_bridge_state {{"groups",
+        {{"1",
+            {{"name", "Group 1"}, {"type", "LightGroup"}, {"lights", {"1", "2", "3"}},
+                {"action",
+                    {{"on", true}, {"bri", 254}, {"ct", 366}, {"alert", "none"}, {"colormode", "ct"}, {"hue", 200},
+                        {"sat", 254}, {"effect", "none"}, {"xy", {0.f, 0.f}}}},
+                {"state", {{"any_on", true}, {"all_on", true}}}}}}}};
+    EXPECT_CALL(
+        *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+        .Times(AtLeast(1))
+        .WillRepeatedly(Return(hue_bridge_state));
+    EXPECT_CALL(*handler,
+        GETJson("/api/" + getBridgeUsername() + "/groups/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+        .Times(AtLeast(1))
+        .WillRepeatedly(Return(hue_bridge_state["groups"]["1"]));
+
+    Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+
+    EXPECT_EQ(true, test_bridge.groupExists(1));
+    EXPECT_EQ(false, test_bridge.groupExists(2));
+
+    const Hue const_test_bridge1 = test_bridge;
+    EXPECT_EQ(true, const_test_bridge1.groupExists(1));
+    EXPECT_EQ(false, const_test_bridge1.groupExists(2));
+
+    test_bridge.getGroup(1);
+    const Hue const_test_bridge2 = test_bridge;
+    EXPECT_EQ(true, test_bridge.groupExists(1));
+    EXPECT_EQ(true, const_test_bridge2.groupExists(1));
+}
+
+TEST(Hue, getAllGroups)
+{
+    using namespace ::testing;
+    std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
+    nlohmann::json hue_bridge_state {{"groups",
+        {{"1",
+            {{"name", "Group 1"}, {"type", "LightGroup"}, {"lights", {"1", "2", "3"}},
+                {"action",
+                    {{"on", true}, {"bri", 254}, {"ct", 366}, {"alert", "none"}, {"colormode", "ct"}, {"hue", 200},
+                        {"sat", 254}, {"effect", "none"}, {"xy", {0.f, 0.f}}}},
+                {"state", {{"any_on", true}, {"all_on", true}}}}}}}};
+
+    EXPECT_CALL(
+        *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+        .Times(AtLeast(1))
+        .WillRepeatedly(Return(hue_bridge_state));
+
+    EXPECT_CALL(*handler,
+        GETJson("/api/" + getBridgeUsername() + "/groups/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+        .Times(AtLeast(1))
+        .WillRepeatedly(Return(hue_bridge_state["groups"]["1"]));
+
+    Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+
+    std::vector<std::reference_wrapper<Group>> test_groups = test_bridge.getAllGroups();
+    ASSERT_EQ(1, test_groups.size());
+    EXPECT_EQ(test_groups[0].get().getName(), "Group 1");
+    EXPECT_EQ(test_groups[0].get().getType(), "LightGroup");
+}
+
+TEST(Hue, createGroup)
+{
+    using namespace ::testing;
+    std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
+    Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+    CreateGroup create = CreateGroup::Room({2, 3}, "Nice room", "LivingRoom");
+    nlohmann::json request = create.getRequest();
+    const int id = 4;
+    nlohmann::json response = {{{"success", {{"id", std::to_string(id)}}}}};
+    EXPECT_CALL(*handler, POSTJson("/api/" + getBridgeUsername() + "/groups", request, getBridgeIp(), getBridgePort()))
+        .WillOnce(Return(response));
+    EXPECT_EQ(id, test_bridge.createGroup(create));
+
+    response = {};
+    EXPECT_CALL(*handler, POSTJson("/api/" + getBridgeUsername() + "/groups", request, getBridgeIp(), getBridgePort()))
+        .WillOnce(Return(response));
+    EXPECT_EQ(0, test_bridge.createGroup(create));
+}
+
 TEST(Hue, getPictureOfLight)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
-    nlohmann::json hue_bridge_state{{"lights",
+    nlohmann::json hue_bridge_state {{"lights",
         {{"1",
             {{"state",
                  {{"on", true}, {"bri", 254}, {"ct", 366}, {"alert", "none"}, {"colormode", "ct"},
