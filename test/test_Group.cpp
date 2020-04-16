@@ -155,7 +155,7 @@ TEST_F(GroupTest, getActionHueSaturation)
     const int id = 1;
     expectGetState(id);
     Group group(id, commands, std::chrono::steady_clock::duration::max());
-    std::pair<uint16_t, uint8_t> hueSat{hue, sat};
+    std::pair<uint16_t, uint8_t> hueSat {hue, sat};
     EXPECT_EQ(hueSat, group.getActionHueSaturation());
     EXPECT_EQ(hueSat, Const(group).getActionHueSaturation());
 }
@@ -183,7 +183,7 @@ TEST_F(GroupTest, getActionColorXY)
     const int id = 1;
     expectGetState(id);
     Group group(id, commands, std::chrono::steady_clock::duration::max());
-    std::pair<float, float> xy{x, y};
+    std::pair<float, float> xy {x, y};
     EXPECT_EQ(xy, group.getActionColorXY());
     EXPECT_EQ(xy, Const(group).getActionColorXY());
 }
@@ -195,4 +195,87 @@ TEST_F(GroupTest, getActionColorMode)
     Group group(id, commands, std::chrono::steady_clock::duration::max());
     EXPECT_EQ(colormode, group.getActionColorMode());
     EXPECT_EQ(colormode, Const(group).getActionColorMode());
+}
+
+TEST_F(GroupTest, setName)
+{
+    const int id = 1;
+    expectGetState(id);
+    Group group(id, commands, std::chrono::steady_clock::duration::max());
+    const std::string name = "Test group";
+    nlohmann::json request = {{"name", name}};
+    nlohmann::json response = {{"success", {"/groups/1/name", name}}};
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/groups/1", request, getBridgeIp(), getBridgePort()))
+        .WillOnce(Return(response));
+    expectGetState(id);
+    group.setName(name);
+}
+
+TEST_F(GroupTest, setLights)
+{
+    const int id = 1;
+    expectGetState(id);
+    Group group(id, commands, std::chrono::steady_clock::duration::max());
+    const nlohmann::json lights = {"2", "4", "5"};
+    nlohmann::json request = {{"lights", lights}};
+    nlohmann::json response = {{"success", {"/groups/1/lights", lights}}};
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/groups/1", request, getBridgeIp(), getBridgePort()))
+        .WillOnce(Return(response));
+    expectGetState(id);
+    group.setLights(std::vector<int> {2, 4, 5});
+}
+
+TEST_F(GroupTest, setRoomType)
+{
+    const int id = 1;
+    expectGetState(id);
+    Group group(id, commands, std::chrono::steady_clock::duration::max());
+    const std::string type = "LivingRoom";
+    nlohmann::json request = {{"class", type}};
+    nlohmann::json response = {{"success", {"/groups/1/class", type}}};
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/groups/1", request, getBridgeIp(), getBridgePort()))
+        .WillOnce(Return(response));
+    expectGetState(id);
+    group.setRoomType(type);
+}
+
+TEST_F(GroupTest, setScene)
+{
+    const int id = 1;
+    expectGetState(id);
+    Group group(id, commands, std::chrono::steady_clock::duration::max());
+    const std::string scene = "testScene";
+    nlohmann::json request = {{"scene", scene}};
+    nlohmann::json response = {{"success", {"/groups/1/action/scene", scene}}};
+    EXPECT_CALL(
+        *handler, PUTJson("/api/" + getBridgeUsername() + "/groups/1/action", request, getBridgeIp(), getBridgePort()))
+        .WillOnce(Return(response));
+    (id);
+    group.setScene(scene);
+}
+
+TEST(CreateGroup, LightGroup)
+{
+    EXPECT_EQ(nlohmann::json({{"lights", {"1"}}, {"type", "LightGroup"}, {"name", "Name"}}),
+        CreateGroup::LightGroup({1}, "Name").getRequest());
+    EXPECT_EQ(
+        nlohmann::json({{"lights", {"2", "4"}}, {"type", "LightGroup"}}), CreateGroup::LightGroup({2, 4}).getRequest());
+}
+
+TEST(CreateGroup, Entertainment)
+{
+    EXPECT_EQ(nlohmann::json({{"lights", {"1"}}, {"type", "Entertainment"}, {"name", "Name"}}),
+        CreateGroup::Entertainment({1}, "Name").getRequest());
+    EXPECT_EQ(nlohmann::json({{"lights", {"2", "4"}}, {"type", "Entertainment"}}),
+        CreateGroup::Entertainment({2, 4}).getRequest());
+}
+
+TEST(CreateGroup, Room)
+{
+    EXPECT_EQ(nlohmann::json({{"lights", {"1"}}, {"type", "Room"}, {"name", "Name"}, {"class", "Bedroom"}}),
+        CreateGroup::Room({1}, "Name", "Bedroom").getRequest());
+    EXPECT_EQ(nlohmann::json({{"lights", {"1"}}, {"type", "Room"}, {"name", "Name"}}),
+        CreateGroup::Room({1}, "Name").getRequest());
+    EXPECT_EQ(
+        nlohmann::json({{"lights", {"2", "4"}}, {"type", "Room"}}), CreateGroup::Room({2, 4}).getRequest());
 }

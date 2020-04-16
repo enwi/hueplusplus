@@ -224,8 +224,11 @@ public:
     std::vector<std::reference_wrapper<Group>> getAllGroups();
 
     Group& getGroup(int id);
+    bool removeGroup(int id);
     bool groupExists(int id);
     bool groupExists(int id) const;
+
+    int createGroup(const CreateGroup& params);
 
     //! \brief Const function that returns the picture name of a given light id
     //!
