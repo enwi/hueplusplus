@@ -96,6 +96,18 @@ public:
     nlohmann::json DELETERequest(const std::string& path, const nlohmann::json& request) const;
     nlohmann::json DELETERequest(const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const;
 
+    //! \brief Sends a HTTP POST request to the bridge and returns the response
+    //!
+    //! This function will block until at least \ref minDelay has passed to any previous request
+    //! \param path API request path (appended after /api/{username})
+    //! \param request Request to the api, may be empty
+    //! \returns The return value of the underlying \ref IHttpHandler::POSTJson call
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contains no body
+    //! \throws HueAPIResponseException when response contains an error
+    nlohmann::json POSTRequest(const std::string& path, const nlohmann::json& request) const;
+    nlohmann::json POSTRequest(const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const;
+
 private:
     struct TimeoutData
     {

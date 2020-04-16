@@ -91,7 +91,7 @@ public:
     void incrementHue(int increment, uint8_t transition = 4);
     void incrementColorTemperature(int increment, uint8_t transition = 4);
     void incrementColorXY(float incX, float incY, uint8_t transition = 4);
-    void setScene(const std::string& scene, uint8_t transition = 4);
+    void setScene(const std::string& scene);
 
 protected:
     nlohmann::json SendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo);
@@ -100,6 +100,27 @@ protected:
     int id;
     APICache state;
     HueCommandAPI commands;
+};
+
+class CreateGroup
+{
+public:
+    static CreateGroup LightGroup(const std::vector<int>& lights, const std::string& name = "");
+    static CreateGroup Room(
+        const std::vector<int>& lights, const std::string& name = "", const std::string& roomType = "");
+    static CreateGroup Entertainment(const std::vector<int>& lights, const std::string& name = "");
+
+    nlohmann::json getRequest() const;
+
+protected:
+    CreateGroup(
+        const std::vector<int>& lights, const std::string& name, const std::string& type, const std::string& roomType);
+
+private:
+    std::vector<int> lights;
+    std::string name;
+    std::string type;
+    std::string roomType;
 };
 } // namespace hueplusplus
 

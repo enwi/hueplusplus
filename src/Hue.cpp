@@ -307,6 +307,18 @@ Group& Hue::getGroup(int id)
     return groups.emplace(id, Group(id, commands, stateCache.GetRefreshDuration())).first->second;
 }
 
+bool Hue::removeGroup(int id)
+{
+    nlohmann::json result
+        = commands.DELETERequest("/groups/" + std::to_string(id), nlohmann::json::object(), CURRENT_FILE_INFO);
+    bool success = utils::safeGetMember(result, 0, "success") == "/groups/" + std::to_string(id) + " deleted";
+    if (success && groups.count(id) != 0)
+    {
+        groups.erase(id);
+    }
+    return success;
+}
+
 bool Hue::groupExists(int id)
 {
     auto pos = lights.find(id);
@@ -333,6 +345,17 @@ bool Hue::groupExists(int id) const
         return true;
     }
     return false;
+}
+
+int Hue::createGroup(const CreateGroup& params)
+{
+    nlohmann::json response = commands.POSTRequest("/groups", params.getRequest(), CURRENT_FILE_INFO);
+    nlohmann::json id = utils::safeGetMember(response, 0, "success", "id");
+    if (id.is_string())
+    {
+        return std::stoi(id.get<std::string>());
+    }
+    return 0;
 }
 
 bool Hue::lightExists(int id)
