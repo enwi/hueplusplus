@@ -159,7 +159,7 @@ void Group::setBrightness(uint8_t brightness, uint8_t transition)
 
 void Group::setColorHueSaturation(uint16_t hue, uint8_t saturation, uint8_t transition)
 {
-    transaction().setColorHueSaturation(hue, saturation).setTransition(transition).commit();
+    transaction().setColorHue(hue).setColorSaturation(saturation).setTransition(transition).commit();
 }
 
 void Group::setColorXY(float x, float y, uint8_t transition)
@@ -204,7 +204,7 @@ void Group::incrementColorXY(float incX, float incY, uint8_t transition)
 
 void Group::setScene(const std::string& scene, uint8_t transition)
 {
-    SendPutRequest({ {"scene", scene} }, "/action", CURRENT_FILE_INFO);
+    SendPutRequest({{"scene", scene}}, "/action", CURRENT_FILE_INFO);
 }
 
 nlohmann::json Group::SendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo)

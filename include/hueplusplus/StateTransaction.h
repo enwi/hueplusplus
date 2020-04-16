@@ -45,7 +45,6 @@ public:
     StateTransaction&& setBrightness(uint8_t brightness) &&;
     StateTransaction&& setColorHue(uint16_t hue) &&;
     StateTransaction&& setColorSaturation(uint8_t saturation) &&;
-    StateTransaction&& setColorHueSaturation(uint16_t hue, uint8_t saturation) &&;
     StateTransaction&& setColorXY(float x, float y) &&;
     StateTransaction&& setColorTemperature(unsigned int mired) &&;
     StateTransaction&& setColorLoop(bool on) &&;

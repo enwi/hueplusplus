@@ -44,7 +44,7 @@ bool SimpleColorHueStrategy::setColorSaturation(uint8_t sat, uint8_t transition,
 
 bool SimpleColorHueStrategy::setColorHueSaturation(uint16_t hue, uint8_t sat, uint8_t transition, HueLight& light) const
 {
-    return light.transaction().setColorHueSaturation(hue, sat).setTransition(transition).commit();
+    return light.transaction().setColorHue(hue).setColorSaturation(sat).setTransition(transition).commit();
 }
 
 bool SimpleColorHueStrategy::setColorXY(float x, float y, uint8_t transition, HueLight& light) const
