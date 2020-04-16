@@ -46,6 +46,7 @@ void Group::setName(const std::string& name)
 {
     nlohmann::json request = {{"name", name}};
     SendPutRequest(request, "", CURRENT_FILE_INFO);
+    Refresh();
 }
 
 void Group::setLights(const std::vector<int>& ids)
@@ -56,6 +57,7 @@ void Group::setLights(const std::vector<int>& ids)
         lights.push_back(std::to_string(id));
     }
     SendPutRequest({{"lights", lights}}, "", CURRENT_FILE_INFO);
+    Refresh();
 }
 
 bool Group::getAllOn()
@@ -144,12 +146,7 @@ StateTransaction Group::transaction()
 
 void Group::setOn(bool on, uint8_t transition)
 {
-    nlohmann::json request = {{"on", on}};
-    if (transition != 4)
-    {
-        request["transition"] = transition;
-    }
-    SendPutRequest(request, "/action", CURRENT_FILE_INFO);
+    transaction().setOn(on).setTransition(transition).commit();
 }
 
 void Group::setBrightness(uint8_t brightness, uint8_t transition)
@@ -202,7 +199,7 @@ void Group::incrementColorXY(float incX, float incY, uint8_t transition)
     transaction().incrementColorXY(incX, incY).setTransition(transition).commit();
 }
 
-void Group::setScene(const std::string& scene, uint8_t transition)
+void Group::setScene(const std::string& scene)
 {
     SendPutRequest({{"scene", scene}}, "/action", CURRENT_FILE_INFO);
 }
@@ -220,6 +217,7 @@ std::string Group::getRoomType() const
 void Group::setRoomType(const std::string& type)
 {
     SendPutRequest({{"class", type}}, "", CURRENT_FILE_INFO);
+    Refresh();
 }
 
 std::string Group::getModelId() const
@@ -231,4 +229,44 @@ std::string Group::getUniqueId() const
 {
     return state.GetValue().at("uniqueid").get<std::string>();
 }
+
+CreateGroup CreateGroup::LightGroup(const std::vector<int>& lights, const std::string& name)
+{
+    return CreateGroup(lights, name, "LightGroup", "");
+}
+
+CreateGroup CreateGroup::Room(const std::vector<int>& lights, const std::string& name, const std::string& roomType)
+{
+    return CreateGroup(lights, name, "Room", roomType);
+}
+
+CreateGroup CreateGroup::Entertainment(const std::vector<int>& lights, const std::string& name)
+{
+    return CreateGroup(lights, name, "Entertainment", "");
+}
+
+nlohmann::json CreateGroup::getRequest() const
+{
+    nlohmann::json lightStrings = nlohmann::json::array();
+    for (int light : lights)
+    {
+        lightStrings.push_back(std::to_string(light));
+    }
+    nlohmann::json result = {{"lights", lightStrings}, {"type", type}};
+    if (!name.empty())
+    {
+        result["name"] = name;
+    }
+    if (!roomType.empty())
+    {
+        result["class"] = roomType;
+    }
+    return result;
+}
+
+CreateGroup::CreateGroup(
+    const std::vector<int>& lights, const std::string& name, const std::string& type, const std::string& roomType)
+    : lights(lights), name(name), type(type), roomType(roomType)
+{}
+
 } // namespace hueplusplus

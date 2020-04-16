@@ -112,6 +112,7 @@ bool HueLight::setName(const std::string& name)
     nlohmann::json request = nlohmann::json::object();
     request["name"] = name;
     nlohmann::json reply = SendPutRequest(request, "/name", CURRENT_FILE_INFO);
+    state.Refresh();
 
     // Check whether request was successful (returned name is not necessarily the actually set name)
     // If it already exists, a number is added, if it is too long to be returned, "Updated" is returned
