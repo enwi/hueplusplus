@@ -31,7 +31,9 @@ namespace hueplusplus
 StateTransaction::StateTransaction(
     const HueCommandAPI& commands, const std::string& path, const nlohmann::json& currentState)
     : commands(commands), path(path), state(currentState), request(nlohmann::json::object())
-{}
+{
+    assert(currentState.is_object());
+}
 
 bool StateTransaction::commit() &&
 {
@@ -98,27 +100,15 @@ StateTransaction&& StateTransaction::setColorHue(uint16_t hue) &&
     return std::move(*this);
 }
 
-StateTransaction&& StateTransaction::setColorHueSaturation(uint16_t hue, uint8_t saturation) &&
-{
-    if (!state.count("hue") || state["hue"].get<int>() != hue)
-    {
-        request["hue"] = hue;
-    }
-    uint8_t clamped = std::min<uint8_t>(saturation, 254);
-    if (!state.count("sat") || state["sat"].get<unsigned int>() != clamped)
-    {
-        request["sat"] = clamped;
-    }
-    return std::move(*this);
-}
-
 StateTransaction&& StateTransaction::setColorXY(float x, float y) &&
 {
+    float clampedX = std::max(0.f, std::min(x, 1.f));
+    float clampedY = std::max(0.f, std::min(y, 1.f));
     if (!state.count("xy") || !state.count("colormode") || !state["xy"].is_array()
-        || !utils::floatEquals(state["xy"][0].get<float>(), x) || !utils::floatEquals(state["xy"][1].get<float>(), y)
-        || state["colormode"] != "xy")
+        || !utils::floatEquals(state["xy"][0].get<float>(), clampedX)
+        || !utils::floatEquals(state["xy"][1].get<float>(), clampedY) || state["colormode"] != "xy")
     {
-        request["xy"] = {x, y};
+        request["xy"] = {clampedX, clampedY};
     }
     return std::move(*this);
 }
@@ -169,7 +159,7 @@ StateTransaction&& StateTransaction::incrementColorTemperature(int increment) &&
 
 StateTransaction&& StateTransaction::incrementColorXY(float xInc, float yInc) &&
 {
-    request["xy_inc"] = {std::min(-0.5f, std::max(xInc, 0.5f)), std::min(-0.5f, std::max(yInc, 0.5f))};
+    request["xy_inc"] = {std::max(-0.5f, std::min(xInc, 0.5f)), std::max(-0.5f, std::min(yInc, 0.5f))};
     return std::move(*this);
 }
 
