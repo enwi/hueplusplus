@@ -40,7 +40,7 @@ bool SimpleColorTemperatureStrategy::setColorTemperature(unsigned int mired, uin
 bool SimpleColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLight& light) const
 {
     // Careful, only use state until any light function might refresh the value and invalidate the reference
-    const nlohmann::json& state = light.state.GetValue()["state"];
+    const nlohmann::json& state = light.state.getValue()["state"];
     std::string cType = state["colormode"].get<std::string>();
     bool on = state["on"].get<bool>();
     if (cType == "ct")
@@ -74,11 +74,11 @@ bool SimpleColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLig
 
 unsigned int SimpleColorTemperatureStrategy::getColorTemperature(HueLight& light) const
 {
-    return light.state.GetValue()["state"]["ct"].get<unsigned int>();
+    return light.state.getValue()["state"]["ct"].get<unsigned int>();
 }
 
 unsigned int SimpleColorTemperatureStrategy::getColorTemperature(const HueLight& light) const
 {
-    return light.state.GetValue()["state"]["ct"].get<unsigned int>();
+    return light.state.getValue()["state"]["ct"].get<unsigned int>();
 }
 } // namespace hueplusplus

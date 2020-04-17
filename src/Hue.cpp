@@ -190,7 +190,7 @@ std::string Hue::requestUsername()
                 username = jsonUser.get<std::string>();
                 // Update commands with new username and ip
                 commands = HueCommandAPI(ip, port, username, http_handler);
-                stateCache = APICache("", commands, stateCache.GetRefreshDuration());
+                stateCache = APICache("", commands, stateCache.getRefreshDuration());
                 std::cout << "Success! Link button was pressed!\n";
                 std::cout << "Username is \"" << username << "\"\n";
                 break;
@@ -230,10 +230,10 @@ HueLight& Hue::getLight(int id)
     auto pos = lights.find(id);
     if (pos != lights.end())
     {
-        pos->second.state.Refresh();
+        pos->second.state.refresh();
         return pos->second;
     }
-    const nlohmann::json& lightsCache = stateCache.GetValue()["lights"];
+    const nlohmann::json& lightsCache = stateCache.getValue()["lights"];
     if (!lightsCache.count(std::to_string(id)))
     {
         std::cerr << "Error in Hue getLight(): light with id " << id << " is not valid\n";
@@ -261,7 +261,7 @@ bool Hue::removeLight(int id)
 std::vector<std::reference_wrapper<HueLight>> Hue::getAllLights()
 {
     // No reference because getLight may invalidate it
-    nlohmann::json lightsState = stateCache.GetValue()["lights"];
+    nlohmann::json lightsState = stateCache.getValue()["lights"];
     for (auto it = lightsState.begin(); it != lightsState.end(); ++it)
     {
         getLight(std::stoi(it.key()));
@@ -276,7 +276,7 @@ std::vector<std::reference_wrapper<HueLight>> Hue::getAllLights()
 
 std::vector<std::reference_wrapper<Group>> Hue::getAllGroups()
 {
-    nlohmann::json groupsState = stateCache.GetValue().at("groups");
+    nlohmann::json groupsState = stateCache.getValue().at("groups");
     for (auto it = groupsState.begin(); it != groupsState.end(); ++it)
     {
         getGroup(std::stoi(it.key()));
@@ -295,16 +295,16 @@ Group& Hue::getGroup(int id)
     auto pos = groups.find(id);
     if (pos != groups.end())
     {
-        pos->second.Refresh();
+        pos->second.refresh();
         return pos->second;
     }
-    const nlohmann::json& groupsCache = stateCache.GetValue()["groups"];
+    const nlohmann::json& groupsCache = stateCache.getValue()["groups"];
     if (!groupsCache.count(std::to_string(id)))
     {
         std::cerr << "Error in Hue getGroup(): group with id " << id << " is not valid\n";
         throw HueException(CURRENT_FILE_INFO, "Group id is not valid");
     }
-    return groups.emplace(id, Group(id, commands, stateCache.GetRefreshDuration())).first->second;
+    return groups.emplace(id, Group(id, commands, stateCache.getRefreshDuration())).first->second;
 }
 
 bool Hue::removeGroup(int id)
@@ -326,7 +326,7 @@ bool Hue::groupExists(int id)
     {
         return true;
     }
-    if (stateCache.GetValue()["groups"].count(std::to_string(id)))
+    if (stateCache.getValue()["groups"].count(std::to_string(id)))
     {
         return true;
     }
@@ -340,7 +340,7 @@ bool Hue::groupExists(int id) const
     {
         return true;
     }
-    if (stateCache.GetValue()["groups"].count(std::to_string(id)))
+    if (stateCache.getValue()["groups"].count(std::to_string(id)))
     {
         return true;
     }
@@ -365,7 +365,7 @@ bool Hue::lightExists(int id)
     {
         return true;
     }
-    if (stateCache.GetValue()["lights"].count(std::to_string(id)))
+    if (stateCache.getValue()["lights"].count(std::to_string(id)))
     {
         return true;
     }
@@ -379,7 +379,7 @@ bool Hue::lightExists(int id) const
     {
         return true;
     }
-    if (stateCache.GetValue()["lights"].count(std::to_string(id)))
+    if (stateCache.getValue()["lights"].count(std::to_string(id)))
     {
         return true;
     }
@@ -519,5 +519,12 @@ std::string Hue::getPictureOfModel(const std::string& model_id) const
         ret.append("motion_sensor");
     }
     return ret;
+}
+
+void Hue::setHttpHandler(std::shared_ptr<const IHttpHandler> handler)
+{
+    http_handler = handler;
+    commands = HueCommandAPI(ip, port, username, handler);
+    stateCache = APICache("", commands, stateCache.getRefreshDuration());
 }
 } // namespace hueplusplus

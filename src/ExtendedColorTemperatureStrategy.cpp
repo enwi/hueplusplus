@@ -36,7 +36,7 @@ bool ExtendedColorTemperatureStrategy::setColorTemperature(
     unsigned int mired, uint8_t transition, HueLight& light) const
 {
     // Careful, only use state until any light function might refresh the value and invalidate the reference
-    const nlohmann::json& state = light.state.GetValue()["state"];
+    const nlohmann::json& state = light.state.getValue()["state"];
     nlohmann::json request = nlohmann::json::object();
     if (transition != 4)
     {
@@ -65,7 +65,7 @@ bool ExtendedColorTemperatureStrategy::setColorTemperature(
         return true;
     }
 
-    nlohmann::json reply = light.SendPutRequest(request, "/state", CURRENT_FILE_INFO);
+    nlohmann::json reply = light.sendPutRequest(request, "/state", CURRENT_FILE_INFO);
 
     // Check whether request was successful
     return utils::validateReplyForLight(request, reply, light.id);
@@ -74,7 +74,7 @@ bool ExtendedColorTemperatureStrategy::setColorTemperature(
 bool ExtendedColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLight& light) const
 {
     // Careful, only use state until any light function might refresh the value and invalidate the reference
-    const nlohmann::json& state = light.state.GetValue()["state"];
+    const nlohmann::json& state = light.state.getValue()["state"];
     std::string cType = state["colormode"].get<std::string>();
     bool on = state["on"].get<bool>();
     if (cType == "hs")

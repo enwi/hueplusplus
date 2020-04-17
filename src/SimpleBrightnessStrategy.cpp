@@ -39,11 +39,11 @@ bool SimpleBrightnessStrategy::setBrightness(unsigned int bri, uint8_t transitio
 
 unsigned int SimpleBrightnessStrategy::getBrightness(HueLight& light) const
 {
-    return light.state.GetValue()["state"]["bri"].get<unsigned int>();
+    return light.state.getValue()["state"]["bri"].get<unsigned int>();
 }
 
 unsigned int SimpleBrightnessStrategy::getBrightness(const HueLight& light) const
 {
-    return light.state.GetValue()["state"]["bri"].get<unsigned int>();
+    return light.state.getValue()["state"]["bri"].get<unsigned int>();
 }
 } // namespace hueplusplus

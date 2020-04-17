@@ -43,7 +43,7 @@ public:
         // Set refresh duration to max, so random refreshes do not hinder the test setups
     }
 
-    nlohmann::json& getState() { return state.GetValue(); }
+    nlohmann::json& getState() { return state.getValue(); }
 
     MOCK_METHOD1(On, bool(uint8_t transition));
 
@@ -125,7 +125,7 @@ public:
 
     MOCK_METHOD1(setColorLoop, bool(bool on));
 
-    MOCK_METHOD3(SendPutRequest,
+    MOCK_METHOD3(sendPutRequest,
         nlohmann::json(const nlohmann::json& request, const std::string& subPath, hueplusplus::FileInfo fileInfo));
 };
 
