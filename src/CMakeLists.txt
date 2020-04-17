@@ -7,6 +7,8 @@ set(hueplusplus_SOURCES
 	HueDeviceTypes.cpp
     HueException.cpp
     HueLight.cpp
+    HueSensor.cpp
+    HueThing.cpp
     SimpleBrightnessStrategy.cpp
     SimpleColorHueStrategy.cpp
     SimpleColorTemperatureStrategy.cpp

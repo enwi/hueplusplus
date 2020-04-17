@@ -34,6 +34,7 @@
 #include "ColorTemperatureStrategy.h"
 #include "HueCommandAPI.h"
 #include "HueLight.h"
+#include "HueSensor.h"
 #include "IHttpHandler.h"
 
 #include "json/json.hpp"
@@ -173,6 +174,16 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     HueLight& getLight(int id);
 
+    //! \brief Function that returns a \ref HueSensor of specified id
+    //!
+    //! \param id Integer that specifies the ID of a Hue sensor
+    //! \return \ref HueSensor that can be controlled
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when id does not exist or type is unknown
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
+    HueSensor& getSensor(int id);
+
     //! \brief Function to remove a light from the bridge
     //!
     //! \attention Any use of the light after it was successfully removed results in undefined behavior
@@ -198,6 +209,16 @@ public:
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
     std::vector<std::reference_wrapper<HueLight>> getAllLights();
+
+    //! \brief Function that returns all sensors that are associated with this
+    //! bridge
+    //!
+    //! \return A vector containing references to every HueSensor
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contains no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
+    std::vector<std::reference_wrapper<HueSensor>> getAllSensors();
 
     //! \brief Function that tells whether a given light id represents an existing light
     //!
@@ -263,6 +284,7 @@ private:
     int port;
     nlohmann::json state; //!< The state of the hue bridge as it is returned from it
     std::map<uint8_t, HueLight> lights; //!< Maps ids to HueLights that are controlled by this bridge
+    std::map<uint8_t, HueSensor> sensors; //!< Maps ids to HueSensors that are controlled by this bridge
 
     std::shared_ptr<BrightnessStrategy> simpleBrightnessStrategy; //!< Strategy that is used for controlling the
                                                                   //!< brightness of lights

@@ -29,6 +29,7 @@
 #include "ColorHueStrategy.h"
 #include "ColorTemperatureStrategy.h"
 #include "HueCommandAPI.h"
+#include "HueThing.h"
 
 #include "json/json.hpp"
 
@@ -93,7 +94,7 @@ enum ColorType
 //!
 //! Class for Hue Light fixtures
 //!
-class HueLight
+class HueLight : public HueThing
 {
     friend class Hue;
     friend struct MakeHueLight;
@@ -142,83 +143,11 @@ public:
     //! \return Bool that is true, when the light is on and false, when off
     virtual bool isOn() const;
 
-    //! \brief Const function that returns the id of this light
-    //!
-    //! \return integer representing the light id
-    virtual int getId() const;
-
-    //! \brief Const function that returns the light type
-    //!
-    //! \return String containing the type
-    virtual std::string getType() const;
-
-    //! \brief Function that returns the name of the light.
-    //!
-    //! \return String containig the name of the light
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual std::string getName();
-
-    //! \brief Const function that returns the name of the light.
-    //!
-    //! \note This will not refresh the light state
-    //! \return String containig the name of the light
-    virtual std::string getName() const;
-
-    //! \brief Const function that returns the modelid of the light
-    //!
-    //! \return String conatining the modelid
-    virtual std::string getModelId() const;
-
-    //! \brief Const function that returns the uniqueid of the light
-    //!
-    //! \note Only working on bridges with versions starting at 1.4
-    //! \return String containing the uniqueid or an empty string when the function is not supported
-    virtual std::string getUId() const;
-
-    //! \brief Const function that returns the manufacturername of the light
-    //!
-    //! \note Only working on bridges with versions starting at 1.7
-    //! \return String containing the manufacturername or an empty string when the function is not supported
-    virtual std::string getManufacturername() const;
-
-    //! \brief Const function that returns the productname of the light
-    //!
-    //! \note Only working on bridges with versions starting at 1.24
-    //! \return String containing the productname or an empty string when the function is not supported
-    virtual std::string getProductname() const;
-
     //! \brief Const function that returns the luminaireuniqueid of the light
     //!
     //! \note Only working on bridges with versions starting at 1.9
     //! \return String containing the luminaireuniqueid or an empty string when the function is not supported
     virtual std::string getLuminaireUId() const;
-
-    //! \brief Function that returns the software version of the light
-    //!
-    //! \return String containing the software version
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual std::string getSwVersion();
-
-    //! \brief Const function that returns the software version of the light
-    //!
-    //! \note This will not refresh the light state
-    //! \return String containing the software version
-    virtual std::string getSwVersion() const;
-
-    //! \brief Function that sets the name of the light
-    //!
-    //! \return Bool that is true on success
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual bool setName(const std::string& name);
 
     //! \brief Const function that returns the color type of the light.
     //!
@@ -729,12 +658,6 @@ protected:
         colorHueStrategy = std::move(strat);
     };
 
-    //! \brief Protected function that sets the HueCommandAPI.
-    //!
-    //! The HueCommandAPI is used for bridge communication
-    //! \param commandAPI the new HueCommandAPI
-    virtual void setCommandAPI(const HueCommandAPI& commandAPI) { commands = commandAPI; };
-
     //! \brief Function that turns the light on without refreshing its state.
     //!
     //! \param transition Optional parameter to set the transition from current state to new standard is 4 = 400ms
@@ -755,29 +678,7 @@ protected:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual bool OffNoRefresh(uint8_t transition = 4);
 
-    //! \brief Utility function to send a put request to the light.
-    //!
-    //! \throws nlohmann::json::parse_error if the reply could not be parsed
-    //! \param request A nlohmann::json aka the request to send
-    //! \param subPath A path that is appended to the uri, note it should always start with a slash ("/")
-    //! \param fileInfo FileInfo from calling function for exception details.
-    //! \return The parsed reply
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual nlohmann::json SendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo);
-
-    //! \brief Virtual function that refreshes the \ref state of the light.
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual void refreshState();
-
 protected:
-    int id; //!< holds the id of the light
-    nlohmann::json state; //!< holds the current state of the light updated by \ref refreshState
     ColorType colorType; //!< holds the \ref ColorType of the light
 
     std::shared_ptr<const BrightnessStrategy>
@@ -786,7 +687,6 @@ protected:
         colorTemperatureStrategy; //!< holds a reference to the strategy that handles colortemperature commands
     std::shared_ptr<const ColorHueStrategy>
         colorHueStrategy; //!< holds a reference to the strategy that handles all color commands
-    HueCommandAPI commands; //!< A IHttpHandler that is used to communicate with the bridge
 };
 } // namespace hueplusplus
 

@@ -246,6 +246,34 @@ HueLight& Hue::getLight(int id)
     return lights.find(id)->second;
 }
 
+HueSensor& Hue::getSensor(int id)
+{
+    auto pos = sensors.find(id);
+    if (pos != sensors.end())
+    {
+        pos->second.refreshState();
+        return pos->second;
+    }
+    refreshState();
+    if (!state["sensors"].count(std::to_string(id)))
+    {
+        std::cerr << "Error in Hue getSensor(): sensor with id " << id << " is not valid\n";
+        throw HueException(CURRENT_FILE_INFO, "Sensor id is not valid");
+    }
+    // std::cout << state["sensors"][std::to_string(id)] << std::endl;
+    std::string type = state["sensors"][std::to_string(id)]["modelid"];
+    // std::cout << type << std::endl;
+    if (type == "RWL021" || type == "PHDL00" || type == "PHWA01")
+    {
+        // Hue dimmer switch
+        HueSensor sensor = HueSensor(id, commands);
+        sensors.emplace(id, sensor);
+        return sensors.find(id)->second;
+    }
+    std::cerr << "Could not determine HueSensor type:" << type << "!\n";
+    throw HueException(CURRENT_FILE_INFO, "Could not determine HueSensor type!");
+}
+
 bool Hue::removeLight(int id)
 {
     nlohmann::json result
@@ -268,6 +296,22 @@ std::vector<std::reference_wrapper<HueLight>> Hue::getAllLights()
     }
     std::vector<std::reference_wrapper<HueLight>> result;
     for (auto& entry : lights)
+    {
+        result.emplace_back(entry.second);
+    }
+    return result;
+}
+
+std::vector<std::reference_wrapper<HueSensor>> Hue::getAllSensors()
+{
+    refreshState();
+    nlohmann::json sensorsState = state["sensors"];
+    for (nlohmann::json::iterator it = sensorsState.begin(); it != sensorsState.end(); ++it)
+    {
+        getSensor(std::stoi(it.key()));
+    }
+    std::vector<std::reference_wrapper<HueSensor>> result;
+    for (auto& entry : sensors)
     {
         result.emplace_back(entry.second);
     }
@@ -445,7 +489,7 @@ void Hue::refreshState()
         return;
     }
     nlohmann::json answer = commands.GETRequest("", nlohmann::json::object(), CURRENT_FILE_INFO);
-    if (answer.is_object() && answer.count("lights"))
+    if (answer.is_object() && (answer.count("lights") || answer.count("sensors")))
     {
         state = answer;
     }

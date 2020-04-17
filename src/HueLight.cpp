@@ -27,6 +27,7 @@
 #include <thread>
 
 #include "hueplusplus/HueExceptionMacro.h"
+#include "hueplusplus/HueThing.h"
 #include "hueplusplus/Utils.h"
 #include "json/json.hpp"
 
@@ -55,59 +56,6 @@ bool HueLight::isOn() const
     return state["state"]["on"];
 }
 
-int HueLight::getId() const
-{
-    return id;
-}
-
-std::string HueLight::getType() const
-{
-    return state["type"];
-}
-
-std::string HueLight::getName()
-{
-    refreshState();
-    return state["name"];
-}
-
-std::string HueLight::getName() const
-{
-    return state["name"];
-}
-
-std::string HueLight::getModelId() const
-{
-    return state["modelid"];
-}
-
-std::string HueLight::getUId() const
-{
-    if (state.count("uniqueid"))
-    {
-        return state["uniqueid"];
-    }
-    return std::string();
-}
-
-std::string HueLight::getManufacturername() const
-{
-    if (state.count("manufacturername"))
-    {
-        return state["manufacturername"];
-    }
-    return std::string();
-}
-
-std::string HueLight::getProductname() const
-{
-    if (state.count("productname"))
-    {
-        return state["productname"];
-    }
-    return std::string();
-}
-
 std::string HueLight::getLuminaireUId() const
 {
     if (state.count("luminaireuniqueid"))
@@ -115,27 +63,6 @@ std::string HueLight::getLuminaireUId() const
         return state["luminaireuniqueid"];
     }
     return std::string();
-}
-
-std::string HueLight::getSwVersion()
-{
-    refreshState();
-    return state["swversion"];
-}
-
-std::string HueLight::getSwVersion() const
-{
-    return state["swversion"];
-}
-
-bool HueLight::setName(const std::string& name)
-{
-    nlohmann::json request = nlohmann::json::object();
-    request["name"] = name;
-    nlohmann::json reply = SendPutRequest(request, "/name", CURRENT_FILE_INFO);
-
-    // Check whether request was successful
-    return utils::safeGetMember(reply, 0, "success", "/lights/" + std::to_string(id) + "/name") == name;
 }
 
 ColorType HueLight::getColorType() const
@@ -168,12 +95,10 @@ HueLight::HueLight(int id, const HueCommandAPI& commands) : HueLight(id, command
 HueLight::HueLight(int id, const HueCommandAPI& commands, std::shared_ptr<const BrightnessStrategy> brightnessStrategy,
     std::shared_ptr<const ColorTemperatureStrategy> colorTempStrategy,
     std::shared_ptr<const ColorHueStrategy> colorHueStrategy)
-    : id(id),
+    : HueThing(id, commands, "/lights/"),
       brightnessStrategy(std::move(brightnessStrategy)),
       colorTemperatureStrategy(std::move(colorTempStrategy)),
-      colorHueStrategy(std::move(colorHueStrategy)),
-      commands(commands)
-
+      colorHueStrategy(std::move(colorHueStrategy))
 {
     refreshState();
 }
@@ -224,32 +149,5 @@ bool HueLight::OffNoRefresh(uint8_t transition)
 
     // Check whether request was successful
     return utils::validateReplyForLight(request, reply, id);
-}
-
-nlohmann::json HueLight::SendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo)
-{
-    return commands.PUTRequest("/lights/" + std::to_string(id) + subPath, request, std::move(fileInfo));
-}
-
-void HueLight::refreshState()
-{
-    // std::chrono::steady_clock::time_point start =
-    // std::chrono::steady_clock::now(); std::cout << "\tRefreshing lampstate of
-    // lamp with id: " << id << ", ip: " << ip << "\n";
-    nlohmann::json answer
-        = commands.GETRequest("/lights/" + std::to_string(id), nlohmann::json::object(), CURRENT_FILE_INFO);
-    if (answer.count("state"))
-    {
-        state = answer;
-    }
-    else
-    {
-        std::cout << "Answer in HueLight::refreshState of "
-                     "http_handler->GETJson(...) is not expected!\nAnswer:\n\t"
-                  << answer.dump() << std::endl;
-    }
-    // std::cout << "\tRefresh state took: " <<
-    // std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()
-    // - start).count() << "ms" << std::endl;
 }
 } // namespace hueplusplus
