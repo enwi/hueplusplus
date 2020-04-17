@@ -42,17 +42,17 @@ bool StateTransaction::commit() &&
     {
         if (!request.count("on"))
         {
-            if (request.value("bri", 254) == 0 && state.value("on", true))
-            {
-                // Turn off if brightness is 0
-                request["on"] = false;
-            }
-            else if (!state.value("on", false)
+            if (!state.value("on", false)
                 && (request.value("bri", 0) != 0 || request.count("effect") || request.count("hue")
                     || request.count("sat") || request.count("xy") || request.count("ct")))
             {
                 // Turn on if it was turned off
                 request["on"] = true;
+            }
+            else if(request.value("bri", 254) == 0 && state.value("on", true))
+            {
+                // Turn off if brightness is 0
+                request["on"] = false;
             }
         }
 

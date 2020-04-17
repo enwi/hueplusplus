@@ -22,6 +22,8 @@
 
 #include "HueException.h"
 
+//! \def CURRENT_FILE_INFO
+//! \brief Creates the FileInfo for the current line.
 #ifndef CURRENT_FILE_INFO
 #define CURRENT_FILE_INFO (::hueplusplus::FileInfo{__FILE__, __LINE__, __func__})
 #endif

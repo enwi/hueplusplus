@@ -28,13 +28,13 @@ hueplusplus::APICache::APICache(
     : path(path), commands(commands), refreshDuration(refresh), lastRefresh(std::chrono::steady_clock::duration::zero())
 {}
 
-void hueplusplus::APICache::Refresh()
+void hueplusplus::APICache::refresh()
 {
     value = commands.GETRequest(path, nlohmann::json::object(), CURRENT_FILE_INFO);
     lastRefresh = std::chrono::steady_clock::now();
 }
 
-nlohmann::json& hueplusplus::APICache::GetValue()
+nlohmann::json& hueplusplus::APICache::getValue()
 {
     using clock = std::chrono::steady_clock;
     // Explicitly check for zero in case refreshDuration is duration::max()
@@ -42,7 +42,7 @@ nlohmann::json& hueplusplus::APICache::GetValue()
     if (lastRefresh.time_since_epoch().count() == 0 || refreshDuration.count() < 0)
     {
         // No value set yet
-        Refresh();
+        refresh();
     }
     // Check if nextRefresh would overflow (assumes lastRefresh is not negative, which it should not be).
     // If addition would overflow, do not refresh
@@ -51,18 +51,18 @@ nlohmann::json& hueplusplus::APICache::GetValue()
         clock::time_point nextRefresh = lastRefresh + refreshDuration;
         if (clock::now() >= nextRefresh)
         {
-            Refresh();
+            refresh();
         }
     }
     return value;
 }
 
-const nlohmann::json& hueplusplus::APICache::GetValue() const
+const nlohmann::json& hueplusplus::APICache::getValue() const
 {
     return value;
 }
 
-std::chrono::steady_clock::duration hueplusplus::APICache::GetRefreshDuration() const
+std::chrono::steady_clock::duration hueplusplus::APICache::getRefreshDuration() const
 {
     return refreshDuration;
 }

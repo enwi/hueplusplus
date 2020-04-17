@@ -65,48 +65,59 @@ public:
     //! This function will block until at least \ref minDelay has passed to any previous request
     //! \param path API request path (appended after /api/{username})
     //! \param request Request to the api, may be empty
+    //! \param fileInfo File information for thrown exceptions.
     //! \returns The return value of the underlying \ref IHttpHandler::PUTJson call
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contains no body
     //! \throws HueAPIResponseException when response contains an error
-    nlohmann::json PUTRequest(const std::string& path, const nlohmann::json& request) const;
     nlohmann::json PUTRequest(const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const;
+    //! \overload
+    nlohmann::json PUTRequest(const std::string& path, const nlohmann::json& request) const;
 
     //! \brief Sends a HTTP GET request to the bridge and returns the response
     //!
     //! This function will block until at least \ref minDelay has passed to any previous request
     //! \param path API request path (appended after /api/{username})
     //! \param request Request to the api, may be empty
+    //! \param fileInfo File information for thrown exceptions.
     //! \returns The return value of the underlying \ref IHttpHandler::GETJson call
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contains no body
     //! \throws HueAPIResponseException when response contains an error
-    nlohmann::json GETRequest(const std::string& path, const nlohmann::json& request) const;
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     nlohmann::json GETRequest(const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const;
+    //! \overload
+    nlohmann::json GETRequest(const std::string& path, const nlohmann::json& request) const;
 
     //! \brief Sends a HTTP DELETE request to the bridge and returns the response
     //!
     //! This function will block until at least \ref minDelay has passed to any previous request
     //! \param path API request path (appended after /api/{username})
     //! \param request Request to the api, may be empty
+    //! \param fileInfo File information for thrown exceptions.
     //! \returns The return value of the underlying \ref IHttpHandler::DELETEJson call
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contains no body
     //! \throws HueAPIResponseException when response contains an error
-    nlohmann::json DELETERequest(const std::string& path, const nlohmann::json& request) const;
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     nlohmann::json DELETERequest(const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const;
+    //! \overload
+    nlohmann::json DELETERequest(const std::string& path, const nlohmann::json& request) const;
 
     //! \brief Sends a HTTP POST request to the bridge and returns the response
     //!
     //! This function will block until at least \ref minDelay has passed to any previous request
     //! \param path API request path (appended after /api/{username})
     //! \param request Request to the api, may be empty
+    //! \param fileInfo File information for thrown exceptions.
     //! \returns The return value of the underlying \ref IHttpHandler::POSTJson call
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contains no body
     //! \throws HueAPIResponseException when response contains an error
-    nlohmann::json POSTRequest(const std::string& path, const nlohmann::json& request) const;
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     nlohmann::json POSTRequest(const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const;
+    //! \overload
+    nlohmann::json POSTRequest(const std::string& path, const nlohmann::json& request) const;
 
 private:
     struct TimeoutData

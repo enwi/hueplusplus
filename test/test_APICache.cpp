@@ -29,28 +29,28 @@
 
 using namespace hueplusplus;
 
-TEST(APICache, GetRefreshDuration)
+TEST(APICache, getRefreshDuration)
 {
     auto handler = std::make_shared<MockHttpHandler>();
     HueCommandAPI commands(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
     {
         std::chrono::steady_clock::duration refresh = std::chrono::seconds(20);
         APICache cache("", commands, refresh);
-        EXPECT_EQ(refresh, cache.GetRefreshDuration());
+        EXPECT_EQ(refresh, cache.getRefreshDuration());
     }
     {
         std::chrono::steady_clock::duration refresh = std::chrono::seconds(0);
         APICache cache("", commands, refresh);
-        EXPECT_EQ(refresh, cache.GetRefreshDuration());
+        EXPECT_EQ(refresh, cache.getRefreshDuration());
     }
     {
         std::chrono::steady_clock::duration refresh = std::chrono::steady_clock::duration::max();
         APICache cache("", commands, refresh);
-        EXPECT_EQ(refresh, cache.GetRefreshDuration());
+        EXPECT_EQ(refresh, cache.getRefreshDuration());
     }
 }
 
-TEST(APICache, Refresh)
+TEST(APICache, refresh)
 {
     using namespace ::testing;
     auto handler = std::make_shared<MockHttpHandler>();
@@ -62,7 +62,7 @@ TEST(APICache, Refresh)
         EXPECT_CALL(*handler,
             GETJson("/api/" + getBridgeUsername() + path, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
             .WillOnce(Return(nlohmann::json::object()));
-        cache.Refresh();
+        cache.refresh();
         Mock::VerifyAndClearExpectations(handler.get());
     }
     {
@@ -73,13 +73,13 @@ TEST(APICache, Refresh)
                 "/api/" + getBridgeUsername() + path, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
             .Times(2)
             .WillRepeatedly(Return(nlohmann::json::object()));
-        cache.Refresh();
-        cache.Refresh();
+        cache.refresh();
+        cache.refresh();
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }
 
-TEST(APICache, GetValue)
+TEST(APICache, getValue)
 {
     using namespace ::testing;
     auto handler = std::make_shared<MockHttpHandler>();
@@ -94,8 +94,8 @@ TEST(APICache, GetValue)
             GETJson("/api/" + getBridgeUsername() + path, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
             .Times(2)
             .WillRepeatedly(Return(value));
-        EXPECT_EQ(value, cache.GetValue());
-        EXPECT_EQ(value, cache.GetValue());
+        EXPECT_EQ(value, cache.getValue());
+        EXPECT_EQ(value, cache.getValue());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Only refresh once
@@ -106,8 +106,8 @@ TEST(APICache, GetValue)
         EXPECT_CALL(*handler,
             GETJson("/api/" + getBridgeUsername() + path, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
             .WillOnce(Return(value));
-        EXPECT_EQ(value, cache.GetValue());
-        EXPECT_EQ(value, cache.GetValue());
+        EXPECT_EQ(value, cache.getValue());
+        EXPECT_EQ(value, cache.getValue());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // No refresh with const
@@ -118,7 +118,7 @@ TEST(APICache, GetValue)
         EXPECT_CALL(*handler,
             GETJson("/api/" + getBridgeUsername() + path, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
             .Times(0);
-        EXPECT_EQ(nullptr, cache.GetValue());
+        EXPECT_EQ(nullptr, cache.getValue());
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }
