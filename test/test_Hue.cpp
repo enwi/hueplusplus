@@ -365,6 +365,23 @@ TEST(Hue, getLight)
     EXPECT_EQ(test_light_1.getName(), "Hue ambiance lamp 1");
     EXPECT_EQ(test_light_1.getColorType(), ColorType::NONE);
 
+    hue_bridge_state["lights"]["1"]["modelid"] = "Plug 01";
+    EXPECT_CALL(
+        *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+        .Times(1)
+        .WillOnce(Return(hue_bridge_state));
+
+    EXPECT_CALL(*handler,
+        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+        .Times(AtLeast(1))
+        .WillRepeatedly(Return(hue_bridge_state["lights"]["1"]));
+    test_bridge = Hue(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+
+    // Test when correct data is sent
+    test_light_1 = test_bridge.getLight(1);
+    EXPECT_EQ(test_light_1.getName(), "Hue ambiance lamp 1");
+    EXPECT_EQ(test_light_1.getColorType(), ColorType::NONE);
+
     hue_bridge_state["lights"]["1"]["modelid"] = "ABC000";
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
