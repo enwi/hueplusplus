@@ -30,6 +30,7 @@
 #include "ColorHueStrategy.h"
 #include "ColorTemperatureStrategy.h"
 #include "HueCommandAPI.h"
+#include "HueThing.h"
 #include "StateTransaction.h"
 
 #include "json/json.hpp"
@@ -95,7 +96,7 @@ enum class ColorType
 //! \brief Class for Hue Light fixtures
 //!
 //! Provides methods to query and control lights.
-class HueLight
+class HueLight : public HueThing
 {
     friend class HueLightFactory;
     friend class SimpleBrightnessStrategy;
@@ -111,6 +112,31 @@ public:
     //! \name General information
     ///@{
 
+    //! \brief Function that turns the light off.
+    //!
+    //! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
+    //! \return Bool that is true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
+    virtual bool Off(uint8_t transition = 4);
+
+    //! \brief Function to check whether a light is on or off
+    //!
+    //! \return Bool that is true, when the light is on and false, when off
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
+    virtual bool isOn();
+
+    //! \brief Const function to check whether a light is on or off
+    //!
+    //! \note This will not refresh the light state
+    //! \return Bool that is true, when the light is on and false, when off
+    virtual bool isOn() const;
+
     //! \brief Const function that returns the id of this light
     //!
     //! \return integer representing the light id
@@ -118,13 +144,7 @@ public:
 
     //! \brief Const function that returns the light type
     //!
-    //! The type determines which functions the light has.
     //! \return String containing the type
-    //! - "On/Off light": on/off
-    //! - "Dimmable light": on/off, brightness
-    //! - "Color light": on/off, brightness, color hue/sat/xy
-    //! - "Color temperature light": on/off, brightness, color temperature
-    //! - "Extended color light": on/off, brightness, color temperature, color hue/sat/xy
     virtual std::string getType() const;
 
     //! \brief Function that returns the name of the light.
@@ -141,15 +161,6 @@ public:
     //! \note This will not refresh the light state
     //! \return String containig the name of the light
     virtual std::string getName() const;
-
-    //! \brief Function that sets the name of the light
-    //!
-    //! \return Bool that is true on success
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual bool setName(const std::string& name);
 
     //! \brief Const function that returns the modelid of the light
     //!
@@ -179,22 +190,6 @@ public:
     //! \note Only working on bridges with versions starting at 1.9
     //! \return String containing the luminaireuniqueid or an empty string when the function is not supported
     virtual std::string getLuminaireUId() const;
-
-    //! \brief Function that returns the software version of the light
-    //!
-    //! \return String containing the software version
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual std::string getSwVersion();
-
-    //! \brief Const function that returns the software version of the light
-    //!
-    //! \note This will not refresh the light state
-    //! \return String containing the software version
-    virtual std::string getSwVersion() const;
-
 
     //! \brief Const function that returns the color type of the light.
     //!
