@@ -14,6 +14,8 @@ set(hueplusplus_SOURCES
     ModelPictures.cpp
     Scene.cpp
     Schedule.cpp
+    HueSensor.cpp
+    HueThing.cpp
     SimpleBrightnessStrategy.cpp
     SimpleColorHueStrategy.cpp
     SimpleColorTemperatureStrategy.cpp

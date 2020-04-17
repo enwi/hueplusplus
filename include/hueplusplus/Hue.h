@@ -38,6 +38,7 @@
 #include "HueCommandAPI.h"
 #include "HueDeviceTypes.h"
 #include "HueLight.h"
+#include "HueSensor.h"
 #include "IHttpHandler.h"
 #include "ResourceList.h"
 #include "Scene.h"

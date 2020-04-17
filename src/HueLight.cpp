@@ -27,6 +27,7 @@
 #include <thread>
 
 #include "hueplusplus/HueExceptionMacro.h"
+#include "hueplusplus/HueThing.h"
 #include "hueplusplus/Utils.h"
 #include "json/json.hpp"
 
@@ -52,46 +53,6 @@ bool HueLight::isOn() const
     return state.getValue().at("state").at("on").get<bool>();
 }
 
-int HueLight::getId() const
-{
-    return id;
-}
-
-std::string HueLight::getType() const
-{
-    return state.getValue()["type"].get<std::string>();
-}
-
-std::string HueLight::getName()
-{
-    return state.getValue()["name"].get<std::string>();
-}
-
-std::string HueLight::getName() const
-{
-    return state.getValue()["name"].get<std::string>();
-}
-
-std::string HueLight::getModelId() const
-{
-    return state.getValue()["modelid"].get<std::string>();
-}
-
-std::string HueLight::getUId() const
-{
-    return state.getValue().value("uniqueid", std::string());
-}
-
-std::string HueLight::getManufacturername() const
-{
-    return state.getValue().value("manufacturername", std::string());
-}
-
-std::string HueLight::getProductname() const
-{
-    return state.getValue().value("productname", std::string());
-}
-
 std::string HueLight::getLuminaireUId() const
 {
     return state.getValue().value("luminaireuniqueid", std::string());
@@ -105,18 +66,6 @@ std::string HueLight::getSwVersion()
 std::string HueLight::getSwVersion() const
 {
     return state.getValue()["swversion"].get<std::string>();
-}
-
-bool HueLight::setName(const std::string& name)
-{
-    nlohmann::json request = nlohmann::json::object();
-    request["name"] = name;
-    nlohmann::json reply = sendPutRequest(request, "/name", CURRENT_FILE_INFO);
-    state.refresh();
-
-    // Check whether request was successful (returned name is not necessarily the actually set name)
-    // If it already exists, a number is added, if it is too long to be returned, "Updated" is returned
-    return utils::safeGetMember(reply, 0, "success", "/lights/" + std::to_string(id) + "/name").is_string();
 }
 
 ColorType HueLight::getColorType() const
@@ -183,9 +132,8 @@ HueLight::HueLight(int id, const HueCommandAPI& commands) : HueLight(id, command
 
 HueLight::HueLight(int id, const HueCommandAPI& commands, std::shared_ptr<const BrightnessStrategy> brightnessStrategy,
     std::shared_ptr<const ColorTemperatureStrategy> colorTempStrategy,
-    std::shared_ptr<const ColorHueStrategy> colorHueStrategy, std::chrono::steady_clock::duration refreshDuration)
-    : id(id),
-      state("/lights/" + std::to_string(id), commands, refreshDuration),
+    std::shared_ptr<const ColorHueStrategy> colorHueStrategy, chrono::steady_clock::duration refreshDuration)
+    : HueThing(id, commands, "/lights/"),
       colorType(ColorType::NONE),
       brightnessStrategy(std::move(brightnessStrategy)),
       colorTemperatureStrategy(std::move(colorTempStrategy)),
