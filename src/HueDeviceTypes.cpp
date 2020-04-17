@@ -58,6 +58,13 @@ const std::set<std::string> getNoColorTypes()
     return c_DIMMABLELIGHT_NO_COLOR_TYPES;
 }
 
+const std::set<std::string> getNonDimmableTypes()
+{
+    static const std::set<std::string> c_NON_DIMMABLE_TYPES
+        = {"Plug 01"};
+    return c_NON_DIMMABLE_TYPES;
+}
+
 const std::set<std::string> getTemperatureLightTypes()
 {
     static const std::set<std::string> c_TEMPERATURELIGHT_TYPES
@@ -101,6 +108,12 @@ auto MakeHueLight::operator()(std::string type, int id, HueCommandAPI commands,
     else if (getNoColorTypes().count(type))
     {
         auto light = HueLight(id, commands, simpleBrightnessStrategy, nullptr, nullptr);
+        light.colorType = ColorType::NONE;
+        return light;
+    }
+
+    else if (getNonDimmableTypes().count(type)) {
+        auto light = HueLight(id, commands);
         light.colorType = ColorType::NONE;
         return light;
     }
