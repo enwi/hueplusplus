@@ -33,7 +33,7 @@ namespace hueplusplus
 bool ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, HueLight& light) const
 {
     // Careful, only use state until any light function might refresh the value and invalidate the reference
-    const nlohmann::json& state = light.state.GetValue()["state"];
+    const nlohmann::json& state = light.state.getValue()["state"];
     std::string cType = state["colormode"];
     bool on = state["on"];
     if (cType == "hs")
@@ -86,7 +86,7 @@ bool ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, Hue
     }
     else if (cType == "ct")
     {
-        uint16_t oldCT = light.state.GetValue()["state"]["ct"];
+        uint16_t oldCT = light.state.getValue()["state"]["ct"];
         if (!light.setColorHueSaturation(hue, sat, 1))
         {
             return false;
@@ -116,7 +116,7 @@ bool ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, Hue
 bool ExtendedColorHueStrategy::alertXY(float x, float y, HueLight& light) const
 {
     // Careful, only use state until any light function might refresh the value and invalidate the reference
-    const nlohmann::json& state = light.state.GetValue()["state"];
+    const nlohmann::json& state = light.state.getValue()["state"];
     std::string cType = state["colormode"];
     bool on = state["on"];
     if (cType == "hs")
@@ -199,7 +199,7 @@ bool ExtendedColorHueStrategy::alertXY(float x, float y, HueLight& light) const
 bool ExtendedColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLight& light) const
 {
     // Careful, only use state until any light function might refresh the value and invalidate the reference
-    const nlohmann::json& state = light.state.GetValue()["state"];
+    const nlohmann::json& state = light.state.getValue()["state"];
     std::string cType = state["colormode"];
     bool on = state["on"];
     if (cType == "hs")

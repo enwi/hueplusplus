@@ -112,7 +112,9 @@ private:
     std::shared_ptr<const IHttpHandler> http_handler;
 };
 
-//! Hue class
+//! \brief Hue class for a bridge.
+//!
+//! This is the main class used to interact with the Hue bridge.
 class Hue
 {
     friend class HueFinder;
@@ -123,10 +125,14 @@ public:
     //! \param ip IP address in dotted decimal notation like "192.168.2.1"
     //! \param port Port of the hue bridge
     //! \param username String that specifies the username that is used to control
-    //! the bridge. This needs to be acquired in \ref requestUsername
+    //! the bridge. Can be left empty and acquired in \ref requestUsername.
     //! \param handler HttpHandler for communication with the bridge
+    //! \param refreshDuration Time between refreshing the cached state.
     Hue(const std::string& ip, const int port, const std::string& username, std::shared_ptr<const IHttpHandler> handler,
         std::chrono::steady_clock::duration refreshDuration = std::chrono::seconds(10));
+
+    //! \name Configuration
+    ///@{
 
     //! \brief Function to get the ip address of the hue bridge
     //!
@@ -165,6 +171,16 @@ public:
     //! "192.168.2.1:8080"
     void setPort(const int port);
 
+    //! \brief Function that sets the HttpHandler and updates the HueCommandAPI.
+    //!
+    //! The HttpHandler and HueCommandAPI are used for bridge communication
+    //! \param handler a HttpHandler of type \ref IHttpHandler
+    void setHttpHandler(std::shared_ptr<const IHttpHandler> handler);
+
+    ///@}
+    //! \name Lights
+    ///@{
+
     //! \brief Function that returns a \ref HueLight of specified id
     //!
     //! \param id Integer that specifies the ID of a Hue light
@@ -186,11 +202,6 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     bool removeLight(int id);
 
-    //! \brief Function that returns all light types that are associated with this bridge
-    //!
-    //! \return A map mapping light id's to light types for every light
-    // const std::map<uint8_t, ColorType>& getAllLightTypes();
-
     //! \brief Function that returns all lights that are associated with this
     //! bridge
     //!
@@ -202,8 +213,6 @@ public:
     std::vector<std::reference_wrapper<HueLight>> getAllLights();
 
     //! \brief Function that tells whether a given light id represents an existing light
-    //!
-    //! Calls refreshState to update the local bridge state
     //! \param id Id of a light to check for existance
     //! \return Bool that is true when a light with the given id exists and false when not
     //! \throws std::system_error when system or socket operations fail
@@ -221,14 +230,66 @@ public:
     //! when not
     bool lightExists(int id) const;
 
+    ///@}
+    //! \name Groups
+    ///@{
+
+    //! \brief Get all groups that exist on this bridge.
+    //! \return A vector of references to every Group.
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contains no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     std::vector<std::reference_wrapper<Group>> getAllGroups();
 
+    //! \brief Get group specified by id.
+    //! \param id ID of the group.
+    //! \returns Group that can be controlled.
+    //! \note Every bridge has a special group 0 which contains all lights 
+    //! and is not visible to getAllGroups().
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when id does not exist
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     Group& getGroup(int id);
+
+    //! \brief Remove a group from the bridge.
+    //! \param id ID of the group.
+    //! \returns true on success.
+    //! \brief Remove a group from the bridge.
+    //! \param id ID of the group.
+    //! \returns true on success.
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contains no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     bool removeGroup(int id);
+
+    //! \brief Checks whether a group exists.
+    //! \param id ID of the group.
+    //! \returns true when the group exists.
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contains no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     bool groupExists(int id);
+
+    //! \brief Checks whether a group exists.
+    //! \param id ID of the group.
+    //! \returns true when the group exists.
+    //! \note Does not refresh the cached state.
     bool groupExists(int id) const;
 
+    //! \brief Create a new group.
+    //! \param params CreateGroup parameters for the new group.
+    //! \returns The new group id or 0 if failed.
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contains no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     int createGroup(const CreateGroup& params);
+
+    ///@}
 
     //! \brief Const function that returns the picture name of a given light id
     //!
@@ -248,16 +309,6 @@ public:
     //! filename of the picture of the device or if it was not found an empty
     //! string
     std::string getPictureOfModel(const std::string& model_id) const;
-
-    //! \brief Function that sets the HttpHandler and updates the HueCommandAPI.
-    //!
-    //! The HttpHandler and HueCommandAPI are used for bridge communication
-    //! \param handler a HttpHandler of type \ref IHttpHandler
-    void setHttpHandler(std::shared_ptr<const IHttpHandler> handler)
-    {
-        http_handler = std::move(handler);
-        commands = HueCommandAPI(ip, port, username, http_handler);
-    }
 
 private:
     std::string ip; //!< IP-Address of the hue bridge in dotted decimal notation

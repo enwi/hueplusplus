@@ -86,7 +86,7 @@ bool SimpleColorHueStrategy::setColorLoop(bool on, HueLight& light) const
 bool SimpleColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, HueLight& light) const
 {
     // Careful, only use state until any light function might refresh the value and invalidate the reference
-    const nlohmann::json& state = light.state.GetValue()["state"];
+    const nlohmann::json& state = light.state.getValue()["state"];
     std::string cType = state["colormode"];
     bool on = state["on"];
     if (cType == "hs")
@@ -146,7 +146,7 @@ bool SimpleColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, HueLi
 bool SimpleColorHueStrategy::alertXY(float x, float y, HueLight& light) const
 {
     // Careful, only use state until any light function might refresh the value and invalidate the reference
-    const nlohmann::json& state = light.state.GetValue()["state"];
+    const nlohmann::json& state = light.state.getValue()["state"];
     std::string cType = state["colormode"];
     bool on = state["on"];
     if (cType == "hs")
@@ -206,7 +206,7 @@ bool SimpleColorHueStrategy::alertXY(float x, float y, HueLight& light) const
 bool SimpleColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLight& light) const
 {
     // Careful, only use state until any light function might refresh the value and invalidate the reference
-    const nlohmann::json& state = light.state.GetValue()["state"];
+    const nlohmann::json& state = light.state.getValue()["state"];
     std::string cType = state["colormode"];
     bool on = state["on"];
     if (cType == "hs")
@@ -266,26 +266,26 @@ bool SimpleColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLight&
 std::pair<uint16_t, uint8_t> SimpleColorHueStrategy::getColorHueSaturation(HueLight& light) const
 {
     // Save value, so there are no inconsistent results if it is refreshed between two calls
-    const nlohmann::json& state = light.state.GetValue()["state"];
+    const nlohmann::json& state = light.state.getValue()["state"];
     return std::pair<uint16_t, uint8_t>(static_cast<uint16_t>(state["hue"]), static_cast<uint8_t>(state["sat"]));
 }
 
 std::pair<uint16_t, uint8_t> SimpleColorHueStrategy::getColorHueSaturation(const HueLight& light) const
 {
-    return std::pair<uint16_t, uint8_t>(static_cast<uint16_t>(light.state.GetValue()["state"]["hue"]),
-        static_cast<uint8_t>(light.state.GetValue()["state"]["sat"]));
+    return std::pair<uint16_t, uint8_t>(static_cast<uint16_t>(light.state.getValue()["state"]["hue"]),
+        static_cast<uint8_t>(light.state.getValue()["state"]["sat"]));
 }
 
 std::pair<float, float> SimpleColorHueStrategy::getColorXY(HueLight& light) const
 {
     // Save value, so there are no inconsistent results if it is refreshed between two calls
-    const nlohmann::json& state = light.state.GetValue()["state"];
+    const nlohmann::json& state = light.state.getValue()["state"];
     return std::pair<float, float>(state["xy"][0], state["xy"][1]);
 }
 
 std::pair<float, float> SimpleColorHueStrategy::getColorXY(const HueLight& light) const
 {
-    return std::pair<float, float>(light.state.GetValue()["state"]["xy"][0], light.state.GetValue()["state"]["xy"][1]);
+    return std::pair<float, float>(light.state.getValue()["state"]["xy"][0], light.state.getValue()["state"]["xy"][1]);
 }
 /*bool SimpleColorHueStrategy::pointInTriangle(float pointx, float pointy, float
 x0, float y0, float x1, float y1, float x2, float y2)
