@@ -44,12 +44,12 @@ bool HueLight::Off(uint8_t transition)
 
 bool HueLight::isOn()
 {
-    return state.GetValue().at("state").at("on").get<bool>();
+    return state.getValue().at("state").at("on").get<bool>();
 }
 
 bool HueLight::isOn() const
 {
-    return state.GetValue().at("state").at("on").get<bool>();
+    return state.getValue().at("state").at("on").get<bool>();
 }
 
 int HueLight::getId() const
@@ -59,60 +59,60 @@ int HueLight::getId() const
 
 std::string HueLight::getType() const
 {
-    return state.GetValue()["type"];
+    return state.getValue()["type"];
 }
 
 std::string HueLight::getName()
 {
-    return state.GetValue()["name"];
+    return state.getValue()["name"];
 }
 
 std::string HueLight::getName() const
 {
-    return state.GetValue()["name"];
+    return state.getValue()["name"];
 }
 
 std::string HueLight::getModelId() const
 {
-    return state.GetValue()["modelid"];
+    return state.getValue()["modelid"];
 }
 
 std::string HueLight::getUId() const
 {
-    return state.GetValue().value("uniqueid", std::string());
+    return state.getValue().value("uniqueid", std::string());
 }
 
 std::string HueLight::getManufacturername() const
 {
-    return state.GetValue().value("manufacturername", std::string());
+    return state.getValue().value("manufacturername", std::string());
 }
 
 std::string HueLight::getProductname() const
 {
-    return state.GetValue().value("productname", std::string());
+    return state.getValue().value("productname", std::string());
 }
 
 std::string HueLight::getLuminaireUId() const
 {
-    return state.GetValue().value("luminaireuniqueid", std::string());
+    return state.getValue().value("luminaireuniqueid", std::string());
 }
 
 std::string HueLight::getSwVersion()
 {
-    return state.GetValue()["swversion"];
+    return state.getValue()["swversion"];
 }
 
 std::string HueLight::getSwVersion() const
 {
-    return state.GetValue()["swversion"];
+    return state.getValue()["swversion"];
 }
 
 bool HueLight::setName(const std::string& name)
 {
     nlohmann::json request = nlohmann::json::object();
     request["name"] = name;
-    nlohmann::json reply = SendPutRequest(request, "/name", CURRENT_FILE_INFO);
-    state.Refresh();
+    nlohmann::json reply = sendPutRequest(request, "/name", CURRENT_FILE_INFO);
+    state.refresh();
 
     // Check whether request was successful (returned name is not necessarily the actually set name)
     // If it already exists, a number is added, if it is too long to be returned, "Updated" is returned
@@ -141,7 +141,12 @@ bool HueLight::alert()
 
 StateTransaction HueLight::transaction()
 {
-    return StateTransaction(commands, "/lights/" + std::to_string(id) + "/state", state.GetValue().at("state"));
+    return StateTransaction(commands, "/lights/" + std::to_string(id) + "/state", state.getValue().at("state"));
+}
+
+void HueLight::refresh()
+{
+    state.refresh();
 }
 
 HueLight::HueLight(int id, const HueCommandAPI& commands) : HueLight(id, commands, nullptr, nullptr, nullptr) {}
@@ -157,10 +162,10 @@ HueLight::HueLight(int id, const HueCommandAPI& commands, std::shared_ptr<const 
       colorHueStrategy(std::move(colorHueStrategy)),
       commands(commands)
 {
-    state.Refresh();
+    state.refresh();
 }
 
-nlohmann::json HueLight::SendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo)
+nlohmann::json HueLight::sendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo)
 {
     return commands.PUTRequest("/lights/" + std::to_string(id) + subPath, request, std::move(fileInfo));
 }

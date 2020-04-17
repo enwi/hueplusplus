@@ -45,19 +45,19 @@ public:
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    void Refresh();
+    void refresh();
 
     //! \brief Get cached value, refresh if necessary.
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    nlohmann::json& GetValue();
+    nlohmann::json& getValue();
     //! \brief Get cached value, does not refresh.
-    const nlohmann::json& GetValue() const;
+    const nlohmann::json& getValue() const;
 
     //! \brief Get duration between refreshes.
-    std::chrono::steady_clock::duration GetRefreshDuration() const;
+    std::chrono::steady_clock::duration getRefreshDuration() const;
 
 private:
     std::string path;

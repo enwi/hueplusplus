@@ -92,9 +92,9 @@ enum class ColorType
     GAMUT_C_TEMPERATURE
 };
 
+//! \brief Class for Hue Light fixtures
 //!
-//! Class for Hue Light fixtures
-//!
+//! Provides methods to query and control lights.
 class HueLight
 {
     friend class Hue;
@@ -109,40 +109,8 @@ public:
     //! \brief std dtor
     ~HueLight() = default;
 
-    //! \brief Function that turns the light on.
-    //!
-    //! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
-    //! \return true on success
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual bool On(uint8_t transition = 4);
-
-    //! \brief Function that turns the light off.
-    //!
-    //! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
-    //! \return Bool that is true on success
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual bool Off(uint8_t transition = 4);
-
-    //! \brief Function to check whether a light is on or off
-    //!
-    //! \return Bool that is true, when the light is on and false, when off
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual bool isOn();
-
-    //! \brief Const function to check whether a light is on or off
-    //!
-    //! \note This will not refresh the light state
-    //! \return Bool that is true, when the light is on and false, when off
-    virtual bool isOn() const;
+    //! \name General information
+    ///@{
 
     //! \brief Const function that returns the id of this light
     //!
@@ -168,6 +136,15 @@ public:
     //! \note This will not refresh the light state
     //! \return String containig the name of the light
     virtual std::string getName() const;
+
+    //! \brief Function that sets the name of the light
+    //!
+    //! \return Bool that is true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
+    virtual bool setName(const std::string& name);
 
     //! \brief Const function that returns the modelid of the light
     //!
@@ -213,14 +190,44 @@ public:
     //! \return String containing the software version
     virtual std::string getSwVersion() const;
 
-    //! \brief Function that sets the name of the light
+    ///@}
+    //! \name Light state
+    ///@{
+
+    //! \brief Function that turns the light on.
     //!
+    //! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
+    //! \return true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
+    virtual bool On(uint8_t transition = 4);
+
+    //! \brief Function that turns the light off.
+    //!
+    //! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
     //! \return Bool that is true on success
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual bool setName(const std::string& name);
+    virtual bool Off(uint8_t transition = 4);
+
+    //! \brief Function to check whether a light is on or off
+    //!
+    //! \return Bool that is true, when the light is on and false, when off
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
+    virtual bool isOn();
+
+    //! \brief Const function to check whether a light is on or off
+    //!
+    //! \note This will not refresh the light state
+    //! \return Bool that is true, when the light is on and false, when off
+    virtual bool isOn() const;
 
     //! \brief Const function that returns the color type of the light.
     //!
@@ -677,7 +684,24 @@ public:
         return false;
     };
 
+    //! \brief Create a transaction for this light.
+    //!
+    //! The transaction can be used to change more than one value in one request.
+    //! Only use the functions supported by the current light type.
+    //!
+    //! Example usage: \code
+    //! light.transaction().setBrightness(240).setColorHue(5000).commit();
+    //! \endcode
     virtual StateTransaction transaction();
+
+    ///@}
+
+    //! \brief Refreshes internal cached state.
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
+    virtual void refresh();
 
 protected:
     //! \brief Protected ctor that is used by \ref Hue class.
@@ -696,6 +720,8 @@ protected:
     //! \param brightnessStrategy Strategy for brightness. May be nullptr.
     //! \param colorTempStrategy Strategy for color temperature. May be nullptr.
     //! \param colorHueStrategy Strategy for color hue/saturation. May be nullptr.
+    //! \param refreshDuration Time between refreshing the cached state.
+    //! Can be 0 to always refresh, or steady_clock::duration::max() to never refresh.
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
@@ -742,7 +768,6 @@ protected:
 
     //! \brief Utility function to send a put request to the light.
     //!
-    //! \throws nlohmann::json::parse_error if the reply could not be parsed
     //! \param request A nlohmann::json aka the request to send
     //! \param subPath A path that is appended to the uri, note it should always start with a slash ("/")
     //! \param fileInfo FileInfo from calling function for exception details.
@@ -751,11 +776,11 @@ protected:
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual nlohmann::json SendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo);
+    virtual nlohmann::json sendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo);
 
 protected:
     int id; //!< holds the id of the light
-    APICache state; //!< holds the current state of the light updated by \ref refreshState
+    APICache state; //!< holds the current state of the light
     ColorType colorType; //!< holds the \ref ColorType of the light
 
     std::shared_ptr<const BrightnessStrategy>

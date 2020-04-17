@@ -30,7 +30,7 @@
 
 namespace hueplusplus
 {
-//! \brief Contains information about error location, use CURRENT_FILE_INFO to create
+//! \brief Contains information about error location, use \ref CURRENT_FILE_INFO to create
 struct FileInfo
 {
     //! \brief Current file name from __FILE__. Empty if unknown
