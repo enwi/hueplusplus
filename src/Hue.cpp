@@ -197,10 +197,11 @@ std::string Hue::requestUsername()
             }
             else if (answer.size() > 0 && answer[0].count("error"))
             {
+                HueAPIResponseException exception = HueAPIResponseException::Create(CURRENT_FILE_INFO, answer[0]);
                 // All errors except 101: Link button not pressed
-                if (utils::safeGetMember(answer, 0, "error", "type") != 101)
+                if (exception.GetErrorNumber() != 101)
                 {
-                    throw HueAPIResponseException::Create(CURRENT_FILE_INFO, answer[0]);
+                    throw exception;
                 }
             }
 
@@ -353,7 +354,14 @@ int Hue::createGroup(const CreateGroup& params)
     nlohmann::json id = utils::safeGetMember(response, 0, "success", "id");
     if (id.is_string())
     {
-        return std::stoi(id.get<std::string>());
+        std::string idStr = id.get<std::string>();
+        // Sometimes the response can be /groups/<id>?
+        if (idStr.find("/groups/") == 0)
+        {
+            idStr.erase(0, 8);
+        }
+        stateCache.refresh();
+        return std::stoi(idStr);
     }
     return 0;
 }
