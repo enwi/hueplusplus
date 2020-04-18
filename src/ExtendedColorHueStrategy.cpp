@@ -86,7 +86,7 @@ bool ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, Hue
     }
     else if (cType == "ct")
     {
-        uint16_t oldCT = light.state.getValue()["state"]["ct"];
+        uint16_t oldCT = state["ct"];
         if (!light.setColorHueSaturation(hue, sat, 1))
         {
             return false;
