@@ -31,6 +31,8 @@
 # build directory
 /build*
 
+# Generated documentation
+/doc/html
 
 # General
 .DS_Store
