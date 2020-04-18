@@ -37,6 +37,12 @@ if(ESP_PLATFORM)
     )
 endif()
 
+# append current source dir before files
+foreach(src ${hueplusplus_SOURCES})
+    list(APPEND _srcList "${CMAKE_CURRENT_SOURCE_DIR}/${src}")
+endforeach()
+set(hueplusplus_SOURCES ${_srcList} PARENT_SCOPE)
+
 # hueplusplus shared library
 add_library(hueplusplusshared SHARED ${hueplusplus_SOURCES})
 target_compile_features(hueplusplusshared PUBLIC cxx_std_14)
