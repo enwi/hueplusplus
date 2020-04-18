@@ -1,17 +1,12 @@
-# hueplusplus
-A simple and easy to use library for Philips Hue Lights
-
-| Branch | Travis CI | Codecov | LGTM
-|:-|:-|:-|:-|
-| [Master](https://github.com/enwi/hueplusplus/tree/master) | [![Build Status](https://travis-ci.com/enwi/hueplusplus.svg?branch=master)](https://travis-ci.com/enwi/hueplusplus) | [![codecov](https://codecov.io/gh/enwi/hueplusplus/branch/master/graph/badge.svg)](https://codecov.io/gh/enwi/hueplusplus) | [![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/enwi/hueplusplus.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/enwi/hueplusplus/context:cpp) |
-| [Development](https://github.com/enwi/hueplusplus/tree/development) | [![Build Status](https://travis-ci.com/enwi/hueplusplus.svg?branch=development)](https://travis-ci.com/enwi/hueplusplus) | [![codecov](https://codecov.io/gh/enwi/hueplusplus/branch/development/graph/badge.svg)](https://codecov.io/gh/enwi/hueplusplus) | |
+# Documentation for the hueplusplus library
+A simple and easy to use library for Philips Hue Lights.
 
 ## Features
 * find bridges with SSDP or set an ip manually
 * function to assign a username or set one manually
 * all common light functions (brightness, color, temperature)
 * extended alert() functions, which alert in a specific color (good for notifications)
-* [documented with doxygen](https://enwi.github.io/hueplusplus/)
+* documented with doxygen
 * tested with google test, google mock and gcov/lcov
 
 ## Compatibility
@@ -22,11 +17,12 @@ A simple and easy to use library for Philips Hue Lights
 
 ## How to use
 ### <a name="searchingBridges"></a>Searching for Bridges
-To start searching for a Hue Bridge you will need to choose an IHttpHandler and create one. The options are a "WinHttpHandler" (for windows) or a "LinHttpHandler" (for linux).
-Then create a HueFinder object with the handler.
+To start searching for a Hue Bridge you will need to choose an IHttpHandler and create one. The options are a [WinHttpHandler](@ref hueplusplus::WinHttpHandler) (for windows) or a [LinHttpHandler](@ref hueplusplus::LinHttpHandler) (for linux or linux-like).
+
+Then create a [HueFinder](@ref hueplusplus::HueFinder) object with the handler.
 The handler is needed, because it tells the finder which functions to use to communicate with a bridge or your local network.
-After that you can call FindBridges(), which will return a vector containing the ip and mac address of all found Bridges.
-```C++
+After that you can call [FindBridges()](@ref hueplusplus::HueFinder::FindBridges), which will return a vector containing the ip and mac address of all found Bridges.
+```{.cpp}
 // For windows use std::make_shared<hueplusplus::WinHttpHandler>();
 handler = std::make_shared<hueplusplus::LinHttpHandler>();
 hueplusplus::HueFinder finder(handler);
@@ -41,19 +37,19 @@ if (bridges.empty())
 
 ### Authenticate Bridges
 If you have found the Bridge you were looking for, you can then move on with the authentication process.
-To get a new username from the Bridge (for now) you simply call GetBridge(bridges[\<index\>]),
-where index is your preferred Bridge from the part [Searching for Bridges](#searchingBridges).
-```C++
+To get a new username from the Bridge (for now) you simply call [GetBridge(bridges[\<index\>])](@ref hueplusplus::HueFinder::GetBridge),
+where index is your preferred Bridge from the part [Searching for Bridges](#searchingBridges). This requires the user to press the link button.
+```{.cpp}
 hueplusplus::Hue bridge = finder.GetBridge(bridges[0]);
 ```
 If you on the other hand already have a username you can add your bridge like so
-```C++
+```{.cpp}
 finder.AddUsername(bridges[0].mac, "<username>");
 hueplusplus::Hue bridge = finder.GetBridge(bridges[0]);
 ```
 If you do not want to use the HueFinder or you already know the ip and username of your bridge you have the option to create your own Hue object.
 Here you will need to provide the ip address, the port number, a username and an HttpHandler
-```C++
+```{.cpp}
 // For windows use std::make_shared<hueplusplus::WinHttpHandler>();
 handler = std::make_shared<hueplusplus::LinHttpHandler>();
 hueplusplus::Hue bridge("192.168.2.102", 80, "<username>", handler);
@@ -61,18 +57,18 @@ hueplusplus::Hue bridge("192.168.2.102", 80, "<username>", handler);
 
 ### Controlling lights
 If you have your Bridge all set up, you can now control its lights.
-For that create a new HueLight object and call getLight(\<id\>) on your bridge object to get a reference to a specific light, where id
+For that create a new HueLight object and call [getLight(\<id\>)](@ref hueplusplus::Hue::getLight) on your bridge object to get a reference to a specific light, where id
 is the id of the light set internally by the Hue Bridge.
-```C++
+```{.cpp}
 hueplusplus::HueLight light1 = bridge.getLight(1);
 ```
 If you don't know the id of a specific light or want to get an overview over all lights that are controlled by your bridge, 
-you can get a vector containing them by calling getAllLights() on your bridge object. If no lights are found the vector will be empty.
-```C++
+you can get a vector containing them by calling [getAllLights()](@ref hueplusplus::Hue::getAllLights) on your bridge object. If no lights are found the vector will be empty.
+```{.cpp}
 std::vector<std::reference_wrapper<hueplusplus::HueLight>> lights = bridge.getAllLights();
 ```
 If you now want to control a light, call a specific function of it.
-```C++
+```{.cpp}
 light1.On();
 light1.setBrightness(120);
 light1.alertHueSaturation(25500, 255);
@@ -83,21 +79,18 @@ lights.at(1).setColorHue(4562);
 ```
 But keep in mind that some light types do not have all functions available. So you might call a
 specific function, but nothing will happen. For that you might want to check what type
-of a light you are controlling. For that you can call the function getColorType(), which will return
+of a light you are controlling. For that you can call the function [getColorType()](@ref hueplusplus::HueLight::getColorType()), which will return
 a ColorType.
-```C++
+```{.cpp}
 hueplusplus::ColorType type1 = light1.getColorType();
 ```
 There's also a new way to check whether specific functions of a light are available:
-```C++
+```{.cpp}
 light1.hasBrightnessControl();
 light1.hasTemperatureControl();
 light1.hasColorControl();
 ```
 These will either return true(light has specified function) or false(light lacks specified function).
-
-### Further reading
-If you want to know more about all functions just look inside the doxygen documentation. It can be found [here](https://enwi.github.io/hueplusplus/)
 
 ## Build and install
 ### Basic installation
@@ -158,7 +151,3 @@ If you also want to execute coverage tests you will need to install gcov and lco
 ```bash
 make coveragetest
 ```
-
-
-## Copyright
-Copyright (c) 2017 Jan Rogall & Moritz Wirger. See LICENSE for further details.
