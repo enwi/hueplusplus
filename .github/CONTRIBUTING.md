@@ -35,6 +35,10 @@ git fetch upstream
 ```
 git reset --hard upstream/development
 ```
+> If you have for some reason made changes to your development branch do a rebase pull to preserve them
+> ```
+> git pull --rebase upstream/development
+> ```
 5.  Switch back to your feature branch
 ```
 git checkout name-of-your-feature-branch
