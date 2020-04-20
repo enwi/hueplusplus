@@ -118,7 +118,13 @@ public:
 
     //! \brief Const function that returns the light type
     //!
+    //! The type determines which functions the light has.
     //! \return String containing the type
+    //! - "On/Off light": on/off
+    //! - "Dimmable light": on/off, brightness
+    //! - "Color light": on/off, brightness, color hue/sat/xy
+    //! - "Color temperature light": on/off, brightness, color temperature
+    //! - "Extended color light": on/off, brightness, color temperature, color hue/sat/xy
     virtual std::string getType() const;
 
     //! \brief Function that returns the name of the light.
