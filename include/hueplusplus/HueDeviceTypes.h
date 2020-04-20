@@ -35,7 +35,7 @@ class HueLightFactory
 public:
     HueLightFactory(const HueCommandAPI& commands);
 
-    HueLight createLight(const std::string& type, int id);
+    HueLight createLight(const nlohmann::json& lightState, int id);
 
 private:
     HueCommandAPI commands;
