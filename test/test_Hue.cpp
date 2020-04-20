@@ -298,6 +298,7 @@ TEST(Hue, getLight)
     EXPECT_EQ(test_light_1.getColorType(), ColorType::TEMPERATURE);
 
     // more coverage stuff
+    hue_bridge_state["lights"]["1"]["type"] = "Color light";
     hue_bridge_state["lights"]["1"]["modelid"] = "LCT001";
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
@@ -349,7 +350,7 @@ TEST(Hue, getLight)
     EXPECT_EQ(test_light_1.getName(), "Hue ambiance lamp 1");
     EXPECT_EQ(test_light_1.getColorType(), ColorType::GAMUT_A);
 
-    hue_bridge_state["lights"]["1"]["modelid"] = "LWB004";
+    hue_bridge_state["lights"]["1"]["type"] = "Dimmable light";
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .Times(1)
@@ -366,7 +367,7 @@ TEST(Hue, getLight)
     EXPECT_EQ(test_light_1.getName(), "Hue ambiance lamp 1");
     EXPECT_EQ(test_light_1.getColorType(), ColorType::NONE);
 
-    hue_bridge_state["lights"]["1"]["modelid"] = "Plug 01";
+    hue_bridge_state["lights"]["1"]["type"] = "On/Off light";
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .Times(1)
@@ -383,7 +384,7 @@ TEST(Hue, getLight)
     EXPECT_EQ(test_light_1.getName(), "Hue ambiance lamp 1");
     EXPECT_EQ(test_light_1.getColorType(), ColorType::NONE);
 
-    hue_bridge_state["lights"]["1"]["modelid"] = "ABC000";
+    hue_bridge_state["lights"]["1"]["type"] = "unknown light type";
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .Times(1)

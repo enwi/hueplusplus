@@ -31,6 +31,7 @@
 #include "hueplusplus/SimpleBrightnessStrategy.h"
 #include "hueplusplus/SimpleColorHueStrategy.h"
 #include "hueplusplus/SimpleColorTemperatureStrategy.h"
+#include "hueplusplus/Utils.h"
 
 namespace hueplusplus
 {
@@ -56,32 +57,11 @@ const std::set<std::string>& getGamutATypes()
         = {"LST001", "LLC005", "LLC006", "LLC007", "LLC010", "LLC011", "LLC012", "LLC013", "LLC014"};
     return c_EXTENDEDCOLORLIGHT_GAMUTA_TYPES;
 }
-
-const std::set<std::string>& getNoColorTypes()
-{
-    static const std::set<std::string> c_DIMMABLELIGHT_NO_COLOR_TYPES
-        = {"LWB004", "LWB006", "LWB007", "LWB010", "LWB014", "LDF001", "LDF002", "LDD001", "LDD002", "MWM001"};
-    return c_DIMMABLELIGHT_NO_COLOR_TYPES;
-}
-
-const std::set<std::string>& getNonDimmableTypes()
-{
-    static const std::set<std::string> c_NON_DIMMABLE_TYPES = {"Plug 01"};
-    return c_NON_DIMMABLE_TYPES;
-}
-
-const std::set<std::string>& getTemperatureLightTypes()
-{
-    static const std::set<std::string> c_TEMPERATURELIGHT_TYPES
-        = {"LLM010", "LLM011", "LLM012", "LTW001", "LTW004", "LTW010", "LTW011", "LTW012", "LTW013", "LTW014", "LTW015",
-            "LTP001", "LTP002", "LTP003", "LTP004", "LTP005", "LTD003", "LTF001", "LTF002", "LTC001", "LTC002",
-            "LTC003", "LTC004", "LTC011", "LTC012", "LTD001", "LTD002", "LFF001", "LTT001", "LDT001"};
-    return c_TEMPERATURELIGHT_TYPES;
-}
 } // namespace
 
-HueLightFactory::HueLightFactory(const HueCommandAPI& commands)
+HueLightFactory::HueLightFactory(const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration)
     : commands(commands),
+      refreshDuration(refreshDuration),
       simpleBrightness(std::make_shared<SimpleBrightnessStrategy>()),
       simpleColorHue(std::make_shared<SimpleColorHueStrategy>()),
       extendedColorHue(std::make_shared<ExtendedColorHueStrategy>()),
@@ -97,35 +77,81 @@ HueLight HueLightFactory::createLight(const nlohmann::json& lightState, int id)
 
     if (type == "on/off light")
     {
-        HueLight light(id, commands, nullptr, nullptr, nullptr);
+        HueLight light(id, commands, nullptr, nullptr, nullptr, refreshDuration);
         light.colorType = ColorType::NONE;
         return light;
     }
     else if (type == "dimmable light")
     {
-        HueLight light(id, commands, simpleBrightness, nullptr, nullptr);
+        HueLight light(id, commands, simpleBrightness, nullptr, nullptr, refreshDuration);
         light.colorType = ColorType::NONE;
         return light;
     }
     else if (type == "color temperature light")
     {
-        HueLight light(id, commands, simpleBrightness, simpleColorTemperature, nullptr);
+        HueLight light(id, commands, simpleBrightness, simpleColorTemperature, nullptr, refreshDuration);
         light.colorType = ColorType::TEMPERATURE;
         return light;
     }
     else if (type == "color light")
     {
-        HueLight light(id, commands, simpleBrightness, nullptr, simpleColorHue);
-        light.colorType = ColorType::GAMUT_A; // getColorType(state);
+        HueLight light(id, commands, simpleBrightness, nullptr, simpleColorHue, refreshDuration);
+        light.colorType = getColorType(lightState, false);
         return light;
     }
     else if (type == "extended color light")
     {
-        HueLight light(id, commands, simpleBrightness, extendedColorTemperature, extendedColorHue);
-        light.colorType = ColorType::GAMUT_B_TEMPERATURE; // getColorType(state);
+        HueLight light(id, commands, simpleBrightness, extendedColorTemperature, extendedColorHue, refreshDuration);
+        light.colorType = getColorType(lightState, true);
         return light;
     }
     std::cerr << "Could not determine HueLight type:" << type << "!\n";
     throw HueException(CURRENT_FILE_INFO, "Could not determine HueLight type!");
+}
+
+ColorType HueLightFactory::getColorType(const nlohmann::json& lightState, bool hasCt) const
+{
+    // Try to get color type via capabilities
+    const nlohmann::json& gamuttype = utils::safeGetMember(lightState, "capabilities", "control", "colorgamuttype");
+    if (gamuttype.is_string())
+    {
+        const std::string gamut = gamuttype.get<std::string>();
+        if (gamut == "A")
+        {
+            return hasCt ? ColorType::GAMUT_A_TEMPERATURE : ColorType::GAMUT_A;
+        }
+        else if (gamut == "B")
+        {
+            return hasCt ? ColorType::GAMUT_B_TEMPERATURE : ColorType::GAMUT_B;
+        }
+        else if (gamut == "C")
+        {
+            return hasCt ? ColorType::GAMUT_C_TEMPERATURE : ColorType::GAMUT_C;
+        }
+        else
+        {
+            // Only other type is "Other" which does not have an enum value
+            return ColorType::UNDEFINED;
+        }
+    }
+    else
+    {
+        // Old version without capabilities, fall back to hardcoded types
+        std::string modelid = lightState.at("modelid").get<std::string>();
+        if (getGamutATypes().count(modelid))
+        {
+            return hasCt ? ColorType::GAMUT_A_TEMPERATURE : ColorType::GAMUT_A;
+        }
+        else if (getGamutBTypes().count(modelid))
+        {
+            return hasCt ? ColorType::GAMUT_B_TEMPERATURE : ColorType::GAMUT_B;
+        }
+        else if (getGamutCTypes().count(modelid))
+        {
+            return hasCt ? ColorType::GAMUT_C_TEMPERATURE : ColorType::GAMUT_C;
+        }
+        std::cerr << "Could not determine HueLight color type:" << modelid << "!\n";
+        throw HueException(CURRENT_FILE_INFO, "Could not determine HueLight color type!");
+    }
 }
 } // namespace hueplusplus
