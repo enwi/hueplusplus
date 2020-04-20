@@ -33,12 +33,16 @@ namespace hueplusplus
 class HueLightFactory
 {
 public:
-    HueLightFactory(const HueCommandAPI& commands);
+    HueLightFactory(const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration);
 
     HueLight createLight(const nlohmann::json& lightState, int id);
 
 private:
+    ColorType getColorType(const nlohmann::json& lightState, bool hasCt) const;
+
+private:
     HueCommandAPI commands;
+    std::chrono::steady_clock::duration refreshDuration;
     std::shared_ptr<BrightnessStrategy> simpleBrightness;
     std::shared_ptr<ColorTemperatureStrategy> simpleColorTemperature;
     std::shared_ptr<ColorTemperatureStrategy> extendedColorTemperature;

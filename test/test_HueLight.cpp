@@ -103,7 +103,7 @@ protected:
         hue_bridge_state["lights"]["3"]["swupdate"] = nlohmann::json::object();
         hue_bridge_state["lights"]["3"]["swupdate"]["state"] = "noupdates";
         hue_bridge_state["lights"]["3"]["swupdate"]["lastinstall"] = nullptr;
-        hue_bridge_state["lights"]["3"]["type"] = "Color extended light";
+        hue_bridge_state["lights"]["3"]["type"] = "Extended color light";
         hue_bridge_state["lights"]["3"]["name"] = "Hue lamp 3";
         hue_bridge_state["lights"]["3"]["modelid"] = "LCT010";
         hue_bridge_state["lights"]["3"]["manufacturername"] = "Philips";
@@ -236,10 +236,10 @@ TEST_F(HueLightTest, getType)
 
     EXPECT_EQ("Dimmable light", ctest_light_1.getType());
     EXPECT_EQ("Color light", ctest_light_2.getType());
-    EXPECT_EQ("Color extended light", ctest_light_3.getType());
+    EXPECT_EQ("Extended color light", ctest_light_3.getType());
     EXPECT_EQ("Dimmable light", test_light_1.getType());
     EXPECT_EQ("Color light", test_light_2.getType());
-    EXPECT_EQ("Color extended light", test_light_3.getType());
+    EXPECT_EQ("Extended color light", test_light_3.getType());
 }
 
 TEST_F(HueLightTest, getName)
@@ -406,10 +406,10 @@ TEST_F(HueLightTest, getColorType)
 
     EXPECT_EQ(ColorType::NONE, ctest_light_1.getColorType());
     EXPECT_EQ(ColorType::GAMUT_A, ctest_light_2.getColorType());
-    EXPECT_EQ(ColorType::GAMUT_C, ctest_light_3.getColorType());
+    EXPECT_EQ(ColorType::GAMUT_C_TEMPERATURE, ctest_light_3.getColorType());
     EXPECT_EQ(ColorType::NONE, test_light_1.getColorType());
     EXPECT_EQ(ColorType::GAMUT_A, test_light_2.getColorType());
-    EXPECT_EQ(ColorType::GAMUT_C, test_light_3.getColorType());
+    EXPECT_EQ(ColorType::GAMUT_C_TEMPERATURE, test_light_3.getColorType());
 }
 
 TEST_F(HueLightTest, KelvinToMired)
