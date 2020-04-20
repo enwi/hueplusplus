@@ -97,8 +97,7 @@ enum class ColorType
 //! Provides methods to query and control lights.
 class HueLight
 {
-    friend class Hue;
-    friend struct MakeHueLight;
+    friend class HueLightFactory;
     friend class SimpleBrightnessStrategy;
     friend class SimpleColorHueStrategy;
     friend class ExtendedColorHueStrategy;
