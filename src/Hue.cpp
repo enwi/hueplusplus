@@ -231,8 +231,7 @@ HueLight& Hue::getLight(int id)
         std::cerr << "Error in Hue getLight(): light with id " << id << " is not valid\n";
         throw HueException(CURRENT_FILE_INFO, "Light id is not valid");
     }
-    std::string type = lightsCache[std::to_string(id)]["modelid"];
-    auto light = lightFactory.createLight(type, id);
+    auto light = lightFactory.createLight(lightsCache[std::to_string(id)], id);
     lights.emplace(id, light);
     return lights.find(id)->second;
 }
