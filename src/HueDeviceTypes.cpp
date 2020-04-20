@@ -24,7 +24,13 @@
 
 #include <set>
 
+#include "hueplusplus/ExtendedColorHueStrategy.h"
+#include "hueplusplus/ExtendedColorTemperatureStrategy.h"
+#include "hueplusplus/HueDeviceTypes.h"
 #include "hueplusplus/HueExceptionMacro.h"
+#include "hueplusplus/SimpleBrightnessStrategy.h"
+#include "hueplusplus/SimpleColorHueStrategy.h"
+#include "hueplusplus/SimpleColorTemperatureStrategy.h"
 
 namespace hueplusplus
 {
@@ -60,8 +66,7 @@ const std::set<std::string>& getNoColorTypes()
 
 const std::set<std::string>& getNonDimmableTypes()
 {
-    static const std::set<std::string> c_NON_DIMMABLE_TYPES
-        = {"Plug 01"};
+    static const std::set<std::string> c_NON_DIMMABLE_TYPES = {"Plug 01"};
     return c_NON_DIMMABLE_TYPES;
 }
 
@@ -75,52 +80,50 @@ const std::set<std::string>& getTemperatureLightTypes()
 }
 } // namespace
 
-auto MakeHueLight::operator()(std::string type, int id, HueCommandAPI commands,
-    std::shared_ptr<BrightnessStrategy> simpleBrightnessStrategy,
-    std::shared_ptr<ColorTemperatureStrategy> extendedColorTemperatureStrategy,
-    std::shared_ptr<ColorTemperatureStrategy> simpleColorTemperatureStrategy,
-    std::shared_ptr<ColorHueStrategy> extendedColorHueStrategy,
-    std::shared_ptr<ColorHueStrategy> simpleColorHueStrategy) -> HueLight
+HueLightFactory::HueLightFactory(const HueCommandAPI& commands)
+    : commands(commands),
+      simpleBrightness(std::make_shared<SimpleBrightnessStrategy>()),
+      simpleColorHue(std::make_shared<SimpleColorHueStrategy>()),
+      extendedColorHue(std::make_shared<ExtendedColorHueStrategy>()),
+      simpleColorTemperature(std::make_shared<SimpleColorTemperatureStrategy>()),
+      extendedColorTemperature(std::make_shared<ExtendedColorTemperatureStrategy>())
+{}
+
+HueLight HueLightFactory::createLight(const std::string& type, int id)
 {
     if (getGamutBTypes().count(type))
     {
-        auto light = HueLight(
-            id, commands, simpleBrightnessStrategy, extendedColorTemperatureStrategy, extendedColorHueStrategy);
+        auto light = HueLight(id, commands, simpleBrightness, extendedColorTemperature, extendedColorHue);
         light.colorType = ColorType::GAMUT_B;
         return light;
     }
-
     else if (getGamutCTypes().count(type))
     {
-        auto light = HueLight(
-            id, commands, simpleBrightnessStrategy, extendedColorTemperatureStrategy, extendedColorHueStrategy);
+        auto light = HueLight(id, commands, simpleBrightness, extendedColorTemperature, extendedColorHue);
         light.colorType = ColorType::GAMUT_C;
         return light;
     }
-
     else if (getGamutATypes().count(type))
     {
-        auto light = HueLight(id, commands, simpleBrightnessStrategy, nullptr, simpleColorHueStrategy);
+        auto light = HueLight(id, commands, simpleBrightness, nullptr, simpleColorHue);
         light.colorType = ColorType::GAMUT_A;
         return light;
     }
-
     else if (getNoColorTypes().count(type))
     {
-        auto light = HueLight(id, commands, simpleBrightnessStrategy, nullptr, nullptr);
+        auto light = HueLight(id, commands, simpleBrightness, nullptr, nullptr);
         light.colorType = ColorType::NONE;
         return light;
     }
-
-    else if (getNonDimmableTypes().count(type)) {
+    else if (getNonDimmableTypes().count(type))
+    {
         auto light = HueLight(id, commands);
         light.colorType = ColorType::NONE;
         return light;
     }
-
     else if (getTemperatureLightTypes().count(type))
     {
-        auto light = HueLight(id, commands, simpleBrightnessStrategy, simpleColorTemperatureStrategy, nullptr);
+        auto light = HueLight(id, commands, simpleBrightness, simpleColorTemperature, nullptr);
         light.colorType = ColorType::TEMPERATURE;
         return light;
     }

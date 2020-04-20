@@ -35,6 +35,7 @@
 #include "ColorTemperatureStrategy.h"
 #include "Group.h"
 #include "HueCommandAPI.h"
+#include "HueDeviceTypes.h"
 #include "HueLight.h"
 #include "IHttpHandler.h"
 
@@ -245,7 +246,7 @@ public:
     //! \brief Get group specified by id.
     //! \param id ID of the group.
     //! \returns Group that can be controlled.
-    //! \note Every bridge has a special group 0 which contains all lights 
+    //! \note Every bridge has a special group 0 which contains all lights
     //! and is not visible to getAllGroups().
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when id does not exist
@@ -318,21 +319,11 @@ private:
     std::map<uint8_t, HueLight> lights; //!< Maps ids to HueLights that are controlled by this bridge
     std::map<uint8_t, Group> groups; //!< Maps ids to Groups
 
-    std::shared_ptr<BrightnessStrategy> simpleBrightnessStrategy; //!< Strategy that is used for controlling the
-                                                                  //!< brightness of lights
-    std::shared_ptr<ColorHueStrategy> simpleColorHueStrategy; //!< Strategy that is used for controlling the
-                                                              //!< color of lights
-    std::shared_ptr<ColorHueStrategy> extendedColorHueStrategy; //!< Strategy that is used for controlling the
-                                                                //!< color of lights
-    std::shared_ptr<ColorTemperatureStrategy> simpleColorTemperatureStrategy; //!< Strategy that is used for controlling
-                                                                              //!< the color temperature of lights
-    std::shared_ptr<ColorTemperatureStrategy> extendedColorTemperatureStrategy; //!< Strategy that is used for
-                                                                                //!< controlling the color
-                                                                                //!< temperature of lights
     std::shared_ptr<const IHttpHandler> http_handler; //!< A IHttpHandler that is used to communicate with the
                                                       //!< bridge
     HueCommandAPI commands; //!< A HueCommandAPI that is used to communicate with the bridge
     APICache stateCache; //!< The state of the hue bridge as it is returned from it
+    HueLightFactory lightFactory;
 };
 } // namespace hueplusplus
 

@@ -31,13 +31,7 @@
 #include <stdexcept>
 #include <thread>
 
-#include "hueplusplus/ExtendedColorHueStrategy.h"
-#include "hueplusplus/ExtendedColorTemperatureStrategy.h"
-#include "hueplusplus/HueDeviceTypes.h"
 #include "hueplusplus/HueExceptionMacro.h"
-#include "hueplusplus/SimpleBrightnessStrategy.h"
-#include "hueplusplus/SimpleColorHueStrategy.h"
-#include "hueplusplus/SimpleColorTemperatureStrategy.h"
 #include "hueplusplus/UPnP.h"
 #include "hueplusplus/Utils.h"
 
@@ -140,14 +134,10 @@ Hue::Hue(const std::string& ip, const int port, const std::string& username,
     : ip(ip),
       port(port),
       username(username),
-      simpleBrightnessStrategy(std::make_shared<SimpleBrightnessStrategy>()),
-      simpleColorHueStrategy(std::make_shared<SimpleColorHueStrategy>()),
-      extendedColorHueStrategy(std::make_shared<ExtendedColorHueStrategy>()),
-      simpleColorTemperatureStrategy(std::make_shared<SimpleColorTemperatureStrategy>()),
-      extendedColorTemperatureStrategy(std::make_shared<ExtendedColorTemperatureStrategy>()),
       http_handler(std::move(handler)),
       commands(ip, port, username, http_handler),
-      stateCache("", commands, refreshDuration)
+      stateCache("", commands, refreshDuration),
+      lightFactory(commands)
 {}
 
 std::string Hue::getBridgeIP()
@@ -191,6 +181,7 @@ std::string Hue::requestUsername()
                 // Update commands with new username and ip
                 commands = HueCommandAPI(ip, port, username, http_handler);
                 stateCache = APICache("", commands, stateCache.getRefreshDuration());
+                lightFactory = HueLightFactory(commands);
                 std::cout << "Success! Link button was pressed!\n";
                 std::cout << "Username is \"" << username << "\"\n";
                 break;
@@ -231,7 +222,7 @@ HueLight& Hue::getLight(int id)
     auto pos = lights.find(id);
     if (pos != lights.end())
     {
-        pos->second.state.refresh();
+        pos->second.refresh();
         return pos->second;
     }
     const nlohmann::json& lightsCache = stateCache.getValue()["lights"];
@@ -241,8 +232,7 @@ HueLight& Hue::getLight(int id)
         throw HueException(CURRENT_FILE_INFO, "Light id is not valid");
     }
     std::string type = lightsCache[std::to_string(id)]["modelid"];
-    auto light = MakeHueLight()(type, id, commands, simpleBrightnessStrategy, extendedColorTemperatureStrategy,
-        simpleColorTemperatureStrategy, extendedColorHueStrategy, simpleColorHueStrategy);
+    auto light = lightFactory.createLight(type, id);
     lights.emplace(id, light);
     return lights.find(id)->second;
 }
@@ -534,5 +524,6 @@ void Hue::setHttpHandler(std::shared_ptr<const IHttpHandler> handler)
     http_handler = handler;
     commands = HueCommandAPI(ip, port, username, handler);
     stateCache = APICache("", commands, stateCache.getRefreshDuration());
+    lightFactory = HueLightFactory(commands);
 }
 } // namespace hueplusplus

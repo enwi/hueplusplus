@@ -30,14 +30,20 @@
 
 namespace hueplusplus
 {
-struct MakeHueLight
+class HueLightFactory
 {
-    auto operator()(std::string type, int id, HueCommandAPI commands,
-        std::shared_ptr<BrightnessStrategy> simpleBrightnessStrategy,
-        std::shared_ptr<ColorTemperatureStrategy> extendedColorTemperatureStrategy,
-        std::shared_ptr<ColorTemperatureStrategy> simpleColorTemperatureStrategy,
-        std::shared_ptr<ColorHueStrategy> extendedColorHueStrategy,
-        std::shared_ptr<ColorHueStrategy> simpleColorHueStrategy) -> HueLight;
+public:
+    HueLightFactory(const HueCommandAPI& commands);
+
+    HueLight createLight(const std::string& type, int id);
+
+private:
+    HueCommandAPI commands;
+    std::shared_ptr<BrightnessStrategy> simpleBrightness;
+    std::shared_ptr<ColorTemperatureStrategy> simpleColorTemperature;
+    std::shared_ptr<ColorTemperatureStrategy> extendedColorTemperature;
+    std::shared_ptr<ColorHueStrategy> simpleColorHue;
+    std::shared_ptr<ColorHueStrategy> extendedColorHue;
 };
 } // namespace hueplusplus
 
