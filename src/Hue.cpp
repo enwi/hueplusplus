@@ -137,7 +137,7 @@ Hue::Hue(const std::string& ip, const int port, const std::string& username,
       http_handler(std::move(handler)),
       commands(ip, port, username, http_handler),
       stateCache("", commands, refreshDuration),
-      lightFactory(commands)
+      lightFactory(commands, refreshDuration)
 {}
 
 std::string Hue::getBridgeIP()
@@ -179,9 +179,7 @@ std::string Hue::requestUsername()
                 // [{"success":{"username": "<username>"}}]
                 username = jsonUser.get<std::string>();
                 // Update commands with new username and ip
-                commands = HueCommandAPI(ip, port, username, http_handler);
-                stateCache = APICache("", commands, stateCache.getRefreshDuration());
-                lightFactory = HueLightFactory(commands);
+                setHttpHandler(http_handler);
                 std::cout << "Success! Link button was pressed!\n";
                 std::cout << "Username is \"" << username << "\"\n";
                 break;
@@ -523,6 +521,6 @@ void Hue::setHttpHandler(std::shared_ptr<const IHttpHandler> handler)
     http_handler = handler;
     commands = HueCommandAPI(ip, port, username, handler);
     stateCache = APICache("", commands, stateCache.getRefreshDuration());
-    lightFactory = HueLightFactory(commands);
+    lightFactory = HueLightFactory(commands, stateCache.getRefreshDuration());
 }
 } // namespace hueplusplus
