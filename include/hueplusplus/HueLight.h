@@ -83,13 +83,13 @@ enum class ColorType
 {
     UNDEFINED, //!< ColorType for this light is unknown or undefined
     NONE, //!< light has no specific ColorType
-    GAMUT_A,
-    GAMUT_B,
-    GAMUT_C,
-    TEMPERATURE,
-    GAMUT_A_TEMPERATURE,
-    GAMUT_B_TEMPERATURE,
-    GAMUT_C_TEMPERATURE
+    GAMUT_A, //!< light uses Gamut A
+    GAMUT_B, //!< light uses Gamut B
+    GAMUT_C, //!< light uses Gamut C
+    TEMPERATURE, //!< light has color temperature control
+    GAMUT_A_TEMPERATURE, //!< light uses Gamut A and has color temperature control
+    GAMUT_B_TEMPERATURE, //!< light uses Gamut B and has color temperature control
+    GAMUT_C_TEMPERATURE //!< light uses Gamut C and has color temperature control
 };
 
 //! \brief Class for Hue Light fixtures

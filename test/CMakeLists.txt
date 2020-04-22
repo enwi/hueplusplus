@@ -37,6 +37,7 @@ set(TEST_SOURCES
 	test_Group.cpp
     test_Hue.cpp
     test_HueLight.cpp
+    test_HueLightFactory.cpp
     test_HueCommandAPI.cpp
     test_Main.cpp
     test_SimpleBrightnessStrategy.cpp
