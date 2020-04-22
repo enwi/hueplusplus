@@ -270,12 +270,18 @@ TEST(CreateGroup, Entertainment)
         CreateGroup::Entertainment({2, 4}).getRequest());
 }
 
+TEST(CreateGroup, Zone)
+{
+    EXPECT_EQ(nlohmann::json({{"lights", {"1"}}, {"type", "Zone"}, {"name", "Name"}}),
+        CreateGroup::Zone({1}, "Name").getRequest());
+    EXPECT_EQ(nlohmann::json({{"lights", {"2", "4"}}, {"type", "Zone"}}), CreateGroup::Zone({2, 4}).getRequest());
+}
+
 TEST(CreateGroup, Room)
 {
     EXPECT_EQ(nlohmann::json({{"lights", {"1"}}, {"type", "Room"}, {"name", "Name"}, {"class", "Bedroom"}}),
         CreateGroup::Room({1}, "Name", "Bedroom").getRequest());
     EXPECT_EQ(nlohmann::json({{"lights", {"1"}}, {"type", "Room"}, {"name", "Name"}}),
         CreateGroup::Room({1}, "Name").getRequest());
-    EXPECT_EQ(
-        nlohmann::json({{"lights", {"2", "4"}}, {"type", "Room"}}), CreateGroup::Room({2, 4}).getRequest());
+    EXPECT_EQ(nlohmann::json({{"lights", {"2", "4"}}, {"type", "Room"}}), CreateGroup::Room({2, 4}).getRequest());
 }
