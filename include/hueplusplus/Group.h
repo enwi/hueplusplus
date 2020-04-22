@@ -40,7 +40,7 @@ namespace hueplusplus
 class Group
 {
 public:
-    //! Creates group with id
+    //! \brief Creates group with id
     //! \param id Group id in the bridge
     //! \param commands HueCommandAPI for requests
     //! \param refreshDuration Time between refreshing the cached state.

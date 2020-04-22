@@ -33,11 +33,28 @@ namespace hueplusplus
 class HueLightFactory
 {
 public:
+    //! \brief Create a factory for HueLight%s
+    //! \param commands HueCommandAPI for communication with the bridge
+    //! \param refreshDuration Time between refreshing the cached light state.
     HueLightFactory(const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration);
 
+    //! \brief Create a HueLight with the correct type from the JSON state.
+    //! \param lightState Light JSON as returned from the bridge (not only the "state" part of it).
+    //! \param id Light id.
+    //! \returns HueLight with matching id, strategies and \ref ColorType.
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when light type is unknown
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     HueLight createLight(const nlohmann::json& lightState, int id);
 
 private:
+    //! \brief Get color type from light JSON.
+    //! \param lightState Light JSON as returned from the bridge (not only the "state" part of it).
+    //! \param hasCt Whether the light has color temperature control.
+    //! \returns The color gamut specified in the light capabilities or,
+    //! if that does not exist, from a set of known models. Returns GAMUT_X_TEMPERATURE when \ref hasCt is true.
+    //! \throws HueException when the light has no capabilities and the model is not known.
     ColorType getColorType(const nlohmann::json& lightState, bool hasCt) const;
 
 private:
