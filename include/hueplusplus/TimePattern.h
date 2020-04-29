@@ -42,15 +42,16 @@ class AbsoluteTime
 public:
     explicit AbsoluteTime(clock::time_point baseTime, clock::duration variation = std::chrono::seconds(0));
 
-    clock::time_point getBaseTime();
-    clock::duration getRandomVariation();
+    clock::time_point getBaseTime() const;
+    clock::duration getRandomVariation() const;
 
-    std::string toString();
+    std::string toString() const;
 
 private:
     clock::time_point base;
     clock::duration variation;
 };
+
 class Weekdays
 {
 public:
@@ -83,9 +84,14 @@ public:
     static Weekdays sunday();
 
     static Weekdays parse(const std::string& s);
+
+    bool operator==(const Weekdays& other) const { return bitmask == other.bitmask; }
+    bool operator!=(const Weekdays& other) const { return bitmask != other.bitmask; }
+
 private:
     int bitmask;
 };
+
 class RecurringTime
 {
     using clock = std::chrono::system_clock;
@@ -104,6 +110,7 @@ private:
     clock::duration variation;
     Weekdays days;
 };
+
 class TimeInterval
 {
     using clock = std::chrono::system_clock;
@@ -122,6 +129,7 @@ private:
     clock::duration end;
     Weekdays days;
 };
+
 class Timer
 {
     using clock = std::chrono::system_clock;
@@ -175,6 +183,8 @@ public:
     TimeInterval asInterval() const;
 
     Timer asTimer() const;
+
+    std::string toString() const;
 
     static TimePattern parse(const std::string& s);
 

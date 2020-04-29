@@ -48,9 +48,9 @@ std::string timepointToTimestamp(clock::time_point time)
 
 clock::time_point parseTimestamp(const std::string& timestamp)
 {
-    std::tm tm;
-    tm.tm_year = std::stoi(timestamp.substr(0, 4));
-    tm.tm_mon = std::stoi(timestamp.substr(5, 2));
+    std::tm tm {};
+    tm.tm_year = std::stoi(timestamp.substr(0, 4)) - 1900;
+    tm.tm_mon = std::stoi(timestamp.substr(5, 2)) - 1;
     tm.tm_mday = std::stoi(timestamp.substr(8, 2));
     tm.tm_hour = std::stoi(timestamp.substr(11, 2));
     tm.tm_min = std::stoi(timestamp.substr(14, 2));
@@ -82,21 +82,24 @@ std::string durationTo_hh_mm_ss(clock::duration duration)
 clock::duration parseDuration(const std::string& s)
 {
     using namespace std::chrono;
-    return hours(std::stoi(s.substr(0, 2))) + minutes(std::stoi(s.substr(3, 2))) + seconds(std::stoi(s.substr(7, 2)));
+    const hours hour(std::stoi(s.substr(0, 2)));
+    const minutes min(std::stoi(s.substr(3, 2)));
+    const seconds sec(std::stoi(s.substr(6, 2)));
+    return hour + min + sec;
 }
 
 AbsoluteTime::AbsoluteTime(clock::time_point baseTime, clock::duration variation) : base(baseTime), variation(variation)
 {}
 
-clock::time_point AbsoluteTime::getBaseTime()
+clock::time_point AbsoluteTime::getBaseTime() const
 {
     return base;
 }
-clock::duration AbsoluteTime::getRandomVariation()
+clock::duration AbsoluteTime::getRandomVariation() const
 {
     return variation;
 }
-std::string AbsoluteTime::toString()
+std::string AbsoluteTime::toString() const
 {
     std::string result = timepointToTimestamp(base);
     if (variation.count() != 0)
@@ -246,14 +249,14 @@ std::string RecurringTime::toString() const
 {
     std::string result = "W";
     result.append(days.toString());
-    result.append("/");
+    result.append("/T");
     result.append(durationTo_hh_mm_ss(time));
     if (variation.count() != 0)
     {
         result.push_back('A');
         result.append(durationTo_hh_mm_ss(variation));
     }
-    return std::string();
+    return result;
 }
 
 TimeInterval::TimeInterval(clock::duration start, clock::duration end, Weekdays days)
@@ -355,25 +358,13 @@ TimePattern::~TimePattern()
     destroy();
 }
 
-TimePattern::TimePattern(const AbsoluteTime& absolute) : type(Type::absolute)
-{
-    new (&this->absolute) AbsoluteTime(absolute);
-}
+TimePattern::TimePattern(const AbsoluteTime& absolute) : type(Type::absolute), absolute(absolute) {}
 
-TimePattern::TimePattern(const RecurringTime& recurring) : type(Type::recurring)
-{
-    new (&this->recurring) RecurringTime(recurring);
-}
+TimePattern::TimePattern(const RecurringTime& recurring) : type(Type::recurring), recurring(recurring) {}
 
-TimePattern::TimePattern(const TimeInterval& interval) : type(Type::interval)
-{
-    new (&this->interval) TimeInterval(interval);
-}
+TimePattern::TimePattern(const TimeInterval& interval) : type(Type::interval), interval(interval) {}
 
-TimePattern::TimePattern(const Timer& timer) : type(Type::timer)
-{
-    new (&this->timer) Timer(timer);
-}
+TimePattern::TimePattern(const Timer& timer) : type(Type::timer), timer(timer) {}
 
 TimePattern::TimePattern(const TimePattern& other) : type(Type::undefined), undefined(nullptr)
 {
@@ -444,6 +435,25 @@ Timer TimePattern::asTimer() const
     return timer;
 }
 
+std::string TimePattern::toString() const
+{
+    switch (type)
+    {
+    case Type::undefined:
+        return std::string();
+    case Type::absolute:
+        return absolute.toString();
+    case Type::recurring:
+        return recurring.toString();
+    case Type::interval:
+        return interval.toString();
+    case Type::timer:
+        return timer.toString();
+    default:
+        throw HueException(CURRENT_FILE_INFO, "TimePattern has wrong type");
+    }
+}
+
 TimePattern TimePattern::parse(const std::string& s)
 {
     if (s.empty() || s == "none")
@@ -471,7 +481,7 @@ TimePattern TimePattern::parse(const std::string& s)
             if (s.at(1) == '/')
             {
                 // Infinite
-                numRepetitions = -1;
+                numRepetitions = 0;
             }
             else
             {
@@ -484,7 +494,7 @@ TimePattern TimePattern::parse(const std::string& s)
         clock::duration variance = std::chrono::seconds(0);
         if (randomStart != std::string::npos)
         {
-            variance = parseDuration(s.substr(randomStart));
+            variance = parseDuration(s.substr(randomStart+1));
         }
         return TimePattern(Timer(expires, numRepetitions, variance));
     }
@@ -535,6 +545,8 @@ void TimePattern::destroy()
         timer.~Timer();
         break;
     default:
+        // Do not throw exception, because it is called in destructor
+        // just ignore
         break;
     }
     type = Type::undefined;
