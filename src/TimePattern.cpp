@@ -110,6 +110,19 @@ std::string AbsoluteTime::toString() const
     return result;
 }
 
+AbsoluteTime AbsoluteTime::parse(const std::string& s)
+{
+    // Absolute time
+    clock::time_point time = parseTimestamp(s);
+    clock::duration variation {0};
+    if (s.size() > 19 && s[19] == 'A')
+    {
+        // Random variation
+        variation = parseDuration(s.substr(20));
+    }
+    return AbsoluteTime(time, variation);
+}
+
 bool Weekdays::isNone() const
 {
     return bitmask == 0;
@@ -462,15 +475,7 @@ TimePattern TimePattern::parse(const std::string& s)
     }
     else if (std::isdigit(s.front()))
     {
-        // Absolute time
-        clock::time_point time = parseTimestamp(s);
-        clock::duration variation {0};
-        if (s.size() > 19 && s[19] == 'A')
-        {
-            // Random variation
-            variation = parseDuration(s.substr(20));
-        }
-        return TimePattern(AbsoluteTime(time, variation));
+        return TimePattern(AbsoluteTime::parse(s));
     }
     else if (s.front() == 'R' || s.front() == 'P')
     {
@@ -494,7 +499,7 @@ TimePattern TimePattern::parse(const std::string& s)
         clock::duration variance = std::chrono::seconds(0);
         if (randomStart != std::string::npos)
         {
-            variance = parseDuration(s.substr(randomStart+1));
+            variance = parseDuration(s.substr(randomStart + 1));
         }
         return TimePattern(Timer(expires, numRepetitions, variance));
     }
