@@ -27,6 +27,7 @@
 
 namespace hueplusplus
 {
+//! \brief Utility functions used in multiple places.
 namespace utils
 {
 namespace detail

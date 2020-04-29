@@ -41,6 +41,7 @@
 
 #include "json/json.hpp"
 
+//! \brief Namespace for the hueplusplus library
 namespace hueplusplus
 {
 // forward declarations
