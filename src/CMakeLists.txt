@@ -9,11 +9,12 @@ set(hueplusplus_SOURCES
 	HueDeviceTypes.cpp
     HueException.cpp
     HueLight.cpp
+    Schedule.cpp
     SimpleBrightnessStrategy.cpp
     SimpleColorHueStrategy.cpp
     SimpleColorTemperatureStrategy.cpp
     StateTransaction.cpp
-    "TimePattern.cpp"
+    TimePattern.cpp
     UPnP.cpp
     Utils.cpp)
 

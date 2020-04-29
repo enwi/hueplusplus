@@ -47,6 +47,8 @@ public:
 
     std::string toString() const;
 
+    static AbsoluteTime parse(const std::string& s);
+
 private:
     clock::time_point base;
     clock::duration variation;
