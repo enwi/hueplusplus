@@ -28,14 +28,19 @@ namespace hueplusplus
 {
 namespace time
 {
-
-using clock = std::chrono::system_clock;
-std::string timepointToTimestamp(clock::time_point time)
+using std::chrono::system_clock;
+// Full name needed for doxygen
+std::string timepointToTimestamp(std::chrono::system_clock::time_point time)
 {
     using namespace std::chrono;
-    std::time_t ctime = clock::to_time_t(time);
+    std::time_t ctime = system_clock::to_time_t(time);
 
-    std::tm localtime = *std::localtime(&ctime);
+    std::tm* pLocaltime = std::localtime(&ctime);
+    if (pLocaltime == nullptr)
+    {
+        throw HueException(CURRENT_FILE_INFO, "localtime failed");
+    }
+    std::tm localtime = *pLocaltime;
     char buf[32];
 
     std::size_t result = std::strftime(buf, sizeof(buf), "%FT%T", &localtime);
@@ -46,7 +51,7 @@ std::string timepointToTimestamp(clock::time_point time)
     return std::string(buf);
 }
 
-clock::time_point parseTimestamp(const std::string& timestamp)
+system_clock::time_point parseTimestamp(const std::string& timestamp)
 {
     std::tm tm {};
     tm.tm_year = std::stoi(timestamp.substr(0, 4)) - 1900;
@@ -58,10 +63,15 @@ clock::time_point parseTimestamp(const std::string& timestamp)
     // Auto detect daylight savings time
     tm.tm_isdst = -1;
     std::time_t ctime = std::mktime(&tm);
-    return clock::from_time_t(ctime);
+    if (ctime == -1)
+    {
+        throw HueException(CURRENT_FILE_INFO, "mktime failed");
+    }
+    return system_clock::from_time_t(ctime);
 }
 
-std::string durationTo_hh_mm_ss(clock::duration duration)
+// Full name needed for doxygen
+std::string durationTo_hh_mm_ss(std::chrono::system_clock::duration duration)
 {
     using namespace std::chrono;
     if (duration > hours(24))
@@ -79,7 +89,7 @@ std::string durationTo_hh_mm_ss(clock::duration duration)
     return std::string(result);
 }
 
-clock::duration parseDuration(const std::string& s)
+system_clock::duration parseDuration(const std::string& s)
 {
     using namespace std::chrono;
     const hours hour(std::stoi(s.substr(0, 2)));
@@ -91,11 +101,11 @@ clock::duration parseDuration(const std::string& s)
 AbsoluteTime::AbsoluteTime(clock::time_point baseTime, clock::duration variation) : base(baseTime), variation(variation)
 {}
 
-clock::time_point AbsoluteTime::getBaseTime() const
+system_clock::time_point AbsoluteTime::getBaseTime() const
 {
     return base;
 }
-clock::duration AbsoluteTime::getRandomVariation() const
+system_clock::duration AbsoluteTime::getRandomVariation() const
 {
     return variation;
 }
@@ -243,12 +253,12 @@ RecurringTime::RecurringTime(clock::duration daytime, Weekdays days, clock::dura
     : time(daytime), days(days), variation(variation)
 {}
 
-clock::duration RecurringTime::getDaytime() const
+system_clock::duration RecurringTime::getDaytime() const
 {
     return time;
 }
 
-clock::duration RecurringTime::getRandomVariation() const
+system_clock::duration RecurringTime::getRandomVariation() const
 {
     return variation;
 }
@@ -276,12 +286,12 @@ TimeInterval::TimeInterval(clock::duration start, clock::duration end, Weekdays 
     : start(start), end(end), days(days)
 {}
 
-clock::duration TimeInterval::getStartTime() const
+system_clock::duration TimeInterval::getStartTime() const
 {
     return start;
 }
 
-clock::duration TimeInterval::getEndTime() const
+system_clock::duration TimeInterval::getEndTime() const
 {
     return end;
 }
@@ -326,12 +336,12 @@ int Timer::getNumberOfExecutions() const
     return numExecutions;
 }
 
-clock::duration Timer::getExpiryTime() const
+system_clock::duration Timer::getExpiryTime() const
 {
     return expires;
 }
 
-clock::duration Timer::getRandomVariation() const
+system_clock::duration Timer::getRandomVariation() const
 {
     return variation;
 }
@@ -342,7 +352,7 @@ std::string Timer::toString() const
     if (numExecutions != 1)
     {
         result.push_back('R');
-        if (numExecutions != 0)
+        if (numExecutions != infiniteExecutions)
         {
             std::string s = std::to_string(numExecutions);
             // Pad to two digits
@@ -495,8 +505,8 @@ TimePattern TimePattern::parse(const std::string& s)
         }
         std::size_t start = s.find('T') + 1;
         std::size_t randomStart = s.find('A');
-        clock::duration expires = parseDuration(s.substr(start, randomStart - start));
-        clock::duration variance = std::chrono::seconds(0);
+        system_clock::duration expires = parseDuration(s.substr(start, randomStart - start));
+        system_clock::duration variance = std::chrono::seconds(0);
         if (randomStart != std::string::npos)
         {
             variance = parseDuration(s.substr(randomStart + 1));
@@ -507,8 +517,8 @@ TimePattern TimePattern::parse(const std::string& s)
     {
         // Recurring time
         Weekdays days = Weekdays::parse(s.substr(1, 3));
-        clock::duration time = parseDuration(s.substr(6));
-        clock::duration variation {0};
+        system_clock::duration time = parseDuration(s.substr(6));
+        system_clock::duration variation {0};
         if (s.size() > 14)
         {
             variation = parseDuration(s.substr(15));
@@ -526,8 +536,8 @@ TimePattern TimePattern::parse(const std::string& s)
         // Time interval
         std::size_t start = s.find('T') + 1;
         std::size_t end = s.find('/', start);
-        clock::duration startTime = parseDuration(s.substr(start, end - start));
-        clock::duration endTime = parseDuration(s.substr(end + 2));
+        system_clock::duration startTime = parseDuration(s.substr(start, end - start));
+        system_clock::duration endTime = parseDuration(s.substr(end + 2));
         return TimePattern(TimeInterval(startTime, endTime, days));
     }
     throw HueException(CURRENT_FILE_INFO, "Unable to parse time string: " + s);
