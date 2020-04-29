@@ -299,7 +299,7 @@ TEST(Timer, toString)
         EXPECT_EQ("PT00:01:20A01:00:00", timer.toString());
     }
     {
-        const Timer timer(1min + 20s, 0);
+        const Timer timer(1min + 20s, Timer::infiniteExecutions);
         EXPECT_EQ("R/PT00:01:20", timer.toString());
     }
     {
@@ -315,7 +315,7 @@ TEST(Timer, toString)
         EXPECT_EQ("R05/PT00:01:20A01:00:00", timer.toString());
     }
     {
-        const Timer timer(1min + 20s, 0, 1h);
+        const Timer timer(1min + 20s, Timer::infiniteExecutions, 1h);
         EXPECT_EQ("R/PT00:01:20A01:00:00", timer.toString());
     }
 }
@@ -449,7 +449,7 @@ TEST(TimePattern, Timer)
         EXPECT_EQ(expected.getNumberOfExecutions(), pattern.asTimer().getNumberOfExecutions());
     }
     {
-        const Timer expected(1h + 30min + 20s, 0);
+        const Timer expected(1h + 30min + 20s, Timer::infiniteExecutions);
         const TimePattern pattern = TimePattern::parse("R/PT01:30:20");
         ASSERT_EQ(TimePattern::Type::timer, pattern.getType());
         EXPECT_EQ(expected.getExpiryTime(), pattern.asTimer().getExpiryTime());
@@ -457,7 +457,7 @@ TEST(TimePattern, Timer)
         EXPECT_EQ(expected.getNumberOfExecutions(), pattern.asTimer().getNumberOfExecutions());
     }
     {
-        const Timer expected(1h + 30min + 20s, 0, 20s);
+        const Timer expected(1h + 30min + 20s, Timer::infiniteExecutions, 20s);
         const TimePattern pattern = TimePattern::parse("R/PT01:30:20A00:00:20");
         ASSERT_EQ(TimePattern::Type::timer, pattern.getType());
         EXPECT_EQ(expected.getExpiryTime(), pattern.asTimer().getExpiryTime());
