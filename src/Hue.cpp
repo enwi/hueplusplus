@@ -381,6 +381,71 @@ bool Hue::lightExists(int id) const
     return false;
 }
 
+std::vector<std::reference_wrapper<Schedule>> Hue::getAllSchedules()
+{
+    nlohmann::json schedulesState = stateCache.getValue().at("schedules");
+    for (auto it = schedulesState.begin(); it != schedulesState.end(); ++it)
+    {
+        getSchedule(std::stoi(it.key()));
+    }
+    std::vector<std::reference_wrapper<Schedule>> result;
+    result.reserve(result.size());
+    for (auto& entry : schedules)
+    {
+        result.emplace_back(entry.second);
+    }
+    return result;
+}
+
+Schedule& Hue::getSchedule(int id)
+{
+    auto pos = schedules.find(id);
+    if (pos != schedules.end())
+    {
+        pos->second.refresh();
+        return pos->second;
+    }
+    const nlohmann::json& schedulesCache = stateCache.getValue()["schedules"];
+    if (!schedulesCache.count(std::to_string(id)))
+    {
+        std::cerr << "Error in Hue getSchedule(): schedule with id " << id << " is not valid\n";
+        throw HueException(CURRENT_FILE_INFO, "Schedule id is not valid");
+    }
+    return schedules.emplace(id, Schedule(id, commands, stateCache.getRefreshDuration())).first->second;
+}
+
+bool Hue::scheduleExists(int id) const
+{
+    auto pos = schedules.find(id);
+    if (pos != schedules.end())
+    {
+        return true;
+    }
+    if (stateCache.getValue()["schedules"].count(std::to_string(id)))
+    {
+        return true;
+    }
+    return false;
+}
+
+int Hue::createSchedule(const CreateSchedule& params)
+{
+    nlohmann::json response = commands.POSTRequest("/schedules", params.getRequest(), CURRENT_FILE_INFO);
+    nlohmann::json id = utils::safeGetMember(response, 0, "success", "id");
+    if (id.is_string())
+    {
+        std::string idStr = id.get<std::string>();
+        // Sometimes the response can be /groups/<id>?
+        if (idStr.find("/schedules/") == 0)
+        {
+            idStr.erase(0, 11);
+        }
+        stateCache.refresh();
+        return std::stoi(idStr);
+    }
+    return 0;
+}
+
 std::string Hue::getPictureOfLight(int id) const
 {
     std::string ret = "";
