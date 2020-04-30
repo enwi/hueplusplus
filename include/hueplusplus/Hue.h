@@ -38,6 +38,7 @@
 #include "HueDeviceTypes.h"
 #include "HueLight.h"
 #include "IHttpHandler.h"
+#include "Schedule.h"
 
 #include "json/json.hpp"
 
@@ -292,6 +293,42 @@ public:
     int createGroup(const CreateGroup& params);
 
     ///@}
+    //! \name Schedule
+    ///@{
+
+    //! \brief Get all schedules on this bridge.
+    //! \return A vector of references to every Schedule.
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contains no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
+    std::vector<std::reference_wrapper<Schedule>> getAllSchedules();
+
+    //! \brief Get schedule specified by id.
+    //! \param id ID of the schedule.
+    //! \returns Schedule that can be modified.
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when id does not exist
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
+    Schedule& getSchedule(int id);
+
+    //! \brief Checks whether a schedule exists.
+    //! \param id ID of the schedule.
+    //! \returns true when the schedule exists.
+    //! \note Does not refresh the cached state.
+    bool scheduleExists(int id) const;
+
+    //! \brief Create a new schedule.
+    //! \param params CreateSchedule parameters for the new group.
+    //! \returns The new schedule id or 0 if failed.
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contains no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
+    int createSchedule(const CreateSchedule& params);
+
+    ///@}
 
     //! \brief Const function that returns the picture name of a given light id
     //!
@@ -317,8 +354,9 @@ private:
                     //!< like "192.168.2.1"
     std::string username; //!< Username that is ussed to access the hue bridge
     int port;
-    std::map<uint8_t, HueLight> lights; //!< Maps ids to HueLights that are controlled by this bridge
-    std::map<uint8_t, Group> groups; //!< Maps ids to Groups
+    std::map<int, HueLight> lights; //!< Maps ids to HueLights that are controlled by this bridge
+    std::map<int, Group> groups; //!< Maps ids to Groups
+    std::map<int, Schedule> schedules; //!< Maps ids to Schedules
 
     std::shared_ptr<const IHttpHandler> http_handler; //!< A IHttpHandler that is used to communicate with the
                                                       //!< bridge

@@ -380,6 +380,7 @@ public:
     static TimePattern parse(const std::string& s);
 
 private:
+    //! \brief Calls destructor of active union member
     void destroy();
 
 private:
