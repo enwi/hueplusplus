@@ -132,20 +132,24 @@ std::string HueFinder::ParseDescription(const std::string& description)
 Hue::Hue(const std::string& ip, const int port, const std::string& username,
     std::shared_ptr<const IHttpHandler> handler, std::chrono::steady_clock::duration refreshDuration)
     : ip(ip),
-      port(port),
       username(username),
+      port(port),
       http_handler(std::move(handler)),
       commands(ip, port, username, http_handler),
-      stateCache("", commands, refreshDuration),
-      lightFactory(commands, refreshDuration)
+      refreshDuration(refreshDuration),
+      lights(commands, "/lights", refreshDuration,
+          [factory = HueLightFactory(commands, refreshDuration)](
+              int id, const nlohmann::json& state) mutable { return factory.createLight(state, id); }),
+      groups(commands, "/groups", refreshDuration),
+      schedules(commands, "/schedules", refreshDuration)
 {}
 
-std::string Hue::getBridgeIP()
+std::string Hue::getBridgeIP() const
 {
     return ip;
 }
 
-int Hue::getBridgePort()
+int Hue::getBridgePort() const
 {
     return port;
 }
@@ -200,7 +204,7 @@ std::string Hue::requestUsername()
     return username;
 }
 
-std::string Hue::getUsername()
+std::string Hue::getUsername() const
 {
     return username;
 }
@@ -217,242 +221,75 @@ void Hue::setPort(const int port)
 
 HueLight& Hue::getLight(int id)
 {
-    auto pos = lights.find(id);
-    if (pos != lights.end())
-    {
-        pos->second.refresh();
-        return pos->second;
-    }
-    const nlohmann::json& lightsCache = stateCache.getValue()["lights"];
-    if (!lightsCache.count(std::to_string(id)))
-    {
-        std::cerr << "Error in Hue getLight(): light with id " << id << " is not valid\n";
-        throw HueException(CURRENT_FILE_INFO, "Light id is not valid");
-    }
-    auto light = lightFactory.createLight(lightsCache[std::to_string(id)], id);
-    lights.emplace(id, light);
-    return lights.find(id)->second;
+    return lights.get(id);
 }
 
 bool Hue::removeLight(int id)
 {
-    nlohmann::json result
-        = commands.DELETERequest("/lights/" + std::to_string(id), nlohmann::json::object(), CURRENT_FILE_INFO);
-    bool success = utils::safeGetMember(result, 0, "success") == "/lights/" + std::to_string(id) + " deleted";
-    if (success && lights.count(id) != 0)
-    {
-        lights.erase(id);
-    }
-    return success;
+    return lights.remove(id);
 }
 
 std::vector<std::reference_wrapper<HueLight>> Hue::getAllLights()
 {
-    // No reference because getLight may invalidate it
-    nlohmann::json lightsState = stateCache.getValue()["lights"];
-    for (auto it = lightsState.begin(); it != lightsState.end(); ++it)
-    {
-        getLight(std::stoi(it.key()));
-    }
-    std::vector<std::reference_wrapper<HueLight>> result;
-    for (auto& entry : lights)
-    {
-        result.emplace_back(entry.second);
-    }
-    return result;
+    return lights.getAll();
 }
 
 std::vector<std::reference_wrapper<Group>> Hue::getAllGroups()
 {
-    nlohmann::json groupsState = stateCache.getValue().at("groups");
-    for (auto it = groupsState.begin(); it != groupsState.end(); ++it)
-    {
-        getGroup(std::stoi(it.key()));
-    }
-    std::vector<std::reference_wrapper<Group>> result;
-    result.reserve(result.size());
-    for (auto& entry : groups)
-    {
-        result.emplace_back(entry.second);
-    }
-    return result;
+    return groups.getAll();
 }
 
 Group& Hue::getGroup(int id)
 {
-    auto pos = groups.find(id);
-    if (pos != groups.end())
-    {
-        pos->second.refresh();
-        return pos->second;
-    }
-    const nlohmann::json& groupsCache = stateCache.getValue()["groups"];
-    if (!groupsCache.count(std::to_string(id)))
-    {
-        std::cerr << "Error in Hue getGroup(): group with id " << id << " is not valid\n";
-        throw HueException(CURRENT_FILE_INFO, "Group id is not valid");
-    }
-    return groups.emplace(id, Group(id, commands, stateCache.getRefreshDuration())).first->second;
+    return groups.get(id);
 }
 
 bool Hue::removeGroup(int id)
 {
-    nlohmann::json result
-        = commands.DELETERequest("/groups/" + std::to_string(id), nlohmann::json::object(), CURRENT_FILE_INFO);
-    bool success = utils::safeGetMember(result, 0, "success") == "/groups/" + std::to_string(id) + " deleted";
-    if (success && groups.count(id) != 0)
-    {
-        groups.erase(id);
-    }
-    return success;
-}
-
-bool Hue::groupExists(int id)
-{
-    auto pos = lights.find(id);
-    if (pos != lights.end())
-    {
-        return true;
-    }
-    if (stateCache.getValue()["groups"].count(std::to_string(id)))
-    {
-        return true;
-    }
-    return false;
+    return groups.remove(id);
 }
 
 bool Hue::groupExists(int id) const
 {
-    auto pos = lights.find(id);
-    if (pos != lights.end())
-    {
-        return true;
-    }
-    if (stateCache.getValue()["groups"].count(std::to_string(id)))
-    {
-        return true;
-    }
-    return false;
+    return groups.exists(id);
 }
 
 int Hue::createGroup(const CreateGroup& params)
 {
-    nlohmann::json response = commands.POSTRequest("/groups", params.getRequest(), CURRENT_FILE_INFO);
-    nlohmann::json id = utils::safeGetMember(response, 0, "success", "id");
-    if (id.is_string())
-    {
-        std::string idStr = id.get<std::string>();
-        // Sometimes the response can be /groups/<id>?
-        if (idStr.find("/groups/") == 0)
-        {
-            idStr.erase(0, 8);
-        }
-        stateCache.refresh();
-        return std::stoi(idStr);
-    }
-    return 0;
-}
-
-bool Hue::lightExists(int id)
-{
-    auto pos = lights.find(id);
-    if (pos != lights.end())
-    {
-        return true;
-    }
-    if (stateCache.getValue()["lights"].count(std::to_string(id)))
-    {
-        return true;
-    }
-    return false;
+    return groups.create(params);
 }
 
 bool Hue::lightExists(int id) const
 {
-    auto pos = lights.find(id);
-    if (pos != lights.end())
-    {
-        return true;
-    }
-    if (stateCache.getValue()["lights"].count(std::to_string(id)))
-    {
-        return true;
-    }
-    return false;
+    return lights.exists(id);
 }
 
 std::vector<std::reference_wrapper<Schedule>> Hue::getAllSchedules()
 {
-    nlohmann::json schedulesState = stateCache.getValue().at("schedules");
-    for (auto it = schedulesState.begin(); it != schedulesState.end(); ++it)
-    {
-        getSchedule(std::stoi(it.key()));
-    }
-    std::vector<std::reference_wrapper<Schedule>> result;
-    result.reserve(result.size());
-    for (auto& entry : schedules)
-    {
-        result.emplace_back(entry.second);
-    }
-    return result;
+    return schedules.getAll();
 }
 
 Schedule& Hue::getSchedule(int id)
 {
-    auto pos = schedules.find(id);
-    if (pos != schedules.end())
-    {
-        pos->second.refresh();
-        return pos->second;
-    }
-    const nlohmann::json& schedulesCache = stateCache.getValue()["schedules"];
-    if (!schedulesCache.count(std::to_string(id)))
-    {
-        std::cerr << "Error in Hue getSchedule(): schedule with id " << id << " is not valid\n";
-        throw HueException(CURRENT_FILE_INFO, "Schedule id is not valid");
-    }
-    return schedules.emplace(id, Schedule(id, commands, stateCache.getRefreshDuration())).first->second;
+    return schedules.get(id);
 }
 
 bool Hue::scheduleExists(int id) const
 {
-    auto pos = schedules.find(id);
-    if (pos != schedules.end())
-    {
-        return true;
-    }
-    if (stateCache.getValue()["schedules"].count(std::to_string(id)))
-    {
-        return true;
-    }
-    return false;
+    return schedules.exists(id);
 }
 
 int Hue::createSchedule(const CreateSchedule& params)
 {
-    nlohmann::json response = commands.POSTRequest("/schedules", params.getRequest(), CURRENT_FILE_INFO);
-    nlohmann::json id = utils::safeGetMember(response, 0, "success", "id");
-    if (id.is_string())
-    {
-        std::string idStr = id.get<std::string>();
-        // Sometimes the response can be /groups/<id>?
-        if (idStr.find("/schedules/") == 0)
-        {
-            idStr.erase(0, 11);
-        }
-        stateCache.refresh();
-        return std::stoi(idStr);
-    }
-    return 0;
+    return schedules.create(params);
 }
 
-std::string Hue::getPictureOfLight(int id) const
+std::string Hue::getPictureOfLight(int id)
 {
     std::string ret = "";
-    auto pos = lights.find(id);
-    if (pos != lights.end())
+    if (lights.exists(id))
     {
-        ret = getPictureOfModel(pos->second.getModelId());
+        ret = getPictureOfModel(lights.get(id).getModelId());
     }
     return ret;
 }
@@ -585,7 +422,10 @@ void Hue::setHttpHandler(std::shared_ptr<const IHttpHandler> handler)
 {
     http_handler = handler;
     commands = HueCommandAPI(ip, port, username, handler);
-    stateCache = APICache("", commands, stateCache.getRefreshDuration());
-    lightFactory = HueLightFactory(commands, stateCache.getRefreshDuration());
+    lights = ResourceList<HueLight, int>(commands, "/lights", refreshDuration,
+        [factory = HueLightFactory(commands, refreshDuration)](
+            int id, const nlohmann::json& state) mutable { return factory.createLight(state, id); });
+    groups = CreateableResourceList<Group, int, CreateGroup>(commands, "/groups", refreshDuration);
+    schedules = CreateableResourceList<Schedule, int, CreateSchedule>(commands, "/schedules", refreshDuration);
 }
 } // namespace hueplusplus
