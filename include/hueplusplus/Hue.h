@@ -42,6 +42,8 @@
 
 #include "json/json.hpp"
 
+#include "ResourceList.h"
+
 //! \brief Namespace for the hueplusplus library
 namespace hueplusplus
 {
@@ -140,12 +142,12 @@ public:
     //! \brief Function to get the ip address of the hue bridge
     //!
     //! \return string containing ip
-    std::string getBridgeIP();
+    std::string getBridgeIP() const;
 
     //! \brief Function to get the port of the hue bridge
     //!
     //! \return integer containing port
-    int getBridgePort();
+    int getBridgePort() const;
 
     //! \brief Send a username request to the Hue bridge.
     //!
@@ -161,7 +163,7 @@ public:
     //! \brief Function that returns the username
     //!
     //! \return The username used for API access
-    std::string getUsername();
+    std::string getUsername() const;
 
     //! \brief Function to set the ip address of this class representing a bridge
     //!
@@ -337,7 +339,7 @@ public:
     //! because Philips provides different file types. \param id Id of a light to
     //! get the picture of \return String that either contains the filename of the
     //! picture of the light or if it was not found an empty string
-    std::string getPictureOfLight(int id) const;
+    std::string getPictureOfLight(int id);
 
     //! \brief Const function that returns the picture name of a given model id
     //!
@@ -354,15 +356,16 @@ private:
                     //!< like "192.168.2.1"
     std::string username; //!< Username that is ussed to access the hue bridge
     int port;
-    std::map<int, HueLight> lights; //!< Maps ids to HueLights that are controlled by this bridge
-    std::map<int, Group> groups; //!< Maps ids to Groups
-    std::map<int, Schedule> schedules; //!< Maps ids to Schedules
 
     std::shared_ptr<const IHttpHandler> http_handler; //!< A IHttpHandler that is used to communicate with the
                                                       //!< bridge
     HueCommandAPI commands; //!< A HueCommandAPI that is used to communicate with the bridge
-    APICache stateCache; //!< The state of the hue bridge as it is returned from it
-    HueLightFactory lightFactory;
+    std::chrono::steady_clock::duration refreshDuration;
+
+    ResourceList<HueLight, int> lights;
+    CreateableResourceList<Group, int, CreateGroup> groups;
+    CreateableResourceList<Schedule, int, CreateSchedule> schedules;
+
 };
 } // namespace hueplusplus
 
