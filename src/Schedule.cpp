@@ -190,4 +190,51 @@ void Schedule::sendPutRequest(const nlohmann::json& request, FileInfo fileInfo)
 {
     commands.PUTRequest("/schedules/" + std::to_string(id), request, std::move(fileInfo));
 }
+
+CreateSchedule& CreateSchedule::setName(const std::string& name)
+{
+    request["name"] = name;
+    return *this;
+}
+
+CreateSchedule& CreateSchedule::setDescription(const std::string& description)
+{
+    request["descripton"] = description;
+    return *this;
+}
+
+CreateSchedule& CreateSchedule::setCommand(const ScheduleCommand& command)
+{
+    request["command"] = command.toJson();
+    return *this;
+}
+
+CreateSchedule& CreateSchedule::setTime(const time::TimePattern& time)
+{
+    request["localtime"] = time.toString();
+    return *this;
+}
+
+CreateSchedule& CreateSchedule::setStatus(Schedule::Status status)
+{
+    request["status"] = (status == Schedule::Status::enabled) ? "enabled" : "disabled";
+    return *this;
+}
+
+CreateSchedule& CreateSchedule::setAutodelete(bool autodelete)
+{
+    request["autodelete"] = autodelete;
+    return *this;
+}
+
+CreateSchedule& CreateSchedule::setRecycle(bool recycle)
+{
+    request["recycle"] = recycle;
+    return *this;
+}
+
+nlohmann::json CreateSchedule::getRequest() const
+{
+    return request;
+}
 } // namespace hueplusplus
