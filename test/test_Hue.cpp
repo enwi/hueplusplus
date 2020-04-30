@@ -116,15 +116,6 @@ TEST_F(HueFinderTest, GetBridge)
     EXPECT_EQ(test_bridge.getBridgePort(), getBridgePort()) << "Bridge Port not matching";
     EXPECT_EQ(test_bridge.getUsername(), getBridgeUsername()) << "Bridge username not matching";
 
-    // Verify that username is correctly set in api requests
-    nlohmann::json hue_bridge_state {{"lights", {}}};
-    EXPECT_CALL(
-        *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(1)
-        .WillOnce(Return(hue_bridge_state));
-
-    test_bridge.getAllLights();
-
     Mock::VerifyAndClearExpectations(handler.get());
 }
 
@@ -395,17 +386,8 @@ TEST(Hue, lightExists)
 
     Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
-    EXPECT_EQ(true, test_bridge.lightExists(1));
-    EXPECT_EQ(false, test_bridge.lightExists(2));
-
-    const Hue const_test_bridge1 = test_bridge;
-    EXPECT_EQ(true, const_test_bridge1.lightExists(1));
-    EXPECT_EQ(false, const_test_bridge1.lightExists(2));
-
-    test_bridge.getLight(1);
-    const Hue const_test_bridge2 = test_bridge;
-    EXPECT_EQ(true, test_bridge.lightExists(1));
-    EXPECT_EQ(true, const_test_bridge2.lightExists(1));
+    EXPECT_EQ(true, Const(test_bridge).lightExists(1));
+    EXPECT_EQ(false, Const(test_bridge).lightExists(2));
 }
 
 TEST(Hue, getGroup)
@@ -517,17 +499,8 @@ TEST(Hue, groupExists)
 
     Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
-    EXPECT_EQ(true, test_bridge.groupExists(1));
-    EXPECT_EQ(false, test_bridge.groupExists(2));
-
-    const Hue const_test_bridge1 = test_bridge;
-    EXPECT_EQ(true, const_test_bridge1.groupExists(1));
-    EXPECT_EQ(false, const_test_bridge1.groupExists(2));
-
-    test_bridge.getGroup(1);
-    const Hue const_test_bridge2 = test_bridge;
-    EXPECT_EQ(true, test_bridge.groupExists(1));
-    EXPECT_EQ(true, const_test_bridge2.groupExists(1));
+    EXPECT_EQ(true, Const(test_bridge).groupExists(1));
+    EXPECT_EQ(false, Const(test_bridge).groupExists(2));
 }
 
 TEST(Hue, getAllGroups)
