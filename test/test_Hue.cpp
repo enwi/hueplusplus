@@ -379,15 +379,13 @@ TEST(Hue, lightExists)
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(hue_bridge_state));
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(hue_bridge_state["lights"]["1"]));
 
     Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
-    EXPECT_EQ(true, Const(test_bridge).lightExists(1));
-    EXPECT_EQ(false, Const(test_bridge).lightExists(2));
+    test_bridge.refresh();
+
+    EXPECT_TRUE(Const(test_bridge).lightExists(1));
+    EXPECT_FALSE(Const(test_bridge).lightExists(2));
 }
 
 TEST(Hue, getGroup)
@@ -492,12 +490,10 @@ TEST(Hue, groupExists)
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(hue_bridge_state));
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/groups/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(hue_bridge_state["groups"]["1"]));
 
     Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+
+    test_bridge.refresh();
 
     EXPECT_EQ(true, Const(test_bridge).groupExists(1));
     EXPECT_EQ(false, Const(test_bridge).groupExists(2));
