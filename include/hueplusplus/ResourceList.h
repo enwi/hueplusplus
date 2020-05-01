@@ -36,6 +36,10 @@ template <typename Resource, typename IdType>
 class ResourceList
 {
 public:
+    ResourceList(const HueCommandAPI& commands, const std::string& path, std::shared_ptr<APICache> baseCache,
+        const std::string& cacheEntry, const std::function<Resource(int, const nlohmann::json&)>& factory = nullptr)
+        : commands(commands), stateCache(baseCache, cacheEntry), path(path + '/'), factory(factory)
+    {}
     ResourceList(const HueCommandAPI& commands, const std::string& path,
         std::chrono::steady_clock::duration refreshDuration,
         const std::function<Resource(int, const nlohmann::json&)>& factory = nullptr)
@@ -97,7 +101,7 @@ public:
         std::string requestPath = path + maybeToString(id);
         nlohmann::json result
             = commands.DELETERequest(requestPath, nlohmann::json::object(), FileInfo {__FILE__, __LINE__, __func__});
-        bool success = utils::safeGetMember(result, 0, "success") == requestPath;
+        bool success = utils::safeGetMember(result, 0, "success") == requestPath + " deleted";
         auto it = resources.find(id);
         if (success && it != resources.end())
         {
@@ -113,7 +117,7 @@ protected:
 
     Resource construct(const IdType& id, const nlohmann::json& state)
     {
-        return construct(id, state, std::is_constructible<Resource, IdType, HueCommandAPI, nlohmann::json> {});
+        return construct(id, state, std::is_constructible<Resource, IdType, HueCommandAPI, std::chrono::steady_clock::duration> {});
     }
 
 private:

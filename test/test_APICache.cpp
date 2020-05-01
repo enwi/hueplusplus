@@ -110,7 +110,19 @@ TEST(APICache, getValue)
         EXPECT_EQ(value, cache.getValue());
         Mock::VerifyAndClearExpectations(handler.get());
     }
-    // No refresh with const
+    // Only refresh once
+    {
+        std::string path = "/test/abc";
+        APICache cache(path, commands, std::chrono::seconds(0));
+        nlohmann::json value = { {"a", "b"} };
+        EXPECT_CALL(*handler,
+            GETJson("/api/" + getBridgeUsername() + path, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+            .WillOnce(Return(value));
+        EXPECT_EQ(value, cache.getValue());
+        EXPECT_EQ(value, Const(cache).getValue());
+        Mock::VerifyAndClearExpectations(handler.get());
+    }
+    // No refresh with const throws exception
     {
         std::string path = "/test/abc";
         const APICache cache(path, commands, std::chrono::steady_clock::duration::max());
@@ -118,7 +130,7 @@ TEST(APICache, getValue)
         EXPECT_CALL(*handler,
             GETJson("/api/" + getBridgeUsername() + path, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
             .Times(0);
-        EXPECT_EQ(nullptr, cache.getValue());
+        EXPECT_THROW(cache.getValue(), HueException);
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }

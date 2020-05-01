@@ -136,6 +136,8 @@ public:
     Hue(const std::string& ip, const int port, const std::string& username, std::shared_ptr<const IHttpHandler> handler,
         std::chrono::steady_clock::duration refreshDuration = std::chrono::seconds(10));
 
+    void refresh();
+
     //! \name Configuration
     ///@{
 
@@ -362,6 +364,7 @@ private:
     HueCommandAPI commands; //!< A HueCommandAPI that is used to communicate with the bridge
     std::chrono::steady_clock::duration refreshDuration;
 
+    std::shared_ptr<APICache> stateCache;
     ResourceList<HueLight, int> lights;
     CreateableResourceList<Group, int, CreateGroup> groups;
     CreateableResourceList<Schedule, int, CreateSchedule> schedules;

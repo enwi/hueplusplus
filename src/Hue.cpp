@@ -137,12 +137,18 @@ Hue::Hue(const std::string& ip, const int port, const std::string& username,
       http_handler(std::move(handler)),
       commands(ip, port, username, http_handler),
       refreshDuration(refreshDuration),
-      lights(commands, "/lights", refreshDuration,
+      stateCache(std::make_shared<APICache>("", commands, refreshDuration)),
+      lights(commands, "/lights", stateCache, "lights",
           [factory = HueLightFactory(commands, refreshDuration)](
               int id, const nlohmann::json& state) mutable { return factory.createLight(state, id); }),
-      groups(commands, "/groups", refreshDuration),
-      schedules(commands, "/schedules", refreshDuration)
+      groups(commands, "/groups", stateCache, "groups"),
+      schedules(commands, "/schedules", stateCache, "schedules")
 {}
+
+void Hue::refresh()
+{
+    stateCache->refresh();
+}
 
 std::string Hue::getBridgeIP() const
 {
@@ -422,10 +428,11 @@ void Hue::setHttpHandler(std::shared_ptr<const IHttpHandler> handler)
 {
     http_handler = handler;
     commands = HueCommandAPI(ip, port, username, handler);
-    lights = ResourceList<HueLight, int>(commands, "/lights", refreshDuration,
+    stateCache = std::make_shared<APICache>("", commands, refreshDuration);
+    lights = ResourceList<HueLight, int>(commands, "/lights", stateCache, "lights",
         [factory = HueLightFactory(commands, refreshDuration)](
             int id, const nlohmann::json& state) mutable { return factory.createLight(state, id); });
-    groups = CreateableResourceList<Group, int, CreateGroup>(commands, "/groups", refreshDuration);
-    schedules = CreateableResourceList<Schedule, int, CreateSchedule>(commands, "/schedules", refreshDuration);
+    groups = CreateableResourceList<Group, int, CreateGroup>(commands, "/groups", stateCache, "groups");
+    schedules = CreateableResourceList<Schedule, int, CreateSchedule>(commands, "/schedules", stateCache, "schedules");
 }
 } // namespace hueplusplus
