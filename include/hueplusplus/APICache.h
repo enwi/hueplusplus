@@ -34,6 +34,7 @@ namespace hueplusplus
 class APICache
 {
 public:
+    APICache(std::shared_ptr<APICache> baseCache, const std::string& subEntry);
     //! \brief Constructs APICache
     //! \param path URL appended after username, may be empty.
     //! \param commands HueCommandAPI for making API requests.
@@ -54,12 +55,14 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     nlohmann::json& getValue();
     //! \brief Get cached value, does not refresh.
+    //! \throws HueException when no previous request was cached
     const nlohmann::json& getValue() const;
 
     //! \brief Get duration between refreshes.
     std::chrono::steady_clock::duration getRefreshDuration() const;
 
 private:
+    std::shared_ptr<APICache> base;
     std::string path;
     HueCommandAPI commands;
     std::chrono::steady_clock::duration refreshDuration;

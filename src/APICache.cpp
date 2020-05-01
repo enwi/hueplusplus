@@ -23,46 +23,95 @@
 
 #include "hueplusplus/HueExceptionMacro.h"
 
-hueplusplus::APICache::APICache(
-    const std::string& path, const HueCommandAPI& commands, std::chrono::steady_clock::duration refresh)
+namespace hueplusplus
+{
+APICache::APICache(std::shared_ptr<APICache> baseCache, const std::string& subEntry)
+    : base(baseCache),
+      path(subEntry),
+      commands(baseCache->commands),
+      refreshDuration(baseCache->refreshDuration),
+      lastRefresh(baseCache->lastRefresh)
+{}
+
+APICache::APICache(const std::string& path, const HueCommandAPI& commands, std::chrono::steady_clock::duration refresh)
     : path(path), commands(commands), refreshDuration(refresh), lastRefresh(std::chrono::steady_clock::duration::zero())
 {}
 
-void hueplusplus::APICache::refresh()
+void APICache::refresh()
 {
-    value = commands.GETRequest(path, nlohmann::json::object(), CURRENT_FILE_INFO);
-    lastRefresh = std::chrono::steady_clock::now();
+    if (base)
+    {
+        base->refresh();
+    }
+    else
+    {
+        value = commands.GETRequest(path, nlohmann::json::object(), CURRENT_FILE_INFO);
+        lastRefresh = std::chrono::steady_clock::now();
+    }
 }
 
-nlohmann::json& hueplusplus::APICache::getValue()
+nlohmann::json& APICache::getValue()
 {
-    using clock = std::chrono::steady_clock;
-    // Explicitly check for zero in case refreshDuration is duration::max()
-    // Negative duration causes overflow check to overflow itself
-    if (lastRefresh.time_since_epoch().count() == 0 || refreshDuration.count() < 0)
+    if (base)
     {
-        // No value set yet
-        refresh();
-    }
-    // Check if nextRefresh would overflow (assumes lastRefresh is not negative, which it should not be).
-    // If addition would overflow, do not refresh
-    else if (clock::duration::max() - refreshDuration > lastRefresh.time_since_epoch())
-    {
-        clock::time_point nextRefresh = lastRefresh + refreshDuration;
-        if (clock::now() >= nextRefresh)
+        nlohmann::json& baseState = base->getValue();
+        auto pos = baseState.find(path);
+        if (pos != baseState.end())
         {
-            refresh();
+            return *pos;
+        }
+        else
+        {
+            throw HueException(CURRENT_FILE_INFO, "Child path not present in base cache");
         }
     }
-    return value;
+    else
+    {
+        using clock = std::chrono::steady_clock;
+        // Explicitly check for zero in case refreshDuration is duration::max()
+        // Negative duration causes overflow check to overflow itself
+        if (lastRefresh.time_since_epoch().count() == 0 || refreshDuration.count() < 0)
+        {
+            // No value set yet
+            refresh();
+        }
+        // Check if nextRefresh would overflow (assumes lastRefresh is not negative, which it should not be).
+        // If addition would overflow, do not refresh
+        else if (clock::duration::max() - refreshDuration > lastRefresh.time_since_epoch())
+        {
+            clock::time_point nextRefresh = lastRefresh + refreshDuration;
+            if (clock::now() >= nextRefresh)
+            {
+                refresh();
+            }
+        }
+        return value;
+    }
 }
 
-const nlohmann::json& hueplusplus::APICache::getValue() const
+const nlohmann::json& APICache::getValue() const
 {
-    return value;
+    if (base)
+    {
+        // Make const reference to not refresh
+        const APICache& b = *base;
+        return b.getValue().at(path);
+    }
+    else
+    {
+        if (lastRefresh.time_since_epoch().count() == 0)
+        {
+            // No value has been requested yet
+            throw HueException(CURRENT_FILE_INFO,
+                "Tried to call const getValue(), but no value was cached. "
+                "Call refresh() or non-const getValue() first.");
+        }
+        return value;
+    }
 }
 
-std::chrono::steady_clock::duration hueplusplus::APICache::getRefreshDuration() const
+std::chrono::steady_clock::duration APICache::getRefreshDuration() const
 {
     return refreshDuration;
 }
+} // namespace hueplusplus
