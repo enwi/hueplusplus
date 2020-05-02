@@ -38,7 +38,7 @@ public:
     MOCK_CONST_METHOD3(send, std::string(const std::string& msg, const std::string& adr, int port));
 
     MOCK_CONST_METHOD4(
-        sendMulticast, std::vector<std::string>(const std::string& msg, const std::string& adr, int port, int timeout));
+        sendMulticast, std::vector<std::string>(const std::string& msg, const std::string& adr, int port, std::chrono::steady_clock::duration timeout));
 };
 
 #endif

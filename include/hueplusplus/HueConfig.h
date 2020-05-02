@@ -23,10 +23,53 @@
 #ifndef INCLUDE_HUEPLUSPLUS_HUE_CONFIG_H
 #define INCLUDE_HUEPLUSPLUS_HUE_CONFIG_H
 
+#include <chrono>
+
 namespace hueplusplus
 {
-constexpr uint16_t c_PRE_ALERT_DELAY = 120; //!< Delay for advanced alerts before the actual alert
-constexpr uint16_t c_POST_ALERT_DELAY = 1600; //!< Delay for advanced alerts after the actual alert
+//! \brief Configurable delays
+//!
+//! Used to set all delays to zero when running tests.
+class Config
+{
+private:
+    using duration = std::chrono::steady_clock::duration;
+
+public:
+    //! \brief Delay for advanced alerts before the actual alert
+    duration getPreAlertDelay() const { return preAlertDelay; }
+    //! \brief Delay for advanced alerts after the actual alert
+    duration getPostAlertDelay() const { return postAlertDelay; }
+
+    //! \brief Timeout for UPnP multicast request
+    duration getUPnPTimeout() const { return upnpTimeout; }
+
+    //! \brief Delay between bridge requests
+    duration getBridgeRequestDelay() const { return bridgeRequestDelay; }
+
+    //! \brief Timeout for Hue::requestUsername, waits until link button was pressed
+    duration getRequestUsernameTimeout() const { return requestUsernameDelay; }
+
+    //! \brief Interval in which username requests are attempted
+    duration getRequestUsernameAttemptInterval() const { return requestUsernameAttemptInterval; }
+
+    //! \brief Get config instance
+    static Config& instance()
+    {
+        static Config c;
+        return c;
+    }
+protected:
+    Config() = default;
+
+protected:
+    duration preAlertDelay = std::chrono::milliseconds(120);
+    duration postAlertDelay = std::chrono::milliseconds(1600);
+    duration upnpTimeout = std::chrono::seconds(5);
+    duration bridgeRequestDelay = std::chrono::milliseconds(100);
+    duration requestUsernameDelay = std::chrono::seconds(35);
+    duration requestUsernameAttemptInterval = std::chrono::seconds(1);
+};
 } // namespace hueplusplus
 
 #endif

@@ -31,6 +31,7 @@
 #include <stdexcept>
 #include <thread>
 
+#include "hueplusplus/HueConfig.h"
 #include "hueplusplus/HueExceptionMacro.h"
 #include "hueplusplus/UPnP.h"
 #include "hueplusplus/Utils.h"
@@ -160,51 +161,44 @@ int Hue::getBridgePort() const
 
 std::string Hue::requestUsername()
 {
-    std::cout << "Please press the link Button! You've got 35 secs!\n"; // when the link
-                                                                        // button was
-                                                                        // pressed we
-                                                                        // got 30
-                                                                        // seconds to
-                                                                        // get our
-                                                                        // username for
-                                                                        // control
+    std::chrono::steady_clock::duration timeout = Config::instance().getRequestUsernameTimeout();
+    std::chrono::steady_clock::duration checkInterval = Config::instance().getRequestUsernameAttemptInterval();
+    std::cout << "Please press the link Button! You've got "
+              << std::chrono::duration_cast<std::chrono::seconds>(timeout).count() << " secs!\n";
 
+    // when the link button was pressed we got 30 seconds to get our username for control
     nlohmann::json request;
     request["devicetype"] = "HuePlusPlus#User";
 
     nlohmann::json answer;
     std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-    std::chrono::steady_clock::time_point lastCheck;
-    while (std::chrono::steady_clock::now() - start < std::chrono::seconds(35))
+    // do-while loop to check at least once when timeout is 0
+    do
     {
-        if (std::chrono::steady_clock::now() - lastCheck > std::chrono::seconds(1))
+        std::this_thread::sleep_for(checkInterval);
+        answer = http_handler->POSTJson("/api", request, ip, port);
+        nlohmann::json jsonUser = utils::safeGetMember(answer, 0, "success", "username");
+        if (jsonUser != nullptr)
         {
-            lastCheck = std::chrono::steady_clock::now();
-            answer = http_handler->POSTJson("/api", request, ip, port);
-            nlohmann::json jsonUser = utils::safeGetMember(answer, 0, "success", "username");
-            if (jsonUser != nullptr)
-            {
-                // [{"success":{"username": "<username>"}}]
-                username = jsonUser.get<std::string>();
-                // Update commands with new username and ip
-                setHttpHandler(http_handler);
-                std::cout << "Success! Link button was pressed!\n";
-                std::cout << "Username is \"" << username << "\"\n";
-                break;
-            }
-            else if (answer.size() > 0 && answer[0].count("error"))
-            {
-                HueAPIResponseException exception = HueAPIResponseException::Create(CURRENT_FILE_INFO, answer[0]);
-                // All errors except 101: Link button not pressed
-                if (exception.GetErrorNumber() != 101)
-                {
-                    throw exception;
-                }
-            }
-
-            std::this_thread::sleep_until(lastCheck + std::chrono::seconds(1));
+            // [{"success":{"username": "<username>"}}]
+            username = jsonUser.get<std::string>();
+            // Update commands with new username and ip
+            setHttpHandler(http_handler);
+            std::cout << "Success! Link button was pressed!\n";
+            std::cout << "Username is \"" << username << "\"\n";
+            break;
         }
-    }
+        else if (answer.size() > 0 && answer[0].count("error"))
+        {
+            HueAPIResponseException exception = HueAPIResponseException::Create(CURRENT_FILE_INFO, answer[0]);
+            // All errors except 101: Link button not pressed
+            if (exception.GetErrorNumber() != 101)
+            {
+                throw exception;
+            }
+        }
+    } while (std::chrono::steady_clock::now() - start < timeout);
+
     return username;
 }
 
@@ -425,9 +419,10 @@ std::string Hue::getPictureOfModel(const std::string& model_id) const
 void Hue::setHttpHandler(std::shared_ptr<const IHttpHandler> handler)
 {
     http_handler = handler;
-    stateCache = std::make_shared<APICache>("", HueCommandAPI(ip, port, username, handler), refreshDuration);
+    stateCache
+        = std::make_shared<APICache>("", HueCommandAPI(ip, port, username, handler), stateCache->getRefreshDuration());
     lights = ResourceList<HueLight, int>("/lights", stateCache, "lights",
-        [factory = HueLightFactory(stateCache->getCommandAPI(), refreshDuration)](
+        [factory = HueLightFactory(stateCache->getCommandAPI(), stateCache->getRefreshDuration())](
             int id, const nlohmann::json& state) mutable { return factory.createLight(state, id); });
     groups = CreateableResourceList<Group, int, CreateGroup>("/groups", stateCache, "groups");
     schedules = CreateableResourceList<Schedule, int, CreateSchedule>("/schedules", stateCache, "schedules");
