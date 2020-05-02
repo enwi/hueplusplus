@@ -250,7 +250,6 @@ TEST_F(GroupTest, setScene)
     EXPECT_CALL(
         *handler, PUTJson("/api/" + getBridgeUsername() + "/groups/1/action", request, getBridgeIp(), getBridgePort()))
         .WillOnce(Return(response));
-    (id);
     group.setScene(scene);
 }
 
