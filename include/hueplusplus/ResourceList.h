@@ -27,6 +27,7 @@
 #include <string>
 #include <vector>
 
+#include "Utils.h"
 #include "APICache.h"
 #include "HueException.h"
 
@@ -54,7 +55,7 @@ public:
     //! Necessary if Resource is not constructible as described above.
     ResourceList(const std::string& path, std::shared_ptr<APICache> baseCache, const std::string& cacheEntry,
         const std::function<Resource(int, const nlohmann::json&)>& factory = nullptr)
-        : stateCache(baseCache, cacheEntry), path(path + '/'), factory(factory)
+        : stateCache(baseCache, cacheEntry), factory(factory), path(path + '/')
     {}
     //! \brief Construct ResourceList with a separate cache and optional factory function
     //! \param commands HueCommandAPI for requests
@@ -65,7 +66,7 @@ public:
     ResourceList(const HueCommandAPI& commands, const std::string& path,
         std::chrono::steady_clock::duration refreshDuration,
         const std::function<Resource(int, const nlohmann::json&)>& factory = nullptr)
-        : stateCache(path, commands, refreshDuration), path(path + '/'), factory(factory)
+        : stateCache(path, commands, refreshDuration), factory(factory), path(path + '/')
     {}
 
     //! \brief Deleted copy constructor
@@ -227,11 +228,9 @@ private:
     static std::string maybeToString(const IdType& id, std::false_type) { return id; }
 
 protected:
-    std::function<Resource(int, const nlohmann::json&)> factory;
-
     APICache stateCache;
+    std::function<Resource(int, const nlohmann::json&)> factory;
     std::string path;
-
     std::map<IdType, Resource> resources;
 };
 
@@ -244,7 +243,7 @@ template <typename Resource, typename IdType, typename CreateType>
 class CreateableResourceList : public ResourceList<Resource, IdType>
 {
 public:
-    using ResourceList::ResourceList;
+    using ResourceList<Resource, IdType>::ResourceList;
 
     //! \brief Create a new resource
     //! \param params Parameters for the new resource
@@ -256,21 +255,21 @@ public:
     //! \throws std::invalid_argument when IdType is int and std::stoi fails
     IdType create(const CreateType& params)
     {
-        std::string requestPath = path;
+        std::string requestPath = this->path;
         // Remove slash
         requestPath.pop_back();
-        nlohmann::json response = stateCache.getCommandAPI().POSTRequest(
+        nlohmann::json response = this->stateCache.getCommandAPI().POSTRequest(
             requestPath, params.getRequest(), FileInfo {__FILE__, __LINE__, __func__});
         nlohmann::json id = utils::safeGetMember(response, 0, "success", "id");
         if (id.is_string())
         {
             std::string idStr = id.get<std::string>();
-            if (idStr.find(path) == 0)
+            if (idStr.find(this->path) == 0)
             {
-                idStr.erase(0, path.size());
+                idStr.erase(0, this->path.size());
             }
-            stateCache.refresh();
-            return maybeStoi(idStr);
+            this->stateCache.refresh();
+            return this->maybeStoi(idStr);
         }
         return IdType {};
     }
