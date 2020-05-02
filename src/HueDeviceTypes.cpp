@@ -63,10 +63,10 @@ HueLightFactory::HueLightFactory(const HueCommandAPI& commands, std::chrono::ste
     : commands(commands),
       refreshDuration(refreshDuration),
       simpleBrightness(std::make_shared<SimpleBrightnessStrategy>()),
-      simpleColorHue(std::make_shared<SimpleColorHueStrategy>()),
-      extendedColorHue(std::make_shared<ExtendedColorHueStrategy>()),
       simpleColorTemperature(std::make_shared<SimpleColorTemperatureStrategy>()),
-      extendedColorTemperature(std::make_shared<ExtendedColorTemperatureStrategy>())
+      extendedColorTemperature(std::make_shared<ExtendedColorTemperatureStrategy>()),
+      simpleColorHue(std::make_shared<SimpleColorHueStrategy>()),
+      extendedColorHue(std::make_shared<ExtendedColorHueStrategy>())
 {}
 
 HueLight HueLightFactory::createLight(const nlohmann::json& lightState, int id)
