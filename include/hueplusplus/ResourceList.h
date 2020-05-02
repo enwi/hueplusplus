@@ -32,27 +32,61 @@
 
 namespace hueplusplus
 {
+//! \brief Handles a list of a certain API resource
+//! \tparam Resource Resource type that is in the list
+//! \tparam IdType Type of the resource id. int or std::string
+//!
+//! The resources are assumed to be in an object with ids as keys.
+//! The Resource class needs a constructor that accepts \c id, HueCommandAPI and \c refreshDuration;
+//! otherwise a factory function needs to be provided that takes \c id and the JSON state.
 template <typename Resource, typename IdType>
 class ResourceList
 {
 public:
+    static_assert(std::is_integral<IdType>::value || std::is_same<std::string, IdType>::value,
+        "IdType must be integral or string");
+
+    //! \brief Construct ResourceList using a base cache and optional factory function
+    //! \param commands HueCommandAPI for requests
+    //! \param path Path of the resource list
+    //! \param baseCache Base cache which holds the parent state, not nullptr
+    //! \param cacheEntry Entry name of the list state in the base cache
+    //! \param factory Optional factory function to create Resources.
+    //! Necessary if Resource is not constructible as described above.
     ResourceList(const HueCommandAPI& commands, const std::string& path, std::shared_ptr<APICache> baseCache,
         const std::string& cacheEntry, const std::function<Resource(int, const nlohmann::json&)>& factory = nullptr)
         : commands(commands), stateCache(baseCache, cacheEntry), path(path + '/'), factory(factory)
     {}
+    //! \brief Construct ResourceList with a separate cache and optional factory function
+    //! \param commands HueCommandAPI for requests
+    //! \param path Path of the resource list
+    //! \param refreshDuration Interval between refreshing the cache
+    //! \param factory Optional factory function to create Resources.
+    //! Necessary if Resource is not constructible as described above.
     ResourceList(const HueCommandAPI& commands, const std::string& path,
         std::chrono::steady_clock::duration refreshDuration,
         const std::function<Resource(int, const nlohmann::json&)>& factory = nullptr)
         : commands(commands), stateCache(path, commands, refreshDuration), path(path + '/'), factory(factory)
     {}
 
+    //! \brief Deleted copy constructor
     ResourceList(const ResourceList&) = delete;
+    //! \brief Defaulted move constructor
     ResourceList(ResourceList&&) = default;
+    //! \brief Deleted copy assignment
     ResourceList& operator=(const ResourceList&) = delete;
+    //! \brief Defaulted move assignment
     ResourceList& operator=(ResourceList&&) = default;
 
+    //! \brief Refreshes internal state now
     void refresh() { stateCache.refresh(); }
 
+    //! \brief Get all resources that exist
+    //! \returns A vectory of references to every Resource
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contains no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     std::vector<std::reference_wrapper<Resource>> getAll()
     {
         nlohmann::json state = stateCache.getValue();
@@ -69,6 +103,13 @@ public:
         return result;
     }
 
+    //! \brief Get resource specified by id
+    //! \param id ID of the resource
+    //! \returns The resource matching the id
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when id does not exist
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     Resource& get(const IdType& id)
     {
         auto pos = resources.find(id);
@@ -86,6 +127,28 @@ public:
         return resources.emplace(id, construct(id, state[key])).first->second;
     }
 
+    //! \brief Checks whether resource with id exists
+    //! \param id Id of the resource to check
+    //! \returns true when the resource with given id exists
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contains no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
+    bool exists(const IdType& id)
+    {
+        auto pos = resources.find(id);
+        if (pos != resources.end())
+        {
+            return true;
+        }
+        return stateCache.getValue().count(maybeToString(id)) != 0;
+    }
+
+    //! \brief Checks whether resource with id exists
+    //! \param id Id of the resource to check
+    //! \returns true when the resource with given id exists
+    //! \note This will not update the cache
+    //! \throws HueException when the cache is empty
     bool exists(const IdType& id) const
     {
         auto pos = resources.find(id);
@@ -96,6 +159,15 @@ public:
         return stateCache.getValue().count(maybeToString(id)) != 0;
     }
 
+    //! \brief Removes the resource
+    //! \param id Id of the resource to remove
+    //! \returns true on success
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contains no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
+    //!
+    //! If successful, invalidates references to the Resource removed.
     bool remove(const IdType& id)
     {
         std::string requestPath = path + maybeToString(id);
@@ -111,13 +183,18 @@ public:
     }
 
 protected:
+    //! \brief Calls std::stoi if IdType is int
     static IdType maybeStoi(const std::string& key) { return maybeStoi(key, std::is_integral<IdType> {}); }
 
+    //! \brief Calls std::to_string if IdType is int
     static std::string maybeToString(const IdType& id) { return maybeToString(id, std::is_integral<IdType> {}); }
 
+    //! \brief Constructs resource using factory or constructor, if available
+    //! \throws HueException when factory is nullptr and Resource cannot be constructed as specified above.
     Resource construct(const IdType& id, const nlohmann::json& state)
     {
-        return construct(id, state, std::is_constructible<Resource, IdType, HueCommandAPI, std::chrono::steady_clock::duration> {});
+        return construct(
+            id, state, std::is_constructible<Resource, IdType, HueCommandAPI, std::chrono::steady_clock::duration> {});
     }
 
 private:
@@ -160,12 +237,25 @@ protected:
     std::map<IdType, Resource> resources;
 };
 
+//! \brief Handles a ResourceList where Resources can be added by the user
+//! \tparam Resource Resource type that is in the list
+//! \tparam IdType Type of the resource id. int or std::string
+//! \tparam CreateType Type that provides parameters for creation.
+//! Must have a const getRequest() function returning the JSON for the POST request.
 template <typename Resource, typename IdType, typename CreateType>
 class CreateableResourceList : public ResourceList<Resource, IdType>
 {
 public:
     using ResourceList::ResourceList;
 
+    //! \brief Create a new resource
+    //! \param params Parameters for the new resource
+    //! \returns The id of the created resource or 0/an empty string if failed.
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contains no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
+    //! \throws std::invalid_argument when IdType is int and std::stoi fails
     IdType create(const CreateType& params)
     {
         std::string requestPath = path;
