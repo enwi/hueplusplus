@@ -5,7 +5,7 @@
 namespace hueplusplus
 {
 Group::Group(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration)
-    : id(id), state("/groups/" + std::to_string(id), commands, refreshDuration), commands(commands)
+    : id(id), state("/groups/" + std::to_string(id), commands, refreshDuration)
 {
     state.refresh();
 }
@@ -141,7 +141,7 @@ std::string Group::getActionColorMode() const
 StateTransaction Group::transaction()
 {
     // Do not pass state, because it is not the state of ALL lights in the group
-    return StateTransaction(commands, "/groups/" + std::to_string(id) + "/action", nlohmann::json::object());
+    return StateTransaction(state.getCommandAPI(), "/groups/" + std::to_string(id) + "/action", nlohmann::json::object());
 }
 
 void Group::setOn(bool on, uint8_t transition)
@@ -181,7 +181,7 @@ void Group::setScene(const std::string& scene)
 
 nlohmann::json Group::sendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo)
 {
-    return commands.PUTRequest("/groups/" + std::to_string(id) + subPath, request, std::move(fileInfo));
+    return state.getCommandAPI().PUTRequest("/groups/" + std::to_string(id) + subPath, request, std::move(fileInfo));
 }
 
 std::string Group::getRoomType() const

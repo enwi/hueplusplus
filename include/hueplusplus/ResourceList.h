@@ -47,15 +47,14 @@ public:
         "IdType must be integral or string");
 
     //! \brief Construct ResourceList using a base cache and optional factory function
-    //! \param commands HueCommandAPI for requests
     //! \param path Path of the resource list
     //! \param baseCache Base cache which holds the parent state, not nullptr
     //! \param cacheEntry Entry name of the list state in the base cache
     //! \param factory Optional factory function to create Resources.
     //! Necessary if Resource is not constructible as described above.
-    ResourceList(const HueCommandAPI& commands, const std::string& path, std::shared_ptr<APICache> baseCache,
-        const std::string& cacheEntry, const std::function<Resource(int, const nlohmann::json&)>& factory = nullptr)
-        : commands(commands), stateCache(baseCache, cacheEntry), path(path + '/'), factory(factory)
+    ResourceList(const std::string& path, std::shared_ptr<APICache> baseCache, const std::string& cacheEntry,
+        const std::function<Resource(int, const nlohmann::json&)>& factory = nullptr)
+        : stateCache(baseCache, cacheEntry), path(path + '/'), factory(factory)
     {}
     //! \brief Construct ResourceList with a separate cache and optional factory function
     //! \param commands HueCommandAPI for requests
@@ -66,7 +65,7 @@ public:
     ResourceList(const HueCommandAPI& commands, const std::string& path,
         std::chrono::steady_clock::duration refreshDuration,
         const std::function<Resource(int, const nlohmann::json&)>& factory = nullptr)
-        : commands(commands), stateCache(path, commands, refreshDuration), path(path + '/'), factory(factory)
+        : stateCache(path, commands, refreshDuration), path(path + '/'), factory(factory)
     {}
 
     //! \brief Deleted copy constructor
@@ -171,8 +170,8 @@ public:
     bool remove(const IdType& id)
     {
         std::string requestPath = path + maybeToString(id);
-        nlohmann::json result
-            = commands.DELETERequest(requestPath, nlohmann::json::object(), FileInfo {__FILE__, __LINE__, __func__});
+        nlohmann::json result = stateCache.getCommandAPI().DELETERequest(
+            requestPath, nlohmann::json::object(), FileInfo {__FILE__, __LINE__, __func__});
         bool success = utils::safeGetMember(result, 0, "success") == requestPath + " deleted";
         auto it = resources.find(id);
         if (success && it != resources.end())
@@ -207,7 +206,7 @@ private:
         }
         else
         {
-            return Resource(id, commands, stateCache.getRefreshDuration());
+            return Resource(id, stateCache.getCommandAPI(), stateCache.getRefreshDuration());
         }
     }
     // Resource is not constructable
@@ -230,7 +229,6 @@ private:
 protected:
     std::function<Resource(int, const nlohmann::json&)> factory;
 
-    HueCommandAPI commands;
     APICache stateCache;
     std::string path;
 
@@ -259,10 +257,10 @@ public:
     IdType create(const CreateType& params)
     {
         std::string requestPath = path;
-        // Remove leading slash
+        // Remove slash
         requestPath.pop_back();
-        nlohmann::json response
-            = commands.POSTRequest(requestPath, params.getRequest(), FileInfo {__FILE__, __LINE__, __func__});
+        nlohmann::json response = stateCache.getCommandAPI().POSTRequest(
+            requestPath, params.getRequest(), FileInfo {__FILE__, __LINE__, __func__});
         nlohmann::json id = utils::safeGetMember(response, 0, "success", "id");
         if (id.is_string())
         {

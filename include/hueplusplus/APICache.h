@@ -67,6 +67,9 @@ public:
     //! \brief Get duration between refreshes.
     std::chrono::steady_clock::duration getRefreshDuration() const;
 
+    //! \brief Get HueCommandAPI used for requests
+    HueCommandAPI& getCommandAPI();
+
 private:
     std::shared_ptr<APICache> base;
     std::string path;
