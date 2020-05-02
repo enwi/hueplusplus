@@ -250,7 +250,7 @@ Weekdays Weekdays::parse(const std::string& s)
 }
 
 RecurringTime::RecurringTime(clock::duration daytime, Weekdays days, clock::duration variation)
-    : time(daytime), days(days), variation(variation)
+    : time(daytime), variation(variation), days(days)
 {}
 
 system_clock::duration RecurringTime::getDaytime() const
@@ -319,11 +319,11 @@ std::string TimeInterval::toString() const
 }
 
 Timer::Timer(clock::duration duration, clock::duration variation)
-    : expires(duration), numExecutions(1), variation(variation)
+    : expires(duration), variation(variation), numExecutions(1)
 {}
 
 Timer::Timer(clock::duration duration, int numExecutions, clock::duration variation)
-    : expires(duration), numExecutions(numExecutions), variation(variation)
+    : expires(duration), variation(variation), numExecutions(numExecutions)
 {}
 
 bool Timer::isRecurring() const
