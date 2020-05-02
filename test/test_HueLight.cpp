@@ -42,73 +42,35 @@ protected:
 protected:
     HueLightTest()
         : handler(std::make_shared<MockHttpHandler>()),
+          hue_bridge_state({{"lights",
+              {{"1",
+                   {{"state",
+                        {{"on", true}, {"bri", 254}, {"ct", 366}, {"alert", "none"}, {"colormode", "ct"},
+                            {"reachable", true}, {"effect", "none"}}},
+                       {"swupdate", {{"state", "noupdates"}, {"lastinstall", nullptr}}}, {"type", "Dimmable light"},
+                       {"name", "Hue lamp 1"}, {"modelid", "LWB004"}, {"manufacturername", "Philips"},
+                       {"productname", "Hue bloom"}, {"uniqueid", "00:00:00:00:00:00:00:00-00"},
+                       {"swversion", "5.50.1.19085"}, {"luminaireuniqueid", "0000000"}}},
+                  {"2",
+                      {{"state",
+                           {{"on", false}, {"bri", 0}, {"ct", 366}, {"hue", 12345}, {"sat", 123},
+                               {"xy", {0.102, 0.102}}, {"alert", "none"}, {"colormode", "ct"}, {"reachable", true},
+                               {"effect", "none"}}},
+                          {"swupdate", {{"state", "noupdates"}, {"lastinstall", nullptr}}}, {"type", "Color light"},
+                          {"name", "Hue lamp 2"}, {"modelid", "LST001"}, {"uniqueid", "11:11:11:11:11:11:11:11-11"},
+                          {"swversion", "5.50.1.19085"}}},
+                  {"3",
+                      {{"state",
+                           {{"on", false}, {"bri", 254}, {"ct", 366}, {"hue", 12345}, {"sat", 123},
+                               {"xy", {0.102, 0.102}}, {"alert", "none"}, {"colormode", "ct"}, {"reachable", true},
+                               {"effect", "none"}}},
+                          {"swupdate", {{"state", "noupdates"}, {"lastinstall", nullptr}}},
+                          {"type", "Extended color light"}, {"name", "Hue lamp 3"}, {"modelid", "LCT010"},
+                          {"manufacturername", "Philips"}, {"productname", "Hue bloom"},
+                          {"swversion", "5.50.1.19085"}}}}}}),
           test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler)
     {
         using namespace ::testing;
-        hue_bridge_state["lights"] = nlohmann::json::object();
-        hue_bridge_state["lights"]["1"] = nlohmann::json::object();
-        hue_bridge_state["lights"]["1"]["state"] = nlohmann::json::object();
-        hue_bridge_state["lights"]["1"]["state"]["on"] = true;
-        hue_bridge_state["lights"]["1"]["state"]["bri"] = 254;
-        hue_bridge_state["lights"]["1"]["state"]["ct"] = 366;
-        hue_bridge_state["lights"]["1"]["state"]["alert"] = "none";
-        hue_bridge_state["lights"]["1"]["state"]["colormode"] = "ct";
-        hue_bridge_state["lights"]["1"]["state"]["reachable"] = true;
-        hue_bridge_state["lights"]["1"]["state"]["effect"] = "none";
-        hue_bridge_state["lights"]["1"]["swupdate"] = nlohmann::json::object();
-        hue_bridge_state["lights"]["1"]["swupdate"]["state"] = "noupdates";
-        hue_bridge_state["lights"]["1"]["swupdate"]["lastinstall"] = nullptr;
-        hue_bridge_state["lights"]["1"]["type"] = "Dimmable light";
-        hue_bridge_state["lights"]["1"]["name"] = "Hue lamp 1";
-        hue_bridge_state["lights"]["1"]["modelid"] = "LWB004";
-        hue_bridge_state["lights"]["1"]["manufacturername"] = "Philips";
-        hue_bridge_state["lights"]["1"]["productname"] = "Hue bloom";
-        hue_bridge_state["lights"]["1"]["uniqueid"] = "00:00:00:00:00:00:00:00-00";
-        hue_bridge_state["lights"]["1"]["swversion"] = "5.50.1.19085";
-        hue_bridge_state["lights"]["1"]["luminaireuniqueid"] = "0000000";
-        hue_bridge_state["lights"]["2"] = nlohmann::json::object();
-        hue_bridge_state["lights"]["2"]["state"] = nlohmann::json::object();
-        hue_bridge_state["lights"]["2"]["state"]["on"] = false;
-        hue_bridge_state["lights"]["2"]["state"]["bri"] = 0;
-        hue_bridge_state["lights"]["2"]["state"]["ct"] = 366;
-        hue_bridge_state["lights"]["2"]["state"]["hue"] = 123456;
-        hue_bridge_state["lights"]["2"]["state"]["sat"] = 123;
-        hue_bridge_state["lights"]["2"]["state"]["xy"][0] = 0.102;
-        hue_bridge_state["lights"]["2"]["state"]["xy"][1] = 0.102;
-        hue_bridge_state["lights"]["2"]["state"]["alert"] = "none";
-        hue_bridge_state["lights"]["2"]["state"]["colormode"] = "ct";
-        hue_bridge_state["lights"]["2"]["state"]["reachable"] = true;
-        hue_bridge_state["lights"]["2"]["state"]["effect"] = "none";
-        hue_bridge_state["lights"]["2"]["swupdate"] = nlohmann::json::object();
-        hue_bridge_state["lights"]["2"]["swupdate"]["state"] = "noupdates";
-        hue_bridge_state["lights"]["2"]["swupdate"]["lastinstall"] = nullptr;
-        hue_bridge_state["lights"]["2"]["type"] = "Color light";
-        hue_bridge_state["lights"]["2"]["name"] = "Hue lamp 2";
-        hue_bridge_state["lights"]["2"]["modelid"] = "LST001";
-        hue_bridge_state["lights"]["2"]["uniqueid"] = "11:11:11:11:11:11:11:11-11";
-        hue_bridge_state["lights"]["2"]["swversion"] = "5.50.1.19085";
-        hue_bridge_state["lights"]["3"] = nlohmann::json::object();
-        hue_bridge_state["lights"]["3"]["state"] = nlohmann::json::object();
-        hue_bridge_state["lights"]["3"]["state"]["on"] = false;
-        hue_bridge_state["lights"]["3"]["state"]["bri"] = 254;
-        hue_bridge_state["lights"]["3"]["state"]["ct"] = 366;
-        hue_bridge_state["lights"]["3"]["state"]["hue"] = 123456;
-        hue_bridge_state["lights"]["3"]["state"]["sat"] = 123;
-        hue_bridge_state["lights"]["3"]["state"]["xy"][0] = 0.102;
-        hue_bridge_state["lights"]["3"]["state"]["xy"][1] = 0.102;
-        hue_bridge_state["lights"]["3"]["state"]["alert"] = "none";
-        hue_bridge_state["lights"]["3"]["state"]["colormode"] = "ct";
-        hue_bridge_state["lights"]["3"]["state"]["reachable"] = true;
-        hue_bridge_state["lights"]["3"]["state"]["effect"] = "none";
-        hue_bridge_state["lights"]["3"]["swupdate"] = nlohmann::json::object();
-        hue_bridge_state["lights"]["3"]["swupdate"]["state"] = "noupdates";
-        hue_bridge_state["lights"]["3"]["swupdate"]["lastinstall"] = nullptr;
-        hue_bridge_state["lights"]["3"]["type"] = "Extended color light";
-        hue_bridge_state["lights"]["3"]["name"] = "Hue lamp 3";
-        hue_bridge_state["lights"]["3"]["modelid"] = "LCT010";
-        hue_bridge_state["lights"]["3"]["manufacturername"] = "Philips";
-        hue_bridge_state["lights"]["3"]["productname"] = "Hue bloom";
-        hue_bridge_state["lights"]["3"]["swversion"] = "5.50.1.19085";
 
         EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), 80))
             .Times(AtLeast(1))
@@ -126,7 +88,7 @@ protected:
             .Times(AtLeast(1))
             .WillRepeatedly(Return(hue_bridge_state["lights"]["3"]));
     }
-    ~HueLightTest(){};
+    ~HueLightTest() {};
 };
 
 TEST_F(HueLightTest, Constructor)
@@ -692,15 +654,15 @@ TEST_F(HueLightTest, getColorHueSaturation)
     HueLight test_light_3 = test_bridge.getLight(3);
 
     EXPECT_EQ(std::make_pair(static_cast<uint16_t>(0), static_cast<uint8_t>(0)), ctest_light_1.getColorHueSaturation());
-    EXPECT_EQ(std::make_pair(static_cast<uint16_t>(123456), static_cast<uint8_t>(123)),
-        ctest_light_2.getColorHueSaturation());
-    EXPECT_EQ(std::make_pair(static_cast<uint16_t>(123456), static_cast<uint8_t>(123)),
-        ctest_light_3.getColorHueSaturation());
+    EXPECT_EQ(
+        std::make_pair(static_cast<uint16_t>(12345), static_cast<uint8_t>(123)), ctest_light_2.getColorHueSaturation());
+    EXPECT_EQ(
+        std::make_pair(static_cast<uint16_t>(12345), static_cast<uint8_t>(123)), ctest_light_3.getColorHueSaturation());
     EXPECT_EQ(std::make_pair(static_cast<uint16_t>(0), static_cast<uint8_t>(0)), test_light_1.getColorHueSaturation());
     EXPECT_EQ(
-        std::make_pair(static_cast<uint16_t>(123456), static_cast<uint8_t>(123)), test_light_2.getColorHueSaturation());
+        std::make_pair(static_cast<uint16_t>(12345), static_cast<uint8_t>(123)), test_light_2.getColorHueSaturation());
     EXPECT_EQ(
-        std::make_pair(static_cast<uint16_t>(123456), static_cast<uint8_t>(123)), test_light_3.getColorHueSaturation());
+        std::make_pair(static_cast<uint16_t>(12345), static_cast<uint8_t>(123)), test_light_3.getColorHueSaturation());
 }
 
 TEST_F(HueLightTest, setColorXY)

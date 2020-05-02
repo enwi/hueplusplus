@@ -23,6 +23,7 @@
 #ifndef INCLUDE_HUEPLUSPLUS_IHTTPHANDLER_H
 #define INCLUDE_HUEPLUSPLUS_IHTTPHANDLER_H
 
+#include <chrono>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -63,14 +64,14 @@ public:
     //! \param msg The message that should sent to the specified multicast address
     //! \param adr Optional ip or hostname in dotted decimal notation, default is "239.255.255.250"
     //! \param port Optional port the request is sent to, default is 1900
-    //! \param timeout Optional time to wait for responses in seconds, default is 5
+    //! \param timeout Optional time to wait for responses, default is 5 seconds
     //!
     //! Blocks for the duration of the timeout.
     //!
     //! \return vector of strings containing each received answer
     //! \throws std::system_error when system or socket operations fail
-    virtual std::vector<std::string> sendMulticast(
-        const std::string& msg, const std::string& adr = "239.255.255.250", int port = 1900, int timeout = 5) const = 0;
+    virtual std::vector<std::string> sendMulticast(const std::string& msg, const std::string& adr = "239.255.255.250",
+        int port = 1900, std::chrono::steady_clock::duration timeout = std::chrono::seconds(5)) const = 0;
 
     //! \brief Send a HTTP request with the given method to the specified host and return the body of the response.
     //!

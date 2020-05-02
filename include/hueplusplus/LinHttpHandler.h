@@ -52,11 +52,11 @@ public:
     //! address \param adr Optional String that contains an ip or hostname in
     //! dotted decimal notation, default is "239.255.255.250" \param port Optional
     //! integer that specifies the port to which the request is sent. Default is
-    //! 1900 \param timeout Optional Integer that specifies the timeout of the
-    //! request in seconds. Default is 5 \return Vector containing strings of each
+    //! 1900 \param timeout Optional The timeout of the
+    //! request. Default is 5 seconds \return Vector containing strings of each
     //! answer received
-    virtual std::vector<std::string> sendMulticast(
-        const std::string& msg, const std::string& adr = "239.255.255.250", int port = 1900, int timeout = 5) const;
+    std::vector<std::string> sendMulticast(const std::string& msg, const std::string& adr = "239.255.255.250",
+        int port = 1900, std::chrono::steady_clock::duration timeout = std::chrono::seconds(5)) const override;
 };
 } // namespace hueplusplus
 

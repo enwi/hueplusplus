@@ -39,8 +39,9 @@ public:
 
     MOCK_CONST_METHOD3(sendGetHTTPBody, std::string(const std::string& msg, const std::string& adr, int port));
 
-    MOCK_CONST_METHOD4(
-        sendMulticast, std::vector<std::string>(const std::string& msg, const std::string& adr, int port, int timeout));
+    MOCK_CONST_METHOD4(sendMulticast,
+        std::vector<std::string>(
+            const std::string& msg, const std::string& adr, int port, std::chrono::steady_clock::duration timeout));
 
     MOCK_CONST_METHOD6(sendHTTPRequest,
         std::string(const std::string& method, const std::string& uri, const std::string& content_type,

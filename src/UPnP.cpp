@@ -25,6 +25,8 @@
 #include <algorithm>
 #include <iostream>
 
+#include "hueplusplus/HueConfig.h"
+
 namespace hueplusplus
 {
 std::vector<std::pair<std::string, std::string>> UPnP::getDevices(std::shared_ptr<const IHttpHandler> handler)
@@ -33,7 +35,7 @@ std::vector<std::pair<std::string, std::string>> UPnP::getDevices(std::shared_pt
     std::vector<std::string> foundDevices
         = handler->sendMulticast("M-SEARCH * HTTP/1.1\r\nHOST: 239.255.255.250:1900\r\nMAN: "
                                  "\"ssdp:discover\"\r\nMX: 5\r\nST: ssdp:all\r\n\r\n",
-            "239.255.255.250", 1900, 5);
+            "239.255.255.250", 1900, Config::instance().getUPnPTimeout());
 
     std::vector<std::pair<std::string, std::string>> devices;
 
@@ -41,9 +43,19 @@ std::vector<std::pair<std::string, std::string>> UPnP::getDevices(std::shared_pt
     for (const std::string& s : foundDevices)
     {
         std::pair<std::string, std::string> device;
-        int start = s.find("LOCATION:") + 10;
+        std::size_t start = s.find("LOCATION:");
+        if (start == std::string::npos)
+        {
+            continue;
+        }
+        start += 10;
         device.first = s.substr(start, s.find("\r\n", start) - start);
-        start = s.find("SERVER:") + 8;
+        start = s.find("SERVER:");
+        if (start == std::string::npos)
+        {
+            continue;
+        }
+        start += 8;
         device.second = s.substr(start, s.find("\r\n", start) - start);
         if (std::find_if(devices.begin(), devices.end(),
                 [&](const std::pair<std::string, std::string>& item) { return item.first == device.first; })
