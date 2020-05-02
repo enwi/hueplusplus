@@ -765,12 +765,6 @@ protected:
         colorHueStrategy = std::move(strat);
     };
 
-    //! \brief Protected function that sets the HueCommandAPI.
-    //!
-    //! The HueCommandAPI is used for bridge communication
-    //! \param commandAPI the new HueCommandAPI
-    virtual void setCommandAPI(const HueCommandAPI& commandAPI) { commands = commandAPI; };
-
     //! \brief Utility function to send a put request to the light.
     //!
     //! \param request A nlohmann::json aka the request to send
@@ -794,7 +788,6 @@ protected:
         colorTemperatureStrategy; //!< holds a reference to the strategy that handles colortemperature commands
     std::shared_ptr<const ColorHueStrategy>
         colorHueStrategy; //!< holds a reference to the strategy that handles all color commands
-    HueCommandAPI commands; //!< A IHttpHandler that is used to communicate with the bridge
 };
 } // namespace hueplusplus
 

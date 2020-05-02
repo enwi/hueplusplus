@@ -282,7 +282,6 @@ protected:
 protected:
     int id;
     APICache state;
-    HueCommandAPI commands;
 };
 
 //! \brief Parameters necessary for creating a new Group.

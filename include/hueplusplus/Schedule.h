@@ -181,7 +181,6 @@ private:
 private:
     int id;
     APICache state;
-    HueCommandAPI commands;
 };
 
 //! \brief Parameters for creating a new Schedule.
