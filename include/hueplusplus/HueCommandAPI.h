@@ -135,9 +135,6 @@ private:
     //! \returns "/api/<username>/<path>"
     std::string CombinedPath(const std::string& path) const;
 
-public:
-    static constexpr std::chrono::steady_clock::duration minDelay = std::chrono::milliseconds(100);
-
 private:
     std::string ip;
     int port;

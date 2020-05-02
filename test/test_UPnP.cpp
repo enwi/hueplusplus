@@ -26,6 +26,7 @@
 #include "iostream"
 #include "testhelper.h"
 
+#include "hueplusplus/HueConfig.h"
 #include "hueplusplus/UPnP.h"
 #include "json/json.hpp"
 #include "mocks/mock_HttpHandler.h"
@@ -42,7 +43,7 @@ TEST(UPnP, getDevices)
     EXPECT_CALL(*handler,
         sendMulticast("M-SEARCH * HTTP/1.1\r\nHOST: 239.255.255.250:1900\r\nMAN: "
                       "\"ssdp:discover\"\r\nMX: 5\r\nST: ssdp:all\r\n\r\n",
-            "239.255.255.250", 1900, 5))
+            "239.255.255.250", 1900, Config::instance().getUPnPTimeout()))
         .Times(1)
         .WillRepeatedly(::testing::Return(getMulticastReply()));
 
