@@ -24,12 +24,11 @@
 
 #include <thread>
 
+#include "hueplusplus/HueConfig.h"
 #include "hueplusplus/HueExceptionMacro.h"
 
 namespace hueplusplus
 {
-constexpr std::chrono::steady_clock::duration HueCommandAPI::minDelay;
-
 namespace
 {
 // Runs functor with appropriate timeout and retries when timed out or connection reset
@@ -81,7 +80,7 @@ nlohmann::json HueCommandAPI::PUTRequest(const std::string& path, const nlohmann
 nlohmann::json HueCommandAPI::PUTRequest(
     const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const
 {
-    return HandleError(std::move(fileInfo), RunWithTimeout(timeout, minDelay, [&]() {
+    return HandleError(std::move(fileInfo), RunWithTimeout(timeout, Config::instance().getBridgeRequestDelay(), [&]() {
         return httpHandler->PUTJson(CombinedPath(path), request, ip, port);
     }));
 }
@@ -94,7 +93,7 @@ nlohmann::json HueCommandAPI::GETRequest(const std::string& path, const nlohmann
 nlohmann::json HueCommandAPI::GETRequest(
     const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const
 {
-    return HandleError(std::move(fileInfo), RunWithTimeout(timeout, minDelay, [&]() {
+    return HandleError(std::move(fileInfo), RunWithTimeout(timeout, Config::instance().getBridgeRequestDelay(), [&]() {
         return httpHandler->GETJson(CombinedPath(path), request, ip, port);
     }));
 }
@@ -107,7 +106,7 @@ nlohmann::json HueCommandAPI::DELETERequest(const std::string& path, const nlohm
 nlohmann::json HueCommandAPI::DELETERequest(
     const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const
 {
-    return HandleError(std::move(fileInfo), RunWithTimeout(timeout, minDelay, [&]() {
+    return HandleError(std::move(fileInfo), RunWithTimeout(timeout, Config::instance().getBridgeRequestDelay(), [&]() {
         return httpHandler->DELETEJson(CombinedPath(path), request, ip, port);
     }));
 }
@@ -120,7 +119,7 @@ nlohmann::json HueCommandAPI::POSTRequest(const std::string& path, const nlohman
 nlohmann::json HueCommandAPI::POSTRequest(
     const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const
 {
-    return HandleError(std::move(fileInfo), RunWithTimeout(timeout, minDelay, [&]() {
+    return HandleError(std::move(fileInfo), RunWithTimeout(timeout, Config::instance().getBridgeRequestDelay(), [&]() {
         return httpHandler->POSTJson(CombinedPath(path), request, ip, port);
     }));
 }

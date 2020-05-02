@@ -21,9 +21,35 @@
 **/
 
 #include <gtest/gtest.h>
+#include <hueplusplus/HueConfig.h>
+
+namespace
+{
+class TestConfig : public hueplusplus::Config
+{
+public:
+    TestConfig()
+    {
+        preAlertDelay = postAlertDelay = upnpTimeout = bridgeRequestDelay = requestUsernameDelay
+            = requestUsernameAttemptInterval = std::chrono::seconds(0);
+    }
+};
+
+// Environment sets config to disable all delays and speed up tests
+class Environment : public ::testing::Environment
+{
+public:
+    ~Environment() override {}
+
+    void SetUp() override { hueplusplus::Config::instance() = TestConfig(); }
+
+    void TearDown() override {}
+};
+} // namespace
 
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
+    ::testing::AddGlobalTestEnvironment(new Environment());
     return RUN_ALL_TESTS();
 }

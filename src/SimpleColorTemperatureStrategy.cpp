@@ -50,12 +50,12 @@ bool SimpleColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLig
         {
             return false;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(c_PRE_ALERT_DELAY));
+        std::this_thread::sleep_for(Config::instance().getPreAlertDelay());
         if (!light.alert())
         {
             return false;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(c_POST_ALERT_DELAY));
+        std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
         if (!on)
         {
             light.setColorTemperature(oldCT, 1);

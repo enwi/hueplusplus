@@ -174,7 +174,7 @@ std::string WinHttpHandler::send(const std::string& msg, const std::string& adr,
 }
 
 std::vector<std::string> WinHttpHandler::sendMulticast(
-    const std::string& msg, const std::string& adr, int port, int timeout) const
+    const std::string& msg, const std::string& adr, int port, std::chrono::steady_clock::duration timeout) const
 {
     struct addrinfo hints = {};
     hints.ai_family = AF_INET;
@@ -262,7 +262,7 @@ std::vector<std::string> WinHttpHandler::sendMulticast(
     const int recvbuflen = 2048;
     char recvbuf[recvbuflen] = {};
     std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-    while (std::chrono::steady_clock::now() - start < std::chrono::seconds(timeout))
+    while (std::chrono::steady_clock::now() - start < timeout)
     {
         int res = recv(connect_socket, recvbuf, recvbuflen, 0);
         if (res > 0)

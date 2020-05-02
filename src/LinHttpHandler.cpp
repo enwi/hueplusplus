@@ -139,7 +139,7 @@ std::string LinHttpHandler::send(const std::string& msg, const std::string& adr,
 }
 
 std::vector<std::string> LinHttpHandler::sendMulticast(
-    const std::string& msg, const std::string& adr, int port, int timeout) const
+    const std::string& msg, const std::string& adr, int port, std::chrono::steady_clock::duration timeout) const
 {
     hostent* server; // host information
     sockaddr_in server_addr; // server address
@@ -187,7 +187,7 @@ std::vector<std::string> LinHttpHandler::sendMulticast(
     char buffer[2048] = {}; // receive buffer
 
     std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-    while (std::chrono::steady_clock::now() - start < std::chrono::seconds(timeout))
+    while (std::chrono::steady_clock::now() - start < timeout)
     {
         ssize_t bytesReceived = recv(socketFD, &buffer, 2048, MSG_DONTWAIT);
         if (bytesReceived < 0)

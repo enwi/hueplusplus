@@ -44,12 +44,12 @@ bool ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, Hue
         {
             return false;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(c_PRE_ALERT_DELAY));
+        std::this_thread::sleep_for(Config::instance().getPreAlertDelay());
         if (!light.alert())
         {
             return false;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(c_POST_ALERT_DELAY));
+        std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
         if (!on)
         {
             light.setColorHueSaturation(oldHue, oldSat, 1);
@@ -68,12 +68,12 @@ bool ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, Hue
         {
             return false;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(c_PRE_ALERT_DELAY));
+        std::this_thread::sleep_for(Config::instance().getPreAlertDelay());
         if (!light.alert())
         {
             return false;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(c_POST_ALERT_DELAY));
+        std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
         if (!on)
         {
             light.setColorXY(oldX, oldY, 1);
@@ -91,12 +91,12 @@ bool ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, Hue
         {
             return false;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(c_PRE_ALERT_DELAY));
+        std::this_thread::sleep_for(Config::instance().getPreAlertDelay());
         if (!light.alert())
         {
             return false;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(c_POST_ALERT_DELAY));
+        std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
         if (!on)
         {
             light.setColorTemperature(oldCT, 1);
@@ -127,12 +127,12 @@ bool ExtendedColorHueStrategy::alertXY(float x, float y, HueLight& light) const
         {
             return false;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(c_PRE_ALERT_DELAY));
+        std::this_thread::sleep_for(Config::instance().getPreAlertDelay());
         if (!light.alert())
         {
             return false;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(c_POST_ALERT_DELAY));
+        std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
         if (!on)
         {
             light.setColorHueSaturation(oldHue, oldSat, 1);
@@ -151,12 +151,12 @@ bool ExtendedColorHueStrategy::alertXY(float x, float y, HueLight& light) const
         {
             return false;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(c_PRE_ALERT_DELAY));
+        std::this_thread::sleep_for(Config::instance().getPreAlertDelay());
         if (!light.alert())
         {
             return false;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(c_POST_ALERT_DELAY));
+        std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
         if (!on)
         {
             light.setColorXY(oldX, oldY, 1);
@@ -174,12 +174,12 @@ bool ExtendedColorHueStrategy::alertXY(float x, float y, HueLight& light) const
         {
             return false;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(c_PRE_ALERT_DELAY));
+        std::this_thread::sleep_for(Config::instance().getPreAlertDelay());
         if (!light.alert())
         {
             return false;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(c_POST_ALERT_DELAY));
+        std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
         if (!on)
         {
             light.setColorTemperature(oldCT, 1);
@@ -210,12 +210,12 @@ bool ExtendedColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLigh
         {
             return false;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(c_PRE_ALERT_DELAY));
+        std::this_thread::sleep_for(Config::instance().getPreAlertDelay());
         if (!light.alert())
         {
             return false;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(c_POST_ALERT_DELAY));
+        std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
         if (!on)
         {
             light.setColorHueSaturation(oldHue, oldSat, 1);
@@ -234,12 +234,12 @@ bool ExtendedColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLigh
         {
             return false;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(c_PRE_ALERT_DELAY));
+        std::this_thread::sleep_for(Config::instance().getPreAlertDelay());
         if (!light.alert())
         {
             return false;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(c_POST_ALERT_DELAY));
+        std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
         if (!on)
         {
             light.setColorXY(oldX, oldY, 1);
@@ -257,12 +257,12 @@ bool ExtendedColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLigh
         {
             return false;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(c_PRE_ALERT_DELAY));
+        std::this_thread::sleep_for(Config::instance().getPreAlertDelay());
         if (!light.alert())
         {
             return false;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(c_POST_ALERT_DELAY));
+        std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
         if (!on)
         {
             light.setColorTemperature(oldCT, 1);

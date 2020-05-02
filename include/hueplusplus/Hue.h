@@ -360,7 +360,6 @@ private:
 
     std::shared_ptr<const IHttpHandler> http_handler; //!< A IHttpHandler that is used to communicate with the
                                                       //!< bridge
-    std::chrono::steady_clock::duration refreshDuration;
 
     std::shared_ptr<APICache> stateCache;
     ResourceList<HueLight, int> lights;
