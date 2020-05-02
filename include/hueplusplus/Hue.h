@@ -38,11 +38,10 @@
 #include "HueDeviceTypes.h"
 #include "HueLight.h"
 #include "IHttpHandler.h"
+#include "ResourceList.h"
 #include "Schedule.h"
 
 #include "json/json.hpp"
-
-#include "ResourceList.h"
 
 //! \brief Namespace for the hueplusplus library
 namespace hueplusplus
@@ -361,14 +360,12 @@ private:
 
     std::shared_ptr<const IHttpHandler> http_handler; //!< A IHttpHandler that is used to communicate with the
                                                       //!< bridge
-    HueCommandAPI commands; //!< A HueCommandAPI that is used to communicate with the bridge
     std::chrono::steady_clock::duration refreshDuration;
 
     std::shared_ptr<APICache> stateCache;
     ResourceList<HueLight, int> lights;
     CreateableResourceList<Group, int, CreateGroup> groups;
     CreateableResourceList<Schedule, int, CreateSchedule> schedules;
-
 };
 } // namespace hueplusplus
 

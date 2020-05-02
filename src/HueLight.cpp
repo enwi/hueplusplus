@@ -141,7 +141,7 @@ bool HueLight::alert()
 
 StateTransaction HueLight::transaction()
 {
-    return StateTransaction(commands, "/lights/" + std::to_string(id) + "/state", state.getValue().at("state"));
+    return StateTransaction(state.getCommandAPI(), "/lights/" + std::to_string(id) + "/state", state.getValue().at("state"));
 }
 
 void HueLight::refresh()
@@ -159,14 +159,13 @@ HueLight::HueLight(int id, const HueCommandAPI& commands, std::shared_ptr<const 
       colorType(ColorType::NONE),
       brightnessStrategy(std::move(brightnessStrategy)),
       colorTemperatureStrategy(std::move(colorTempStrategy)),
-      colorHueStrategy(std::move(colorHueStrategy)),
-      commands(commands)
+      colorHueStrategy(std::move(colorHueStrategy))
 {
     state.refresh();
 }
 
 nlohmann::json HueLight::sendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo)
 {
-    return commands.PUTRequest("/lights/" + std::to_string(id) + subPath, request, std::move(fileInfo));
+    return state.getCommandAPI().PUTRequest("/lights/" + std::to_string(id) + subPath, request, std::move(fileInfo));
 }
 } // namespace hueplusplus

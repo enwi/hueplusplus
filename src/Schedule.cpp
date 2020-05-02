@@ -81,7 +81,7 @@ std::string ScheduleCommand::methodToString(Method m)
 }
 
 Schedule::Schedule(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration)
-    : id(id), state("/schedules/" + std::to_string(id), commands, refreshDuration), commands(commands)
+    : id(id), state("/schedules/" + std::to_string(id), commands, refreshDuration)
 {
     state.refresh();
 }
@@ -188,7 +188,7 @@ void Schedule::setAutodelete(bool autodelete)
 
 void Schedule::sendPutRequest(const nlohmann::json& request, FileInfo fileInfo)
 {
-    commands.PUTRequest("/schedules/" + std::to_string(id), request, std::move(fileInfo));
+    state.getCommandAPI().PUTRequest("/schedules/" + std::to_string(id), request, std::move(fileInfo));
 }
 
 CreateSchedule& CreateSchedule::setName(const std::string& name)
