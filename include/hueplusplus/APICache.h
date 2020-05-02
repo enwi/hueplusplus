@@ -34,8 +34,14 @@ namespace hueplusplus
 class APICache
 {
 public:
+    //! \brief Constructs APICache which forwards to a base cache
+    //! \param baseCache Base cache providing a parent state, must not be nullptr
+    //! \param subEntry Key of the child to use in the base cache
+    //!
+    //! Uses same refresh duration as base cache. Refresh calls are forwarded.
     APICache(std::shared_ptr<APICache> baseCache, const std::string& subEntry);
-    //! \brief Constructs APICache
+
+    //! \brief Constructs APICache with an own internal json cache
     //! \param path URL appended after username, may be empty.
     //! \param commands HueCommandAPI for making API requests.
     //! \param refresh Interval between cache refreshing. May be 0 to always refresh.
