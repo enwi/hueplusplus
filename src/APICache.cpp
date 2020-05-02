@@ -114,4 +114,9 @@ std::chrono::steady_clock::duration APICache::getRefreshDuration() const
 {
     return refreshDuration;
 }
+
+HueCommandAPI& APICache::getCommandAPI()
+{
+    return commands;
+}
 } // namespace hueplusplus
