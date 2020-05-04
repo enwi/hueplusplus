@@ -27,9 +27,9 @@
 #include <string>
 #include <vector>
 
-#include "Utils.h"
 #include "APICache.h"
 #include "HueException.h"
+#include "Utils.h"
 
 namespace hueplusplus
 {
@@ -48,14 +48,15 @@ public:
         "IdType must be integral or string");
 
     //! \brief Construct ResourceList using a base cache and optional factory function
-    //! \param path Path of the resource list
     //! \param baseCache Base cache which holds the parent state, not nullptr
     //! \param cacheEntry Entry name of the list state in the base cache
+    //! \param refreshDuration Interval between refreshing the cache
     //! \param factory Optional factory function to create Resources.
     //! Necessary if Resource is not constructible as described above.
-    ResourceList(const std::string& path, std::shared_ptr<APICache> baseCache, const std::string& cacheEntry,
+    ResourceList(std::shared_ptr<APICache> baseCache, const std::string& cacheEntry,
+        std::chrono::steady_clock::duration refreshDuration,
         const std::function<Resource(int, const nlohmann::json&)>& factory = nullptr)
-        : stateCache(baseCache, cacheEntry), factory(factory), path(path + '/')
+        : stateCache(baseCache, cacheEntry, refreshDuration), factory(factory), path(stateCache.getRequestPath() + '/')
     {}
     //! \brief Construct ResourceList with a separate cache and optional factory function
     //! \param commands HueCommandAPI for requests

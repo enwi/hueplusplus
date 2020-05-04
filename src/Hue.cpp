@@ -136,12 +136,14 @@ Hue::Hue(const std::string& ip, const int port, const std::string& username,
       username(username),
       port(port),
       http_handler(std::move(handler)),
-      stateCache(std::make_shared<APICache>("", HueCommandAPI(ip, port, username, http_handler), refreshDuration)),
-      lights("/lights", stateCache, "lights",
+      refreshDuration(refreshDuration),
+      stateCache(std::make_shared<APICache>(
+          "", HueCommandAPI(ip, port, username, http_handler), std::chrono::steady_clock::duration::max())),
+      lights(stateCache, "lights", refreshDuration,
           [factory = HueLightFactory(stateCache->getCommandAPI(), refreshDuration)](
               int id, const nlohmann::json& state) mutable { return factory.createLight(state, id); }),
-      groups("/groups", stateCache, "groups"),
-      schedules("/schedules", stateCache, "schedules")
+      groups(stateCache, "groups", refreshDuration),
+      schedules(stateCache, "schedules", refreshDuration)
 {}
 
 void Hue::refresh()
@@ -419,12 +421,11 @@ std::string Hue::getPictureOfModel(const std::string& model_id) const
 void Hue::setHttpHandler(std::shared_ptr<const IHttpHandler> handler)
 {
     http_handler = handler;
-    stateCache
-        = std::make_shared<APICache>("", HueCommandAPI(ip, port, username, handler), stateCache->getRefreshDuration());
-    lights = ResourceList<HueLight, int>("/lights", stateCache, "lights",
-        [factory = HueLightFactory(stateCache->getCommandAPI(), stateCache->getRefreshDuration())](
+    stateCache = std::make_shared<APICache>("", HueCommandAPI(ip, port, username, handler), refreshDuration);
+    lights = ResourceList<HueLight, int>(stateCache, "lights", refreshDuration,
+        [factory = HueLightFactory(stateCache->getCommandAPI(), refreshDuration)](
             int id, const nlohmann::json& state) mutable { return factory.createLight(state, id); });
-    groups = CreateableResourceList<Group, int, CreateGroup>("/groups", stateCache, "groups");
-    schedules = CreateableResourceList<Schedule, int, CreateSchedule>("/schedules", stateCache, "schedules");
+    groups = CreateableResourceList<Group, int, CreateGroup>(stateCache, "groups", refreshDuration);
+    schedules = CreateableResourceList<Schedule, int, CreateSchedule>(stateCache, "schedules", refreshDuration);
 }
 } // namespace hueplusplus
