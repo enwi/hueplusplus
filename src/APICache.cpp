@@ -25,11 +25,12 @@
 
 namespace hueplusplus
 {
-APICache::APICache(std::shared_ptr<APICache> baseCache, const std::string& subEntry)
+APICache::APICache(
+    std::shared_ptr<APICache> baseCache, const std::string& subEntry, std::chrono::steady_clock::duration refresh)
     : base(baseCache),
       path(subEntry),
       commands(baseCache->commands),
-      refreshDuration(baseCache->refreshDuration),
+      refreshDuration(refresh),
       lastRefresh(baseCache->lastRefresh)
 {}
 
@@ -39,22 +40,37 @@ APICache::APICache(const std::string& path, const HueCommandAPI& commands, std::
 
 void APICache::refresh()
 {
-    if (base)
+    // Only refresh part of the cache, because that is more efficient
+    if (base && base->needsRefresh())
     {
         base->refresh();
     }
     else
     {
-        value = commands.GETRequest(path, nlohmann::json::object(), CURRENT_FILE_INFO);
+        nlohmann::json result = commands.GETRequest(getRequestPath(), nlohmann::json::object(), CURRENT_FILE_INFO);
         lastRefresh = std::chrono::steady_clock::now();
+        if (base)
+        {
+            base->value[path] = std::move(result);
+        }
+        else
+        {
+            value = std::move(result);
+        }
     }
 }
 
 nlohmann::json& APICache::getValue()
 {
+    if (needsRefresh())
+    {
+        refresh();
+    }
     if (base)
     {
-        nlohmann::json& baseState = base->getValue();
+        // Do not call getValue here, because that could cause another refresh
+        // if base has refresh duration 0
+        nlohmann::json& baseState = base->value;
         auto pos = baseState.find(path);
         if (pos != baseState.end())
         {
@@ -67,24 +83,6 @@ nlohmann::json& APICache::getValue()
     }
     else
     {
-        using clock = std::chrono::steady_clock;
-        // Explicitly check for zero in case refreshDuration is duration::max()
-        // Negative duration causes overflow check to overflow itself
-        if (lastRefresh.time_since_epoch().count() == 0 || refreshDuration.count() < 0)
-        {
-            // No value set yet
-            refresh();
-        }
-        // Check if nextRefresh would overflow (assumes lastRefresh is not negative, which it should not be).
-        // If addition would overflow, do not refresh
-        else if (clock::duration::max() - refreshDuration > lastRefresh.time_since_epoch())
-        {
-            clock::time_point nextRefresh = lastRefresh + refreshDuration;
-            if (clock::now() >= nextRefresh)
-            {
-                refresh();
-            }
-        }
         return value;
     }
 }
@@ -118,5 +116,45 @@ std::chrono::steady_clock::duration APICache::getRefreshDuration() const
 HueCommandAPI& APICache::getCommandAPI()
 {
     return commands;
+}
+
+bool APICache::needsRefresh()
+{
+    using clock = std::chrono::steady_clock;
+    if (base)
+    {
+        // Update lastRefresh in case base was refreshed
+        lastRefresh = std::max(lastRefresh, base->lastRefresh);
+    }
+
+    // Explicitly check for zero in case refreshDuration is duration::max()
+    // Negative duration causes overflow check to overflow itself
+    if (lastRefresh.time_since_epoch().count() == 0 || refreshDuration.count() < 0)
+    {
+        // No value set yet
+        return true;
+    }
+    // Check if nextRefresh would overflow (assumes lastRefresh is not negative, which it should not be).
+    // If addition would overflow, do not refresh
+    else if (clock::duration::max() - refreshDuration > lastRefresh.time_since_epoch())
+    {
+        clock::time_point nextRefresh = lastRefresh + refreshDuration;
+        if (clock::now() >= nextRefresh)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+std::string APICache::getRequestPath() const
+{
+    std::string result;
+    if (base)
+    {
+        result = base->getRequestPath();
+        result.push_back('/');
+    }
+    result.append(path);
+    return result;
 }
 } // namespace hueplusplus
