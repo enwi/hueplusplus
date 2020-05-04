@@ -37,9 +37,12 @@ public:
     //! \brief Constructs APICache which forwards to a base cache
     //! \param baseCache Base cache providing a parent state, must not be nullptr
     //! \param subEntry Key of the child to use in the base cache
+    //! \param refresh Interval between cache refreshing. May be 0 to always refresh.
+    //! This is independent from the base cache refresh rate.
     //!
-    //! Uses same refresh duration as base cache. Refresh calls are forwarded.
-    APICache(std::shared_ptr<APICache> baseCache, const std::string& subEntry);
+    //! Uses same refresh duration as base cache. Refreshes only part of the base cache.
+    APICache(
+        std::shared_ptr<APICache> baseCache, const std::string& subEntry, std::chrono::steady_clock::duration refresh);
 
     //! \brief Constructs APICache with an own internal json cache
     //! \param path URL appended after username, may be empty.
@@ -52,6 +55,8 @@ public:
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
+    //!
+    //! If there is a base cache, refreshes only the used part of that cache.
     void refresh();
 
     //! \brief Get cached value, refresh if necessary.
@@ -69,6 +74,13 @@ public:
 
     //! \brief Get HueCommandAPI used for requests
     HueCommandAPI& getCommandAPI();
+
+    //! \brief Get path the cache is refreshed from
+    //! \returns Request path as passed to HueCommandAPI::GETRequest
+    std::string getRequestPath() const;
+
+private:
+    bool needsRefresh();
 
 private:
     std::shared_ptr<APICache> base;
