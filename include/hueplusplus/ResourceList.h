@@ -66,7 +66,7 @@ public:
     //! Necessary if Resource is not constructible as described above.
     ResourceList(const HueCommandAPI& commands, const std::string& path,
         std::chrono::steady_clock::duration refreshDuration,
-        const std::function<Resource(int, const nlohmann::json&)>& factory = nullptr)
+        const std::function<Resource(IdType, const nlohmann::json&)>& factory = nullptr)
         : stateCache(path, commands, refreshDuration), factory(factory), path(path + '/')
     {}
 
@@ -230,7 +230,7 @@ private:
 
 protected:
     APICache stateCache;
-    std::function<Resource(int, const nlohmann::json&)> factory;
+    std::function<Resource(IdType, const nlohmann::json&)> factory;
     std::string path;
     std::map<IdType, Resource> resources;
 };
