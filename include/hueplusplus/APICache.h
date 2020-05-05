@@ -74,6 +74,8 @@ public:
 
     //! \brief Get HueCommandAPI used for requests
     HueCommandAPI& getCommandAPI();
+    //! \brief Get HueCommandAPI used for requests
+    const HueCommandAPI& getCommandAPI() const;
 
     //! \brief Get path the cache is refreshed from
     //! \returns Request path as passed to HueCommandAPI::GETRequest
