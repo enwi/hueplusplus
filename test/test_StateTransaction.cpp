@@ -49,6 +49,32 @@ TEST(StateTransaction, commit)
             StateTransaction(commands, "/path", nlohmann::json::object()).setOn(false).setBrightness(100).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
+    // Do not trim
+    {
+        const nlohmann::json request = {{"on", false}, {"bri", 100}};
+        const nlohmann::json state = {{"on", false}, {"bri", 100}};
+        nlohmann::json response = {{{"success", {{"/path/on", false}}}}, {{"success", {{"/path/bri", 100}}}}};
+        EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
+        EXPECT_TRUE(StateTransaction(commands, "/path", state).setOn(false).setBrightness(100).commit(false));
+        Mock::VerifyAndClearExpectations(handler.get());
+    }
+}
+
+TEST(StateTransaction, toScheduleCommand)
+{
+    auto handler = std::make_shared<MockHttpHandler>();
+    HueCommandAPI commands(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+    const std::string requestPath = "/api/" + getBridgeUsername() + "/path";
+    nlohmann::json request = {{"on", false}, {"bri", 100}};
+
+    ScheduleCommand command = StateTransaction(commands, "/path", nlohmann::json::object())
+                                  .setOn(false)
+                                  .setBrightness(100)
+                                  .toScheduleCommand();
+    Mock::VerifyAndClearExpectations(handler.get());
+    EXPECT_EQ(ScheduleCommand::Method::put, command.getMethod());
+    EXPECT_EQ(request, command.getBody());
+    EXPECT_EQ(requestPath, command.getAddress());
 }
 
 TEST(StateTransaction, setOn)
