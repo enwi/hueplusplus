@@ -199,7 +199,7 @@ CreateSchedule& CreateSchedule::setName(const std::string& name)
 
 CreateSchedule& CreateSchedule::setDescription(const std::string& description)
 {
-    request["descripton"] = description;
+    request["description"] = description;
     return *this;
 }
 

@@ -288,3 +288,68 @@ TEST_F(ScheduleTest, setAutodelete)
     expectGetState(id);
     schedule.setAutodelete(autodelete);
 }
+
+TEST(CreateSchedule, setName)
+{
+    const std::string name = "New schedule";
+    const nlohmann::json request = {{"name", name}};
+    EXPECT_EQ(request, CreateSchedule().setName(name).getRequest());
+}
+
+TEST(CreateSchedule, setDescription)
+{
+    const std::string description = "New schedule description";
+    {
+        const nlohmann::json request = {{"description", description}};
+        EXPECT_EQ(request, CreateSchedule().setDescription(description).getRequest());
+    }
+    {
+        const std::string name = "New schedule name";
+        const nlohmann::json request = {{"name", name}, {"description", description}};
+        EXPECT_EQ(request, CreateSchedule().setName(name).setDescription(description).getRequest());
+    }
+}
+
+TEST(CreateSchedule, setCommand)
+{
+    const nlohmann::json commandJson = {{"address", "/api/asdf"}, {"method", "PUT"}, {"body", {}}};
+    ScheduleCommand command {commandJson};
+    const nlohmann::json request = {{"command", commandJson}};
+    EXPECT_EQ(request, CreateSchedule().setCommand(command).getRequest());
+}
+
+TEST(CreateSchedule, setTime)
+{
+    const time::AbsoluteTime time(std::chrono::system_clock::now());
+    const nlohmann::json request = {{"localtime", time.toString()}};
+    EXPECT_EQ(request, CreateSchedule().setTime(time::TimePattern(time)).getRequest());
+}
+
+TEST(CreateSchedule, setStatus)
+{
+    {
+        const nlohmann::json request = {{"status", "enabled"}};
+        EXPECT_EQ(request, CreateSchedule().setStatus(Schedule::Status::enabled).getRequest());
+    }
+    {
+        const nlohmann::json request = {{"status", "disabled"}};
+        EXPECT_EQ(request, CreateSchedule().setStatus(Schedule::Status::disabled).getRequest());
+    }
+}
+
+TEST(CreateSchedule, setAutodelete)
+{
+    {
+        const nlohmann::json request = { {"autodelete", true} };
+        EXPECT_EQ(request, CreateSchedule().setAutodelete(true).getRequest());
+    }
+}
+
+
+TEST(CreateSchedule, setRecycle)
+{
+    {
+        const nlohmann::json request = {{"recycle", true}};
+        EXPECT_EQ(request, CreateSchedule().setRecycle(true).getRequest());
+    }
+}
