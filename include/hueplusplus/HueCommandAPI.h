@@ -119,6 +119,9 @@ public:
     //! \overload
     nlohmann::json POSTRequest(const std::string& path, const nlohmann::json& request) const;
 
+    //! \brief Combines path with api prefix and username
+    //! \returns "/api/<username>/<path>"
+    std::string combinedPath(const std::string& path) const;
 private:
     struct TimeoutData
     {
@@ -130,10 +133,6 @@ private:
     //! \throws HueAPIResponseException when response contains an error
     //! \returns \ref response if there is no error
     nlohmann::json HandleError(FileInfo fileInfo, const nlohmann::json& response) const;
-
-    //! \brief Combines path with api prefix and username
-    //! \returns "/api/<username>/<path>"
-    std::string CombinedPath(const std::string& path) const;
 
 private:
     std::string ip;
