@@ -81,7 +81,7 @@ nlohmann::json HueCommandAPI::PUTRequest(
     const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const
 {
     return HandleError(std::move(fileInfo), RunWithTimeout(timeout, Config::instance().getBridgeRequestDelay(), [&]() {
-        return httpHandler->PUTJson(CombinedPath(path), request, ip, port);
+        return httpHandler->PUTJson(combinedPath(path), request, ip, port);
     }));
 }
 
@@ -94,7 +94,7 @@ nlohmann::json HueCommandAPI::GETRequest(
     const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const
 {
     return HandleError(std::move(fileInfo), RunWithTimeout(timeout, Config::instance().getBridgeRequestDelay(), [&]() {
-        return httpHandler->GETJson(CombinedPath(path), request, ip, port);
+        return httpHandler->GETJson(combinedPath(path), request, ip, port);
     }));
 }
 
@@ -107,7 +107,7 @@ nlohmann::json HueCommandAPI::DELETERequest(
     const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const
 {
     return HandleError(std::move(fileInfo), RunWithTimeout(timeout, Config::instance().getBridgeRequestDelay(), [&]() {
-        return httpHandler->DELETEJson(CombinedPath(path), request, ip, port);
+        return httpHandler->DELETEJson(combinedPath(path), request, ip, port);
     }));
 }
 
@@ -120,7 +120,7 @@ nlohmann::json HueCommandAPI::POSTRequest(
     const std::string& path, const nlohmann::json& request, FileInfo fileInfo) const
 {
     return HandleError(std::move(fileInfo), RunWithTimeout(timeout, Config::instance().getBridgeRequestDelay(), [&]() {
-        return httpHandler->POSTJson(CombinedPath(path), request, ip, port);
+        return httpHandler->POSTJson(combinedPath(path), request, ip, port);
     }));
 }
 
@@ -143,7 +143,7 @@ nlohmann::json HueCommandAPI::HandleError(FileInfo fileInfo, const nlohmann::jso
     return response;
 }
 
-std::string HueCommandAPI::CombinedPath(const std::string& path) const
+std::string HueCommandAPI::combinedPath(const std::string& path) const
 {
     std::string result = "/api/";
     result.append(username);
