@@ -62,7 +62,7 @@ public:
 
     //! \brief Sends a HTTP PUT request to the bridge and returns the response
     //!
-    //! This function will block until at least \ref minDelay has passed to any previous request
+    //! This function will block until at least Config::getBridgeRequestDelay() has passed to any previous request
     //! \param path API request path (appended after /api/{username})
     //! \param request Request to the api, may be empty
     //! \param fileInfo File information for thrown exceptions.
@@ -76,7 +76,7 @@ public:
 
     //! \brief Sends a HTTP GET request to the bridge and returns the response
     //!
-    //! This function will block until at least \ref minDelay has passed to any previous request
+    //! This function will block until at least Config::getBridgeRequestDelay() has passed to any previous request
     //! \param path API request path (appended after /api/{username})
     //! \param request Request to the api, may be empty
     //! \param fileInfo File information for thrown exceptions.
@@ -91,7 +91,7 @@ public:
 
     //! \brief Sends a HTTP DELETE request to the bridge and returns the response
     //!
-    //! This function will block until at least \ref minDelay has passed to any previous request
+    //! This function will block until at least Config::getBridgeRequestDelay() has passed to any previous request
     //! \param path API request path (appended after /api/{username})
     //! \param request Request to the api, may be empty
     //! \param fileInfo File information for thrown exceptions.
@@ -106,7 +106,7 @@ public:
 
     //! \brief Sends a HTTP POST request to the bridge and returns the response
     //!
-    //! This function will block until at least \ref minDelay has passed to any previous request
+    //! This function will block until at least Config::getBridgeRequestDelay() has passed to any previous request
     //! \param path API request path (appended after /api/{username})
     //! \param request Request to the api, may be empty
     //! \param fileInfo File information for thrown exceptions.
