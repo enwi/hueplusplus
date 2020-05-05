@@ -52,14 +52,17 @@ public:
     StateTransaction(StateTransaction&&) = default;
 
     //! \brief Commit transaction and make request.
+    //! \param trimRequest Optional. When true, request parameters that are unneccessary based on
+    //! the current state are removed. This reduces load on the bridge. On the other hand, an outdated
+    //! state might cause requests to be dropped unexpectedly. Has no effect on groups.
     //! \returns true on success or when no change was requested.
-    //! \note After changing the state of a HueLight or Group, 
+    //! \note After changing the state of a HueLight or Group,
     //! refresh() must be called if the updated values are needed immediately.
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contains no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    bool commit() &&;
+    bool commit(bool trimRequest = true) &&;
 
     //! \brief Turn light on or off.
     //! \param on true for on, false for off
@@ -132,7 +135,7 @@ public:
     //! \brief Set transition time for the request.
     //! \param transition Transition time in 100ms, default for any request is 400ms.
     //! \returns This transaction for chaining calls
-    //! \note The transition only applies to the current request. 
+    //! \note The transition only applies to the current request.
     //! A request without any changes only containing a transition is pointless and is not sent.
     StateTransaction&& setTransition(uint16_t transition) &&;
     //! \brief Trigger an alert.
@@ -147,7 +150,11 @@ public:
     //! \returns This transaction for chaining calls
     StateTransaction&& stopAlert() &&;
 
-protected:
+private:
+    //! \brief Remove parts from request that are already set in state
+    void trimRequest();
+
+private:
     const HueCommandAPI& commands;
     std::string path;
     nlohmann::json state;
