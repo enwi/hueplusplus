@@ -20,6 +20,7 @@
 **/
 
 #include <gtest/gtest.h>
+#include <hueplusplus/HueException.h>
 #include <hueplusplus/TimePattern.h>
 
 using namespace hueplusplus::time;
@@ -333,6 +334,50 @@ TEST(TimePattern, Undefined)
     {
         TimePattern pattern = TimePattern::parse("none");
         EXPECT_EQ(TimePattern::Type::undefined, pattern.getType());
+    }
+    EXPECT_THROW(TimePattern::parse("bla"), hueplusplus::HueException);
+}
+
+TEST(TimePattern, CopyConstructor)
+{
+    {
+        TimePattern pattern;
+        TimePattern copy = pattern;
+        EXPECT_EQ(TimePattern::Type::undefined, copy.getType());
+    }
+    {
+        const AbsoluteTime abs(system_clock::now());
+        const TimePattern pattern(abs);
+        const TimePattern copy(pattern);
+        ASSERT_EQ(TimePattern::Type::absolute, copy.getType());
+        EXPECT_EQ(abs.getBaseTime(), copy.asAbsolute().getBaseTime());
+    }
+    {
+        const RecurringTime rec(12h + 30min, Weekdays::monday(), 1h);
+        const TimePattern pattern(rec);
+        const TimePattern copy(pattern);
+        ASSERT_EQ(TimePattern::Type::recurring, copy.getType());
+        EXPECT_EQ(rec.getDaytime(), copy.asRecurring().getDaytime());
+        EXPECT_EQ(rec.getWeekdays(), copy.asRecurring().getWeekdays());
+        EXPECT_EQ(rec.getRandomVariation(), copy.asRecurring().getRandomVariation());
+    }
+    {
+        const TimeInterval interval(12h + 30min, 13h + 20min, Weekdays::friday());
+        const TimePattern pattern(interval);
+        const TimePattern copy(pattern);
+        ASSERT_EQ(TimePattern::Type::interval, copy.getType());
+        EXPECT_EQ(interval.getStartTime(), copy.asInterval().getStartTime());
+        EXPECT_EQ(interval.getEndTime(), copy.asInterval().getEndTime());
+        EXPECT_EQ(interval.getWeekdays(), copy.asInterval().getWeekdays());
+    }
+    {
+        const Timer timer(1h + 30min, 5, 20s);
+        const TimePattern pattern(timer);
+        const TimePattern copy(pattern);
+        ASSERT_EQ(TimePattern::Type::timer, copy.getType());
+        EXPECT_EQ(timer.getExpiryTime(), copy.asTimer().getExpiryTime());
+        EXPECT_EQ(timer.getRandomVariation(), copy.asTimer().getRandomVariation());
+        EXPECT_EQ(timer.getNumberOfExecutions(), copy.asTimer().getNumberOfExecutions());
     }
 }
 

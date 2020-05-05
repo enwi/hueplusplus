@@ -40,11 +40,12 @@ set(TEST_SOURCES
     test_HueLightFactory.cpp
     test_HueCommandAPI.cpp
     test_Main.cpp
+    test_UPnP.cpp
+    test_ResourceList.cpp
+    test_Schedule.cpp
     test_SimpleBrightnessStrategy.cpp
     test_SimpleColorHueStrategy.cpp
     test_SimpleColorTemperatureStrategy.cpp
-    test_UPnP.cpp
-    test_Schedule.cpp
     test_StateTransaction.cpp
     test_TimePattern.cpp)
 
