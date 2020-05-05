@@ -26,6 +26,7 @@
 #include <string>
 
 #include "HueCommandAPI.h"
+#include "Schedule.h"
 
 #include "json/json.hpp"
 
@@ -63,6 +64,10 @@ public:
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
     bool commit(bool trimRequest = true) &&;
+
+    //! \brief Create a ScheduleCommand from the transaction
+    //! \returns A ScheduleCommand that can be used to execute this transaction on a Schedule.
+    ScheduleCommand toScheduleCommand() &&;
 
     //! \brief Turn light on or off.
     //! \param on true for on, false for off
