@@ -22,6 +22,8 @@
 
 #include "hueplusplus/StateTransaction.h"
 
+#include <set>
+
 #include "hueplusplus/HueExceptionMacro.h"
 #include "hueplusplus/StateTransaction.h"
 #include "hueplusplus/Utils.h"
@@ -35,8 +37,12 @@ StateTransaction::StateTransaction(
     assert(currentState.is_object());
 }
 
-bool StateTransaction::commit() &&
+bool StateTransaction::commit(bool trimRequest) &&
 {
+    if (trimRequest)
+    {
+        this->trimRequest();
+    }
     // Empty request or request with only transition makes no sense
     if (!request.empty() && !(request.size() == 1 && request.count("transitiontime")))
     {
@@ -49,7 +55,7 @@ bool StateTransaction::commit() &&
                 // Turn on if it was turned off
                 request["on"] = true;
             }
-            else if(request.value("bri", 254) == 0 && state.value("on", true))
+            else if (request.value("bri", 254) == 0 && state.value("on", true))
             {
                 // Turn off if brightness is 0
                 request["on"] = false;
@@ -64,39 +70,27 @@ bool StateTransaction::commit() &&
 
 StateTransaction&& StateTransaction::setOn(bool on) &&
 {
-    if (!state.count("on") || state["on"] != on)
-    {
-        request["on"] = on;
-    }
+    request["on"] = on;
     return std::move(*this);
 }
 
 StateTransaction&& StateTransaction::setBrightness(uint8_t brightness) &&
 {
     uint8_t clamped = std::min<uint8_t>(brightness, 254);
-    if (!state.count("bri") || state["bri"].get<unsigned int>() != clamped)
-    {
-        request["bri"] = clamped;
-    }
+    request["bri"] = clamped;
     return std::move(*this);
 }
 
 StateTransaction&& StateTransaction::setColorSaturation(uint8_t saturation) &&
 {
     uint8_t clamped = std::min<uint8_t>(saturation, 254);
-    if (!state.count("sat") || state["sat"].get<unsigned int>() != clamped || state.value("colormode", "") != "hs")
-    {
-        request["sat"] = clamped;
-    }
+    request["sat"] = clamped;
     return std::move(*this);
 }
 
 StateTransaction&& StateTransaction::setColorHue(uint16_t hue) &&
 {
-    if (!state.count("hue") || state["hue"].get<int>() != hue || state.value("colormode", "") != "hs")
-    {
-        request["hue"] = hue;
-    }
+    request["hue"] = hue;
     return std::move(*this);
 }
 
@@ -104,32 +98,20 @@ StateTransaction&& StateTransaction::setColorXY(float x, float y) &&
 {
     float clampedX = std::max(0.f, std::min(x, 1.f));
     float clampedY = std::max(0.f, std::min(y, 1.f));
-    if (!state.count("xy") || !state.count("colormode") || !state["xy"].is_array()
-        || !utils::floatEquals(state["xy"][0].get<float>(), clampedX)
-        || !utils::floatEquals(state["xy"][1].get<float>(), clampedY) || state["colormode"] != "xy")
-    {
-        request["xy"] = {clampedX, clampedY};
-    }
+    request["xy"] = {clampedX, clampedY};
     return std::move(*this);
 }
 
 StateTransaction&& StateTransaction::setColorTemperature(unsigned int mired) &&
 {
     unsigned int clamped = std::max(153u, std::min(mired, 500u));
-    if (state.value("ct", 0u) != clamped || state.value("colormode", "") != "ct")
-    {
-        request["ct"] = clamped;
-    }
+    request["ct"] = clamped;
     return std::move(*this);
 }
 
 StateTransaction&& StateTransaction::setColorLoop(bool on) &&
 {
-    std::string effect = on ? "colorloop" : "none";
-    if (state.value("effect", "") != effect)
-    {
-        request["effect"] = effect;
-    }
+    request["effect"] = on ? "colorloop" : "none";
     return std::move(*this);
 }
 
@@ -186,4 +168,46 @@ StateTransaction&& StateTransaction::stopAlert() &&
     request["alert"] = "none";
     return std::move(*this);
 }
+
+void StateTransaction::trimRequest()
+{
+    static const std::map<std::string, std::string> colormodes
+        = {{"sat", "hs"}, {"hue", "hs"}, {"xy", "xy"}, {"ct", "ct"}};
+    static const std::set<std::string> otherRemove = {"on", "bri", "effect"};
+    // Skip when there is no state provided (e.g. for groups)
+    if (state.empty())
+    {
+        return;
+    }
+    for (auto it = request.begin(); it != request.end();)
+    {
+        auto colormodeIt = colormodes.find(it.key());
+        if (colormodeIt != colormodes.end())
+        {
+            // Only erase color commands if colormode and value matches
+            auto stateIt = state.find(it.key());
+            if (stateIt != state.end() && state.value("colormode", "") == colormodeIt->second)
+            {
+                // Compare xy using float comparison
+                if ((!it->is_array() && *stateIt == *it)
+                    || (stateIt->is_array() && utils::floatEquals((*stateIt)[0].get<float>(), (*it)[0].get<float>())
+                        && utils::floatEquals((*stateIt)[1].get<float>(), (*it)[1].get<float>())))
+                {
+                    it = request.erase(it);
+                    continue;
+                }
+            }
+        }
+        else if (otherRemove.count(it.key()))
+        {
+            if (state.count(it.key()) && state[it.key()] == *it)
+            {
+                it = request.erase(it);
+                continue;
+            }
+        }
+        ++it;
+    }
+}
+
 } // namespace hueplusplus
