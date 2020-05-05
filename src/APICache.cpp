@@ -118,6 +118,11 @@ HueCommandAPI& APICache::getCommandAPI()
     return commands;
 }
 
+const HueCommandAPI& APICache::getCommandAPI() const
+{
+    return commands;
+}
+
 bool APICache::needsRefresh()
 {
     using clock = std::chrono::steady_clock;

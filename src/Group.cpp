@@ -141,7 +141,8 @@ std::string Group::getActionColorMode() const
 StateTransaction Group::transaction()
 {
     // Do not pass state, because it is not the state of ALL lights in the group
-    return StateTransaction(state.getCommandAPI(), "/groups/" + std::to_string(id) + "/action", nlohmann::json::object());
+    return StateTransaction(
+        state.getCommandAPI(), "/groups/" + std::to_string(id) + "/action", nlohmann::json::object());
 }
 
 void Group::setOn(bool on, uint8_t transition)
@@ -177,6 +178,14 @@ void Group::setColorLoop(bool on, uint8_t transition)
 void Group::setScene(const std::string& scene)
 {
     sendPutRequest({{"scene", scene}}, "/action", CURRENT_FILE_INFO);
+}
+
+ScheduleCommand Group::scheduleScene(const std::string& scene) const
+{
+    const nlohmann::json command {{"method", "PUT"},
+        {"address", state.getCommandAPI().combinedPath("/groups/" + std::to_string(id) + "/action")},
+        {"body", {{"scene", scene}}}};
+    return ScheduleCommand(command);
 }
 
 nlohmann::json Group::sendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo)
