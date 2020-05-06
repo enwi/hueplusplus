@@ -75,13 +75,13 @@ HueLight HueLightFactory::createLight(const nlohmann::json& lightState, int id)
     // Ignore case
     std::transform(type.begin(), type.end(), type.begin(), [](char c) { return std::tolower(c); });
 
-    if (type == "on/off light")
+    if (type == "on/off light" || type == "on/off plug-in unit")
     {
         HueLight light(id, commands, nullptr, nullptr, nullptr, refreshDuration);
         light.colorType = ColorType::NONE;
         return light;
     }
-    else if (type == "dimmable light")
+    else if (type == "dimmable light" || type =="dimmable plug-in unit")
     {
         HueLight light(id, commands, simpleBrightness, nullptr, nullptr, refreshDuration);
         light.colorType = ColorType::NONE;
