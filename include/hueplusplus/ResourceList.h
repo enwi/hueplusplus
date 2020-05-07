@@ -55,7 +55,7 @@ public:
     //! Necessary if Resource is not constructible as described above.
     ResourceList(std::shared_ptr<APICache> baseCache, const std::string& cacheEntry,
         std::chrono::steady_clock::duration refreshDuration,
-        const std::function<Resource(int, const nlohmann::json&)>& factory = nullptr)
+        const std::function<Resource(IdType, const nlohmann::json&)>& factory = nullptr)
         : stateCache(baseCache, cacheEntry, refreshDuration), factory(factory), path(stateCache.getRequestPath() + '/')
     {}
     //! \brief Construct ResourceList with a separate cache and optional factory function
@@ -274,6 +274,34 @@ public:
         }
         return IdType {};
     }
+};
+
+template <typename Resource, typename CreateType>
+class GroupResourceList : public CreateableResourceList<Resource, int, CreateType>
+{
+public:
+    using CreateableResourceList<Resource, int, CreateType>::CreateableResourceList;
+    //! \brief Get group, specially handles group 0
+    //! \see ResourceList::get
+    Resource& get(const int& id)
+    {
+        auto pos = resources.find(id);
+        if (pos != resources.end())
+        {
+            pos->second.refresh();
+            return pos->second;
+        }
+        const nlohmann::json& state = stateCache.getValue();
+        std::string key = maybeToString(id);
+        if (!state.count(key) && id != 0)
+        {
+            throw HueException(FileInfo {__FILE__, __LINE__, __func__}, "Resource id is not valid");
+        }
+        return resources.emplace(id, construct(id, state[key])).first->second;
+    }
+    //! \brief Get group, specially handles group 0
+    //! \see ResourceList::exists
+    bool exists(int id) const { return id == 0 || CreateableResourceList<Resource, int, CreateType>::exists(id); }
 };
 } // namespace hueplusplus
 

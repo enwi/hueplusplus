@@ -9,6 +9,7 @@ set(hueplusplus_SOURCES
 	HueDeviceTypes.cpp
     HueException.cpp
     HueLight.cpp
+    Scene.cpp
     Schedule.cpp
     SimpleBrightnessStrategy.cpp
     SimpleColorHueStrategy.cpp

@@ -23,22 +23,10 @@
 #ifndef INCLUDE_HUEPLUSPLUS_UNITS_H
 #define INCLUDE_HUEPLUSPLUS_UNITS_H
 
+#include <cstdint>
+
 namespace hueplusplus
 {
-struct Kelvin
-{
-    int value;
-};
-
-struct Mired
-{
-    int value;
-};
-
-struct Brightness
-{
-    int value;
-};
 
 struct HueSaturation
 {
