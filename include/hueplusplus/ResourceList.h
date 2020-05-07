@@ -83,7 +83,7 @@ public:
     void refresh() { stateCache.refresh(); }
 
     //! \brief Get all resources that exist
-    //! \returns A vectory of references to every Resource
+    //! \returns A vector of references to every Resource
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contains no body
     //! \throws HueAPIResponseException when response contains an error
@@ -105,7 +105,7 @@ public:
     }
 
     //! \brief Get resource specified by id
-    //! \param id ID of the resource
+    //! \param id Identifier of the resource
     //! \returns The resource matching the id
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when id does not exist
@@ -129,7 +129,7 @@ public:
     }
 
     //! \brief Checks whether resource with id exists
-    //! \param id Id of the resource to check
+    //! \param id Identifier of the resource to check
     //! \returns true when the resource with given id exists
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contains no body
@@ -146,7 +146,7 @@ public:
     }
 
     //! \brief Checks whether resource with id exists
-    //! \param id Id of the resource to check
+    //! \param id Identifier of the resource to check
     //! \returns true when the resource with given id exists
     //! \note This will not update the cache
     //! \throws HueException when the cache is empty
@@ -161,7 +161,7 @@ public:
     }
 
     //! \brief Removes the resource
-    //! \param id Id of the resource to remove
+    //! \param id Identifier of the resource to remove
     //! \returns true on success
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contains no body
