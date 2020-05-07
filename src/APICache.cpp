@@ -151,6 +151,7 @@ bool APICache::needsRefresh()
     }
     return false;
 }
+
 std::string APICache::getRequestPath() const
 {
     std::string result;

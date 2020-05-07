@@ -95,7 +95,7 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     void refresh();
 
-    //! \brief Get schedule id
+    //! \brief Get schedule identifier
     int getId() const;
 
     //! \brief Get schedule name
