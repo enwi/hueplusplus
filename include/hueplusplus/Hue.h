@@ -39,6 +39,7 @@
 #include "HueLight.h"
 #include "IHttpHandler.h"
 #include "ResourceList.h"
+#include "Scene.h"
 #include "Schedule.h"
 
 #include "json/json.hpp"
@@ -332,6 +333,18 @@ public:
     int createSchedule(const CreateSchedule& params);
 
     ///@}
+    ///! \name Scenes
+    ///@{
+
+    std::vector<std::reference_wrapper<Scene>> getAllScenes();
+
+    Scene& getScene(const std::string& id);
+
+    bool sceneExists(const std::string& id) const;
+
+    std::string createScene(const CreateScene& params);
+
+    ///@}
 
     //! \brief Const function that returns the picture name of a given light id
     //!
@@ -363,8 +376,9 @@ private:
     std::chrono::steady_clock::duration refreshDuration;
     std::shared_ptr<APICache> stateCache;
     ResourceList<HueLight, int> lights;
-    CreateableResourceList<Group, int, CreateGroup> groups;
+    GroupResourceList<Group, CreateGroup> groups;
     CreateableResourceList<Schedule, int, CreateSchedule> schedules;
+    CreateableResourceList<Scene, std::string, CreateScene> scenes;
 };
 } // namespace hueplusplus
 
