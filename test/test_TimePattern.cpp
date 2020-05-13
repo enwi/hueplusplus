@@ -19,9 +19,10 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include <gtest/gtest.h>
 #include <hueplusplus/HueException.h>
 #include <hueplusplus/TimePattern.h>
+
+#include <gtest/gtest.h>
 
 using namespace hueplusplus::time;
 using std::chrono::system_clock;
@@ -104,6 +105,20 @@ TEST(AbsoluteTime, toString)
 
     const system_clock::duration variation = 1h + 2min + 1s;
     EXPECT_EQ("2020-03-03T20:53:03A01:02:01", AbsoluteTime(timePoint, variation).toString());
+}
+
+TEST(AbsoluteTime, parseUTC)
+{
+    AbsoluteTime absolute = AbsoluteTime::parseUTC("2020-03-03T20:53:03");
+    std::time_t ctime = system_clock::to_time_t(absolute.getBaseTime());
+    std::tm* pTm = std::gmtime(&ctime);
+    ASSERT_NE(nullptr, pTm);
+    std::tm tm = *pTm;
+    EXPECT_EQ(2020 - 1900, tm.tm_year);
+    EXPECT_EQ(3 - 1, tm.tm_mon);
+    EXPECT_EQ(20, tm.tm_hour);
+    EXPECT_EQ(53, tm.tm_min);
+    EXPECT_EQ(3, tm.tm_sec);
 }
 
 TEST(Weekdays, Constructor)
