@@ -297,7 +297,7 @@ public:
     int createGroup(const CreateGroup& params);
 
     ///@}
-    //! \name Schedule
+    //! \name Schedules
     ///@{
 
     //! \brief Get all schedules on this bridge.

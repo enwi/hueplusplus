@@ -38,8 +38,7 @@ namespace hueplusplus
 class LightState
 {
 public:
-
-    LightState(const nlohmann::json& state);
+    explicit LightState(const nlohmann::json& state);
 
     bool isOn() const;
 
@@ -61,6 +60,28 @@ public:
     int getTransitionTime() const;
 
     nlohmann::json toJson() const;
+
+    bool operator==(const LightState& other) const;
+    bool operator!=(const LightState& other) const;
+
+private:
+    nlohmann::json state;
+};
+
+//! \brief Builder to create LightState
+class LightStateBuilder
+{
+public:
+    LightStateBuilder& setOn(bool on);
+    LightStateBuilder& setBrightness(int brightness);
+    LightStateBuilder& setHueSat(const HueSaturation& hueSat);
+    LightStateBuilder& setXY(const XY& xy);
+    LightStateBuilder& setCt(int mired);
+    LightStateBuilder& setColorloop(bool enabled);
+    LightStateBuilder& setTransitionTime(int time);
+
+    LightState create();
+
 private:
     nlohmann::json state;
 };
@@ -74,6 +95,9 @@ public:
         groupScene
     };
 
+public:
+    Scene(const std::string& id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration);
+
     void refresh();
     std::string getId() const;
     std::string getName() const;
@@ -82,7 +106,6 @@ public:
     Type getType() const;
 
     int getGroupId() const;
-    void setGroupId(int id);
 
     std::vector<int> getLightIds() const;
     void setLightIds(const std::vector<int>& ids);
@@ -106,10 +129,12 @@ public:
     void storeCurrentLightState(int transition);
 
     void recall();
+
 private:
     void sendPutRequest(const std::string& path, const nlohmann::json& request, FileInfo fileInfo);
+
 private:
-    int id;
+    std::string id;
     APICache state;
 };
 
