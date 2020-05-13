@@ -47,6 +47,15 @@ std::string timepointToTimestamp(std::chrono::system_clock::time_point time);
 //! \throws HueException when time cannot be represented as time_point
 std::chrono::system_clock::time_point parseTimestamp(const std::string& timestamp);
 
+//! \brief Converts an UTC timestamp to a time_point
+//! \param timestamp UTC Timestamp the format
+//! <code>YYYY-MM-DD</code><strong>T</strong><code>hh:mm:ss</code>
+//! \returns time_point of the local system clock
+//! \throws std::invalid_argument when integer conversion fails
+//! \throws HueException when time cannot be represented as time_point
+std::chrono::system_clock::time_point parseUTCTimestamp(const std::string& timestamp);
+
+
 //! \brief Converts duration to a time string
 //! \param duration Duration or time of day to format. Must be less than 24 hours
 //! \returns Duration string in the format <code>hh:mm:ss</code>
@@ -92,11 +101,15 @@ public:
     //! with base time first, variation second
     std::string toString() const;
 
-    //! \brief Parse AbsoluteTime from formatted string
+    //! \brief Parse AbsoluteTime from formatted string in local timezone
     //! \param s Timestamp in the same format as returned by \ref toString()
     //! \returns AbsoluteTime with base time and variation from \c s
     static AbsoluteTime parse(const std::string& s);
 
+    //! \brief Parse AbsoluteTime from formatted UTC string
+    //! \param s Timestamp in the same format as returned by \ref toString()
+    //! \returns AbsoluteTime with base time and variation from \c s
+    static AbsoluteTime parseUTC(const std::string& s);
 private:
     clock::time_point base;
     clock::duration variation;

@@ -19,6 +19,7 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
+#include <cstdlib>
 #include <ctime>
 
 #include <hueplusplus/HueExceptionMacro.h>
@@ -28,6 +29,23 @@ namespace hueplusplus
 {
 namespace time
 {
+namespace
+{
+std::tm timestampToTm(const std::string& timestamp)
+{
+    std::tm tm {};
+    tm.tm_year = std::stoi(timestamp.substr(0, 4)) - 1900;
+    tm.tm_mon = std::stoi(timestamp.substr(5, 2)) - 1;
+    tm.tm_mday = std::stoi(timestamp.substr(8, 2));
+    tm.tm_hour = std::stoi(timestamp.substr(11, 2));
+    tm.tm_min = std::stoi(timestamp.substr(14, 2));
+    tm.tm_sec = std::stoi(timestamp.substr(17, 2));
+    // Auto detect daylight savings time
+    tm.tm_isdst = -1;
+    return tm;
+}
+} // namespace
+
 using std::chrono::system_clock;
 // Full name needed for doxygen
 std::string timepointToTimestamp(std::chrono::system_clock::time_point time)
@@ -53,19 +71,47 @@ std::string timepointToTimestamp(std::chrono::system_clock::time_point time)
 
 system_clock::time_point parseTimestamp(const std::string& timestamp)
 {
-    std::tm tm {};
-    tm.tm_year = std::stoi(timestamp.substr(0, 4)) - 1900;
-    tm.tm_mon = std::stoi(timestamp.substr(5, 2)) - 1;
-    tm.tm_mday = std::stoi(timestamp.substr(8, 2));
-    tm.tm_hour = std::stoi(timestamp.substr(11, 2));
-    tm.tm_min = std::stoi(timestamp.substr(14, 2));
-    tm.tm_sec = std::stoi(timestamp.substr(17, 2));
-    // Auto detect daylight savings time
-    tm.tm_isdst = -1;
+    std::tm tm = timestampToTm(timestamp);
     std::time_t ctime = std::mktime(&tm);
     if (ctime == -1)
     {
         throw HueException(CURRENT_FILE_INFO, "mktime failed");
+    }
+    return system_clock::from_time_t(ctime);
+}
+
+std::chrono::system_clock::time_point parseUTCTimestamp(const std::string& timestamp)
+{
+    std::tm tm = timestampToTm(timestamp);
+#ifdef _MSC_VER
+    std::time_t ctime = _mkgmtime(&tm);
+#else
+    // Non-standard, but POSIX compliant
+    // (also not officially thread-safe, but none of the time functions are)
+    // Set local timezone to UTC and then set it back
+    char* tz = std::getenv("TZ");
+    std::time_t ctime = std::mktime(&tm);
+    if (tz)
+    {
+        tz = strdup(tz);
+    }
+    setenv("TZ", "", 1);
+    tzset();
+    std::time_t ctime = std::mktime(&tm);
+    if (tz)
+    {
+        setenv("TZ", tz, 1);
+        free(tz);
+    }
+    else
+    {
+        unsetenv("TZ");
+    }
+    tzset();
+#endif
+    if (ctime == -1)
+    {
+        throw HueException(CURRENT_FILE_INFO, "timegm failed");
     }
     return system_clock::from_time_t(ctime);
 }
@@ -124,6 +170,19 @@ AbsoluteTime AbsoluteTime::parse(const std::string& s)
 {
     // Absolute time
     clock::time_point time = parseTimestamp(s);
+    clock::duration variation {0};
+    if (s.size() > 19 && s[19] == 'A')
+    {
+        // Random variation
+        variation = parseDuration(s.substr(20));
+    }
+    return AbsoluteTime(time, variation);
+}
+
+AbsoluteTime AbsoluteTime::parseUTC(const std::string& s)
+{
+    // Absolute time
+    clock::time_point time = parseUTCTimestamp(s);
     clock::duration variation {0};
     if (s.size() > 19 && s[19] == 'A')
     {
