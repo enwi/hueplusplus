@@ -251,6 +251,9 @@ TEST(CreateableResourceList, create)
         "/api/" + getBridgeUsername() + path, request, getBridgeIp(), getBridgePort()))
         .WillOnce(Return(response))
         .WillOnce(Return(nlohmann::json()));
+    EXPECT_CALL(*handler, GETJson(
+        "/api/" + getBridgeUsername() + path, _, getBridgeIp(), getBridgePort()))
+        .Times(AnyNumber()).WillRepeatedly(Return(nlohmann::json::object()));
     TestCreateType params;
     EXPECT_CALL(params, getRequest()).Times(2).WillRepeatedly(Return(request));
     EXPECT_EQ(2, list.create(params));

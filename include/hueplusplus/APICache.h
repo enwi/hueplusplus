@@ -40,7 +40,7 @@ public:
     //! \param refresh Interval between cache refreshing. May be 0 to always refresh.
     //! This is independent from the base cache refresh rate.
     //!
-    //! Uses same refresh duration as base cache. Refreshes only part of the base cache.
+    //! Refreshes only part of the base cache.
     APICache(
         std::shared_ptr<APICache> baseCache, const std::string& subEntry, std::chrono::steady_clock::duration refresh);
 
