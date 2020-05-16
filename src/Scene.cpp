@@ -319,6 +319,7 @@ void Scene::sendPutRequest(const std::string& path, const nlohmann::json& reques
 
 CreateScene& CreateScene::setName(const std::string& name)
 {
+    request["name"] = name;
     return *this;
 }
 

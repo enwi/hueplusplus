@@ -42,6 +42,7 @@ set(TEST_SOURCES
     test_Main.cpp
     test_UPnP.cpp
     test_ResourceList.cpp
+    test_Scene.cpp
     test_Schedule.cpp
     test_SimpleBrightnessStrategy.cpp
     test_SimpleColorHueStrategy.cpp
