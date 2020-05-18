@@ -27,7 +27,6 @@
 
 namespace hueplusplus
 {
-
 struct HueSaturation
 {
     int hue;
@@ -40,11 +39,30 @@ struct XY
     float y;
 };
 
+struct XYBrightness
+{
+    XY xy;
+    float brightness;
+};
+
+struct ColorGamut
+{
+    XY redCorner;
+    XY greenCorner;
+    XY blueCorner;
+
+    XY corrected(const XY& xy) const;
+};
+
 struct RGB
 {
     uint8_t r;
     uint8_t g;
     uint8_t b;
+
+    XYBrightness toXY() const;
+    XYBrightness toXY(const ColorGamut& gamut) const;
+    static RGB fromXY(const XYBrightness& xy);
 };
 } // namespace hueplusplus
 
