@@ -16,8 +16,9 @@ set(hueplusplus_SOURCES
     SimpleColorTemperatureStrategy.cpp
     StateTransaction.cpp
     TimePattern.cpp
+    Units.cpp
     UPnP.cpp
-    Utils.cpp)
+    Utils.cpp )
 
 # on windows we want to compile the WinHttpHandler
 if(WIN32)
