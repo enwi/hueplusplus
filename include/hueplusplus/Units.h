@@ -51,6 +51,7 @@ struct ColorGamut
     XY greenCorner;
     XY blueCorner;
 
+    bool contains(const XY& xy) const;
     XY corrected(const XY& xy) const;
 };
 
@@ -63,6 +64,7 @@ struct RGB
     XYBrightness toXY() const;
     XYBrightness toXY(const ColorGamut& gamut) const;
     static RGB fromXY(const XYBrightness& xy);
+    static RGB fromXY(const XYBrightness& xy, const ColorGamut& gamut);
 };
 } // namespace hueplusplus
 
