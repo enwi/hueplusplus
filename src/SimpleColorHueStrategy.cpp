@@ -287,14 +287,5 @@ std::pair<float, float> SimpleColorHueStrategy::getColorXY(const HueLight& light
 {
     return std::make_pair(light.state.getValue()["state"]["xy"][0].get<float>(), light.state.getValue()["state"]["xy"][1].get<float>());
 }
-/*bool SimpleColorHueStrategy::pointInTriangle(float pointx, float pointy, float
-x0, float y0, float x1, float y1, float x2, float y2)
-{
-float A = (-y1 * x2 + y0*(-x1 + x2) + x0*(y1 - y2) + x1 * y1);
-int8_t sign = A < 0 ? -1 : 1;
-float s = (y0 * x2 - x0 * y2 + (y2 - y0) * pointx + (x0 - x2) * pointy) * sign;
-float t = (x0 * y1 - y0 * x1 + (y0 - y1) * pointx + (x1 - x0) * pointy) * sign;
 
-return s > 0 && t > 0 && (s + t) < A * sign;
-}*/
 } // namespace hueplusplus
