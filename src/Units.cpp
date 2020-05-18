@@ -11,17 +11,6 @@ float sign(const XY& p0, const XY& p1, const XY& p2)
     return (p0.x - p2.x) * (p1.y - p2.y) - (p1.x - p2.x) * (p0.y - p2.y);
 }
 
-bool isInTriangle(const XY& xy, const ColorGamut& triangle)
-{
-    const float d1 = sign(xy, triangle.redCorner, triangle.greenCorner);
-    const float d2 = sign(xy, triangle.greenCorner, triangle.blueCorner);
-    const float d3 = sign(xy, triangle.blueCorner, triangle.redCorner);
-
-    const bool hasNeg = (d1 < 0) || (d2 < 0) || (d3 < 0);
-    const bool hasPos = (d1 > 0) || (d2 > 0) || (d3 > 0);
-    return !(hasNeg && hasPos);
-}
-
 bool isRightOf(const XY& xy, const XY& p1, const XY& p2)
 {
     return sign(xy, p1, p2) < 0;
@@ -45,6 +34,12 @@ XY projectOntoLine(const XY& xy, const XY& p1, const XY& p2)
     return XY {eX, eY};
 }
 } // namespace
+
+bool ColorGamut::contains(const XY& xy) const
+{
+    return !isRightOf(xy, redCorner, greenCorner) && !isRightOf(xy, greenCorner, blueCorner)
+        && !isRightOf(xy, blueCorner, redCorner);
+}
 
 XY ColorGamut::corrected(const XY& xy) const
 {
@@ -111,11 +106,43 @@ XYBrightness RGB::toXY() const
 XYBrightness RGB::toXY(const ColorGamut& gamut) const
 {
     XYBrightness xy = toXY();
-    xy.xy = gamut.corrected(xy.xy);
-
+    if (!gamut.contains(xy.xy))
+    {
+        xy.xy = gamut.corrected(xy.xy);
+    }
     return xy;
 }
 
-RGB RGB::fromXY(const XYBrightness& xy) {}
+RGB RGB::fromXY(const XYBrightness& xy)
+{
+    const float z = 1.f - xy.xy.x - xy.xy.y;
+    const float Y = xy.brightness;
+    const float X = (Y / xy.xy.y) * xy.xy.x;
+    const float Z = (Y / xy.xy.y) * z;
+
+    const float r = X * 1.656492f - Y * 0.354851f - Z * 0.255038f;
+    const float g = -X * 0.707196f + Y * 1.655397f + Z * 0.036152f;
+    const float b = X * 0.051713f - Y * 0.121364f + Z * 1.011530f;
+
+    // Reverse gamma correction
+    const float gammaR = r <= 0.0031308f ? 12.92f * r : (1.0f + 0.055f) * pow(r, (1.0f / 2.4f)) - 0.055f;
+    const float gammaG = g <= 0.0031308f ? 12.92f * g : (1.0f + 0.055f) * pow(g, (1.0f / 2.4f)) - 0.055f;
+    const float gammaB = b <= 0.0031308f ? 12.92f * b : (1.0f + 0.055f) * pow(b, (1.0f / 2.4f)) - 0.055f;
+
+    return RGB {static_cast<int>(std::round(gammaR * 255.f)), static_cast<int>(std::round(gammaG * 255.f)),
+        static_cast<int>(std::round(gammaB * 255.f))};
+}
+
+RGB RGB::fromXY(const XYBrightness& xy, const ColorGamut& gamut)
+{
+    if (gamut.contains(xy.xy))
+    {
+        return fromXY(xy);
+    }
+    else
+    {
+        return fromXY(XYBrightness {gamut.corrected(xy.xy), xy.brightness});
+    }
+}
 
 } // namespace hueplusplus
