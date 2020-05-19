@@ -1,5 +1,5 @@
 /**
-    \file Units.h
+    \file ColorUnits.h
     Copyright Notice\n
     Copyright (C) 2017  Jan Rogall		- developer\n
     Copyright (C) 2017  Moritz Wirger	- developer\n
@@ -54,6 +54,14 @@ struct ColorGamut
     bool contains(const XY& xy) const;
     XY corrected(const XY& xy) const;
 };
+
+namespace gamut
+{
+constexpr ColorGamut gamutA {{0.704f, 0.296f}, {0.2151f, 0.7106f}, {0.138f, 0.08f}};
+constexpr ColorGamut gamutB {{0.675f, 0.322f}, {0.409f, 0.518f}, {0.167f, 0.04f}};
+constexpr ColorGamut gamutC {{0.692f, 0.308f}, {0.17f, 0.7f}, {0.153f, 0.048f}};
+constexpr ColorGamut maxGamut {{1.f, 0.f}, {0.f, 1.f}, {0.f, 0.f}};
+} // namespace gamut
 
 struct RGB
 {

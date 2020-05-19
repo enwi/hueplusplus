@@ -25,6 +25,7 @@
 
 #include <string>
 
+#include "ColorUnits.h"
 #include "HueCommandAPI.h"
 #include "Schedule.h"
 
@@ -99,6 +100,8 @@ public:
     //! \note If this transaction is for a light, the light needs to have rgb color control.
     //! \note Will also turn on the light if nothing else is specified
     StateTransaction&& setColorXY(float x, float y) &&;
+
+    StateTransaction&& setColorXY(const XYBrightness& xy) &&;
     //! \brief Set light color temperature.
     //! \param mired Color temperature in mired from 153 to 500
     //! \returns This transaction for chaining calls

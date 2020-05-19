@@ -1,6 +1,27 @@
+/**
+    \file ColorUnits.cpp
+    Copyright Notice\n
+    Copyright (C) 2020  Jan Rogall		- developer\n
+
+    This file is part of hueplusplus.
+
+    hueplusplus is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    hueplusplus is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
+**/
+
 #include <cmath>
 
-#include <hueplusplus/Units.h>
+#include <hueplusplus/ColorUnits.h>
 
 namespace hueplusplus
 {
@@ -129,8 +150,8 @@ RGB RGB::fromXY(const XYBrightness& xy)
     const float gammaG = g <= 0.0031308f ? 12.92f * g : (1.0f + 0.055f) * pow(g, (1.0f / 2.4f)) - 0.055f;
     const float gammaB = b <= 0.0031308f ? 12.92f * b : (1.0f + 0.055f) * pow(b, (1.0f / 2.4f)) - 0.055f;
 
-    return RGB {static_cast<int>(std::round(gammaR * 255.f)), static_cast<int>(std::round(gammaG * 255.f)),
-        static_cast<int>(std::round(gammaB * 255.f))};
+    return RGB {static_cast<uint8_t>(std::round(gammaR * 255.f)), static_cast<uint8_t>(std::round(gammaG * 255.f)),
+        static_cast<uint8_t>(std::round(gammaB * 255.f))};
 }
 
 RGB RGB::fromXY(const XYBrightness& xy, const ColorGamut& gamut)
