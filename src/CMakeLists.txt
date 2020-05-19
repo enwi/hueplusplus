@@ -16,7 +16,7 @@ set(hueplusplus_SOURCES
     SimpleColorTemperatureStrategy.cpp
     StateTransaction.cpp
     TimePattern.cpp
-    Units.cpp
+    "ColorUnits.cpp"
     UPnP.cpp
     Utils.cpp )
 

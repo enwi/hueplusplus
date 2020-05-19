@@ -124,6 +124,35 @@ ColorType HueLight::getColorType() const
     return colorType;
 }
 
+ColorGamut HueLight::getColorGamut() const
+{
+    switch (colorType)
+    {
+    case ColorType::GAMUT_A:
+    case ColorType::GAMUT_A_TEMPERATURE:
+        return gamut::gamutA;
+    case ColorType::GAMUT_B:
+    case ColorType::GAMUT_B_TEMPERATURE:
+        return gamut::gamutB;
+    case ColorType::GAMUT_C:
+    case ColorType::GAMUT_C_TEMPERATURE:
+        return gamut::gamutC;
+    default: {
+        const nlohmann::json& capabilitiesGamut
+            = utils::safeGetMember(state.getValue(), "capabilities", "control", "colorgamut");
+        if (capabilitiesGamut.is_array() && capabilitiesGamut.size() == 3)
+        {
+            // Other gamut
+            return ColorGamut {{capabilitiesGamut[0].at(0), capabilitiesGamut[0].at(1)},
+                {capabilitiesGamut[1].at(0), capabilitiesGamut[1].at(1)},
+                {capabilitiesGamut[2].at(0), capabilitiesGamut[2].at(1)}};
+        }
+        // Unknown or no color light
+        return gamut::maxGamut;
+    }
+    }
+}
+
 unsigned int HueLight::KelvinToMired(unsigned int kelvin) const
 {
     return int(0.5f + (1000000 / kelvin));
@@ -141,7 +170,8 @@ bool HueLight::alert()
 
 StateTransaction HueLight::transaction()
 {
-    return StateTransaction(state.getCommandAPI(), "/lights/" + std::to_string(id) + "/state", state.getValue().at("state"));
+    return StateTransaction(
+        state.getCommandAPI(), "/lights/" + std::to_string(id) + "/state", state.getValue().at("state"));
 }
 
 void HueLight::refresh()

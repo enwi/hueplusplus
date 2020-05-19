@@ -195,6 +195,14 @@ public:
     //! \return String containing the software version
     virtual std::string getSwVersion() const;
 
+
+    //! \brief Const function that returns the color type of the light.
+    //!
+    //! \return ColorType containig the color type of the light
+    virtual ColorType getColorType() const;
+
+    ColorGamut getColorGamut() const;
+
     ///@}
     //! \name Light state
     ///@{
@@ -233,11 +241,6 @@ public:
     //! \note This will not refresh the light state
     //! \return Bool that is true, when the light is on and false, when off
     virtual bool isOn() const;
-
-    //! \brief Const function that returns the color type of the light.
-    //!
-    //! \return ColorType containig the color type of the light
-    virtual ColorType getColorType() const;
 
     //! \brief Const function to check whether this light has brightness control
     //!
