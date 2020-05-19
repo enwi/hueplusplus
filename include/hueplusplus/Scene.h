@@ -30,7 +30,7 @@
 
 #include "APICache.h"
 #include "TimePattern.h"
-#include "Units.h"
+#include "ColorUnits.h"
 
 namespace hueplusplus
 {
@@ -49,7 +49,7 @@ public:
     HueSaturation getHueSat() const;
 
     bool hasXY() const;
-    XY getXY() const;
+    XYBrightness getXY() const;
 
     bool hasCt() const;
     int getCt() const;
