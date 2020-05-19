@@ -66,11 +66,12 @@ TEST(LightState, XY)
     EXPECT_FALSE(LightState(nlohmann::json::object()).hasXY());
     const float x = 0.6f;
     const float y = 0.3f;
-    nlohmann::json json {{"xy", {x, y}}};
+    nlohmann::json json {{"xy", {x, y}}, {"bri", 255}};
     const LightState state {json};
     EXPECT_TRUE(state.hasXY());
-    EXPECT_FLOAT_EQ(x, state.getXY().x);
-    EXPECT_FLOAT_EQ(y, state.getXY().y);
+    EXPECT_FLOAT_EQ(x, state.getXY().xy.x);
+    EXPECT_FLOAT_EQ(y, state.getXY().xy.y);
+    EXPECT_FLOAT_EQ(1.f, state.getXY().brightness);
 }
 
 TEST(LightState, Ct)
@@ -286,12 +287,12 @@ TEST_F(SceneTest, getVersion)
 
 TEST_F(SceneTest, getLightstates)
 {
-        const std::string id = "125asav3";
+    const std::string id = "125asav3";
     {
-        const std::map<int, LightState> lightstates{
+        const std::map<int, LightState> lightstates {
             {3, LightStateBuilder().setOn(false).setBrightness(100).setXY({0.3, 0.2}).create()},
             {4, LightStateBuilder().setOn(false).setBrightness(200).setXY({0.3, 0.2}).setColorloop(true).create()},
-            {5, LightStateBuilder().setOn(true).setBrightness(100).setXY({0.3, 0.2}).create()} };
+            {5, LightStateBuilder().setOn(true).setBrightness(100).setXY({0.3, 0.2}).create()}};
         nlohmann::json lightstatesJson;
         for (const auto& entry : lightstates)
         {

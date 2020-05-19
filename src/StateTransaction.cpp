@@ -108,6 +108,14 @@ StateTransaction&& StateTransaction::setColorXY(float x, float y) &&
     return std::move(*this);
 }
 
+StateTransaction&& StateTransaction::setColorXY(const XYBrightness& xy)&&
+{
+    request["xy"] = { xy.xy.x, xy.xy.y };
+    request["bri"] = static_cast<int>(std::round(xy.brightness * 255.f));
+
+    return std::move(*this);
+}
+
 StateTransaction&& StateTransaction::setColorTemperature(unsigned int mired) &&
 {
     unsigned int clamped = std::max(153u, std::min(mired, 500u));

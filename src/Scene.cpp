@@ -56,10 +56,10 @@ bool LightState::hasXY() const
     return state.count("xy");
 }
 
-XY LightState::getXY() const
+XYBrightness LightState::getXY() const
 {
     const nlohmann::json& xy = state.at("xy");
-    return XY {xy[0].get<float>(), xy[1].get<float>()};
+    return XYBrightness {{xy[0].get<float>(), xy[1].get<float>()}, state.at("bri").get<int>() / 255.f};
 }
 
 bool LightState::hasCt() const
