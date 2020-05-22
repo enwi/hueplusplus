@@ -171,7 +171,7 @@ bool HueLight::alert()
 StateTransaction HueLight::transaction()
 {
     return StateTransaction(
-        state.getCommandAPI(), "/lights/" + std::to_string(id) + "/state", state.getValue().at("state"));
+        state.getCommandAPI(), "/lights/" + std::to_string(id) + "/state", &state.getValue().at("state"));
 }
 
 void HueLight::refresh()
