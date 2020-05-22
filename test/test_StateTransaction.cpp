@@ -20,8 +20,9 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include <gtest/gtest.h>
 #include <hueplusplus/StateTransaction.h>
+
+#include <gtest/gtest.h>
 
 #include "testhelper.h"
 
@@ -37,7 +38,7 @@ TEST(StateTransaction, commit)
     const std::string requestPath = "/api/" + getBridgeUsername() + "/path";
     {
         EXPECT_CALL(*handler, PUTJson(_, _, getBridgeIp(), getBridgePort())).Times(0);
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Explicit off overrides brightness
@@ -45,17 +46,16 @@ TEST(StateTransaction, commit)
         nlohmann::json request = {{"on", false}, {"bri", 100}};
         nlohmann::json response = {{{"success", {{"/path/on", false}}}}, {{"success", {{"/path/bri", 100}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(
-            StateTransaction(commands, "/path", nlohmann::json::object()).setOn(false).setBrightness(100).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).setOn(false).setBrightness(100).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Do not trim
     {
         const nlohmann::json request = {{"on", false}, {"bri", 100}};
-        const nlohmann::json state = {{"on", false}, {"bri", 100}};
+        nlohmann::json state = {{"on", false}, {"bri", 100}};
         nlohmann::json response = {{{"success", {{"/path/on", false}}}}, {{"success", {{"/path/bri", 100}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", state).setOn(false).setBrightness(100).commit(false));
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setOn(false).setBrightness(100).commit(false));
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }
@@ -67,10 +67,8 @@ TEST(StateTransaction, toScheduleCommand)
     const std::string requestPath = "/api/" + getBridgeUsername() + "/path";
     nlohmann::json request = {{"on", false}, {"bri", 100}};
 
-    ScheduleCommand command = StateTransaction(commands, "/path", nlohmann::json::object())
-                                  .setOn(false)
-                                  .setBrightness(100)
-                                  .toScheduleCommand();
+    ScheduleCommand command
+        = StateTransaction(commands, "/path", nullptr).setOn(false).setBrightness(100).toScheduleCommand();
     Mock::VerifyAndClearExpectations(handler.get());
     EXPECT_EQ(ScheduleCommand::Method::put, command.getMethod());
     EXPECT_EQ(request, command.getBody());
@@ -87,7 +85,7 @@ TEST(StateTransaction, setOn)
         nlohmann::json request = {{"on", true}};
         nlohmann::json response = {{{"success", {{"/path/on", true}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).setOn(true).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).setOn(true).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Set off
@@ -95,7 +93,7 @@ TEST(StateTransaction, setOn)
         nlohmann::json request = {{"on", false}};
         nlohmann::json response = {{{"success", {{"/path/on", false}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).setOn(false).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).setOn(false).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Fail
@@ -103,13 +101,14 @@ TEST(StateTransaction, setOn)
         nlohmann::json request = {{"on", false}};
         nlohmann::json response = {{{"success", {{"/path/on", true}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_FALSE(StateTransaction(commands, "/path", nlohmann::json::object()).setOn(false).commit());
+        EXPECT_FALSE(StateTransaction(commands, "/path", nullptr).setOn(false).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // No change requested
     {
+        nlohmann::json state = {{"on", false}};
         EXPECT_CALL(*handler, PUTJson(_, _, getBridgeIp(), getBridgePort())).Times(0);
-        EXPECT_TRUE(StateTransaction(commands, "/path", {{"on", false}}).setOn(false).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setOn(false).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }
@@ -125,7 +124,7 @@ TEST(StateTransaction, setBrightness)
         nlohmann::json request = {{"on", true}, {"bri", bri}};
         nlohmann::json response = {{{"success", {{"/path/on", true}}}}, {{"success", {{"/path/bri", bri}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).setBrightness(bri).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).setBrightness(bri).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Clamp to 254
@@ -134,7 +133,7 @@ TEST(StateTransaction, setBrightness)
         nlohmann::json request = {{"on", true}, {"bri", bri}};
         nlohmann::json response = {{{"success", {{"/path/on", true}}}}, {{"success", {{"/path/bri", bri}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).setBrightness(255).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).setBrightness(255).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Already off
@@ -142,15 +141,17 @@ TEST(StateTransaction, setBrightness)
         const int bri = 0;
         nlohmann::json request = {{"bri", bri}};
         nlohmann::json response = {{{"success", {{"/path/bri", bri}}}}};
+        nlohmann::json state = {{"on", false}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", {{"on", false}}).setBrightness(bri).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setBrightness(bri).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // No change requested
     {
         const int bri = 120;
+        nlohmann::json state = {{"on", true}, {"bri", bri}};
         EXPECT_CALL(*handler, PUTJson(_, _, getBridgeIp(), getBridgePort())).Times(0);
-        EXPECT_TRUE(StateTransaction(commands, "/path", {{"on", true}, {"bri", bri}}).setBrightness(bri).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setBrightness(bri).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }
@@ -166,7 +167,7 @@ TEST(StateTransaction, setColorHue)
         nlohmann::json request = {{"on", true}, {"hue", hue}};
         nlohmann::json response = {{{"success", {{"/path/on", true}}}}, {{"success", {{"/path/hue", hue}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).setColorHue(hue).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).setColorHue(hue).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Already on
@@ -174,8 +175,9 @@ TEST(StateTransaction, setColorHue)
         const int hue = 2159;
         nlohmann::json request = {{"hue", hue}};
         nlohmann::json response = {{{"success", {{"/path/hue", hue}}}}};
+        nlohmann::json state = {{"on", true}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", {{"on", true}}).setColorHue(hue).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColorHue(hue).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Wrong colormode
@@ -183,19 +185,17 @@ TEST(StateTransaction, setColorHue)
         const int hue = 2159;
         nlohmann::json request = {{"hue", hue}};
         nlohmann::json response = {{{"success", {{"/path/hue", hue}}}}};
+        nlohmann::json state = {{"on", true}, {"hue", hue}, {"colormode", "ct"}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", {{"on", true}, {"hue", hue}, {"colormode", "ct"}})
-                        .setColorHue(hue)
-                        .commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColorHue(hue).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // No request
     {
         const int hue = 2159;
+        nlohmann::json state = {{"on", true}, {"hue", hue}, {"colormode", "hs"}};
         EXPECT_CALL(*handler, PUTJson(_, _, getBridgeIp(), getBridgePort())).Times(0);
-        EXPECT_TRUE(StateTransaction(commands, "/path", {{"on", true}, {"hue", hue}, {"colormode", "hs"}})
-                        .setColorHue(hue)
-                        .commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColorHue(hue).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }
@@ -211,7 +211,7 @@ TEST(StateTransaction, setColorSaturation)
         nlohmann::json request = {{"on", true}, {"sat", sat}};
         nlohmann::json response = {{{"success", {{"/path/on", true}}}}, {{"success", {{"/path/sat", sat}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).setColorSaturation(sat).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).setColorSaturation(sat).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Clamp to 254
@@ -220,7 +220,7 @@ TEST(StateTransaction, setColorSaturation)
         nlohmann::json request = {{"on", true}, {"sat", sat}};
         nlohmann::json response = {{{"success", {{"/path/on", true}}}}, {{"success", {{"/path/sat", sat}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).setColorSaturation(255).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).setColorSaturation(255).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Already on
@@ -228,8 +228,9 @@ TEST(StateTransaction, setColorSaturation)
         const int sat = 125;
         nlohmann::json request = {{"sat", sat}};
         nlohmann::json response = {{{"success", {{"/path/sat", sat}}}}};
+        nlohmann::json state = {{"on", true}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", {{"on", true}}).setColorSaturation(sat).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColorSaturation(sat).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Wrong colormode
@@ -237,19 +238,17 @@ TEST(StateTransaction, setColorSaturation)
         const int sat = 125;
         nlohmann::json request = {{"sat", sat}};
         nlohmann::json response = {{{"success", {{"/path/sat", sat}}}}};
+        nlohmann::json state = {{"on", true}, {"sat", sat}, {"colormode", "ct"}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", {{"on", true}, {"sat", sat}, {"colormode", "ct"}})
-                        .setColorSaturation(sat)
-                        .commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColorSaturation(sat).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // No request
     {
         const int sat = 125;
+        nlohmann::json state = {{"on", true}, {"sat", sat}, {"colormode", "hs"}};
         EXPECT_CALL(*handler, PUTJson(_, _, getBridgeIp(), getBridgePort())).Times(0);
-        EXPECT_TRUE(StateTransaction(commands, "/path", {{"on", true}, {"sat", sat}, {"colormode", "hs"}})
-                        .setColorSaturation(sat)
-                        .commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColorSaturation(sat).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }
@@ -266,7 +265,7 @@ TEST(StateTransaction, setColorXY)
         nlohmann::json request = {{"on", true}, {"xy", {x, y}}};
         nlohmann::json response = {{{"success", {{"/path/on", true}}}}, {{"success", {{"/path/xy", {x, y}}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).setColorXY(x, y).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).setColorXY(x, y).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Clamp
@@ -276,7 +275,7 @@ TEST(StateTransaction, setColorXY)
         nlohmann::json request = {{"on", true}, {"xy", {x, y}}};
         nlohmann::json response = {{{"success", {{"/path/on", true}}}}, {{"success", {{"/path/xy", {x, y}}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).setColorXY(2.f, -1.f).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).setColorXY(2.f, -1.f).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Already on
@@ -285,8 +284,9 @@ TEST(StateTransaction, setColorXY)
         const float y = 0.8f;
         nlohmann::json request = {{"xy", {x, y}}};
         nlohmann::json response = {{{"success", {{"/path/xy", {x, y}}}}}};
+        nlohmann::json state = {{"on", true}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", {{"on", true}}).setColorXY(x, y).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColorXY(x, y).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Wrong colormode
@@ -295,34 +295,30 @@ TEST(StateTransaction, setColorXY)
         const float y = 0.8f;
         nlohmann::json request = {{"xy", {x, y}}};
         nlohmann::json response = {{{"success", {{"/path/xy", {x, y}}}}}};
+        nlohmann::json state = {{"on", true},
+            {"xy",
+                {
+                    x,
+                    y,
+                }},
+            {"colormode", "hs"}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path",
-            {{"on", true},
-                {"xy",
-                    {
-                        x,
-                        y,
-                    }},
-                {"colormode", "hs"}})
-                        .setColorXY(x, y)
-                        .commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColorXY(x, y).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // No request
     {
         const float x = 0.5f;
         const float y = 0.8f;
+        nlohmann::json state = {{"on", true},
+            {"xy",
+                {
+                    x,
+                    y,
+                }},
+            {"colormode", "xy"}};
         EXPECT_CALL(*handler, PUTJson(_, _, getBridgeIp(), getBridgePort())).Times(0);
-        EXPECT_TRUE(StateTransaction(commands, "/path",
-            {{"on", true},
-                {"xy",
-                    {
-                        x,
-                        y,
-                    }},
-                {"colormode", "xy"}})
-                        .setColorXY(x, y)
-                        .commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColorXY(x, y).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }
@@ -338,7 +334,7 @@ TEST(StateTransaction, setColorTemperature)
         nlohmann::json request = {{"on", true}, {"ct", ct}};
         nlohmann::json response = {{{"success", {{"/path/on", true}}}}, {{"success", {{"/path/ct", ct}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).setColorTemperature(ct).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).setColorTemperature(ct).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Clamp
@@ -346,8 +342,9 @@ TEST(StateTransaction, setColorTemperature)
         const int ct = 500;
         nlohmann::json request = {{"ct", ct}};
         nlohmann::json response = {{{"success", {{"/path/ct", ct}}}}};
+        nlohmann::json state = {{"on", true}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", {{"on", true}}).setColorTemperature(520).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColorTemperature(520).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Already on
@@ -355,8 +352,9 @@ TEST(StateTransaction, setColorTemperature)
         const int ct = 240;
         nlohmann::json request = {{"ct", ct}};
         nlohmann::json response = {{{"success", {{"/path/ct", ct}}}}};
+        nlohmann::json state = {{"on", true}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", {{"on", true}}).setColorTemperature(ct).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColorTemperature(ct).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Wrong colormode
@@ -364,19 +362,17 @@ TEST(StateTransaction, setColorTemperature)
         const int ct = 240;
         nlohmann::json request = {{"ct", ct}};
         nlohmann::json response = {{{"success", {{"/path/ct", ct}}}}};
+        nlohmann::json state = {{"on", true}, {"ct", ct}, {"colormode", "hs"}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", {{"on", true}, {"ct", ct}, {"colormode", "hs"}})
-                        .setColorTemperature(ct)
-                        .commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColorTemperature(ct).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // No request
     {
         const int ct = 240;
+        nlohmann::json state = {{"on", true}, {"ct", ct}, {"colormode", "ct"}};
         EXPECT_CALL(*handler, PUTJson(_, _, getBridgeIp(), getBridgePort())).Times(0);
-        EXPECT_TRUE(StateTransaction(commands, "/path", {{"on", true}, {"ct", ct}, {"colormode", "ct"}})
-                        .setColorTemperature(ct)
-                        .commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColorTemperature(ct).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }
@@ -391,7 +387,7 @@ TEST(StateTransaction, setColorLoop)
         nlohmann::json request = {{"on", true}, {"effect", "colorloop"}};
         nlohmann::json response = {{{"success", {{"/path/on", true}}}}, {{"success", {{"/path/effect", "colorloop"}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).setColorLoop(true).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).setColorLoop(true).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Set off
@@ -399,14 +395,14 @@ TEST(StateTransaction, setColorLoop)
         nlohmann::json request = {{"on", true}, {"effect", "none"}};
         nlohmann::json response = {{{"success", {{"/path/on", true}}}}, {{"success", {{"/path/effect", "none"}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).setColorLoop(false).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).setColorLoop(false).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // No request
     {
+        nlohmann::json state = {{"on", true}, {"effect", "colorloop"}};
         EXPECT_CALL(*handler, PUTJson(_, _, getBridgeIp(), getBridgePort())).Times(0);
-        EXPECT_TRUE(
-            StateTransaction(commands, "/path", {{"on", true}, {"effect", "colorloop"}}).setColorLoop(true).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColorLoop(true).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }
@@ -421,7 +417,7 @@ TEST(StateTransaction, incrementBrightness)
         nlohmann::json request = {{"bri_inc", inc}};
         nlohmann::json response = {{{"success", {{"/path/bri_inc", inc}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).incrementBrightness(inc).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).incrementBrightness(inc).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Clamp
@@ -430,7 +426,7 @@ TEST(StateTransaction, incrementBrightness)
         nlohmann::json request = {{"bri_inc", inc}};
         nlohmann::json response = {{{"success", {{"/path/bri_inc", inc}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).incrementBrightness(-300).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).incrementBrightness(-300).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }
@@ -445,7 +441,7 @@ TEST(StateTransaction, incrementSaturation)
         nlohmann::json request = {{"sat_inc", inc}};
         nlohmann::json response = {{{"success", {{"/path/sat_inc", inc}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).incrementSaturation(inc).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).incrementSaturation(inc).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Clamp
@@ -454,7 +450,7 @@ TEST(StateTransaction, incrementSaturation)
         nlohmann::json request = {{"sat_inc", inc}};
         nlohmann::json response = {{{"success", {{"/path/sat_inc", inc}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).incrementSaturation(-300).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).incrementSaturation(-300).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }
@@ -469,7 +465,7 @@ TEST(StateTransaction, incrementHue)
         nlohmann::json request = {{"hue_inc", inc}};
         nlohmann::json response = {{{"success", {{"/path/hue_inc", inc}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).incrementHue(inc).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).incrementHue(inc).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Clamp
@@ -478,7 +474,7 @@ TEST(StateTransaction, incrementHue)
         nlohmann::json request = {{"hue_inc", inc}};
         nlohmann::json response = {{{"success", {{"/path/hue_inc", inc}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).incrementHue(-300000).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).incrementHue(-300000).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }
@@ -493,8 +489,7 @@ TEST(StateTransaction, incrementColorTemperature)
         nlohmann::json request = {{"ct_inc", inc}};
         nlohmann::json response = {{{"success", {{"/path/ct_inc", inc}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(
-            StateTransaction(commands, "/path", nlohmann::json::object()).incrementColorTemperature(inc).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).incrementColorTemperature(inc).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Clamp
@@ -503,8 +498,7 @@ TEST(StateTransaction, incrementColorTemperature)
         nlohmann::json request = {{"ct_inc", inc}};
         nlohmann::json response = {{{"success", {{"/path/ct_inc", inc}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(
-            StateTransaction(commands, "/path", nlohmann::json::object()).incrementColorTemperature(-300000).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).incrementColorTemperature(-300000).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }
@@ -520,8 +514,7 @@ TEST(StateTransaction, incrementColorXY)
         nlohmann::json request = {{"xy_inc", {incX, incY}}};
         nlohmann::json response = {{{"success", {{"/path/xy_inc", {incX, incY}}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(
-            StateTransaction(commands, "/path", nlohmann::json::object()).incrementColorXY(incX, incY).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).incrementColorXY(incX, incY).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Clamp
@@ -531,7 +524,7 @@ TEST(StateTransaction, incrementColorXY)
         nlohmann::json request = {{"xy_inc", {incX, incY}}};
         nlohmann::json response = {{{"success", {{"/path/xy_inc", {incX, incY}}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).incrementColorXY(1.f, -1.f).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).incrementColorXY(1.f, -1.f).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }
@@ -545,8 +538,7 @@ TEST(StateTransaction, setTransition)
         nlohmann::json request = {{"on", true}, {"transitiontime", 2}};
         nlohmann::json response = {{{"success", {{"/path/on", true}}}}, {{"success", {{"/path/transitiontime", 2}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(
-            StateTransaction(commands, "/path", nlohmann::json::object()).setOn(true).setTransition(2).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).setOn(true).setTransition(2).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // No transition time 4
@@ -554,14 +546,13 @@ TEST(StateTransaction, setTransition)
         nlohmann::json request = {{"on", true}};
         nlohmann::json response = {{{"success", {{"/path/on", true}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(
-            StateTransaction(commands, "/path", nlohmann::json::object()).setOn(true).setTransition(4).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).setOn(true).setTransition(4).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // No request with only transition
     {
         EXPECT_CALL(*handler, PUTJson(_, _, getBridgeIp(), getBridgePort())).Times(0);
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).setTransition(2).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).setTransition(2).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }
@@ -575,15 +566,16 @@ TEST(StateTransaction, alert)
         nlohmann::json request = {{"alert", "select"}};
         nlohmann::json response = {{{"success", {{"/path/alert", "select"}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).alert().commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).alert().commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Also alert when in state
     {
         nlohmann::json request = {{"alert", "select"}};
         nlohmann::json response = {{{"success", {{"/path/alert", "select"}}}}};
+        nlohmann::json state = {{"alert", "select"}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", {{"alert", "select"}}).alert().commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).alert().commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }
@@ -597,15 +589,16 @@ TEST(StateTransaction, longAlert)
         nlohmann::json request = {{"alert", "lselect"}};
         nlohmann::json response = {{{"success", {{"/path/alert", "lselect"}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).longAlert().commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).longAlert().commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Also alert when in state
     {
         nlohmann::json request = {{"alert", "lselect"}};
         nlohmann::json response = {{{"success", {{"/path/alert", "lselect"}}}}};
+        nlohmann::json state = {{"alert", "lselect"}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", {{"alert", "lselect"}}).longAlert().commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).longAlert().commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }
@@ -619,15 +612,16 @@ TEST(StateTransaction, stopAlert)
         nlohmann::json request = {{"alert", "none"}};
         nlohmann::json response = {{{"success", {{"/path/alert", "none"}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nlohmann::json::object()).stopAlert().commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).stopAlert().commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Also alert when in state
     {
         nlohmann::json request = {{"alert", "none"}};
         nlohmann::json response = {{{"success", {{"/path/alert", "none"}}}}};
+        nlohmann::json state = {{"alert", "none"}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", {{"alert", "none"}}).stopAlert().commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).stopAlert().commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }
