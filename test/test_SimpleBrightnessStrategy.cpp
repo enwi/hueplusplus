@@ -55,6 +55,7 @@ TEST(SimpleBrightnessStrategy, setBrightness)
     EXPECT_EQ(true, SimpleBrightnessStrategy().setBrightness(0, 4, test_light));
     // Only set brightness, already off
     test_light.getState()["state"]["on"] = false;
+    test_light.getState()["state"].erase("bri");
     prep_ret = {{{"success", {{"/lights/1/state/bri", 0}}}}};
     EXPECT_CALL(*handler, PUTJson(statePath, _, getBridgeIp(), getBridgePort())).Times(1).WillOnce(Return(prep_ret));
     EXPECT_EQ(true, SimpleBrightnessStrategy().setBrightness(0, 4, test_light));
@@ -71,6 +72,7 @@ TEST(SimpleBrightnessStrategy, setBrightness)
     prep_ret[1]["success"]["/lights/1/state/bri"] = 254;
     EXPECT_CALL(*handler, PUTJson(statePath, _, getBridgeIp(), getBridgePort())).Times(1).WillOnce(Return(prep_ret));
     test_light.getState()["state"]["on"] = false;
+    test_light.getState()["state"]["bri"] = 50;
     EXPECT_EQ(true, SimpleBrightnessStrategy().setBrightness(255, 6, test_light));
 }
 

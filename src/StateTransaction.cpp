@@ -30,12 +30,9 @@
 
 namespace hueplusplus
 {
-StateTransaction::StateTransaction(
-    const HueCommandAPI& commands, const std::string& path, const nlohmann::json& currentState)
+StateTransaction::StateTransaction(const HueCommandAPI& commands, const std::string& path, nlohmann::json* currentState)
     : commands(commands), path(path), state(currentState), request(nlohmann::json::object())
-{
-    assert(currentState.is_object());
-}
+{}
 
 bool StateTransaction::commit(bool trimRequest) &&
 {
@@ -46,16 +43,17 @@ bool StateTransaction::commit(bool trimRequest) &&
     // Empty request or request with only transition makes no sense
     if (!request.empty() && !(request.size() == 1 && request.count("transitiontime")))
     {
+        const nlohmann::json& stateJson = (state != nullptr) ? *state : nlohmann::json::object();
         if (!request.count("on"))
         {
-            if (!state.value("on", false)
+            if (!stateJson.value("on", false)
                 && (request.value("bri", 0) != 0 || request.count("effect") || request.count("hue")
                     || request.count("sat") || request.count("xy") || request.count("ct")))
             {
                 // Turn on if it was turned off
                 request["on"] = true;
             }
-            else if (request.value("bri", 254) == 0 && state.value("on", true))
+            else if (request.value("bri", 254) == 0 && stateJson.value("on", true))
             {
                 // Turn off if brightness is 0
                 request["on"] = false;
@@ -63,7 +61,23 @@ bool StateTransaction::commit(bool trimRequest) &&
         }
 
         nlohmann::json reply = commands.PUTRequest(path, request, CURRENT_FILE_INFO);
-        return utils::validatePUTReply(path, request, reply);
+        if (utils::validatePUTReply(path, request, reply))
+        {
+            if (state != nullptr)
+            {
+                // Apply changes to state
+                for (auto it = request.begin(); it != request.end(); ++it)
+                {
+                    if (it.key() == "transitiontime")
+                    {
+                        continue;
+                    }
+                    (*state)[it.key()] = it.value();
+                }
+            }
+            return true;
+        }
+        return false;
     }
     return true;
 }
@@ -108,9 +122,9 @@ StateTransaction&& StateTransaction::setColorXY(float x, float y) &&
     return std::move(*this);
 }
 
-StateTransaction&& StateTransaction::setColorXY(const XYBrightness& xy)&&
+StateTransaction&& StateTransaction::setColorXY(const XYBrightness& xy) &&
 {
-    request["xy"] = { xy.xy.x, xy.xy.y };
+    request["xy"] = {xy.xy.x, xy.xy.y};
     request["bri"] = static_cast<int>(std::round(xy.brightness * 255.f));
 
     return std::move(*this);
@@ -189,7 +203,7 @@ void StateTransaction::trimRequest()
         = {{"sat", "hs"}, {"hue", "hs"}, {"xy", "xy"}, {"ct", "ct"}};
     static const std::set<std::string> otherRemove = {"on", "bri", "effect"};
     // Skip when there is no state provided (e.g. for groups)
-    if (state.empty())
+    if (!state)
     {
         return;
     }
@@ -199,8 +213,8 @@ void StateTransaction::trimRequest()
         if (colormodeIt != colormodes.end())
         {
             // Only erase color commands if colormode and value matches
-            auto stateIt = state.find(it.key());
-            if (stateIt != state.end() && state.value("colormode", "") == colormodeIt->second)
+            auto stateIt = state->find(it.key());
+            if (stateIt != state->end() && state->value("colormode", "") == colormodeIt->second)
             {
                 // Compare xy using float comparison
                 if ((!it->is_array() && *stateIt == *it)
@@ -214,7 +228,7 @@ void StateTransaction::trimRequest()
         }
         else if (otherRemove.count(it.key()))
         {
-            if (state.count(it.key()) && state[it.key()] == *it)
+            if (state->count(it.key()) && (*state)[it.key()] == *it)
             {
                 it = request.erase(it);
                 continue;
