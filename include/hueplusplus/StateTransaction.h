@@ -39,15 +39,18 @@ namespace hueplusplus
 //! \code
 //! light.transaction().setOn(true).setBrightness(29).setColorHue(3000).setColorSaturation(128).commit();
 //! \endcode
+//! \note The transaction has an internal reference to the light state.
+//! You must not cause a refresh of the state between creating and committing the transaction
+//! (e.g. non-const getters/setters), because that invalidates the reference.
 class StateTransaction
 {
 public:
     //! \brief Creates a StateTransaction to a group or light state
     //! \param commands HueCommandAPI for making requests
     //! \param path Path to which the final PUT request is made (without username)
-    //! \param currentState JSON object with the current state to check whether changes are needed.
-    //! Pass an empty object to always include all requests (for groups, because individual lights might be different).
-    StateTransaction(const HueCommandAPI& commands, const std::string& path, const nlohmann::json& currentState);
+    //! \param currentState Optional, the current state to check whether changes are needed.
+    //! Pass nullptr to always include all requests (for groups, because individual lights might be different).
+    StateTransaction(const HueCommandAPI& commands, const std::string& path, nlohmann::json* currentState);
 
     //! \brief Deleted copy constructor, do not store StateTransaction in a variable.
     StateTransaction(const StateTransaction&) = delete;
@@ -165,7 +168,7 @@ private:
 private:
     const HueCommandAPI& commands;
     std::string path;
-    nlohmann::json state;
+    nlohmann::json* state;
     nlohmann::json request;
 };
 

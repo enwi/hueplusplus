@@ -142,7 +142,7 @@ StateTransaction Group::transaction()
 {
     // Do not pass state, because it is not the state of ALL lights in the group
     return StateTransaction(
-        state.getCommandAPI(), "/groups/" + std::to_string(id) + "/action", nlohmann::json::object());
+        state.getCommandAPI(), "/groups/" + std::to_string(id) + "/action", nullptr);
 }
 
 void Group::setOn(bool on, uint8_t transition)
