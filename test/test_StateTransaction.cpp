@@ -265,7 +265,7 @@ TEST(StateTransaction, setColorXY)
         nlohmann::json request = {{"on", true}, {"xy", {x, y}}};
         nlohmann::json response = {{{"success", {{"/path/on", true}}}}, {{"success", {{"/path/xy", {x, y}}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).setColorXY(x, y).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).setColor(XY {x, y}).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Clamp
@@ -275,7 +275,7 @@ TEST(StateTransaction, setColorXY)
         nlohmann::json request = {{"on", true}, {"xy", {x, y}}};
         nlohmann::json response = {{{"success", {{"/path/on", true}}}}, {{"success", {{"/path/xy", {x, y}}}}}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).setColorXY(2.f, -1.f).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", nullptr).setColor(XY {2.f, -1.f}).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Already on
@@ -286,7 +286,7 @@ TEST(StateTransaction, setColorXY)
         nlohmann::json response = {{{"success", {{"/path/xy", {x, y}}}}}};
         nlohmann::json state = {{"on", true}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColorXY(x, y).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColor(XY {x, y}).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // Wrong colormode
@@ -303,7 +303,7 @@ TEST(StateTransaction, setColorXY)
                 }},
             {"colormode", "hs"}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColorXY(x, y).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColor(XY{ x, y }).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // No request
@@ -318,7 +318,7 @@ TEST(StateTransaction, setColorXY)
                 }},
             {"colormode", "xy"}};
         EXPECT_CALL(*handler, PUTJson(_, _, getBridgeIp(), getBridgePort())).Times(0);
-        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColorXY(x, y).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColor(XY{ x, y }).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }

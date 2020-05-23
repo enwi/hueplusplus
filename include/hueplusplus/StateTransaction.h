@@ -96,15 +96,25 @@ public:
     //! \note If this transaction is for a light, the light needs to have rgb color control.
     //! \note Will also turn on the light if nothing else is specified
     StateTransaction&& setColorSaturation(uint8_t saturation) &&;
-    //! \brief Set light color in xy space.
-    //! \param x x coordinate in CIE color space
-    //! \param y y coordinate in CIE color space
+    //! \brief Set light color in hue and saturation
+    //! \param hueSat Color in hue and saturation
     //! \returns This transaction for chaining calls
     //! \note If this transaction is for a light, the light needs to have rgb color control.
     //! \note Will also turn on the light if nothing else is specified
-    StateTransaction&& setColorXY(float x, float y) &&;
+    StateTransaction&& setColor(const HueSaturation& hueSat);
 
-    StateTransaction&& setColorXY(const XYBrightness& xy) &&;
+    //! \brief Set light color in xy space (without brightness).
+    //! \param xy x and y coordinates in CIE color space
+    //! \returns This transaction for chaining calls
+    //! \note If this transaction is for a light, the light needs to have rgb color control.
+    //! \note Will also turn on the light if nothing else is specified
+    StateTransaction&& setColor(const XY& xy) &&;
+    //! \brief Set light color and brightness in xy space
+    //! \param xy x,y and brightness in CIE color space
+    //! \returns This transaction for chaining calls
+    //! \note If this transaction is for a light, the light needs to have rgb color control.
+    //! \note Will also turn on the light if nothing else is specified
+    StateTransaction&& setColor(const XYBrightness& xy) &&;
     //! \brief Set light color temperature.
     //! \param mired Color temperature in mired from 153 to 500
     //! \returns This transaction for chaining calls
@@ -161,11 +171,11 @@ public:
     //! \returns This transaction for chaining calls
     StateTransaction&& stopAlert() &&;
 
-private:
+protected:
     //! \brief Remove parts from request that are already set in state
     void trimRequest();
 
-private:
+protected:
     const HueCommandAPI& commands;
     std::string path;
     nlohmann::json* state;

@@ -26,6 +26,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include "TestTransaction.h"
 #include "testhelper.h"
 
 #include "hueplusplus/ExtendedColorHueStrategy.h"
@@ -43,69 +44,75 @@ TEST(ExtendedColorHueStrategy, alertHueSaturation)
         *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
-    MockHueLight test_light(handler);
+    MockHueLight light(handler);
 
-    test_light.getState()["state"]["colormode"] = "invalid";
-    test_light.getState()["state"]["on"] = false;
-    EXPECT_EQ(false, ExtendedColorHueStrategy().alertHueSaturation(30000, 128, test_light));
+    const HueSaturation hueSat {200, 100};
+    // Needs to update the state so transactions are correctly trimmed
+    const auto setColorLambda = [&](const HueSaturation& hueSat, int transition) {
+        light.getState()["state"]["colormode"] = "hs";
+        light.getState()["state"]["on"] = true;
+        light.getState()["state"]["hue"] = hueSat.hue;
+        light.getState()["state"]["sat"] = hueSat.saturation;
+        return true;
+    };
+    // Invalid state
+    {
+        light.getState()["state"]["colormode"] = "invalid";
+        light.getState()["state"]["on"] = false;
+        EXPECT_FALSE(ExtendedColorHueStrategy().alertHueSaturation(hueSat, light));
+    }
+    // Colormode not ct is forwarded to SimpleColorHueStrategy
+    {
+        const nlohmann::json state = {{"colormode", "hs"}, {"on", true}, {"xy", {0.1, 0.1}}, {"hue", 300}, {"sat", 100},
+            {"bri", 254}, {"ct", 300}};
+        light.getState()["state"] = state;
+        EXPECT_CALL(Const(light), getColorHueSaturation())
+            .Times(AnyNumber())
+            .WillRepeatedly(Return(HueSaturation {300, 100}));
+        TestTransaction reverseTransaction = light.transaction().setColorHue(300).setTransition(1);
+        InSequence s;
+        EXPECT_CALL(light, setColorHueSaturation(hueSat, 1)).WillOnce(Invoke(setColorLambda));
+        EXPECT_CALL(light, alert()).WillOnce(Return(true));
+        reverseTransaction.expectSuccessfulPut(handler, Exactly(1));
+        EXPECT_TRUE(ExtendedColorHueStrategy().alertHueSaturation(hueSat, light));
+        Mock::VerifyAndClearExpectations(handler.get());
+    }
 
-    EXPECT_CALL(test_light, setColorHueSaturation(_, _, 1))
-        .Times(AtLeast(2))
-        .WillOnce(Return(false))
-        .WillRepeatedly(Return(true));
-    test_light.getState()["state"]["colormode"] = "hs";
-    test_light.getState()["state"]["on"] = true;
-    test_light.getState()["state"]["sat"] = 100;
-    test_light.getState()["state"]["hue"] = 200;
-    EXPECT_EQ(false, ExtendedColorHueStrategy().alertHueSaturation(200, 100, test_light));
+    // Colormode ct
+    {
+        const nlohmann::json state
+            = {{"colormode", "ct"}, {"on", true}, {"xy", {0.1, 0.1}}, {"sat", 100}, {"bri", 254}, {"ct", 300}};
+        light.getState()["state"] = state;
+        TestTransaction reverseTransaction = light.transaction().setColorTemperature(300).setTransition(1);
 
-    EXPECT_CALL(test_light, alert()).Times(AtLeast(2)).WillOnce(Return(false)).WillRepeatedly(Return(true));
-    EXPECT_EQ(false, ExtendedColorHueStrategy().alertHueSaturation(200, 100, test_light));
+        InSequence s;
+        EXPECT_CALL(light, setColorHueSaturation(hueSat, 1)).WillOnce(Invoke(setColorLambda));
+        EXPECT_CALL(light, alert()).WillOnce(Return(false));
+        EXPECT_FALSE(ExtendedColorHueStrategy().alertHueSaturation(hueSat, light));
+        light.getState()["state"] = state;
+        Mock::VerifyAndClearExpectations(handler.get());
 
-    EXPECT_EQ(true, ExtendedColorHueStrategy().alertHueSaturation(200, 100, test_light));
+        EXPECT_CALL(light, setColorHueSaturation(hueSat, 1)).WillOnce(Invoke(setColorLambda));
+        EXPECT_CALL(light, alert()).WillOnce(Return(true));
+        reverseTransaction.expectSuccessfulPut(handler, Exactly(1));
+        EXPECT_TRUE(ExtendedColorHueStrategy().alertHueSaturation(hueSat, light));
+        Mock::VerifyAndClearExpectations(handler.get());
+    }
 
-    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
-    test_light.getState()["state"]["on"] = false;
-    EXPECT_EQ(true, ExtendedColorHueStrategy().alertHueSaturation(200, 100, test_light));
+    // Colormode ct, off
+    {
+        const nlohmann::json state
+            = {{"colormode", "ct"}, {"on", false}, {"xy", {0., 1.}}, {"sat", 100}, {"bri", 254}, {"ct", 300}};
+        light.getState()["state"] = state;
 
-    EXPECT_CALL(test_light, setColorHueSaturation(_, _, 1))
-        .Times(AtLeast(2))
-        .WillOnce(Return(false))
-        .WillRepeatedly(Return(true));
-    test_light.getState()["state"]["colormode"] = "xy";
-    test_light.getState()["state"]["on"] = true;
-    test_light.getState()["state"]["xy"][0] = 0.1;
-    test_light.getState()["state"]["xy"][1] = 0.1;
-    EXPECT_EQ(false, ExtendedColorHueStrategy().alertHueSaturation(200, 100, test_light));
-
-    EXPECT_CALL(test_light, alert()).Times(AtLeast(2)).WillOnce(Return(false)).WillRepeatedly(Return(true));
-    EXPECT_EQ(false, ExtendedColorHueStrategy().alertHueSaturation(200, 100, test_light));
-
-    EXPECT_CALL(test_light, setColorXY(_, _, 1)).Times(AtLeast(2)).WillRepeatedly(Return(true));
-    EXPECT_EQ(true, ExtendedColorHueStrategy().alertHueSaturation(200, 100, test_light));
-
-    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
-    test_light.getState()["state"]["on"] = false;
-    EXPECT_EQ(true, ExtendedColorHueStrategy().alertHueSaturation(200, 100, test_light));
-
-    EXPECT_CALL(test_light, setColorHueSaturation(_, _, 1))
-        .Times(AtLeast(2))
-        .WillOnce(Return(false))
-        .WillRepeatedly(Return(true));
-    test_light.getState()["state"]["colormode"] = "ct";
-    test_light.getState()["state"]["on"] = true;
-    test_light.getState()["state"]["ct"] = 200;
-    EXPECT_EQ(false, ExtendedColorHueStrategy().alertHueSaturation(200, 100, test_light));
-
-    EXPECT_CALL(test_light, alert()).Times(AtLeast(2)).WillOnce(Return(false)).WillRepeatedly(Return(true));
-    EXPECT_EQ(false, ExtendedColorHueStrategy().alertHueSaturation(200, 100, test_light));
-
-    EXPECT_CALL(test_light, setColorTemperature(_, 1)).Times(AtLeast(2)).WillRepeatedly(Return(true));
-    EXPECT_EQ(true, ExtendedColorHueStrategy().alertHueSaturation(200, 100, test_light));
-
-    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
-    test_light.getState()["state"]["on"] = false;
-    EXPECT_EQ(true, ExtendedColorHueStrategy().alertHueSaturation(200, 100, test_light));
+        TestTransaction reverseTransaction = light.transaction().setColorTemperature(300).setOn(false).setTransition(1);
+        InSequence s;
+        EXPECT_CALL(light, setColorHueSaturation(hueSat, 1)).WillOnce(Invoke(setColorLambda));
+        EXPECT_CALL(light, alert()).WillOnce(Return(true));
+        reverseTransaction.expectSuccessfulPut(handler, Exactly(1));
+        EXPECT_TRUE(ExtendedColorHueStrategy().alertHueSaturation(hueSat, light));
+        Mock::VerifyAndClearExpectations(handler.get());
+    }
 }
 
 TEST(ExtendedColorHueStrategy, alertXY)
@@ -116,132 +123,78 @@ TEST(ExtendedColorHueStrategy, alertXY)
         *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
-    MockHueLight test_light(handler);
+    MockHueLight light(handler);
 
-    test_light.getState()["state"]["colormode"] = "invalid";
-    test_light.getState()["state"]["on"] = false;
-    EXPECT_EQ(false, ExtendedColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
+    const XYBrightness xy {{0.1f, 0.1f}, 1.f};
+    // Needs to update the state so transactions are correctly trimmed
+    const auto setColorLambda = [&](const XYBrightness& xy, int transition) {
+        light.getState()["state"]["colormode"] = "xy";
+        light.getState()["state"]["on"] = true;
+        light.getState()["state"]["xy"] = {xy.xy.x, xy.xy.y};
+        light.getState()["state"]["bri"] = static_cast<int>(std::round(xy.brightness * 254.f));
+        return true;
+    };
+    // Invalid colormode
+    {
+        light.getState()["state"]["colormode"] = "invalid";
+        light.getState()["state"]["on"] = false;
+        EXPECT_FALSE(ExtendedColorHueStrategy().alertXY({{0.1f, 0.1f}, 1.f}, light));
+    }
+    // Colormode not ct is forwarded to SimpleColorHueStrategy
+    {
+        const nlohmann::json state = {{"colormode", "hs"}, {"on", true}, {"xy", {0.1, 0.1}}, {"hue", 200}, {"sat", 100},
+            {"bri", 254}, {"ct", 300}};
+        light.getState()["state"] = state;
+        EXPECT_CALL(Const(light), getBrightness()).Times(AnyNumber()).WillRepeatedly(Return(254));
+        HueSaturation hueSat {200, 100};
+        EXPECT_CALL(Const(light), getColorHueSaturation()).Times(AnyNumber()).WillRepeatedly(Return(hueSat));
 
-    EXPECT_CALL(test_light, setColorXY(_, _, 1)).Times(AtLeast(2)).WillOnce(Return(false)).WillRepeatedly(Return(true));
-    test_light.getState()["state"]["colormode"] = "hs";
-    test_light.getState()["state"]["on"] = true;
-    test_light.getState()["state"]["xy"][0] = 0.1;
-    test_light.getState()["state"]["xy"][1] = 0.1;
-    test_light.getState()["state"]["sat"] = 100;
-    test_light.getState()["state"]["hue"] = 200;
-    EXPECT_EQ(false, ExtendedColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
+        TestTransaction reverseTransaction = light.transaction().setColor(hueSat).setTransition(1);
 
-    EXPECT_CALL(test_light, alert()).Times(AtLeast(2)).WillOnce(Return(false)).WillRepeatedly(Return(true));
-    EXPECT_EQ(false, ExtendedColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
+        InSequence s;
+        EXPECT_CALL(light, setColorXY(xy, 1)).WillOnce(Invoke(setColorLambda));
+        EXPECT_CALL(light, alert()).WillOnce(Return(true));
+        reverseTransaction.expectSuccessfulPut(handler, Exactly(1));
+        EXPECT_TRUE(SimpleColorHueStrategy().alertXY(xy, light));
+        Mock::VerifyAndClearExpectations(handler.get());
+    }
 
-    EXPECT_CALL(test_light, setColorHueSaturation(_, _, 1)).Times(AtLeast(2)).WillRepeatedly(Return(true));
-    EXPECT_EQ(true, ExtendedColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
+    // Colormode ct
+    {
+        const nlohmann::json state
+            = { {"colormode", "ct"}, {"on", true}, {"xy", {0.1, 0.1}}, {"sat", 100}, {"bri", 128}, {"ct", 300} };
+        light.getState()["state"] = state;        
+        EXPECT_CALL(Const(light), getBrightness()).Times(AnyNumber()).WillRepeatedly(Return(128));
 
-    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
-    test_light.getState()["state"]["on"] = false;
-    EXPECT_EQ(true, ExtendedColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
+        TestTransaction reverseTransaction = light.transaction().setColorTemperature(300).setBrightness(128).setTransition(1);
 
-    EXPECT_CALL(test_light, setColorXY(_, _, 1)).Times(AtLeast(2)).WillOnce(Return(false)).WillRepeatedly(Return(true));
-    test_light.getState()["state"]["colormode"] = "xy";
-    test_light.getState()["state"]["on"] = true;
-    EXPECT_EQ(false, ExtendedColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
+        InSequence s;
+        EXPECT_CALL(light, setColorXY(xy, 1)).WillOnce(Invoke(setColorLambda));
+        EXPECT_CALL(light, alert()).WillOnce(Return(false));
+        EXPECT_FALSE(ExtendedColorHueStrategy().alertXY(xy, light));
+        light.getState()["state"] = state;
+        Mock::VerifyAndClearExpectations(handler.get());
 
-    EXPECT_CALL(test_light, alert()).Times(AtLeast(2)).WillOnce(Return(false)).WillRepeatedly(Return(true));
-    EXPECT_EQ(false, ExtendedColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
+        EXPECT_CALL(light, setColorXY(xy, 1)).WillOnce(Invoke(setColorLambda));
+        EXPECT_CALL(light, alert()).WillOnce(Return(true));
+        reverseTransaction.expectSuccessfulPut(handler, Exactly(1));
+        EXPECT_TRUE(ExtendedColorHueStrategy().alertXY(xy, light));
+        Mock::VerifyAndClearExpectations(handler.get());
+    }
 
-    EXPECT_EQ(true, ExtendedColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
+    // Colormode ct, off
+    {
+        const nlohmann::json state
+            = { {"colormode", "ct"}, {"on", false}, {"xy", {0., 1.}}, {"sat", 100}, {"bri", 254}, {"ct", 300} };
+        light.getState()["state"] = state;
+        EXPECT_CALL(Const(light), getBrightness()).Times(AnyNumber()).WillRepeatedly(Return(254));
 
-    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
-    test_light.getState()["state"]["on"] = false;
-    EXPECT_EQ(true, ExtendedColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
-
-    EXPECT_CALL(test_light, setColorXY(_, _, 1)).Times(AtLeast(2)).WillOnce(Return(false)).WillRepeatedly(Return(true));
-    test_light.getState()["state"]["colormode"] = "ct";
-    test_light.getState()["state"]["on"] = true;
-    test_light.getState()["state"]["ct"] = 200;
-    EXPECT_EQ(false, ExtendedColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
-
-    EXPECT_CALL(test_light, alert()).Times(AtLeast(2)).WillOnce(Return(false)).WillRepeatedly(Return(true));
-    EXPECT_EQ(false, ExtendedColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
-
-    EXPECT_CALL(test_light, setColorTemperature(_, 1)).Times(AtLeast(2)).WillRepeatedly(Return(true));
-    EXPECT_EQ(true, ExtendedColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
-
-    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
-    test_light.getState()["state"]["on"] = false;
-    EXPECT_EQ(true, ExtendedColorHueStrategy().alertXY(0.1f, 0.1f, test_light));
-}
-
-TEST(ExtendedColorHueStrategy, alertRGB)
-{
-    using namespace ::testing;
-    std::shared_ptr<MockHttpHandler> handler(std::make_shared<MockHttpHandler>());
-    EXPECT_CALL(
-        *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(nlohmann::json::object()));
-    MockHueLight test_light(handler);
-
-    test_light.getState()["state"]["colormode"] = "invalid";
-    test_light.getState()["state"]["on"] = false;
-    EXPECT_EQ(false, ExtendedColorHueStrategy().alertRGB(128, 128, 128, test_light));
-
-    EXPECT_CALL(test_light, setColorRGB(_, _, _, 1))
-        .Times(AtLeast(2))
-        .WillOnce(Return(false))
-        .WillRepeatedly(Return(true));
-    test_light.getState()["state"]["colormode"] = "hs";
-    test_light.getState()["state"]["on"] = true;
-    test_light.getState()["state"]["sat"] = 100;
-    test_light.getState()["state"]["hue"] = 200;
-    EXPECT_EQ(false, ExtendedColorHueStrategy().alertRGB(128, 128, 128, test_light));
-
-    EXPECT_CALL(test_light, alert()).Times(AtLeast(2)).WillOnce(Return(false)).WillRepeatedly(Return(true));
-    EXPECT_EQ(false, ExtendedColorHueStrategy().alertRGB(128, 128, 128, test_light));
-
-    EXPECT_CALL(test_light, setColorHueSaturation(_, _, 1)).Times(AtLeast(2)).WillRepeatedly(Return(true));
-    EXPECT_EQ(true, ExtendedColorHueStrategy().alertRGB(128, 128, 128, test_light));
-
-    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
-    test_light.getState()["state"]["on"] = false;
-    EXPECT_EQ(true, ExtendedColorHueStrategy().alertRGB(128, 128, 128, test_light));
-
-    EXPECT_CALL(test_light, setColorRGB(_, _, _, 1))
-        .Times(AtLeast(2))
-        .WillOnce(Return(false))
-        .WillRepeatedly(Return(true));
-    test_light.getState()["state"]["colormode"] = "xy";
-    test_light.getState()["state"]["on"] = true;
-    test_light.getState()["state"]["xy"][0] = 0.1;
-    test_light.getState()["state"]["xy"][1] = 0.1;
-    EXPECT_EQ(false, ExtendedColorHueStrategy().alertRGB(128, 128, 128, test_light));
-
-    EXPECT_CALL(test_light, alert()).Times(AtLeast(2)).WillOnce(Return(false)).WillRepeatedly(Return(true));
-    EXPECT_EQ(false, ExtendedColorHueStrategy().alertRGB(128, 128, 128, test_light));
-
-    EXPECT_CALL(test_light, setColorXY(_, _, 1)).Times(AtLeast(2)).WillRepeatedly(Return(true));
-    EXPECT_EQ(true, ExtendedColorHueStrategy().alertRGB(128, 128, 128, test_light));
-
-    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
-    test_light.getState()["state"]["on"] = false;
-    EXPECT_EQ(true, ExtendedColorHueStrategy().alertRGB(128, 128, 128, test_light));
-
-    EXPECT_CALL(test_light, setColorRGB(_, _, _, 1))
-        .Times(AtLeast(2))
-        .WillOnce(Return(false))
-        .WillRepeatedly(Return(true));
-    test_light.getState()["state"]["colormode"] = "ct";
-    test_light.getState()["state"]["on"] = true;
-    test_light.getState()["state"]["ct"] = 200;
-    EXPECT_EQ(false, ExtendedColorHueStrategy().alertRGB(128, 128, 128, test_light));
-
-    EXPECT_CALL(test_light, alert()).Times(AtLeast(2)).WillOnce(Return(false)).WillRepeatedly(Return(true));
-    EXPECT_EQ(false, ExtendedColorHueStrategy().alertRGB(128, 128, 128, test_light));
-
-    EXPECT_CALL(test_light, setColorTemperature(_, 1)).Times(AtLeast(2)).WillRepeatedly(Return(true));
-    EXPECT_EQ(true, ExtendedColorHueStrategy().alertRGB(128, 128, 128, test_light));
-
-    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
-    test_light.getState()["state"]["on"] = false;
-    EXPECT_EQ(true, ExtendedColorHueStrategy().alertRGB(128, 128, 128, test_light));
+        TestTransaction reverseTransaction = light.transaction().setColorTemperature(300).setOn(false).setTransition(1);
+        InSequence s;
+        EXPECT_CALL(light, setColorXY(xy, 1)).WillOnce(Invoke(setColorLambda));
+        EXPECT_CALL(light, alert()).WillOnce(Return(true));
+        reverseTransaction.expectSuccessfulPut(handler, Exactly(1));
+        EXPECT_TRUE(ExtendedColorHueStrategy().alertXY(xy, light));
+        Mock::VerifyAndClearExpectations(handler.get());
+    }
 }

@@ -245,12 +245,11 @@ public:
     //! \see StateTransaction::setBrightness
     void setBrightness(uint8_t brightness, uint8_t transition = 4);
     //! \brief Convenience function to set hue and saturation.
-    //! \see StateTransaction::setColorHue
-    //! \see StateTransaction::setColorSaturation
-    void setColorHueSaturation(uint16_t hue, uint8_t saturation, uint8_t transition = 4);
+    //! \see StateTransaction::setColor(const HueSaturation&)
+    void setColor(const HueSaturation& hueSat, uint8_t transition = 4);
     //! \brief Convenience function to set color xy.
-    //! \see StateTransaction::setColorXY
-    void setColorXY(float x, float y, uint8_t transition = 4);
+    //! \see StateTransaction::setColor(const XYBrightness&)
+    void setColor(const XYBrightness& xy, uint8_t transition = 4);
     //! \brief Convenience function to set color temperature.
     //! \see StateTransaction::setColorTemperature
     void setColorTemperature(unsigned int mired, uint8_t transition = 4);

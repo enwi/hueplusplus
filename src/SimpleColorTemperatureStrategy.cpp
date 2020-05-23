@@ -56,15 +56,7 @@ bool SimpleColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLig
             return false;
         }
         std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
-        if (!on)
-        {
-            light.setColorTemperature(oldCT, 1);
-            return light.Off(1);
-        }
-        else
-        {
-            return light.setColorTemperature(oldCT, 1);
-        }
+        return light.transaction().setColorTemperature(oldCT).setOn(on).setTransition(1).commit();
     }
     else
     {

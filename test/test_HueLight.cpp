@@ -639,9 +639,9 @@ TEST_F(HueLightTest, setColorHueSaturation)
     HueLight test_light_2 = test_bridge.getLight(2);
     HueLight test_light_3 = test_bridge.getLight(3);
 
-    EXPECT_EQ(false, test_light_1.setColorHueSaturation(153, 0));
-    EXPECT_EQ(false, test_light_2.setColorHueSaturation(30000, 140, 2));
-    EXPECT_EQ(true, test_light_3.setColorHueSaturation(65500, 250, 0));
+    EXPECT_EQ(false, test_light_1.setColorHueSaturation({153, 0}));
+    EXPECT_EQ(false, test_light_2.setColorHueSaturation({30000, 140}, 2));
+    EXPECT_EQ(true, test_light_3.setColorHueSaturation({65500, 250}, 0));
 }
 
 TEST_F(HueLightTest, getColorHueSaturation)
@@ -653,16 +653,12 @@ TEST_F(HueLightTest, getColorHueSaturation)
     HueLight test_light_2 = test_bridge.getLight(2);
     HueLight test_light_3 = test_bridge.getLight(3);
 
-    EXPECT_EQ(std::make_pair(static_cast<uint16_t>(0), static_cast<uint8_t>(0)), ctest_light_1.getColorHueSaturation());
-    EXPECT_EQ(
-        std::make_pair(static_cast<uint16_t>(12345), static_cast<uint8_t>(123)), ctest_light_2.getColorHueSaturation());
-    EXPECT_EQ(
-        std::make_pair(static_cast<uint16_t>(12345), static_cast<uint8_t>(123)), ctest_light_3.getColorHueSaturation());
-    EXPECT_EQ(std::make_pair(static_cast<uint16_t>(0), static_cast<uint8_t>(0)), test_light_1.getColorHueSaturation());
-    EXPECT_EQ(
-        std::make_pair(static_cast<uint16_t>(12345), static_cast<uint8_t>(123)), test_light_2.getColorHueSaturation());
-    EXPECT_EQ(
-        std::make_pair(static_cast<uint16_t>(12345), static_cast<uint8_t>(123)), test_light_3.getColorHueSaturation());
+    EXPECT_EQ((HueSaturation {0, 0}), ctest_light_1.getColorHueSaturation());
+    EXPECT_EQ((HueSaturation {12345, 123}), ctest_light_2.getColorHueSaturation());
+    EXPECT_EQ((HueSaturation {12345, 123}), ctest_light_3.getColorHueSaturation());
+    EXPECT_EQ((HueSaturation {0, 0}), test_light_1.getColorHueSaturation());
+    EXPECT_EQ((HueSaturation {12345, 123}), test_light_2.getColorHueSaturation());
+    EXPECT_EQ((HueSaturation {12345, 123}), test_light_3.getColorHueSaturation());
 }
 
 TEST_F(HueLightTest, setColorXY)
@@ -691,9 +687,9 @@ TEST_F(HueLightTest, setColorXY)
     HueLight test_light_2 = test_bridge.getLight(2);
     HueLight test_light_3 = test_bridge.getLight(3);
 
-    EXPECT_EQ(false, test_light_1.setColorXY(0.01, 0));
-    EXPECT_EQ(false, test_light_2.setColorXY(0.123, 1, 2));
-    EXPECT_EQ(true, test_light_3.setColorXY(0.4232, 0.1231, 0));
+    EXPECT_EQ(false, test_light_1.setColorXY({{0.01f, 0.f}, 1.f}));
+    EXPECT_EQ(false, test_light_2.setColorXY({{0.123f, 1.f}, 1.f}, 2));
+    EXPECT_EQ(true, test_light_3.setColorXY({{0.4232f, 0.1231f}, 1.f}, 0));
 }
 
 TEST_F(HueLightTest, getColorXY)
@@ -704,13 +700,12 @@ TEST_F(HueLightTest, getColorXY)
     HueLight test_light_1 = test_bridge.getLight(1);
     HueLight test_light_2 = test_bridge.getLight(2);
     HueLight test_light_3 = test_bridge.getLight(3);
-
-    EXPECT_EQ(std::make_pair(static_cast<float>(0), static_cast<float>(0)), ctest_light_1.getColorXY());
-    EXPECT_EQ(std::make_pair(static_cast<float>(0.102), static_cast<float>(0.102)), ctest_light_2.getColorXY());
-    EXPECT_EQ(std::make_pair(static_cast<float>(0.102), static_cast<float>(0.102)), ctest_light_3.getColorXY());
-    EXPECT_EQ(std::make_pair(static_cast<float>(0), static_cast<float>(0)), test_light_1.getColorXY());
-    EXPECT_EQ(std::make_pair(static_cast<float>(0.102), static_cast<float>(0.102)), test_light_2.getColorXY());
-    EXPECT_EQ(std::make_pair(static_cast<float>(0.102), static_cast<float>(0.102)), test_light_3.getColorXY());
+    EXPECT_EQ((XYBrightness {{0.f, 0.f}, 0.f}), ctest_light_1.getColorXY());
+    EXPECT_EQ((XYBrightness {{0.102f, 0.102f}, 0.f}), ctest_light_2.getColorXY());
+    EXPECT_EQ((XYBrightness {{0.102f, 0.102f}, 1.f}), ctest_light_3.getColorXY());
+    EXPECT_EQ((XYBrightness {{0.f, 0.f}, 0.f}), test_light_1.getColorXY());
+    EXPECT_EQ((XYBrightness {{0.102f, 0.102f}, 0.f}), test_light_2.getColorXY());
+    EXPECT_EQ((XYBrightness {{0.102f, 0.102f}, 1.f}), test_light_3.getColorXY());
 }
 
 TEST_F(HueLightTest, setColorRGB)
@@ -739,9 +734,9 @@ TEST_F(HueLightTest, setColorRGB)
     HueLight test_light_2 = test_bridge.getLight(2);
     HueLight test_light_3 = test_bridge.getLight(3);
 
-    EXPECT_EQ(false, test_light_1.setColorRGB(0, 0, 0, 0));
-    EXPECT_EQ(false, test_light_2.setColorRGB(32, 64, 128, 2));
-    EXPECT_EQ(true, test_light_3.setColorRGB(64, 128, 255, 0));
+    EXPECT_EQ(false, test_light_1.setColorRGB({0, 0, 0}, 0));
+    EXPECT_EQ(false, test_light_2.setColorRGB({32, 64, 128}, 2));
+    EXPECT_EQ(true, test_light_3.setColorRGB({64, 128, 255}, 0));
 }
 
 TEST_F(HueLightTest, alert)
@@ -798,9 +793,9 @@ TEST_F(HueLightTest, alertHueSaturation)
     HueLight test_light_2 = test_bridge.getLight(2);
     HueLight test_light_3 = test_bridge.getLight(3);
 
-    EXPECT_EQ(false, test_light_1.alertHueSaturation(0, 255));
-    EXPECT_EQ(false, test_light_2.alertHueSaturation(3000, 100));
-    EXPECT_EQ(false, test_light_3.alertHueSaturation(50000, 0));
+    EXPECT_EQ(false, test_light_1.alertHueSaturation({0, 255}));
+    EXPECT_EQ(false, test_light_2.alertHueSaturation({3000, 100}));
+    EXPECT_EQ(false, test_light_3.alertHueSaturation({50000, 0}));
 }
 
 TEST_F(HueLightTest, alertXY)
@@ -814,25 +809,9 @@ TEST_F(HueLightTest, alertXY)
     HueLight test_light_2 = test_bridge.getLight(2);
     HueLight test_light_3 = test_bridge.getLight(3);
 
-    EXPECT_EQ(false, test_light_1.alertXY(0.1, 0.1));
-    EXPECT_EQ(false, test_light_2.alertXY(0.2434, 0.2344));
-    EXPECT_EQ(false, test_light_3.alertXY(0.1234, 0.1234));
-}
-
-TEST_F(HueLightTest, alertRGB)
-{
-    using namespace ::testing;
-    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/3/state", _, getBridgeIp(), 80))
-        .Times(1)
-        .WillOnce(Return(nlohmann::json::array()));
-
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
-
-    EXPECT_EQ(false, test_light_1.alertRGB(0, 0, 0));
-    EXPECT_EQ(false, test_light_2.alertRGB(32, 64, 128));
-    EXPECT_EQ(false, test_light_3.alertRGB(64, 128, 255));
+    EXPECT_EQ(false, test_light_1.alertXY({{0.1f, 0.1f}, 1.f}));
+    EXPECT_EQ(false, test_light_2.alertXY({{0.2434f, 0.2344f}, 1.f}));
+    EXPECT_EQ(false, test_light_3.alertXY({{0.1234f, 0.1234f}, 1.f}));
 }
 
 TEST_F(HueLightTest, setColorLoop)
