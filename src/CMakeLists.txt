@@ -1,6 +1,7 @@
 set(hueplusplus_SOURCES
 	APICache.cpp
     BaseHttpHandler.cpp
+    ColorUnits.cpp
     ExtendedColorHueStrategy.cpp
     ExtendedColorTemperatureStrategy.cpp
 	Group.cpp
@@ -9,6 +10,7 @@ set(hueplusplus_SOURCES
 	HueDeviceTypes.cpp
     HueException.cpp
     HueLight.cpp
+    ModelPictures.cpp
     Scene.cpp
     Schedule.cpp
     SimpleBrightnessStrategy.cpp
@@ -16,9 +18,8 @@ set(hueplusplus_SOURCES
     SimpleColorTemperatureStrategy.cpp
     StateTransaction.cpp
     TimePattern.cpp
-    "ColorUnits.cpp"
     UPnP.cpp
-    Utils.cpp )
+    Utils.cpp)
 
 # on windows we want to compile the WinHttpHandler
 if(WIN32)

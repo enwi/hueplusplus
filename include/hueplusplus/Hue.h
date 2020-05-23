@@ -346,25 +346,6 @@ public:
 
     ///@}
 
-    //! \brief Const function that returns the picture name of a given light id
-    //!
-    //! \note This will not update the local state of the bridge.
-    //! \note This function will only return the filename without extension,
-    //! because Philips provides different file types. \param id Id of a light to
-    //! get the picture of \return String that either contains the filename of the
-    //! picture of the light or if it was not found an empty string
-    std::string getPictureOfLight(int id);
-
-    //! \brief Const function that returns the picture name of a given model id
-    //!
-    //! \note This will not update the local state of the bridge.
-    //! \note This function will only return the filename without extension,
-    //! because Philips provides different file types. \param model_id Model Id of
-    //! a device to get the picture of \return String that either contains the
-    //! filename of the picture of the device or if it was not found an empty
-    //! string
-    std::string getPictureOfModel(const std::string& model_id) const;
-
 private:
     std::string ip; //!< IP-Address of the hue bridge in dotted decimal notation
                     //!< like "192.168.2.1"

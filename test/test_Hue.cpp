@@ -551,34 +551,3 @@ TEST(Hue, createGroup)
         .WillOnce(Return(response));
     EXPECT_EQ(0, test_bridge.createGroup(create));
 }
-
-TEST(Hue, getPictureOfLight)
-{
-    using namespace ::testing;
-    std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
-    nlohmann::json hue_bridge_state {{"lights",
-        {{"1",
-            {{"state",
-                 {{"on", true}, {"bri", 254}, {"ct", 366}, {"alert", "none"}, {"colormode", "ct"},
-                     {"reachable", true}}},
-                {"swupdate", {{"state", "noupdates"}, {"lastinstall", nullptr}}}, {"type", "Color temperature light"},
-                {"name", "Hue ambiance lamp 1"}, {"modelid", "LTW001"}, {"manufacturername", "Philips"},
-                {"uniqueid", "00:00:00:00:00:00:00:00-00"}, {"swversion", "5.50.1.19085"}}}}}};
-
-    EXPECT_CALL(
-        *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(hue_bridge_state));
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(hue_bridge_state["lights"]["1"]));
-
-    Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
-
-    test_bridge.getLight(1);
-
-    EXPECT_EQ("", test_bridge.getPictureOfLight(2));
-
-    EXPECT_EQ("e27_waca", test_bridge.getPictureOfLight(1));
-}
