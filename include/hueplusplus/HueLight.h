@@ -435,19 +435,18 @@ public:
     //!
     //! \note The color will only be set if the light has a reference to a
     //! specific \ref ColorHueStrategy.
-    //! \param hue uint16_t that specifies the hue
-    //! \param sat uint8_t that specifies the saturation
+    //! \param hueSat Color in hue and satuation.
     //! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms.
     //! \return Bool that is true on success
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual bool setColorHueSaturation(uint16_t hue, uint8_t sat, uint8_t transition = 4)
+    virtual bool setColorHueSaturation(const HueSaturation& hueSat, uint8_t transition = 4)
     {
         if (colorHueStrategy)
         {
-            return colorHueStrategy->setColorHueSaturation(hue, sat, transition, *this);
+            return colorHueStrategy->setColorHueSaturation(hueSat, transition, *this);
         }
         return false;
     };
@@ -458,12 +457,12 @@ public:
     //! \note The color hue and saturation will only be returned when the light
     //! has a reference to a specific \ref ColorHueStrategy.
     //! \note This will not refresh the light state
-    //! \return Pair containing the hue as first value and saturation as second value or an empty one when failed
+    //! \return Current hue and saturation or {0,0} when failed
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual std::pair<uint16_t, uint8_t> getColorHueSaturation() const
+    virtual HueSaturation getColorHueSaturation() const
     {
         if (colorHueStrategy)
         {
@@ -478,12 +477,12 @@ public:
     //! \note The color hue and saturation will only be returned when the light
     //! has a reference to a specific \ref ColorHueStrategy. Updates the lights
     //! state by calling refreshState()
-    //! \return Pair containing the hue as first value and saturation as second value or an empty one when failed
+    //! \return Current hue and saturation or {0,0} when failed
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual std::pair<uint16_t, uint8_t> getColorHueSaturation()
+    virtual HueSaturation getColorHueSaturation()
     {
         if (colorHueStrategy)
         {
@@ -496,19 +495,18 @@ public:
     //!
     //! \note The color will only be set if the light has a reference to a
     //! specific \ref ColorHueStrategy. The values of x and y are ranging from 0 to 1.
-    //! \param x float that specifies the x coordinate in CIE
-    //! \param y float that specifies the y coordinate in CIE
+    //! \param xy The color in XY and brightness
     //! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
     //! \return Bool that is true on success
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual bool setColorXY(float x, float y, uint8_t transition = 4)
+    virtual bool setColorXY(const XYBrightness& xy, uint8_t transition = 4)
     {
         if (colorHueStrategy)
         {
-            return colorHueStrategy->setColorXY(x, y, transition, *this);
+            return colorHueStrategy->setColorXY(xy, transition, *this);
         }
         return false;
     };
@@ -518,9 +516,8 @@ public:
     //! \note The color x and y will only be returned when the light has a
     //! reference to a specific \ref ColorHueStrategy.
     //! \note This does not update the lights state
-    //! \return Pair containing the x as first value and y as second value or an
-    //! empty one when failed
-    virtual std::pair<float, float> getColorXY() const
+    //! \return XYBrightness with x, y and brightness or an empty one (all 0) when failed
+    virtual XYBrightness getColorXY() const
     {
         if (colorHueStrategy)
         {
@@ -534,19 +531,19 @@ public:
     //! \note The color x and y will only be returned when the light has a
     //! reference to a specific \ref ColorHueStrategy.
     //! Updates the lights state by calling refreshState()
-    //! \return Pair containing the x as first value and y as second value or an empty one when failed
+    //! \return XYBrightness with x, y and brightness or an empty one (all 0) when failed
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual std::pair<float, float> getColorXY()
+    virtual XYBrightness getColorXY()
     {
         if (colorHueStrategy)
         {
             return colorHueStrategy->getColorXY(*this);
         }
         return {};
-    };
+    }
 
     //! \brief Function to set the color of this light with red green and blue
     //! values.
@@ -554,23 +551,21 @@ public:
     //! \note The color will only be set if the light has a reference to a
     //! specific \ref ColorHueStrategy. The values of red, green and blue are
     //! ranging from 0 to 255.
-    //! \param r uint8_t that specifies the red color value
-    //! \param g uint8_t that specifies the green color value
-    //! \param b uint8_t that specifies the blue color value
+    //! \param rgb RGB color that will be mapped to the available color space
     //! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
     //! \return Bool that is true on success
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual bool setColorRGB(uint8_t r, uint8_t g, uint8_t b, uint8_t transition = 4)
+    virtual bool setColorRGB(const RGB& rgb, uint8_t transition = 4)
     {
         if (colorHueStrategy)
         {
-            return colorHueStrategy->setColorRGB(r, g, b, transition, *this);
+            return colorHueStrategy->setColorXY(rgb.toXY(getColorGamut()), transition, *this);
         }
         return false;
-    };
+    }
 
     //! \brief Function that lets the light perform one breath cycle.
     //!
@@ -600,73 +595,47 @@ public:
             return colorTemperatureStrategy->alertTemperature(mired, *this);
         }
         return false;
-    };
+    }
 
     //! \brief Function that lets the light perform one breath cycle in specified
     //! color.
     //!
     //! \note The breath cylce will only be performed if the light has a reference
     //! to a specific \ref ColorHueStrategy.
-    //! \param hue uint16_t that specifies the hue
-    //! \param sat uint8_t that specifies the saturation
+    //! \param hueSat Color in hue and saturation
     //! \return Bool that is true on success
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual bool alertHueSaturation(uint16_t hue, uint8_t sat)
+    virtual bool alertHueSaturation(const HueSaturation& hueSat)
     {
         if (colorHueStrategy)
         {
-            return colorHueStrategy->alertHueSaturation(hue, sat, *this);
+            return colorHueStrategy->alertHueSaturation(hueSat, *this);
         }
         return false;
-    };
+    }
 
     //! \brief Function that lets the light perform one breath cycle in specified
     //! color.
     //!
     //! \note The breath cylce will only be performed if the light has a reference
-    //! to a specific \ref ColorHueStrategy. The values of x and y are ranging
-    //! from 0 to 1.
-    //! \param x float that specifies the x coordinate in CIE
-    //! \param y float that specifies the y coordinate in CIE
+    //! to a specific \ref ColorHueStrategy.
+    //! \param xy The x,y coordinates in CIE and brightness
     //! \return Bool that is true on success
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual bool alertXY(float x, float y)
+    virtual bool alertXY(const XYBrightness& xy)
     {
         if (colorHueStrategy)
         {
-            return colorHueStrategy->alertXY(x, y, *this);
+            return colorHueStrategy->alertXY(xy, *this);
         }
         return false;
-    };
-
-    //! \brief Function that lets the light perform one breath cycle in specified
-    //! color.
-    //!
-    //! \note The breath cylce will only be performed if the light has a reference
-    //! to a specific \ref ColorHueStrategy. The values of red, green and blue are
-    //! ranging from 0 to 255.
-    //! \param r uint8_t that specifies the red color value
-    //! \param g uint8_t that specifies the green color value
-    //! \param b uint8_t that specifies the blue color value
-    //! \return Bool that is true on success
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual bool alertRGB(uint8_t r, uint8_t g, uint8_t b)
-    {
-        if (colorHueStrategy)
-        {
-            return colorHueStrategy->alertRGB(r, g, b, *this);
-        }
-        return false;
-    };
+    }
 
     //! \brief Function to turn colorloop effect on/off.
     //!
@@ -690,7 +659,7 @@ public:
             return colorHueStrategy->setColorLoop(on, *this);
         }
         return false;
-    };
+    }
 
     //! \brief Create a transaction for this light.
     //!

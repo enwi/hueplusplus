@@ -99,29 +99,27 @@ public:
 
     MOCK_METHOD2(setColorSaturation, bool(uint8_t sat, uint8_t transition));
 
-    MOCK_METHOD3(setColorHueSaturation, bool(uint16_t hue, uint8_t sat, uint8_t transition));
+    MOCK_METHOD2(setColorHueSaturation, bool(const hueplusplus::HueSaturation& hueSat, uint8_t transition));
 
-    MOCK_CONST_METHOD0(getColorHueSaturation, std::pair<uint16_t, uint8_t>());
+    MOCK_CONST_METHOD0(getColorHueSaturation, hueplusplus::HueSaturation());
 
-    MOCK_METHOD0(getColorHueSaturation, std::pair<uint16_t, uint8_t>());
+    MOCK_METHOD0(getColorHueSaturation, hueplusplus::HueSaturation());
 
-    MOCK_METHOD3(setColorXY, bool(float x, float y, uint8_t transition));
+    MOCK_METHOD2(setColorXY, bool(const hueplusplus::XYBrightness& xy, uint8_t transition));
 
-    MOCK_CONST_METHOD0(getColorXY, std::pair<float, float>());
+    MOCK_CONST_METHOD0(getColorXY, hueplusplus::XYBrightness());
 
-    MOCK_METHOD0(getColorXY, std::pair<float, float>());
+    MOCK_METHOD0(getColorXY, hueplusplus::XYBrightness());
 
-    MOCK_METHOD4(setColorRGB, bool(uint8_t r, uint8_t g, uint8_t b, uint8_t transition));
+    MOCK_METHOD2(setColorRGB, bool(const hueplusplus::RGB& rgb, uint8_t transition));
 
     MOCK_METHOD0(alert, bool());
 
     MOCK_METHOD1(alertTemperature, bool(unsigned int mired));
 
-    MOCK_METHOD2(alertHueSaturation, bool(uint16_t hue, uint8_t sat));
+    MOCK_METHOD1(alertHueSaturation, bool(const hueplusplus::HueSaturation& hueSat));
 
-    MOCK_METHOD2(alertXY, bool(float x, float y));
-
-    MOCK_METHOD3(alertRGB, bool(uint8_t r, uint8_t g, uint8_t b));
+    MOCK_METHOD1(alertXY, bool(const hueplusplus::XYBrightness& xy));
 
     MOCK_METHOD1(setColorLoop, bool(bool on));
 

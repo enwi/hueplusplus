@@ -36,6 +36,24 @@ StateTransaction::StateTransaction(const HueCommandAPI& commands, const std::str
 
 bool StateTransaction::commit(bool trimRequest) &&
 {
+    const nlohmann::json& stateJson = (state != nullptr) ? *state : nlohmann::json::object();
+    // Check this before request is trimmed
+    if (!request.count("on"))
+    {
+        if (!stateJson.value("on", false)
+            && (request.value("bri", 0) != 0 || request.count("effect") || request.count("hue")
+                || request.count("sat") || request.count("xy") || request.count("ct")))
+        {
+            // Turn on if it was turned off
+            request["on"] = true;
+        }
+        else if (request.value("bri", 254) == 0 && stateJson.value("on", true))
+        {
+            // Turn off if brightness is 0
+            request["on"] = false;
+        }
+    }
+
     if (trimRequest)
     {
         this->trimRequest();
@@ -43,23 +61,6 @@ bool StateTransaction::commit(bool trimRequest) &&
     // Empty request or request with only transition makes no sense
     if (!request.empty() && !(request.size() == 1 && request.count("transitiontime")))
     {
-        const nlohmann::json& stateJson = (state != nullptr) ? *state : nlohmann::json::object();
-        if (!request.count("on"))
-        {
-            if (!stateJson.value("on", false)
-                && (request.value("bri", 0) != 0 || request.count("effect") || request.count("hue")
-                    || request.count("sat") || request.count("xy") || request.count("ct")))
-            {
-                // Turn on if it was turned off
-                request["on"] = true;
-            }
-            else if (request.value("bri", 254) == 0 && stateJson.value("on", true))
-            {
-                // Turn off if brightness is 0
-                request["on"] = false;
-            }
-        }
-
         nlohmann::json reply = commands.PUTRequest(path, request, CURRENT_FILE_INFO);
         if (utils::validatePUTReply(path, request, reply))
         {
@@ -114,20 +115,27 @@ StateTransaction&& StateTransaction::setColorHue(uint16_t hue) &&
     return std::move(*this);
 }
 
-StateTransaction&& StateTransaction::setColorXY(float x, float y) &&
+StateTransaction&& StateTransaction::setColor(const HueSaturation& hueSat)
 {
-    float clampedX = std::max(0.f, std::min(x, 1.f));
-    float clampedY = std::max(0.f, std::min(y, 1.f));
+    request["hue"] = std::max(0, std::min(hueSat.hue, (1 << 16) - 1));
+    request["sat"] = std::max(0, std::min(hueSat.saturation, 254));
+    return std::move(*this);
+}
+
+StateTransaction&& StateTransaction::setColor(const XY& xy) &&
+{
+    float clampedX = std::max(0.f, std::min(xy.x, 1.f));
+    float clampedY = std::max(0.f, std::min(xy.y, 1.f));
     request["xy"] = {clampedX, clampedY};
     return std::move(*this);
 }
 
-StateTransaction&& StateTransaction::setColorXY(const XYBrightness& xy) &&
+StateTransaction&& StateTransaction::setColor(const XYBrightness& xy) &&
 {
-    request["xy"] = {xy.xy.x, xy.xy.y};
-    request["bri"] = static_cast<int>(std::round(xy.brightness * 255.f));
+    int clamped = std::max(0, std::min(static_cast<int>(std::round(xy.brightness * 254.f)), 254));
+    request["bri"] = clamped;
 
-    return std::move(*this);
+    return std::move(*this).setColor(xy.xy);
 }
 
 StateTransaction&& StateTransaction::setColorTemperature(unsigned int mired) &&
