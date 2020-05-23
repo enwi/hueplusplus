@@ -30,230 +30,51 @@
 
 namespace hueplusplus
 {
-bool ExtendedColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, HueLight& light) const
+bool ExtendedColorHueStrategy::alertHueSaturation(const HueSaturation& hueSat, HueLight& light) const
 {
     // Careful, only use state until any light function might refresh the value and invalidate the reference
     const nlohmann::json& state = light.state.getValue()["state"];
     std::string cType = state["colormode"];
     bool on = state["on"];
-    if (cType == "hs")
+    const HueLight& cLight = light;
+    if (cType != "ct")
     {
-        uint16_t oldHue = state["hue"];
-        uint8_t oldSat = state["sat"];
-        if (!light.setColorHueSaturation(hue, sat, 1))
-        {
-            return false;
-        }
-        std::this_thread::sleep_for(Config::instance().getPreAlertDelay());
-        if (!light.alert())
-        {
-            return false;
-        }
-        std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
-        if (!on)
-        {
-            light.setColorHueSaturation(oldHue, oldSat, 1);
-            return light.Off(1);
-        }
-        else
-        {
-            return light.setColorHueSaturation(oldHue, oldSat, 1);
-        }
-    }
-    else if (cType == "xy")
-    {
-        float oldX = state["xy"][0];
-        float oldY = state["xy"][1];
-        if (!light.setColorHueSaturation(hue, sat, 1))
-        {
-            return false;
-        }
-        std::this_thread::sleep_for(Config::instance().getPreAlertDelay());
-        if (!light.alert())
-        {
-            return false;
-        }
-        std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
-        if (!on)
-        {
-            light.setColorXY(oldX, oldY, 1);
-            return light.Off(1);
-        }
-        else
-        {
-            return light.setColorXY(oldX, oldY, 1);
-        }
-    }
-    else if (cType == "ct")
-    {
-        uint16_t oldCT = state["ct"];
-        if (!light.setColorHueSaturation(hue, sat, 1))
-        {
-            return false;
-        }
-        std::this_thread::sleep_for(Config::instance().getPreAlertDelay());
-        if (!light.alert())
-        {
-            return false;
-        }
-        std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
-        if (!on)
-        {
-            light.setColorTemperature(oldCT, 1);
-            return light.Off(1);
-        }
-        else
-        {
-            return light.setColorTemperature(oldCT, 1);
-        }
+        return SimpleColorHueStrategy::alertHueSaturation(hueSat, light);
     }
     else
     {
-        return false;
+        uint16_t oldCT = state["ct"];
+        if (!light.setColorHueSaturation(hueSat, 1))
+        {
+            return false;
+        }
+        std::this_thread::sleep_for(Config::instance().getPreAlertDelay());
+        if (!light.alert())
+        {
+            return false;
+        }
+        std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
+        return light.transaction().setColorTemperature(oldCT).setOn(on).setTransition(1).commit();
     }
 }
 
-bool ExtendedColorHueStrategy::alertXY(float x, float y, HueLight& light) const
+bool ExtendedColorHueStrategy::alertXY(const XYBrightness& xy, HueLight& light) const
 {
     // Careful, only use state until any light function might refresh the value and invalidate the reference
     const nlohmann::json& state = light.state.getValue()["state"];
     std::string cType = state["colormode"];
     bool on = state["on"];
-    if (cType == "hs")
+    // const reference to prevent refreshes
+    const HueLight& cLight = light;
+    if (cType != "ct")
     {
-        uint16_t oldHue = state["hue"];
-        uint8_t oldSat = state["sat"];
-        if (!light.setColorXY(x, y, 1))
-        {
-            return false;
-        }
-        std::this_thread::sleep_for(Config::instance().getPreAlertDelay());
-        if (!light.alert())
-        {
-            return false;
-        }
-        std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
-        if (!on)
-        {
-            light.setColorHueSaturation(oldHue, oldSat, 1);
-            return light.Off(1);
-        }
-        else
-        {
-            return light.setColorHueSaturation(oldHue, oldSat, 1);
-        }
-    }
-    else if (cType == "xy")
-    {
-        float oldX = state["xy"][0];
-        float oldY = state["xy"][1];
-        if (!light.setColorXY(x, y, 1))
-        {
-            return false;
-        }
-        std::this_thread::sleep_for(Config::instance().getPreAlertDelay());
-        if (!light.alert())
-        {
-            return false;
-        }
-        std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
-        if (!on)
-        {
-            light.setColorXY(oldX, oldY, 1);
-            return light.Off(1);
-        }
-        else
-        {
-            return light.setColorXY(oldX, oldY, 1);
-        }
-    }
-    else if (cType == "ct")
-    {
-        uint16_t oldCT = state["ct"];
-        if (!light.setColorXY(x, y, 1))
-        {
-            return false;
-        }
-        std::this_thread::sleep_for(Config::instance().getPreAlertDelay());
-        if (!light.alert())
-        {
-            return false;
-        }
-        std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
-        if (!on)
-        {
-            light.setColorTemperature(oldCT, 1);
-            return light.Off(1);
-        }
-        else
-        {
-            return light.setColorTemperature(oldCT, 1);
-        }
+        return SimpleColorHueStrategy::alertXY(xy, light);
     }
     else
     {
-        return false;
-    }
-}
-
-bool ExtendedColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLight& light) const
-{
-    // Careful, only use state until any light function might refresh the value and invalidate the reference
-    const nlohmann::json& state = light.state.getValue()["state"];
-    std::string cType = state["colormode"];
-    bool on = state["on"];
-    if (cType == "hs")
-    {
-        uint16_t oldHue = state["hue"];
-        uint8_t oldSat = state["sat"];
-        if (!light.setColorRGB(r, g, b, 1))
-        {
-            return false;
-        }
-        std::this_thread::sleep_for(Config::instance().getPreAlertDelay());
-        if (!light.alert())
-        {
-            return false;
-        }
-        std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
-        if (!on)
-        {
-            light.setColorHueSaturation(oldHue, oldSat, 1);
-            return light.Off(1);
-        }
-        else
-        {
-            return light.setColorHueSaturation(oldHue, oldSat, 1);
-        }
-    }
-    else if (cType == "xy")
-    {
-        float oldX = state["xy"][0];
-        float oldY = state["xy"][1];
-        if (!light.setColorRGB(r, g, b, 1))
-        {
-            return false;
-        }
-        std::this_thread::sleep_for(Config::instance().getPreAlertDelay());
-        if (!light.alert())
-        {
-            return false;
-        }
-        std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
-        if (!on)
-        {
-            light.setColorXY(oldX, oldY, 1);
-            return light.Off(1);
-        }
-        else
-        {
-            return light.setColorXY(oldX, oldY, 1);
-        }
-    }
-    else if (cType == "ct")
-    {
         uint16_t oldCT = state["ct"];
-        if (!light.setColorRGB(r, g, b, 1))
+        uint8_t oldBrightness = cLight.getBrightness();
+        if (!light.setColorXY(xy, 1))
         {
             return false;
         }
@@ -263,19 +84,12 @@ bool ExtendedColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLigh
             return false;
         }
         std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
-        if (!on)
-        {
-            light.setColorTemperature(oldCT, 1);
-            return light.Off(1);
-        }
-        else
-        {
-            return light.setColorTemperature(oldCT, 1);
-        }
-    }
-    else
-    {
-        return false;
+        return light.transaction()
+            .setColorTemperature(oldCT)
+            .setBrightness(oldBrightness)
+            .setOn(on)
+            .setTransition(1)
+            .commit();
     }
 }
 } // namespace hueplusplus

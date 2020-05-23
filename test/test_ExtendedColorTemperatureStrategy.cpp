@@ -26,6 +26,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include "TestTransaction.h"
 #include "testhelper.h"
 
 #include "hueplusplus/ExtendedColorTemperatureStrategy.h"
@@ -35,46 +36,6 @@
 
 using namespace hueplusplus;
 
-TEST(ExtendedColorTemperatureStrategy, setColorTemperature)
-{
-    using namespace ::testing;
-    std::shared_ptr<MockHttpHandler> handler(std::make_shared<MockHttpHandler>());
-    EXPECT_CALL(
-        *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(nlohmann::json::object()));
-    MockHueLight test_light(handler);
-
-    nlohmann::json prep_ret;
-    prep_ret = nlohmann::json::array();
-    prep_ret[0] = nlohmann::json::object();
-    prep_ret[0]["success"] = nlohmann::json::object();
-    prep_ret[0]["success"]["/lights/1/state/transitiontime"] = 6;
-    prep_ret[1] = nlohmann::json::object();
-    prep_ret[1]["success"] = nlohmann::json::object();
-    prep_ret[1]["success"]["/lights/1/state/on"] = true;
-    prep_ret[2] = nlohmann::json::object();
-    prep_ret[2]["success"] = nlohmann::json::object();
-    prep_ret[2]["success"]["/lights/1/state/ct"] = 155;
-    EXPECT_CALL(test_light, sendPutRequest(_, "/state", _)).Times(1).WillOnce(Return(prep_ret));
-
-    test_light.getState()["state"]["colormode"] = "ct";
-    test_light.getState()["state"]["on"] = true;
-    test_light.getState()["state"]["ct"] = 200;
-    EXPECT_EQ(true, ExtendedColorTemperatureStrategy().setColorTemperature(200, 4, test_light));
-
-    test_light.getState()["state"]["on"] = false;
-    EXPECT_EQ(true, ExtendedColorTemperatureStrategy().setColorTemperature(155, 6, test_light));
-
-    prep_ret[2]["success"]["/lights/1/state/ct"] = 153;
-    EXPECT_CALL(test_light, sendPutRequest(_, "/state", _)).Times(1).WillOnce(Return(prep_ret));
-    EXPECT_EQ(true, ExtendedColorTemperatureStrategy().setColorTemperature(0, 6, test_light));
-
-    prep_ret[2]["success"]["/lights/1/state/ct"] = 500;
-    EXPECT_CALL(test_light, sendPutRequest(_, "/state", _)).Times(1).WillOnce(Return(prep_ret));
-    EXPECT_EQ(true, ExtendedColorTemperatureStrategy().setColorTemperature(600, 6, test_light));
-}
-
 TEST(ExtendedColorTemperatureStrategy, alertTemperature)
 {
     using namespace ::testing;
@@ -83,67 +44,79 @@ TEST(ExtendedColorTemperatureStrategy, alertTemperature)
         *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
-    MockHueLight test_light(handler);
+    MockHueLight light(handler);
 
-    test_light.getState()["state"]["colormode"] = "invalid";
-    test_light.getState()["state"]["on"] = false;
-    EXPECT_EQ(false, ExtendedColorTemperatureStrategy().alertTemperature(400, test_light));
+    const auto setCTLambda = [&](unsigned int ct, int transition) {
+        light.getState()["state"]["colormode"] = "ct";
+        light.getState()["state"]["on"] = true;
+        light.getState()["state"]["ct"] = ct;
+        return true;
+    };
 
-    EXPECT_CALL(test_light, setColorTemperature(_, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(false))
-        .WillRepeatedly(Return(true));
-    test_light.getState()["state"]["colormode"] = "hs";
-    test_light.getState()["state"]["on"] = true;
-    test_light.getState()["state"]["ct"] = 200;
-    test_light.getState()["state"]["sat"] = 100;
-    test_light.getState()["state"]["hue"] = 200;
-    EXPECT_EQ(false, ExtendedColorTemperatureStrategy().alertTemperature(400, test_light));
+    // Invalid colormode
+    {
+        light.getState()["state"]["colormode"] = "invalid";
+        light.getState()["state"]["on"] = false;
+        EXPECT_EQ(false, ExtendedColorTemperatureStrategy().alertTemperature(400, light));
+    }
+    // Colormode ct forwarded to SimpleColorTemperatureStrategy
+    {
+        const nlohmann::json state = {{"colormode", "ct"}, {"on", true}, {"ct", 200}, {"xy", {0.1, 0.1}}, {"hue", 300},
+            {"sat", 100}, {"bri", 254}};
+        light.getState()["state"] = state;
+        TestTransaction reverseTransaction = light.transaction().setColorTemperature(200).setTransition(1);
 
-    EXPECT_CALL(test_light, alert()).Times(AtLeast(2)).WillOnce(Return(false)).WillRepeatedly(Return(true));
-    EXPECT_EQ(false, ExtendedColorTemperatureStrategy().alertTemperature(400, test_light));
+        light.getState()["state"] = state;
+        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(Invoke(setCTLambda));
+        EXPECT_CALL(light, alert()).WillOnce(Return(true));
+        reverseTransaction.expectSuccessfulPut(handler, Exactly(1));
+        EXPECT_TRUE(ExtendedColorTemperatureStrategy().alertTemperature(400, light));
+        Mock::VerifyAndClearExpectations(handler.get());
+    }
+    // Colormode xy
+    {
+        const nlohmann::json state = {{"colormode", "xy"}, {"on", true}, {"ct", 200}, {"xy", {0.1, 0.1}}, {"hue", 300},
+            {"sat", 100}, {"bri", 254}};
+        light.getState()["state"] = state;
+        EXPECT_CALL(Const(light), getColorXY()).Times(AnyNumber()).WillRepeatedly(Return(XYBrightness{ {0.1f,0.1f},1.f }));
+        TestTransaction reverseTransaction = light.transaction().setColor(XY{ 0.1f,0.1f }).setTransition(1);
 
-    EXPECT_CALL(test_light, setColorHueSaturation(_, _, 1)).Times(AtLeast(2)).WillRepeatedly(Return(true));
-    EXPECT_EQ(true, ExtendedColorTemperatureStrategy().alertTemperature(400, test_light));
+        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(Return(false));
+        EXPECT_FALSE(ExtendedColorTemperatureStrategy().alertTemperature(400, light));
 
-    EXPECT_CALL(test_light, Off(_)).Times(AtLeast(1)).WillRepeatedly(Return(true));
-    test_light.getState()["state"]["on"] = false;
-    EXPECT_EQ(true, ExtendedColorTemperatureStrategy().alertTemperature(400, test_light));
+        InSequence s;
+        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(Invoke(setCTLambda));
+        EXPECT_CALL(light, alert()).WillOnce(Return(false));
+        EXPECT_FALSE(ExtendedColorTemperatureStrategy().alertTemperature(400, light));
 
-    EXPECT_CALL(test_light, setColorTemperature(_, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(false))
-        .WillRepeatedly(Return(true));
-    test_light.getState()["state"]["colormode"] = "xy";
-    test_light.getState()["state"]["on"] = true;
-    test_light.getState()["state"]["xy"][0] = 0.1;
-    test_light.getState()["state"]["xy"][1] = 0.1;
-    EXPECT_EQ(false, ExtendedColorTemperatureStrategy().alertTemperature(400, test_light));
+        light.getState()["state"] = state;
+        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(Invoke(setCTLambda));
+        EXPECT_CALL(light, alert()).WillOnce(Return(true));
+        reverseTransaction.expectSuccessfulPut(handler, Exactly(1));
+        EXPECT_TRUE(ExtendedColorTemperatureStrategy().alertTemperature(400, light));
+        Mock::VerifyAndClearExpectations(handler.get());
+    }
+    // Colormode hs
+    {
+        const nlohmann::json state = { {"colormode", "hs"}, {"on", true}, {"ct", 200}, {"xy", {0.1, 0.1}}, {"hue", 300},
+            {"sat", 100}, {"bri", 254} };
+        light.getState()["state"] = state;
+        EXPECT_CALL(Const(light), getColorHueSaturation()).Times(AnyNumber()).WillRepeatedly(Return(HueSaturation{ 300,200 }));
+        TestTransaction reverseTransaction = light.transaction().setColor(HueSaturation{ 300,200 }).setTransition(1);
 
-    EXPECT_CALL(test_light, alert()).Times(AtLeast(2)).WillOnce(Return(false)).WillRepeatedly(Return(true));
-    EXPECT_EQ(false, ExtendedColorTemperatureStrategy().alertTemperature(400, test_light));
+        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(Return(false));
+        EXPECT_FALSE(ExtendedColorTemperatureStrategy().alertTemperature(400, light));
 
-    EXPECT_CALL(test_light, setColorXY(_, _, 1)).Times(AtLeast(2)).WillRepeatedly(Return(true));
-    EXPECT_EQ(true, ExtendedColorTemperatureStrategy().alertTemperature(400, test_light));
+        InSequence s;
+        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(Invoke(setCTLambda));
+        EXPECT_CALL(light, alert()).WillOnce(Return(false));
+        EXPECT_FALSE(ExtendedColorTemperatureStrategy().alertTemperature(400, light));
 
-    test_light.getState()["state"]["on"] = false;
-    EXPECT_EQ(true, ExtendedColorTemperatureStrategy().alertTemperature(400, test_light));
-
-    EXPECT_CALL(test_light, setColorTemperature(_, _))
-        .Times(AtLeast(2))
-        .WillOnce(Return(false))
-        .WillRepeatedly(Return(true));
-    test_light.getState()["state"]["colormode"] = "ct";
-    test_light.getState()["state"]["on"] = true;
-    test_light.getState()["state"]["on"] = true;
-    test_light.getState()["state"]["ct"] = 200;
-    EXPECT_EQ(false, ExtendedColorTemperatureStrategy().alertTemperature(400, test_light));
-
-    EXPECT_CALL(test_light, alert()).Times(AtLeast(2)).WillOnce(Return(false)).WillRepeatedly(Return(true));
-    EXPECT_EQ(false, ExtendedColorTemperatureStrategy().alertTemperature(400, test_light));
-
-    EXPECT_EQ(true, ExtendedColorTemperatureStrategy().alertTemperature(400, test_light));
-
-    test_light.getState()["state"]["on"] = false;
-    EXPECT_EQ(true, ExtendedColorTemperatureStrategy().alertTemperature(400, test_light));
+        light.getState()["state"] = state;
+        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(Invoke(setCTLambda));
+        EXPECT_CALL(light, alert()).WillOnce(Return(true));
+        reverseTransaction.expectSuccessfulPut(handler, Exactly(1));
+        EXPECT_TRUE(ExtendedColorTemperatureStrategy().alertTemperature(400, light));
+        Mock::VerifyAndClearExpectations(handler.get());
+    }
 }
