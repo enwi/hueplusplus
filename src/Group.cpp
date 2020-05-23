@@ -155,14 +155,14 @@ void Group::setBrightness(uint8_t brightness, uint8_t transition)
     transaction().setBrightness(brightness).setTransition(transition).commit();
 }
 
-void Group::setColorHueSaturation(uint16_t hue, uint8_t saturation, uint8_t transition)
+void Group::setColor(const HueSaturation& hueSat, uint8_t transition)
 {
-    transaction().setColorHue(hue).setColorSaturation(saturation).setTransition(transition).commit();
+    transaction().setColor(hueSat).setTransition(transition).commit();
 }
 
-void Group::setColorXY(float x, float y, uint8_t transition)
+void Group::setColor(const XYBrightness& xy, uint8_t transition)
 {
-    transaction().setColorXY(x, y).setTransition(transition).commit();
+    transaction().setColor(xy).setTransition(transition).commit();
 }
 
 void Group::setColorTemperature(unsigned int mired, uint8_t transition)

@@ -42,40 +42,15 @@ bool SimpleColorHueStrategy::setColorSaturation(uint8_t sat, uint8_t transition,
     return light.transaction().setColorSaturation(sat).setTransition(transition).commit();
 }
 
-bool SimpleColorHueStrategy::setColorHueSaturation(uint16_t hue, uint8_t sat, uint8_t transition, HueLight& light) const
+bool SimpleColorHueStrategy::setColorHueSaturation(
+    const HueSaturation& hueSat, uint8_t transition, HueLight& light) const
 {
-    return light.transaction().setColorHue(hue).setColorSaturation(sat).setTransition(transition).commit();
+    return light.transaction().setColor(hueSat).setTransition(transition).commit();
 }
 
-bool SimpleColorHueStrategy::setColorXY(float x, float y, uint8_t transition, HueLight& light) const
+bool SimpleColorHueStrategy::setColorXY(const XYBrightness& xy, uint8_t transition, HueLight& light) const
 {
-    return light.transaction().setColorXY(x, y).setTransition(transition).commit();
-}
-
-bool SimpleColorHueStrategy::setColorRGB(uint8_t r, uint8_t g, uint8_t b, uint8_t transition, HueLight& light) const
-{
-    if ((r == 0) && (g == 0) && (b == 0))
-    {
-        return light.Off();
-    }
-
-    const float red = float(r) / 255;
-    const float green = float(g) / 255;
-    const float blue = float(b) / 255;
-
-    // gamma correction
-    const float redCorrected = (red > 0.04045f) ? pow((red + 0.055f) / (1.0f + 0.055f), 2.4f) : (red / 12.92f);
-    const float greenCorrected = (green > 0.04045f) ? pow((green + 0.055f) / (1.0f + 0.055f), 2.4f) : (green / 12.92f);
-    const float blueCorrected = (blue > 0.04045f) ? pow((blue + 0.055f) / (1.0f + 0.055f), 2.4f) : (blue / 12.92f);
-
-    const float X = redCorrected * 0.664511f + greenCorrected * 0.154324f + blueCorrected * 0.162028f;
-    const float Y = redCorrected * 0.283881f + greenCorrected * 0.668433f + blueCorrected * 0.047685f;
-    const float Z = redCorrected * 0.000088f + greenCorrected * 0.072310f + blueCorrected * 0.986039f;
-
-    const float x = X / (X + Y + Z);
-    const float y = Y / (X + Y + Z);
-
-    return light.setColorXY(x, y, transition);
+    return light.transaction().setColor(xy).setTransition(transition).commit();
 }
 
 bool SimpleColorHueStrategy::setColorLoop(bool on, HueLight& light) const
@@ -83,17 +58,17 @@ bool SimpleColorHueStrategy::setColorLoop(bool on, HueLight& light) const
     return light.transaction().setColorLoop(true).commit();
 }
 
-bool SimpleColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, HueLight& light) const
+bool SimpleColorHueStrategy::alertHueSaturation(const HueSaturation& hueSat, HueLight& light) const
 {
     // Careful, only use state until any light function might refresh the value and invalidate the reference
     const nlohmann::json& state = light.state.getValue()["state"];
     std::string cType = state["colormode"].get<std::string>();
     bool on = state["on"].get<bool>();
+    const HueLight& cLight = light;
     if (cType == "hs")
     {
-        uint16_t oldHue = state["hue"].get<uint16_t>();
-        uint8_t oldSat = state["sat"].get<uint8_t>();
-        if (!light.setColorHueSaturation(hue, sat, 1))
+        HueSaturation oldHueSat = cLight.getColorHueSaturation();
+        if (!light.setColorHueSaturation(hueSat, 1))
         {
             return false;
         }
@@ -103,21 +78,12 @@ bool SimpleColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, HueLi
             return false;
         }
         std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
-        if (!on)
-        {
-            light.setColorHueSaturation(oldHue, oldSat, 1);
-            return light.Off(1);
-        }
-        else
-        {
-            return light.setColorHueSaturation(oldHue, oldSat, 1);
-        }
+        return light.transaction().setColor(oldHueSat).setOn(on).setTransition(1).commit();
     }
     else if (cType == "xy")
     {
-        float oldX = state["xy"][0].get<float>();
-        float oldY = state["xy"][1].get<float>();
-        if (!light.setColorHueSaturation(hue, sat, 1))
+        XYBrightness oldXY = cLight.getColorXY();
+        if (!light.setColorHueSaturation(hueSat, 1))
         {
             return false;
         }
@@ -127,15 +93,7 @@ bool SimpleColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, HueLi
             return false;
         }
         std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
-        if (!on)
-        {
-            light.setColorXY(oldX, oldY, 1);
-            return light.Off(1);
-        }
-        else
-        {
-            return light.setColorXY(oldX, oldY, 1);
-        }
+        return light.transaction().setColor(oldXY).setOn(on).setTransition(1).commit();
     }
     else
     {
@@ -143,17 +101,19 @@ bool SimpleColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, HueLi
     }
 }
 
-bool SimpleColorHueStrategy::alertXY(float x, float y, HueLight& light) const
+bool SimpleColorHueStrategy::alertXY(const XYBrightness& xy, HueLight& light) const
 {
     // Careful, only use state until any light function might refresh the value and invalidate the reference
     const nlohmann::json& state = light.state.getValue()["state"];
     std::string cType = state["colormode"].get<std::string>();
     bool on = state["on"].get<bool>();
+    // const reference to prevent refreshes
+    const HueLight& cLight = light;
     if (cType == "hs")
     {
-        uint16_t oldHue = state["hue"].get<uint16_t>();
-        uint8_t oldSat = state["sat"].get<uint8_t>();
-        if (!light.setColorXY(x, y, 1))
+        HueSaturation oldHueSat = cLight.getColorHueSaturation();
+        uint8_t oldBrightness = cLight.getBrightness();
+        if (!light.setColorXY(xy, 1))
         {
             return false;
         }
@@ -163,21 +123,12 @@ bool SimpleColorHueStrategy::alertXY(float x, float y, HueLight& light) const
             return false;
         }
         std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
-        if (!on)
-        {
-            light.setColorHueSaturation(oldHue, oldSat, 1);
-            return light.Off(1);
-        }
-        else
-        {
-            return light.setColorHueSaturation(oldHue, oldSat, 1);
-        }
+        return light.transaction().setColor(oldHueSat).setBrightness(oldBrightness).setOn(on).setTransition(1).commit();
     }
     else if (cType == "xy")
     {
-        float oldX = state["xy"][0].get<float>();
-        float oldY = state["xy"][1].get<float>();
-        if (!light.setColorXY(x, y, 1))
+        XYBrightness oldXY = cLight.getColorXY();
+        if (!light.setColorXY(xy, 1))
         {
             return false;
         }
@@ -187,15 +138,7 @@ bool SimpleColorHueStrategy::alertXY(float x, float y, HueLight& light) const
             return false;
         }
         std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
-        if (!on)
-        {
-            light.setColorXY(oldX, oldY, 1);
-            return light.Off(1);
-        }
-        else
-        {
-            return light.setColorXY(oldX, oldY, 1);
-        }
+        return light.transaction().setColor(oldXY).setOn(on).setTransition(1).commit();
     }
     else
     {
@@ -203,89 +146,30 @@ bool SimpleColorHueStrategy::alertXY(float x, float y, HueLight& light) const
     }
 }
 
-bool SimpleColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLight& light) const
-{
-    // Careful, only use state until any light function might refresh the value and invalidate the reference
-    const nlohmann::json& state = light.state.getValue()["state"];
-    std::string cType = state["colormode"].get<std::string>();
-    bool on = state["on"].get<bool>();
-    if (cType == "hs")
-    {
-        uint16_t oldHue = state["hue"].get<uint16_t>();
-        uint8_t oldSat = state["sat"].get<uint8_t>();
-        if (!light.setColorRGB(r, g, b, 1))
-        {
-            return false;
-        }
-        std::this_thread::sleep_for(Config::instance().getPreAlertDelay());
-        if (!light.alert())
-        {
-            return false;
-        }
-        std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
-        if (!on)
-        {
-            light.setColorHueSaturation(oldHue, oldSat, 1);
-            return light.Off(1);
-        }
-        else
-        {
-            return light.setColorHueSaturation(oldHue, oldSat, 1);
-        }
-    }
-    else if (cType == "xy")
-    {
-        float oldX = state["xy"][0].get<float>();
-        float oldY = state["xy"][1].get<float>();
-        if (!light.setColorRGB(r, g, b, 1))
-        {
-            return false;
-        }
-        std::this_thread::sleep_for(Config::instance().getPreAlertDelay());
-        if (!light.alert())
-        {
-            return false;
-        }
-        std::this_thread::sleep_for(Config::instance().getPostAlertDelay());
-        if (!on)
-        {
-            light.setColorXY(oldX, oldY, 1);
-            return light.Off(1);
-        }
-        else
-        {
-            return light.setColorXY(oldX, oldY, 1);
-        }
-    }
-    else
-    {
-        return false;
-    }
-}
-
-std::pair<uint16_t, uint8_t> SimpleColorHueStrategy::getColorHueSaturation(HueLight& light) const
+HueSaturation SimpleColorHueStrategy::getColorHueSaturation(HueLight& light) const
 {
     // Save value, so there are no inconsistent results if it is refreshed between two calls
     const nlohmann::json& state = light.state.getValue()["state"];
-    return std::make_pair(state["hue"].get<uint16_t>(), state["sat"].get<uint8_t>());
+    return HueSaturation {state["hue"].get<int>(), state["sat"].get<int>()};
 }
 
-std::pair<uint16_t, uint8_t> SimpleColorHueStrategy::getColorHueSaturation(const HueLight& light) const
+HueSaturation SimpleColorHueStrategy::getColorHueSaturation(const HueLight& light) const
 {
-    return std::make_pair(light.state.getValue()["state"]["hue"].get<uint16_t>(), 
-        light.state.getValue()["state"]["sat"].get<uint8_t>());
+    return HueSaturation {
+        light.state.getValue()["state"]["hue"].get<int>(), light.state.getValue()["state"]["sat"].get<int>()};
 }
 
-std::pair<float, float> SimpleColorHueStrategy::getColorXY(HueLight& light) const
+XYBrightness SimpleColorHueStrategy::getColorXY(HueLight& light) const
 {
     // Save value, so there are no inconsistent results if it is refreshed between two calls
     const nlohmann::json& state = light.state.getValue()["state"];
-    return std::make_pair(state["xy"][0].get<float>(), state["xy"][1].get<float>());
+    return XYBrightness {{state["xy"][0].get<float>(), state["xy"][1].get<float>()}, state["bri"].get<int>() / 254.f};
 }
 
-std::pair<float, float> SimpleColorHueStrategy::getColorXY(const HueLight& light) const
+XYBrightness SimpleColorHueStrategy::getColorXY(const HueLight& light) const
 {
-    return std::make_pair(light.state.getValue()["state"]["xy"][0].get<float>(), light.state.getValue()["state"]["xy"][1].get<float>());
+    const nlohmann::json& state = light.state.getValue()["state"];
+    return XYBrightness {{state["xy"][0].get<float>(), state["xy"][1].get<float>()}, state["bri"].get<int>() / 254.f};
 }
 
 } // namespace hueplusplus
