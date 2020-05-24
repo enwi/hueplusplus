@@ -36,7 +36,6 @@ bool ExtendedColorHueStrategy::alertHueSaturation(const HueSaturation& hueSat, H
     const nlohmann::json& state = light.state.getValue()["state"];
     std::string cType = state["colormode"];
     bool on = state["on"];
-    const HueLight& cLight = light;
     if (cType != "ct")
     {
         return SimpleColorHueStrategy::alertHueSaturation(hueSat, light);
