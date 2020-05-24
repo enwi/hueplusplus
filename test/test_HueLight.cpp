@@ -93,12 +93,12 @@ protected:
 
 TEST_F(HueLightTest, Constructor)
 {
-    const HueLight ctest_light_1 = test_bridge.getLight(1);
-    HueLight test_light_1 = test_bridge.getLight(1);
-    const HueLight ctest_light_2 = test_bridge.getLight(2);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    const HueLight ctest_light_3 = test_bridge.getLight(3);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    const HueLight ctest_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    const HueLight ctest_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    const HueLight ctest_light_3 = test_bridge.lights().get(3);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 }
 
 TEST_F(HueLightTest, On)
@@ -120,9 +120,9 @@ TEST_F(HueLightTest, On)
         .Times(1)
         .WillOnce(Return(prep_ret));
 
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(true, test_light_1.On(33));
     EXPECT_EQ(false, test_light_2.On());
@@ -144,9 +144,9 @@ TEST_F(HueLightTest, Off)
         .Times(1)
         .WillOnce(Return(prep_ret));
 
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(true, test_light_1.Off(33));
     EXPECT_EQ(true, test_light_2.Off());
@@ -155,12 +155,12 @@ TEST_F(HueLightTest, Off)
 
 TEST_F(HueLightTest, isOn)
 {
-    const HueLight ctest_light_1 = test_bridge.getLight(1);
-    const HueLight ctest_light_2 = test_bridge.getLight(2);
-    const HueLight ctest_light_3 = test_bridge.getLight(3);
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    const HueLight ctest_light_1 = test_bridge.lights().get(1);
+    const HueLight ctest_light_2 = test_bridge.lights().get(2);
+    const HueLight ctest_light_3 = test_bridge.lights().get(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(true, ctest_light_1.isOn());
     EXPECT_EQ(false, ctest_light_2.isOn());
@@ -172,12 +172,12 @@ TEST_F(HueLightTest, isOn)
 
 TEST_F(HueLightTest, getId)
 {
-    const HueLight ctest_light_1 = test_bridge.getLight(1);
-    const HueLight ctest_light_2 = test_bridge.getLight(2);
-    const HueLight ctest_light_3 = test_bridge.getLight(3);
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    const HueLight ctest_light_1 = test_bridge.lights().get(1);
+    const HueLight ctest_light_2 = test_bridge.lights().get(2);
+    const HueLight ctest_light_3 = test_bridge.lights().get(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(1, ctest_light_1.getId());
     EXPECT_EQ(2, ctest_light_2.getId());
@@ -189,12 +189,12 @@ TEST_F(HueLightTest, getId)
 
 TEST_F(HueLightTest, getType)
 {
-    const HueLight ctest_light_1 = test_bridge.getLight(1);
-    const HueLight ctest_light_2 = test_bridge.getLight(2);
-    const HueLight ctest_light_3 = test_bridge.getLight(3);
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    const HueLight ctest_light_1 = test_bridge.lights().get(1);
+    const HueLight ctest_light_2 = test_bridge.lights().get(2);
+    const HueLight ctest_light_3 = test_bridge.lights().get(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ("Dimmable light", ctest_light_1.getType());
     EXPECT_EQ("Color light", ctest_light_2.getType());
@@ -206,12 +206,12 @@ TEST_F(HueLightTest, getType)
 
 TEST_F(HueLightTest, getName)
 {
-    const HueLight ctest_light_1 = test_bridge.getLight(1);
-    const HueLight ctest_light_2 = test_bridge.getLight(2);
-    const HueLight ctest_light_3 = test_bridge.getLight(3);
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    const HueLight ctest_light_1 = test_bridge.lights().get(1);
+    const HueLight ctest_light_2 = test_bridge.lights().get(2);
+    const HueLight ctest_light_3 = test_bridge.lights().get(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ("Hue lamp 1", ctest_light_1.getName());
     EXPECT_EQ("Hue lamp 2", ctest_light_2.getName());
@@ -223,12 +223,12 @@ TEST_F(HueLightTest, getName)
 
 TEST_F(HueLightTest, getModelId)
 {
-    const HueLight ctest_light_1 = test_bridge.getLight(1);
-    const HueLight ctest_light_2 = test_bridge.getLight(2);
-    const HueLight ctest_light_3 = test_bridge.getLight(3);
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    const HueLight ctest_light_1 = test_bridge.lights().get(1);
+    const HueLight ctest_light_2 = test_bridge.lights().get(2);
+    const HueLight ctest_light_3 = test_bridge.lights().get(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ("LWB004", ctest_light_1.getModelId());
     EXPECT_EQ("LST001", ctest_light_2.getModelId());
@@ -240,12 +240,12 @@ TEST_F(HueLightTest, getModelId)
 
 TEST_F(HueLightTest, getUId)
 {
-    const HueLight ctest_light_1 = test_bridge.getLight(1);
-    const HueLight ctest_light_2 = test_bridge.getLight(2);
-    const HueLight ctest_light_3 = test_bridge.getLight(3);
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    const HueLight ctest_light_1 = test_bridge.lights().get(1);
+    const HueLight ctest_light_2 = test_bridge.lights().get(2);
+    const HueLight ctest_light_3 = test_bridge.lights().get(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ("00:00:00:00:00:00:00:00-00", ctest_light_1.getUId());
     EXPECT_EQ("11:11:11:11:11:11:11:11-11", ctest_light_2.getUId());
@@ -257,12 +257,12 @@ TEST_F(HueLightTest, getUId)
 
 TEST_F(HueLightTest, getManufacturername)
 {
-    const HueLight ctest_light_1 = test_bridge.getLight(1);
-    const HueLight ctest_light_2 = test_bridge.getLight(2);
-    const HueLight ctest_light_3 = test_bridge.getLight(3);
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    const HueLight ctest_light_1 = test_bridge.lights().get(1);
+    const HueLight ctest_light_2 = test_bridge.lights().get(2);
+    const HueLight ctest_light_3 = test_bridge.lights().get(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ("Philips", ctest_light_1.getManufacturername());
     EXPECT_EQ("", ctest_light_2.getManufacturername());
@@ -274,12 +274,12 @@ TEST_F(HueLightTest, getManufacturername)
 
 TEST_F(HueLightTest, getProductname)
 {
-    const HueLight ctest_light_1 = test_bridge.getLight(1);
-    const HueLight ctest_light_2 = test_bridge.getLight(2);
-    const HueLight ctest_light_3 = test_bridge.getLight(3);
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    const HueLight ctest_light_1 = test_bridge.lights().get(1);
+    const HueLight ctest_light_2 = test_bridge.lights().get(2);
+    const HueLight ctest_light_3 = test_bridge.lights().get(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ("Hue bloom", ctest_light_1.getProductname());
     EXPECT_EQ("", ctest_light_2.getProductname());
@@ -291,12 +291,12 @@ TEST_F(HueLightTest, getProductname)
 
 TEST_F(HueLightTest, getLuminaireUId)
 {
-    const HueLight ctest_light_1 = test_bridge.getLight(1);
-    const HueLight ctest_light_2 = test_bridge.getLight(2);
-    const HueLight ctest_light_3 = test_bridge.getLight(3);
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    const HueLight ctest_light_1 = test_bridge.lights().get(1);
+    const HueLight ctest_light_2 = test_bridge.lights().get(2);
+    const HueLight ctest_light_3 = test_bridge.lights().get(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ("0000000", ctest_light_1.getLuminaireUId());
     EXPECT_EQ("", ctest_light_2.getLuminaireUId());
@@ -308,12 +308,12 @@ TEST_F(HueLightTest, getLuminaireUId)
 
 TEST_F(HueLightTest, getSwVersion)
 {
-    const HueLight ctest_light_1 = test_bridge.getLight(1);
-    const HueLight ctest_light_2 = test_bridge.getLight(2);
-    const HueLight ctest_light_3 = test_bridge.getLight(3);
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    const HueLight ctest_light_1 = test_bridge.lights().get(1);
+    const HueLight ctest_light_2 = test_bridge.lights().get(2);
+    const HueLight ctest_light_3 = test_bridge.lights().get(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ("5.50.1.19085", ctest_light_1.getSwVersion());
     EXPECT_EQ("5.50.1.19085", ctest_light_2.getSwVersion());
@@ -348,9 +348,9 @@ TEST_F(HueLightTest, setName)
         .Times(1)
         .WillOnce(Return(prep_ret));
 
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(true, test_light_1.setName(expected_request["name"].get<std::string>()));
     EXPECT_EQ(false, test_light_2.setName(expected_request["name"].get<std::string>()));
@@ -359,12 +359,12 @@ TEST_F(HueLightTest, setName)
 
 TEST_F(HueLightTest, getColorType)
 {
-    const HueLight ctest_light_1 = test_bridge.getLight(1);
-    const HueLight ctest_light_2 = test_bridge.getLight(2);
-    const HueLight ctest_light_3 = test_bridge.getLight(3);
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    const HueLight ctest_light_1 = test_bridge.lights().get(1);
+    const HueLight ctest_light_2 = test_bridge.lights().get(2);
+    const HueLight ctest_light_3 = test_bridge.lights().get(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(ColorType::NONE, ctest_light_1.getColorType());
     EXPECT_EQ(ColorType::GAMUT_A, ctest_light_2.getColorType());
@@ -376,12 +376,12 @@ TEST_F(HueLightTest, getColorType)
 
 TEST_F(HueLightTest, KelvinToMired)
 {
-    const HueLight ctest_light_1 = test_bridge.getLight(1);
-    const HueLight ctest_light_2 = test_bridge.getLight(2);
-    const HueLight ctest_light_3 = test_bridge.getLight(3);
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    const HueLight ctest_light_1 = test_bridge.lights().get(1);
+    const HueLight ctest_light_2 = test_bridge.lights().get(2);
+    const HueLight ctest_light_3 = test_bridge.lights().get(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(10000, ctest_light_1.KelvinToMired(100));
     EXPECT_EQ(500, ctest_light_2.KelvinToMired(2000));
@@ -393,12 +393,12 @@ TEST_F(HueLightTest, KelvinToMired)
 
 TEST_F(HueLightTest, MiredToKelvin)
 {
-    const HueLight ctest_light_1 = test_bridge.getLight(1);
-    const HueLight ctest_light_2 = test_bridge.getLight(2);
-    const HueLight ctest_light_3 = test_bridge.getLight(3);
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    const HueLight ctest_light_1 = test_bridge.lights().get(1);
+    const HueLight ctest_light_2 = test_bridge.lights().get(2);
+    const HueLight ctest_light_3 = test_bridge.lights().get(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(100, ctest_light_1.MiredToKelvin(10000));
     EXPECT_EQ(2000, ctest_light_2.MiredToKelvin(500));
@@ -411,12 +411,12 @@ TEST_F(HueLightTest, MiredToKelvin)
 
 TEST_F(HueLightTest, hasBrightnessControl)
 {
-    const HueLight ctest_light_1 = test_bridge.getLight(1);
-    const HueLight ctest_light_2 = test_bridge.getLight(2);
-    const HueLight ctest_light_3 = test_bridge.getLight(3);
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    const HueLight ctest_light_1 = test_bridge.lights().get(1);
+    const HueLight ctest_light_2 = test_bridge.lights().get(2);
+    const HueLight ctest_light_3 = test_bridge.lights().get(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(true, ctest_light_1.hasBrightnessControl());
     EXPECT_EQ(true, ctest_light_2.hasBrightnessControl());
@@ -428,12 +428,12 @@ TEST_F(HueLightTest, hasBrightnessControl)
 
 TEST_F(HueLightTest, hasTemperatureControl)
 {
-    const HueLight ctest_light_1 = test_bridge.getLight(1);
-    const HueLight ctest_light_2 = test_bridge.getLight(2);
-    const HueLight ctest_light_3 = test_bridge.getLight(3);
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    const HueLight ctest_light_1 = test_bridge.lights().get(1);
+    const HueLight ctest_light_2 = test_bridge.lights().get(2);
+    const HueLight ctest_light_3 = test_bridge.lights().get(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(false, ctest_light_1.hasTemperatureControl());
     EXPECT_EQ(false, ctest_light_2.hasTemperatureControl());
@@ -445,12 +445,12 @@ TEST_F(HueLightTest, hasTemperatureControl)
 
 TEST_F(HueLightTest, hasColorControl)
 {
-    const HueLight ctest_light_1 = test_bridge.getLight(1);
-    const HueLight ctest_light_2 = test_bridge.getLight(2);
-    const HueLight ctest_light_3 = test_bridge.getLight(3);
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    const HueLight ctest_light_1 = test_bridge.lights().get(1);
+    const HueLight ctest_light_2 = test_bridge.lights().get(2);
+    const HueLight ctest_light_3 = test_bridge.lights().get(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(false, ctest_light_1.hasColorControl());
     EXPECT_EQ(true, ctest_light_2.hasColorControl());
@@ -481,9 +481,9 @@ TEST_F(HueLightTest, setBrightness)
         .Times(1)
         .WillOnce(Return(prep_ret));
 
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(false, test_light_1.setBrightness(200));
     EXPECT_EQ(true, test_light_2.setBrightness(0, 2));
@@ -492,12 +492,12 @@ TEST_F(HueLightTest, setBrightness)
 
 TEST_F(HueLightTest, getBrightness)
 {
-    const HueLight ctest_light_1 = test_bridge.getLight(1);
-    const HueLight ctest_light_2 = test_bridge.getLight(2);
-    const HueLight ctest_light_3 = test_bridge.getLight(3);
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    const HueLight ctest_light_1 = test_bridge.lights().get(1);
+    const HueLight ctest_light_2 = test_bridge.lights().get(2);
+    const HueLight ctest_light_3 = test_bridge.lights().get(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(254, ctest_light_1.getBrightness());
     EXPECT_EQ(0, ctest_light_2.getBrightness());
@@ -525,9 +525,9 @@ TEST_F(HueLightTest, setColorTemperature)
         .Times(1)
         .WillOnce(Return(prep_ret));
 
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(false, test_light_1.setColorTemperature(153));
     EXPECT_EQ(false, test_light_2.setColorTemperature(400, 2));
@@ -536,12 +536,12 @@ TEST_F(HueLightTest, setColorTemperature)
 
 TEST_F(HueLightTest, getColorTemperature)
 {
-    const HueLight ctest_light_1 = test_bridge.getLight(1);
-    const HueLight ctest_light_2 = test_bridge.getLight(2);
-    const HueLight ctest_light_3 = test_bridge.getLight(3);
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    const HueLight ctest_light_1 = test_bridge.lights().get(1);
+    const HueLight ctest_light_2 = test_bridge.lights().get(2);
+    const HueLight ctest_light_3 = test_bridge.lights().get(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(0, ctest_light_1.getColorTemperature());
     EXPECT_EQ(0, ctest_light_2.getColorTemperature());
@@ -572,9 +572,9 @@ TEST_F(HueLightTest, setColorHue)
         .Times(1)
         .WillOnce(Return(prep_ret));
 
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(false, test_light_1.setColorHue(153));
     EXPECT_EQ(false, test_light_2.setColorHue(30000, 2));
@@ -602,9 +602,9 @@ TEST_F(HueLightTest, setColorSaturation)
         .Times(1)
         .WillOnce(Return(prep_ret));
 
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(false, test_light_1.setColorSaturation(0));
     EXPECT_EQ(false, test_light_2.setColorSaturation(140, 2));
@@ -635,9 +635,9 @@ TEST_F(HueLightTest, setColorHueSaturation)
         .Times(1)
         .WillOnce(Return(prep_ret));
 
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(false, test_light_1.setColorHueSaturation({153, 0}));
     EXPECT_EQ(false, test_light_2.setColorHueSaturation({30000, 140}, 2));
@@ -646,12 +646,12 @@ TEST_F(HueLightTest, setColorHueSaturation)
 
 TEST_F(HueLightTest, getColorHueSaturation)
 {
-    const HueLight ctest_light_1 = test_bridge.getLight(1);
-    const HueLight ctest_light_2 = test_bridge.getLight(2);
-    const HueLight ctest_light_3 = test_bridge.getLight(3);
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    const HueLight ctest_light_1 = test_bridge.lights().get(1);
+    const HueLight ctest_light_2 = test_bridge.lights().get(2);
+    const HueLight ctest_light_3 = test_bridge.lights().get(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ((HueSaturation {0, 0}), ctest_light_1.getColorHueSaturation());
     EXPECT_EQ((HueSaturation {12345, 123}), ctest_light_2.getColorHueSaturation());
@@ -683,9 +683,9 @@ TEST_F(HueLightTest, setColorXY)
         .Times(1)
         .WillOnce(Return(prep_ret));
 
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(false, test_light_1.setColorXY({{0.01f, 0.f}, 1.f}));
     EXPECT_EQ(false, test_light_2.setColorXY({{0.123f, 1.f}, 1.f}, 2));
@@ -694,12 +694,12 @@ TEST_F(HueLightTest, setColorXY)
 
 TEST_F(HueLightTest, getColorXY)
 {
-    const HueLight ctest_light_1 = test_bridge.getLight(1);
-    const HueLight ctest_light_2 = test_bridge.getLight(2);
-    const HueLight ctest_light_3 = test_bridge.getLight(3);
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    const HueLight ctest_light_1 = test_bridge.lights().get(1);
+    const HueLight ctest_light_2 = test_bridge.lights().get(2);
+    const HueLight ctest_light_3 = test_bridge.lights().get(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
     EXPECT_EQ((XYBrightness {{0.f, 0.f}, 0.f}), ctest_light_1.getColorXY());
     EXPECT_EQ((XYBrightness {{0.102f, 0.102f}, 0.f}), ctest_light_2.getColorXY());
     EXPECT_EQ((XYBrightness {{0.102f, 0.102f}, 1.f}), ctest_light_3.getColorXY());
@@ -730,9 +730,9 @@ TEST_F(HueLightTest, setColorRGB)
         .Times(1)
         .WillOnce(Return(prep_ret));
 
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(false, test_light_1.setColorRGB({0, 0, 0}, 0));
     EXPECT_EQ(false, test_light_2.setColorRGB({32, 64, 128}, 2));
@@ -757,9 +757,9 @@ TEST_F(HueLightTest, alert)
         .Times(1)
         .WillOnce(Return(prep_ret));
 
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(false, test_light_1.alert());
     EXPECT_EQ(false, test_light_2.alert());
@@ -773,9 +773,9 @@ TEST_F(HueLightTest, alertTemperature)
         .Times(1)
         .WillOnce(Return(nlohmann::json::array()));
 
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(false, test_light_1.alertTemperature(400));
     EXPECT_EQ(false, test_light_2.alertTemperature(100));
@@ -789,9 +789,9 @@ TEST_F(HueLightTest, alertHueSaturation)
         .Times(1)
         .WillOnce(Return(nlohmann::json::array()));
 
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(false, test_light_1.alertHueSaturation({0, 255}));
     EXPECT_EQ(false, test_light_2.alertHueSaturation({3000, 100}));
@@ -805,9 +805,9 @@ TEST_F(HueLightTest, alertXY)
         .Times(1)
         .WillOnce(Return(nlohmann::json::array()));
 
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(false, test_light_1.alertXY({{0.1f, 0.1f}, 1.f}));
     EXPECT_EQ(false, test_light_2.alertXY({{0.2434f, 0.2344f}, 1.f}));
@@ -824,9 +824,9 @@ TEST_F(HueLightTest, setColorLoop)
         .Times(1)
         .WillOnce(Return(nlohmann::json::array()));
 
-    HueLight test_light_1 = test_bridge.getLight(1);
-    HueLight test_light_2 = test_bridge.getLight(2);
-    HueLight test_light_3 = test_bridge.getLight(3);
+    HueLight test_light_1 = test_bridge.lights().get(1);
+    HueLight test_light_2 = test_bridge.lights().get(2);
+    HueLight test_light_3 = test_bridge.lights().get(3);
 
     EXPECT_EQ(false, test_light_1.setColorLoop(true));
     EXPECT_EQ(false, test_light_2.setColorLoop(false));
