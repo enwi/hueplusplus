@@ -30,7 +30,7 @@ namespace hueplusplus
     //!
     //! \note This function will only return the filename without extension,
     //! because Philips provides different file types.
-    //! \param model_id Model Id of a device to get the picture of 
+    //! \param modelId Model Id of a device to get the picture of 
     //! \returns String that either contains the filename of the picture of the device 
     //! or an empty string if it was not found.
     std::string getPictureOfModel(const std::string& modelId);

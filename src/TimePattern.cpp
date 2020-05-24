@@ -90,7 +90,6 @@ std::chrono::system_clock::time_point parseUTCTimestamp(const std::string& times
     // (also not officially thread-safe, but none of the time functions are)
     // Set local timezone to UTC and then set it back
     char* tz = std::getenv("TZ");
-    std::time_t ctime = std::mktime(&tm);
     if (tz)
     {
         tz = strdup(tz);
