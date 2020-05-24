@@ -212,6 +212,8 @@ public:
     //! When recycle is true, it is deleted when no resourcelinks refer to it.
     CreateSchedule& setRecycle(bool recycle);
 
+    //! \brief Get request to create the schedule.
+//! \returns JSON request for a POST to create the new schedule
     nlohmann::json getRequest() const;
 
 private:

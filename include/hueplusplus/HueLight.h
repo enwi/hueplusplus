@@ -201,6 +201,8 @@ public:
     //! \return ColorType containig the color type of the light
     virtual ColorType getColorType() const;
 
+    //! \brief Get gamut space of possible light colors
+    //! \returns Used gamut, or \ref gamut::maxGamut when unknown.
     ColorGamut getColorGamut() const;
 
     ///@}
