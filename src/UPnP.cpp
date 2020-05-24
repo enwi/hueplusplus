@@ -25,7 +25,7 @@
 #include <algorithm>
 #include <iostream>
 
-#include "hueplusplus/HueConfig.h"
+#include "hueplusplus/APIConfig.h"
 
 namespace hueplusplus
 {

@@ -30,6 +30,7 @@
 #include <vector>
 
 #include "APICache.h"
+#include "BridgeConfig.h"
 #include "BrightnessStrategy.h"
 #include "ColorHueStrategy.h"
 #include "ColorTemperatureStrategy.h"
@@ -117,6 +118,14 @@ private:
     std::shared_ptr<const IHttpHandler> http_handler;
 };
 
+template <typename T>
+class MakeCopyable : public T
+{
+public:
+    using T::T;
+    using T::operator=;
+};
+
 //! \brief Hue class for a bridge.
 //!
 //! This is the main class used to interact with the Hue bridge.
@@ -184,6 +193,8 @@ public:
     //! \param handler a HttpHandler of type \ref IHttpHandler
     void setHttpHandler(std::shared_ptr<const IHttpHandler> handler);
 
+    BridgeConfig& config();
+    const BridgeConfig& config() const;
     ///@}
     //! \name Lights
     ///@{
@@ -353,7 +364,6 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     Scene& getScene(const std::string& id);
 
-
     //! \brief Checks whether a scene exists.
     //! \param id ID of the scene.
     //! \returns true when the scene exists.
@@ -381,10 +391,11 @@ private:
                                                       //!< bridge
     std::chrono::steady_clock::duration refreshDuration;
     std::shared_ptr<APICache> stateCache;
-    ResourceList<HueLight, int> lights;
-    GroupResourceList<Group, CreateGroup> groups;
-    CreateableResourceList<Schedule, int, CreateSchedule> schedules;
-    CreateableResourceList<Scene, std::string, CreateScene> scenes;
+    MakeCopyable<ResourceList<HueLight, int>> lights;
+    MakeCopyable<GroupResourceList<Group, CreateGroup>> groups;
+    MakeCopyable<CreateableResourceList<Schedule, int, CreateSchedule>> schedules;
+    MakeCopyable<CreateableResourceList<Scene, std::string, CreateScene>> scenes;
+    MakeCopyable<BridgeConfig> bridgeConfig;
 };
 } // namespace hueplusplus
 

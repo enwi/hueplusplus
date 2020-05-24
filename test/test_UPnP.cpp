@@ -26,7 +26,7 @@
 #include "iostream"
 #include "testhelper.h"
 
-#include "hueplusplus/HueConfig.h"
+#include "hueplusplus/APIConfig.h"
 #include "hueplusplus/UPnP.h"
 #include "json/json.hpp"
 #include "mocks/mock_HttpHandler.h"
