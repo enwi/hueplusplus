@@ -1,5 +1,5 @@
 /**
-    \file HueConfig.h
+    \file APIConfig.h
     Copyright Notice\n
     Copyright (C) 2017  Jan Rogall		- developer\n
     Copyright (C) 2017  Moritz Wirger	- developer\n

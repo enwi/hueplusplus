@@ -139,12 +139,12 @@ Hue::Hue(const std::string& ip, const int port, const std::string& username,
       refreshDuration(refreshDuration),
       stateCache(std::make_shared<APICache>(
           "", HueCommandAPI(ip, port, username, http_handler), std::chrono::steady_clock::duration::max())),
-      lights(stateCache, "lights", refreshDuration,
+      lightList(stateCache, "lights", refreshDuration,
           [factory = HueLightFactory(stateCache->getCommandAPI(), refreshDuration)](
               int id, const nlohmann::json& state) mutable { return factory.createLight(state, id); }),
-      groups(stateCache, "groups", refreshDuration),
-      schedules(stateCache, "schedules", refreshDuration),
-      scenes(stateCache, "scenes", refreshDuration),
+      groupList(stateCache, "groups", refreshDuration),
+      scheduleList(stateCache, "schedules", refreshDuration),
+      sceneList(stateCache, "scenes", refreshDuration),
       bridgeConfig(stateCache, refreshDuration)
 { }
 
@@ -231,101 +231,56 @@ const BridgeConfig& Hue::config() const
     return bridgeConfig;
 }
 
-HueLight& Hue::getLight(int id)
+Hue::LightList& Hue::lights()
 {
-    return lights.get(id);
+    return lightList;
 }
 
-bool Hue::removeLight(int id)
+const Hue::LightList& Hue::lights() const
 {
-    return lights.remove(id);
+    return lightList;
 }
 
-std::vector<std::reference_wrapper<HueLight>> Hue::getAllLights()
+Hue::GroupList& Hue::groups()
 {
-    return lights.getAll();
+    return groupList;
 }
 
-std::vector<std::reference_wrapper<Group>> Hue::getAllGroups()
+const Hue::GroupList& Hue::groups() const
 {
-    return groups.getAll();
+    return groupList;
 }
 
-Group& Hue::getGroup(int id)
+Hue::ScheduleList& Hue::schedules()
 {
-    return groups.get(id);
+    return scheduleList;
 }
 
-bool Hue::removeGroup(int id)
+const Hue::ScheduleList& Hue::schedules() const
 {
-    return groups.remove(id);
+    return scheduleList;
 }
 
-bool Hue::groupExists(int id) const
+Hue::SceneList& Hue::scenes()
 {
-    return groups.exists(id);
+    return sceneList;
 }
 
-int Hue::createGroup(const CreateGroup& params)
+const Hue::SceneList& Hue::scenes() const
 {
-    return groups.create(params);
-}
-
-bool Hue::lightExists(int id) const
-{
-    return lights.exists(id);
-}
-
-std::vector<std::reference_wrapper<Schedule>> Hue::getAllSchedules()
-{
-    return schedules.getAll();
-}
-
-Schedule& Hue::getSchedule(int id)
-{
-    return schedules.get(id);
-}
-
-bool Hue::scheduleExists(int id) const
-{
-    return schedules.exists(id);
-}
-
-int Hue::createSchedule(const CreateSchedule& params)
-{
-    return schedules.create(params);
-}
-
-std::vector<std::reference_wrapper<Scene>> Hue::getAllScenes()
-{
-    return scenes.getAll();
-}
-
-Scene& Hue::getScene(const std::string& id)
-{
-    return scenes.get(id);
-}
-
-bool Hue::sceneExists(const std::string& id) const
-{
-    return scenes.exists(id);
-}
-
-std::string Hue::createScene(const CreateScene& params)
-{
-    return scenes.create(params);
+    return sceneList;
 }
 
 void Hue::setHttpHandler(std::shared_ptr<const IHttpHandler> handler)
 {
     http_handler = handler;
     stateCache = std::make_shared<APICache>("", HueCommandAPI(ip, port, username, handler), refreshDuration);
-    lights = ResourceList<HueLight, int>(stateCache, "lights", refreshDuration,
+    lightList = ResourceList<HueLight, int>(stateCache, "lights", refreshDuration,
         [factory = HueLightFactory(stateCache->getCommandAPI(), refreshDuration)](
             int id, const nlohmann::json& state) mutable { return factory.createLight(state, id); });
-    groups = GroupResourceList<Group, CreateGroup>(stateCache, "groups", refreshDuration);
-    schedules = CreateableResourceList<Schedule, int, CreateSchedule>(stateCache, "schedules", refreshDuration);
-    scenes = CreateableResourceList<Scene, std::string, CreateScene>(stateCache, "scenes", refreshDuration);
+    groupList = GroupResourceList<Group, CreateGroup>(stateCache, "groups", refreshDuration);
+    scheduleList = CreateableResourceList<Schedule, int, CreateSchedule>(stateCache, "schedules", refreshDuration);
+    sceneList = CreateableResourceList<Scene, std::string, CreateScene>(stateCache, "scenes", refreshDuration);
     bridgeConfig = BridgeConfig(stateCache, refreshDuration);
 }
 } // namespace hueplusplus

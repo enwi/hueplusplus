@@ -221,7 +221,7 @@ TEST(Hue, requestUsername)
             .Times(1)
             .WillOnce(Return(hue_bridge_state));
 
-        test_bridge.getAllLights();
+        test_bridge.lights().getAll();
     }
 }
 
@@ -254,7 +254,7 @@ TEST(Hue, getLight)
     Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
     // Test exception
-    ASSERT_THROW(test_bridge.getLight(1), HueException);
+    ASSERT_THROW(test_bridge.lights().get(1), HueException);
 
     nlohmann::json hue_bridge_state {{"lights",
         {{"1",
@@ -279,13 +279,13 @@ TEST(Hue, getLight)
     test_bridge = Hue(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
     // Test when correct data is sent
-    HueLight test_light_1 = test_bridge.getLight(1);
+    HueLight test_light_1 = test_bridge.lights().get(1);
     EXPECT_EQ(test_light_1.getName(), "Hue ambiance lamp 1");
     EXPECT_EQ(test_light_1.getColorType(), ColorType::TEMPERATURE);
 
     // Test again to check whether light is returned directly -> interesting for
     // code coverage test
-    test_light_1 = test_bridge.getLight(1);
+    test_light_1 = test_bridge.lights().get(1);
     EXPECT_EQ(test_light_1.getName(), "Hue ambiance lamp 1");
     EXPECT_EQ(test_light_1.getColorType(), ColorType::TEMPERATURE);
 }
@@ -326,11 +326,11 @@ TEST(Hue, removeLight)
         .WillOnce(Return(nlohmann::json()));
 
     // Test when correct data is sent
-    HueLight test_light_1 = test_bridge.getLight(1);
+    HueLight test_light_1 = test_bridge.lights().get(1);
 
-    EXPECT_EQ(test_bridge.removeLight(1), true);
+    EXPECT_EQ(test_bridge.lights().remove(1), true);
 
-    EXPECT_EQ(test_bridge.removeLight(1), false);
+    EXPECT_EQ(test_bridge.lights().remove(1), false);
 }
 
 TEST(Hue, getAllLights)
@@ -358,7 +358,7 @@ TEST(Hue, getAllLights)
 
     Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
-    std::vector<std::reference_wrapper<HueLight>> test_lights = test_bridge.getAllLights();
+    std::vector<std::reference_wrapper<HueLight>> test_lights = test_bridge.lights().getAll();
     ASSERT_EQ(1, test_lights.size());
     EXPECT_EQ(test_lights[0].get().getName(), "Hue ambiance lamp 1");
     EXPECT_EQ(test_lights[0].get().getColorType(), ColorType::TEMPERATURE);
@@ -385,8 +385,8 @@ TEST(Hue, lightExists)
 
     test_bridge.refresh();
 
-    EXPECT_TRUE(Const(test_bridge).lightExists(1));
-    EXPECT_FALSE(Const(test_bridge).lightExists(2));
+    EXPECT_TRUE(Const(test_bridge).lights().exists(1));
+    EXPECT_FALSE(Const(test_bridge).lights().exists(2));
 }
 
 TEST(Hue, getGroup)
@@ -400,7 +400,7 @@ TEST(Hue, getGroup)
     Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
     // Test exception
-    ASSERT_THROW(test_bridge.getGroup(1), HueException);
+    ASSERT_THROW(test_bridge.groups().get(1), HueException);
 
     nlohmann::json hue_bridge_state {{"groups",
         {{"1",
@@ -424,12 +424,12 @@ TEST(Hue, getGroup)
     test_bridge = Hue(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
     // Test when correct data is sent
-    Group test_group_1 = test_bridge.getGroup(1);
+    Group test_group_1 = test_bridge.groups().get(1);
     EXPECT_EQ(test_group_1.getName(), "Group 1");
     EXPECT_EQ(test_group_1.getType(), "LightGroup");
 
     // Test again to check whether group is returned directly
-    test_group_1 = test_bridge.getGroup(1);
+    test_group_1 = test_bridge.groups().get(1);
     EXPECT_EQ(test_group_1.getName(), "Group 1");
     EXPECT_EQ(test_group_1.getType(), "LightGroup");
 }
@@ -469,11 +469,11 @@ TEST(Hue, removeGroup)
         .WillOnce(Return(nlohmann::json()));
 
     // Test when correct data is sent
-    Group test_group_1 = test_bridge.getGroup(1);
+    Group test_group_1 = test_bridge.groups().get(1);
 
-    EXPECT_EQ(test_bridge.removeGroup(1), true);
+    EXPECT_EQ(test_bridge.groups().remove(1), true);
 
-    EXPECT_EQ(test_bridge.removeGroup(1), false);
+    EXPECT_EQ(test_bridge.groups().remove(1), false);
 }
 
 TEST(Hue, groupExists)
@@ -496,8 +496,8 @@ TEST(Hue, groupExists)
 
     test_bridge.refresh();
 
-    EXPECT_EQ(true, Const(test_bridge).groupExists(1));
-    EXPECT_EQ(false, Const(test_bridge).groupExists(2));
+    EXPECT_EQ(true, Const(test_bridge).groups().exists(1));
+    EXPECT_EQ(false, Const(test_bridge).groups().exists(2));
 }
 
 TEST(Hue, getAllGroups)
@@ -524,7 +524,7 @@ TEST(Hue, getAllGroups)
 
     Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
-    std::vector<std::reference_wrapper<Group>> test_groups = test_bridge.getAllGroups();
+    std::vector<std::reference_wrapper<Group>> test_groups = test_bridge.groups().getAll();
     ASSERT_EQ(1, test_groups.size());
     EXPECT_EQ(test_groups[0].get().getName(), "Group 1");
     EXPECT_EQ(test_groups[0].get().getType(), "LightGroup");
@@ -544,10 +544,10 @@ TEST(Hue, createGroup)
     nlohmann::json response = {{{"success", {{"id", std::to_string(id)}}}}};
     EXPECT_CALL(*handler, POSTJson("/api/" + getBridgeUsername() + "/groups", request, getBridgeIp(), getBridgePort()))
         .WillOnce(Return(response));
-    EXPECT_EQ(id, test_bridge.createGroup(create));
+    EXPECT_EQ(id, test_bridge.groups().create(create));
 
     response = {};
     EXPECT_CALL(*handler, POSTJson("/api/" + getBridgeUsername() + "/groups", request, getBridgeIp(), getBridgePort()))
         .WillOnce(Return(response));
-    EXPECT_EQ(0, test_bridge.createGroup(create));
+    EXPECT_EQ(0, test_bridge.groups().create(create));
 }

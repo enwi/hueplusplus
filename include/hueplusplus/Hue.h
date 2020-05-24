@@ -134,6 +134,12 @@ class Hue
     friend class HueFinder;
 
 public:
+    using LightList = ResourceList<HueLight, int>;
+    using GroupList = GroupResourceList<Group, CreateGroup>;
+    using ScheduleList = CreateableResourceList<Schedule, int, CreateSchedule>;
+    using SceneList = CreateableResourceList<Scene, std::string, CreateScene>;
+
+public:
     //! \brief Constructor of Hue class
     //!
     //! \param ip IP address in dotted decimal notation like "192.168.2.1"
@@ -195,191 +201,18 @@ public:
 
     BridgeConfig& config();
     const BridgeConfig& config() const;
-    ///@}
-    //! \name Lights
-    ///@{
 
-    //! \brief Function that returns a \ref HueLight of specified id
-    //!
-    //! \param id Integer that specifies the ID of a Hue light
-    //! \return \ref HueLight that can be controlled
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when id does not exist or type is unknown
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    HueLight& getLight(int id);
+    LightList& lights();
+    const LightList& lights() const;
 
-    //! \brief Function to remove a light from the bridge
-    //!
-    //! \attention Any use of the light after it was successfully removed results in undefined behavior
-    //! \param id Id of the light to remove
-    //! \return true on success
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contains no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    bool removeLight(int id);
+    GroupList& groups();
+    const GroupList& groups() const;
 
-    //! \brief Function that returns all lights that are associated with this
-    //! bridge
-    //!
-    //! \return A vector containing references to every HueLight
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contains no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    std::vector<std::reference_wrapper<HueLight>> getAllLights();
+    ScheduleList& schedules();
+    const ScheduleList& schedules() const;
 
-    //! \brief Function that tells whether a given light id represents an existing light
-    //! \param id Id of a light to check for existance
-    //! \return Bool that is true when a light with the given id exists and false when not
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contains no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    bool lightExists(int id);
-
-    //! \brief Const function that tells whether a given light id represents an
-    //! existing light
-    //!
-    //! \note This will not update the local state of the bridge
-    //! \param id Id of a light to check for existance
-    //! \return Bool that is true when a light with the given id exists and false
-    //! when not
-    bool lightExists(int id) const;
-
-    ///@}
-    //! \name Groups
-    ///@{
-
-    //! \brief Get all groups that exist on this bridge.
-    //! \return A vector of references to every Group.
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contains no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    std::vector<std::reference_wrapper<Group>> getAllGroups();
-
-    //! \brief Get group specified by id.
-    //! \param id ID of the group.
-    //! \returns Group that can be controlled.
-    //! \note Every bridge has a special group 0 which contains all lights
-    //! and is not visible to getAllGroups().
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when id does not exist
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    Group& getGroup(int id);
-
-    //! \brief Remove a group from the bridge.
-    //! \param id ID of the group.
-    //! \returns true on success.
-    //! \brief Remove a group from the bridge.
-    //! \param id ID of the group.
-    //! \returns true on success.
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contains no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    bool removeGroup(int id);
-
-    //! \brief Checks whether a group exists.
-    //! \param id ID of the group.
-    //! \returns true when the group exists.
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contains no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    bool groupExists(int id);
-
-    //! \brief Checks whether a group exists.
-    //! \param id ID of the group.
-    //! \returns true when the group exists.
-    //! \note Does not refresh the cached state.
-    bool groupExists(int id) const;
-
-    //! \brief Create a new group.
-    //! \param params CreateGroup parameters for the new group.
-    //! \returns The new group id or 0 if failed.
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contains no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    int createGroup(const CreateGroup& params);
-
-    ///@}
-    //! \name Schedules
-    ///@{
-
-    //! \brief Get all schedules on this bridge.
-    //! \return A vector of references to every Schedule.
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contains no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    std::vector<std::reference_wrapper<Schedule>> getAllSchedules();
-
-    //! \brief Get schedule specified by id.
-    //! \param id ID of the schedule.
-    //! \returns Schedule that can be modified.
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when id does not exist
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    Schedule& getSchedule(int id);
-
-    //! \brief Checks whether a schedule exists.
-    //! \param id ID of the schedule.
-    //! \returns true when the schedule exists.
-    //! \note Does not refresh the cached state.
-    bool scheduleExists(int id) const;
-
-    //! \brief Create a new schedule.
-    //! \param params CreateSchedule parameters for the new schedule.
-    //! \returns The new schedule id or 0 if failed.
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contains no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    int createSchedule(const CreateSchedule& params);
-
-    ///@}
-    ///! \name Scenes
-    ///@{
-
-    //! \brief Get all scenes on this bridge.
-    //! \return A vector of references to every Scene.
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contains no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    std::vector<std::reference_wrapper<Scene>> getAllScenes();
-
-    //! \brief Get scene specified by id.
-    //! \param id ID of the scene.
-    //! \returns Schedule that can be modified.
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when id does not exist
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    Scene& getScene(const std::string& id);
-
-    //! \brief Checks whether a scene exists.
-    //! \param id ID of the scene.
-    //! \returns true when the scene exists.
-    //! \note Does not refresh the cached state.
-    bool sceneExists(const std::string& id) const;
-
-    //! \brief Create a new scene.
-    //! \param params CreateScene parameters for the new scene.
-    //! \returns The new scene id or 0 if failed.
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contains no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    std::string createScene(const CreateScene& params);
-
-    ///@}
+    SceneList& scenes();
+    const SceneList& scenes() const;
 
 private:
     std::string ip; //!< IP-Address of the hue bridge in dotted decimal notation
@@ -391,10 +224,10 @@ private:
                                                       //!< bridge
     std::chrono::steady_clock::duration refreshDuration;
     std::shared_ptr<APICache> stateCache;
-    MakeCopyable<ResourceList<HueLight, int>> lights;
-    MakeCopyable<GroupResourceList<Group, CreateGroup>> groups;
-    MakeCopyable<CreateableResourceList<Schedule, int, CreateSchedule>> schedules;
-    MakeCopyable<CreateableResourceList<Scene, std::string, CreateScene>> scenes;
+    MakeCopyable<LightList> lightList;
+    MakeCopyable<GroupList> groupList;
+    MakeCopyable<ScheduleList> scheduleList;
+    MakeCopyable<SceneList> sceneList;
     MakeCopyable<BridgeConfig> bridgeConfig;
 };
 } // namespace hueplusplus
