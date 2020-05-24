@@ -26,7 +26,7 @@
 #include <iostream>
 #include <thread>
 
-#include "hueplusplus/HueConfig.h"
+#include "hueplusplus/APIConfig.h"
 
 namespace hueplusplus
 {
