@@ -324,7 +324,7 @@ public:
     bool scheduleExists(int id) const;
 
     //! \brief Create a new schedule.
-    //! \param params CreateSchedule parameters for the new group.
+    //! \param params CreateSchedule parameters for the new schedule.
     //! \returns The new schedule id or 0 if failed.
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contains no body
@@ -336,12 +336,37 @@ public:
     ///! \name Scenes
     ///@{
 
+    //! \brief Get all scenes on this bridge.
+    //! \return A vector of references to every Scene.
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contains no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     std::vector<std::reference_wrapper<Scene>> getAllScenes();
 
+    //! \brief Get scene specified by id.
+    //! \param id ID of the scene.
+    //! \returns Schedule that can be modified.
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when id does not exist
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     Scene& getScene(const std::string& id);
 
+
+    //! \brief Checks whether a scene exists.
+    //! \param id ID of the scene.
+    //! \returns true when the scene exists.
+    //! \note Does not refresh the cached state.
     bool sceneExists(const std::string& id) const;
 
+    //! \brief Create a new scene.
+    //! \param params CreateScene parameters for the new scene.
+    //! \returns The new scene id or 0 if failed.
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contains no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     std::string createScene(const CreateScene& params);
 
     ///@}

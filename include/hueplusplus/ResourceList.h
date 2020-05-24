@@ -73,7 +73,7 @@ public:
     //! \brief Deleted copy constructor
     ResourceList(const ResourceList&) = delete;
     //! \brief Defaulted move constructor
-    ResourceList(ResourceList&&) noexcept = default;
+    ResourceList(ResourceList&&) = default;
     //! \brief Deleted copy assignment
     ResourceList& operator=(const ResourceList&) = delete;
     //! \brief Defaulted move assignment
@@ -276,6 +276,10 @@ public:
     }
 };
 
+//! \brief Handles a group list with the special group 0
+//! \tparam Resource Resource type that is in the list
+//! \tparam CreateType Type that provides parameters for creation.
+//! Must have a const getRequest() function returning the JSON for the POST request.
 template <typename Resource, typename CreateType>
 class GroupResourceList : public CreateableResourceList<Resource, int, CreateType>
 {
