@@ -73,7 +73,7 @@ public:
     //! \brief Deleted copy constructor
     ResourceList(const ResourceList&) = delete;
     //! \brief Defaulted move constructor
-    ResourceList(ResourceList&&) = default;
+    ResourceList(ResourceList&&) noexcept = default;
     //! \brief Deleted copy assignment
     ResourceList& operator=(const ResourceList&) = delete;
     //! \brief Defaulted move assignment
@@ -285,19 +285,19 @@ public:
     //! \see ResourceList::get
     Resource& get(const int& id)
     {
-        auto pos = resources.find(id);
-        if (pos != resources.end())
+        auto pos = this->resources.find(id);
+        if (pos != this->resources.end())
         {
             pos->second.refresh();
             return pos->second;
         }
-        const nlohmann::json& state = stateCache.getValue();
-        std::string key = maybeToString(id);
+        const nlohmann::json& state = this->stateCache.getValue();
+        std::string key = this->maybeToString(id);
         if (!state.count(key) && id != 0)
         {
             throw HueException(FileInfo {__FILE__, __LINE__, __func__}, "Resource id is not valid");
         }
-        return resources.emplace(id, construct(id, state[key])).first->second;
+        return this->resources.emplace(id, this->construct(id, state[key])).first->second;
     }
     //! \brief Get group, specially handles group 0
     //! \see ResourceList::exists
