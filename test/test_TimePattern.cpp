@@ -78,33 +78,33 @@ TEST(Time, durationTo_hh_mm_ss)
     EXPECT_EQ(duration, parseDuration(durationTo_hh_mm_ss(duration)));
 }
 
-TEST(AbsoluteTime, Constructor)
+TEST(AbsoluteVariedTime, Constructor)
 {
     system_clock::time_point now = system_clock::now();
     {
-        AbsoluteTime time(now);
+        AbsoluteVariedTime time(now);
         EXPECT_EQ(now, time.getBaseTime());
         EXPECT_EQ(0s, time.getRandomVariation());
     }
     system_clock::duration variation = 4h + 2min;
     {
-        AbsoluteTime time(now, variation);
+        AbsoluteVariedTime time(now, variation);
         EXPECT_EQ(now, time.getBaseTime());
         EXPECT_EQ(variation, time.getRandomVariation());
     }
 }
 
-TEST(AbsoluteTime, toString)
+TEST(AbsoluteVariedTime, toString)
 {
     const system_clock::time_point timePoint = parseTimestamp("2020-03-03T20:53:03");
 
-    EXPECT_EQ("2020-03-03T20:53:03", AbsoluteTime(timePoint).toString());
+    EXPECT_EQ("2020-03-03T20:53:03", AbsoluteVariedTime(timePoint).toString());
 
     const system_clock::duration noVariation = 0s;
-    EXPECT_EQ("2020-03-03T20:53:03", AbsoluteTime(timePoint, noVariation).toString());
+    EXPECT_EQ("2020-03-03T20:53:03", AbsoluteVariedTime(timePoint, noVariation).toString());
 
     const system_clock::duration variation = 1h + 2min + 1s;
-    EXPECT_EQ("2020-03-03T20:53:03A01:02:01", AbsoluteTime(timePoint, variation).toString());
+    EXPECT_EQ("2020-03-03T20:53:03A01:02:01", AbsoluteVariedTime(timePoint, variation).toString());
 }
 
 TEST(AbsoluteTime, parseUTC)
@@ -361,7 +361,7 @@ TEST(TimePattern, CopyConstructor)
         EXPECT_EQ(TimePattern::Type::undefined, copy.getType());
     }
     {
-        const AbsoluteTime abs(system_clock::now());
+        const AbsoluteVariedTime abs(system_clock::now());
         const TimePattern pattern(abs);
         const TimePattern copy(pattern);
         ASSERT_EQ(TimePattern::Type::absolute, copy.getType());
@@ -399,7 +399,7 @@ TEST(TimePattern, CopyConstructor)
 TEST(TimePattern, Absolute)
 {
     {
-        const AbsoluteTime abs(system_clock::now(), 20s);
+        const AbsoluteVariedTime abs(system_clock::now(), 20s);
         const TimePattern pattern(abs);
         ASSERT_EQ(TimePattern::Type::absolute, pattern.getType());
         EXPECT_EQ(abs.getBaseTime(), pattern.asAbsolute().getBaseTime());
@@ -409,7 +409,7 @@ TEST(TimePattern, Absolute)
     const system_clock::time_point timePoint = parseTimestamp("2020-03-03T20:53:03");
     {
         const TimePattern pattern = TimePattern::parse("2020-03-03T20:53:03");
-        const AbsoluteTime expected(timePoint);
+        const AbsoluteVariedTime expected(timePoint);
         ASSERT_EQ(TimePattern::Type::absolute, pattern.getType());
         EXPECT_EQ(expected.getBaseTime(), pattern.asAbsolute().getBaseTime());
         EXPECT_EQ(expected.getRandomVariation(), pattern.asAbsolute().getRandomVariation());
@@ -417,7 +417,7 @@ TEST(TimePattern, Absolute)
     {
         const system_clock::duration variation = 1h + 2min + 1s;
         const TimePattern pattern = TimePattern::parse("2020-03-03T20:53:03A01:02:01");
-        const AbsoluteTime expected(timePoint, variation);
+        const AbsoluteVariedTime expected(timePoint, variation);
         ASSERT_EQ(TimePattern::Type::absolute, pattern.getType());
         EXPECT_EQ(expected.getBaseTime(), pattern.asAbsolute().getBaseTime());
         EXPECT_EQ(expected.getRandomVariation(), pattern.asAbsolute().getRandomVariation());

@@ -272,7 +272,7 @@ TEST_F(SceneTest, getLastUpdated)
     expectGetState(id);
     const Scene scene(id, commands, std::chrono::seconds(0));
     const time::AbsoluteTime lastUpdated = scene.getLastUpdated();
-    EXPECT_EQ(std::chrono::seconds(0), lastUpdated.getRandomVariation());
+    EXPECT_EQ(time::parseUTCTimestamp("2020-04-23T12:00:04"), lastUpdated.getBaseTime());
 }
 
 TEST_F(SceneTest, getVersion)
