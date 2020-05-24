@@ -19,7 +19,7 @@ set(hueplusplus_SOURCES
     StateTransaction.cpp
     TimePattern.cpp
     UPnP.cpp
-    Utils.cpp)
+    Utils.cpp "BridgeConfig.cpp")
 
 # on windows we want to compile the WinHttpHandler
 if(WIN32)

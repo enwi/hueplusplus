@@ -31,14 +31,14 @@
 #include <stdexcept>
 #include <thread>
 
-#include "hueplusplus/HueConfig.h"
+#include "hueplusplus/APIConfig.h"
 #include "hueplusplus/HueExceptionMacro.h"
 #include "hueplusplus/UPnP.h"
 #include "hueplusplus/Utils.h"
 
 namespace hueplusplus
 {
-HueFinder::HueFinder(std::shared_ptr<const IHttpHandler> handler) : http_handler(std::move(handler)) {}
+HueFinder::HueFinder(std::shared_ptr<const IHttpHandler> handler) : http_handler(std::move(handler)) { }
 
 std::vector<HueFinder::HueIdentification> HueFinder::FindBridges() const
 {
@@ -144,8 +144,9 @@ Hue::Hue(const std::string& ip, const int port, const std::string& username,
               int id, const nlohmann::json& state) mutable { return factory.createLight(state, id); }),
       groups(stateCache, "groups", refreshDuration),
       schedules(stateCache, "schedules", refreshDuration),
-      scenes(stateCache, "scenes", refreshDuration)
-{}
+      scenes(stateCache, "scenes", refreshDuration),
+      bridgeConfig(stateCache, refreshDuration)
+{ }
 
 void Hue::refresh()
 {
@@ -218,6 +219,16 @@ void Hue::setIP(const std::string& ip)
 void Hue::setPort(const int port)
 {
     this->port = port;
+}
+
+BridgeConfig& Hue::config()
+{
+    return bridgeConfig;
+}
+
+const BridgeConfig& Hue::config() const
+{
+    return bridgeConfig;
 }
 
 HueLight& Hue::getLight(int id)
@@ -315,5 +326,6 @@ void Hue::setHttpHandler(std::shared_ptr<const IHttpHandler> handler)
     groups = GroupResourceList<Group, CreateGroup>(stateCache, "groups", refreshDuration);
     schedules = CreateableResourceList<Schedule, int, CreateSchedule>(stateCache, "schedules", refreshDuration);
     scenes = CreateableResourceList<Scene, std::string, CreateScene>(stateCache, "scenes", refreshDuration);
+    bridgeConfig = BridgeConfig(stateCache, refreshDuration);
 }
 } // namespace hueplusplus
