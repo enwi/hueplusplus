@@ -57,7 +57,7 @@ public:
         std::chrono::steady_clock::duration refreshDuration,
         const std::function<Resource(IdType, const nlohmann::json&)>& factory = nullptr)
         : stateCache(baseCache, cacheEntry, refreshDuration), factory(factory), path(stateCache.getRequestPath() + '/')
-    {}
+    { }
     //! \brief Construct ResourceList with a separate cache and optional factory function
     //! \param commands HueCommandAPI for requests
     //! \param path Path of the resource list
@@ -68,16 +68,12 @@ public:
         std::chrono::steady_clock::duration refreshDuration,
         const std::function<Resource(IdType, const nlohmann::json&)>& factory = nullptr)
         : stateCache(path, commands, refreshDuration), factory(factory), path(path + '/')
-    {}
+    { }
 
     //! \brief Deleted copy constructor
     ResourceList(const ResourceList&) = delete;
-    //! \brief Defaulted move constructor
-    ResourceList(ResourceList&&) = default;
     //! \brief Deleted copy assignment
     ResourceList& operator=(const ResourceList&) = delete;
-    //! \brief Defaulted move assignment
-    ResourceList& operator=(ResourceList&&) = default;
 
     //! \brief Refreshes internal state now
     void refresh() { stateCache.refresh(); }
@@ -198,6 +194,11 @@ protected:
             id, state, std::is_constructible<Resource, IdType, HueCommandAPI, std::chrono::steady_clock::duration> {});
     }
 
+    //! \brief Protected defaulted move constructor
+    ResourceList(ResourceList&&) = default;
+    //! \brief Protected defaulted move assignment
+    ResourceList& operator=(ResourceList&&) = default;
+
 private:
     // Resource is constructable
     Resource construct(const IdType& id, const nlohmann::json& state, std::true_type)
@@ -274,6 +275,11 @@ public:
         }
         return IdType {};
     }
+protected:
+    //! \brief Protected defaulted move constructor
+    CreateableResourceList(CreateableResourceList&&) = default;
+    //! \brief Protected defaulted move assignment
+    CreateableResourceList& operator=(CreateableResourceList&&) = default;
 };
 
 //! \brief Handles a group list with the special group 0
@@ -306,6 +312,12 @@ public:
     //! \brief Get group, specially handles group 0
     //! \see ResourceList::exists
     bool exists(int id) const { return id == 0 || CreateableResourceList<Resource, int, CreateType>::exists(id); }
+
+protected:
+    //! \brief Protected defaulted move constructor
+    GroupResourceList(GroupResourceList&&) = default;
+    //! \brief Protected defaulted move assignment
+    GroupResourceList& operator=(GroupResourceList&&) = default;
 };
 } // namespace hueplusplus
 

@@ -28,8 +28,8 @@
 
 #include "testhelper.h"
 
+#include "hueplusplus/APIConfig.h"
 #include "hueplusplus/Hue.h"
-#include "hueplusplus/HueConfig.h"
 #include "json/json.hpp"
 #include "mocks/mock_HttpHandler.h"
 
