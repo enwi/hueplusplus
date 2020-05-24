@@ -239,7 +239,7 @@ TEST_F(ScheduleTest, setTime)
     const int id = 1;
     expectGetState(id);
     Schedule schedule(id, commands, std::chrono::steady_clock::duration::max());
-    time::TimePattern time {time::AbsoluteTime(std::chrono::system_clock::now())};
+    time::TimePattern time {time::AbsoluteVariedTime(std::chrono::system_clock::now())};
     nlohmann::json request = {{"localtime", time.toString()}};
     nlohmann::json response = {{"success", {"/schedules/1/localtime", time.toString()}}};
     EXPECT_CALL(
@@ -320,7 +320,7 @@ TEST(CreateSchedule, setCommand)
 
 TEST(CreateSchedule, setTime)
 {
-    const time::AbsoluteTime time(std::chrono::system_clock::now());
+    const time::AbsoluteVariedTime time(std::chrono::system_clock::now());
     const nlohmann::json request = {{"localtime", time.toString()}};
     EXPECT_EQ(request, CreateSchedule().setTime(time::TimePattern(time)).getRequest());
 }

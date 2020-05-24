@@ -55,7 +55,6 @@ std::chrono::system_clock::time_point parseTimestamp(const std::string& timestam
 //! \throws HueException when time cannot be represented as time_point
 std::chrono::system_clock::time_point parseUTCTimestamp(const std::string& timestamp);
 
-
 //! \brief Converts duration to a time string
 //! \param duration Duration or time of day to format. Must be less than 24 hours
 //! \returns Duration string in the format <code>hh:mm:ss</code>
@@ -68,11 +67,44 @@ std::string durationTo_hh_mm_ss(std::chrono::system_clock::duration duration);
 //! \throws std::invalid_argument when integer conversion fails
 std::chrono::system_clock::duration parseDuration(const std::string& hourMinSec);
 
-//! \brief One-time, absolute time point with possible random variation
+//! \brief One-time, absolute time point
+class AbsoluteTime
+{
+    using clock = std::chrono::system_clock;
+
+public:
+    //! \brief Create absolute time point
+    //! \param baseTime Absolute time point
+    explicit AbsoluteTime(clock::time_point baseTime);
+
+    //! \brief Get base time point
+    //!
+    //! Can be used for calculation with other system_clock time_points
+    clock::time_point getBaseTime() const;
+
+    //! \brief Get formatted string as expected by Hue API
+    //! \returns Timestamp in the format
+    //! <code>YYYY-MM-DD</code><strong>T</strong><code>hh:mm:ss</code>
+    std::string toString() const;
+
+    //! \brief Parse AbsoluteTime from formatted string in local timezone
+    //! \param s Timestamp in the same format as returned by \ref toString()
+    //! \returns AbsoluteTime with base time and variation from \c s
+    static AbsoluteTime parse(const std::string& s);
+
+    //! \brief Parse AbsoluteTime from formatted UTC string
+    //! \param s Timestamp in the same format as returned by \ref toString()
+    //! \returns AbsoluteTime with base time and variation from \c s
+    static AbsoluteTime parseUTC(const std::string& s);
+
+private:
+    clock::time_point base;
+};
+//! One-time, absolute time point with possible random variation
 //!
 //! Can be either used to represent a specific date and time,
 //! or a date and time with a random variation.
-class AbsoluteTime
+class AbsoluteVariedTime : public AbsoluteTime
 {
     using clock = std::chrono::system_clock;
 
@@ -81,12 +113,7 @@ public:
     //! \param baseTime Absolute time point
     //! \param variation Random variation, optional. When not zero, the time is randomly chosen between
     //! <code>baseTime - variation</code> and <code>baseTime + variation</code>
-    explicit AbsoluteTime(clock::time_point baseTime, clock::duration variation = std::chrono::seconds(0));
-
-    //! \brief Get base time point
-    //!
-    //! Can be used for calculation with other system_clock time_points
-    clock::time_point getBaseTime() const;
+    explicit AbsoluteVariedTime(clock::time_point baseTime, clock::duration variation = std::chrono::seconds(0));
 
     //! \brief Get random variation or zero
     //!
@@ -103,15 +130,10 @@ public:
 
     //! \brief Parse AbsoluteTime from formatted string in local timezone
     //! \param s Timestamp in the same format as returned by \ref toString()
-    //! \returns AbsoluteTime with base time and variation from \c s
-    static AbsoluteTime parse(const std::string& s);
+    //! \returns AbsoluteVariedTime with base time and variation from \c s
+    static AbsoluteVariedTime parse(const std::string& s);
 
-    //! \brief Parse AbsoluteTime from formatted UTC string
-    //! \param s Timestamp in the same format as returned by \ref toString()
-    //! \returns AbsoluteTime with base time and variation from \c s
-    static AbsoluteTime parseUTC(const std::string& s);
 private:
-    clock::time_point base;
     clock::duration variation;
 };
 
@@ -122,10 +144,10 @@ class Weekdays
 {
 public:
     //! \brief Create with no days
-    Weekdays() : bitmask(0) {}
+    Weekdays() : bitmask(0) { }
     //! \brief Create with the day \c num
     //! \param num Day of the week, from monday (0) to sunday (6)
-    explicit Weekdays(int num) : bitmask(1 << num) {}
+    explicit Weekdays(int num) : bitmask(1 << num) { }
 
     //! \brief Check if no days are set
     bool isNone() const;
@@ -332,7 +354,7 @@ public:
     enum class Type
     {
         undefined, //!< \brief No active type
-        absolute, //!< \brief Active type is AbsoluteTime
+        absolute, //!< \brief Active type is AbsoluteVariedTime
         recurring, //!< \brief Active type is RecurringTime
         interval, //!< \brief Active type is TimeInterval
         timer //!< \brief Active type is Timer
@@ -342,8 +364,8 @@ public:
     TimePattern();
     //! \brief Destructor for union.
     ~TimePattern();
-    //! \brief Create TimePattern from AbsoluteTime
-    explicit TimePattern(const AbsoluteTime& absolute);
+    //! \brief Create TimePattern from AbsoluteVariedTime
+    explicit TimePattern(const AbsoluteVariedTime& absolute);
     //! \brief Create TimePattern from RecurringTime
     explicit TimePattern(const RecurringTime& recurring);
     //! \brief Create TimePattern from TimeInterval
@@ -364,7 +386,7 @@ public:
 
     //! \brief Get contained absolute time
     //! \pre getType() == Type::absolute
-    AbsoluteTime asAbsolute() const;
+    AbsoluteVariedTime asAbsolute() const;
 
     //! \brief Get contained recurring time
     //! \pre getType() == Type::recurring
@@ -401,7 +423,7 @@ private:
     union
     {
         nullptr_t undefined;
-        AbsoluteTime absolute;
+        AbsoluteVariedTime absolute;
         RecurringTime recurring;
         TimeInterval interval;
         Timer timer;
