@@ -61,15 +61,15 @@ hueplusplus::Hue bridge("192.168.2.102", 80, "<username>", handler);
 
 ### Controlling lights
 If you have your Bridge all set up, you can now control its lights.
-For that create a new HueLight object and call getLight(\<id\>) on your bridge object to get a reference to a specific light, where id
+For that create a new HueLight object and call lights().get(\<id\>) on your bridge object to get a reference to a specific light, where id
 is the id of the light set internally by the Hue Bridge.
 ```C++
-hueplusplus::HueLight light1 = bridge.getLight(1);
+hueplusplus::HueLight light1 = bridge.lights().get(1);
 ```
 If you don't know the id of a specific light or want to get an overview over all lights that are controlled by your bridge, 
-you can get a vector containing them by calling getAllLights() on your bridge object. If no lights are found the vector will be empty.
+you can get a vector containing them by calling getAll(). If no lights are found the vector will be empty.
 ```C++
-std::vector<std::reference_wrapper<hueplusplus::HueLight>> lights = bridge.getAllLights();
+std::vector<std::reference_wrapper<hueplusplus::HueLight>> lights = bridge.lights().getAll();
 ```
 If you now want to control a light, call a specific function of it.
 ```C++
