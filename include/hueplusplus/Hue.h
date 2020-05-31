@@ -151,10 +151,12 @@ public:
     Hue(const std::string& ip, const int port, const std::string& username, std::shared_ptr<const IHttpHandler> handler,
         std::chrono::steady_clock::duration refreshDuration = std::chrono::seconds(10));
 
+    //! \brief Refreshes the bridge state.
+    //!
+    //! Should only be called rarely, as a full refresh is costly and usually not necessary.
+    //! Instead refresh only the parts you are interested in or rely on periodic refreshes
+    //! that happen automatically when calling non-const methods.
     void refresh();
-
-    //! \name Configuration
-    ///@{
 
     //! \brief Function to get the ip address of the hue bridge
     //!
@@ -193,27 +195,45 @@ public:
     //! "192.168.2.1:8080"
     void setPort(const int port);
 
-    //! \brief Function that sets the HttpHandler and updates the HueCommandAPI.
-    //!
-    //! The HttpHandler and HueCommandAPI are used for bridge communication
-    //! \param handler a HttpHandler of type \ref IHttpHandler
-    void setHttpHandler(std::shared_ptr<const IHttpHandler> handler);
-
+    //! \brief Provides access to the configuration of the bridge.
     BridgeConfig& config();
+    //! \brief Provides access to the configuration of the bridge.
+    //! \note Does not refresh state.
     const BridgeConfig& config() const;
-
+    
+    //! \brief Provides access to the HueLight%s on the bridge.
     LightList& lights();
+    //! \brief Provides access to the HueLight%s on the bridge.
+    //! \note Does not refresh state.
     const LightList& lights() const;
 
+    //! \brief Provides access to the Group%s on the bridge.
     GroupList& groups();
+    //! \brief Provides access to the Group%s on the bridge.
+    //! \note Does not refresh state.
     const GroupList& groups() const;
 
+    //! \brief Provides access to the Schedule%s on the bridge.
     ScheduleList& schedules();
+    //! \brief Provides access to the Schedule%s on the bridge.
+    //! \note Does not refresh state.
     const ScheduleList& schedules() const;
 
+    //! \brief Provides access to the Scene%s on the bridge.
     SceneList& scenes();
+    //! \brief Provides access to the Scene%s on the bridge.
+    //! \note Does not refresh state.
     const SceneList& scenes() const;
 
+private:
+    //! \brief Function that sets the HttpHandler and updates the HueCommandAPI.
+    //! \param handler a HttpHandler of type \ref IHttpHandler
+    //!
+    //! The HttpHandler and HueCommandAPI are used for bridge communication.
+    //! Resetting the HttpHandler should only be done when the username is first set,
+    //! before Hue is used.
+    //! Resets all caches and resource lists.
+    void setHttpHandler(std::shared_ptr<const IHttpHandler> handler);
 private:
     std::string ip; //!< IP-Address of the hue bridge in dotted decimal notation
                     //!< like "192.168.2.1"
