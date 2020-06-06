@@ -48,7 +48,7 @@ set(TEST_SOURCES
     test_SimpleColorHueStrategy.cpp
     test_SimpleColorTemperatureStrategy.cpp
     test_StateTransaction.cpp
-    test_TimePattern.cpp "test_ColorUnits.cpp")
+    test_TimePattern.cpp "test_ColorUnits.cpp" "test_BridgeConfig.cpp")
 
 set(HuePlusPlus_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
 

@@ -208,20 +208,16 @@ TEST(Hue, requestUsername)
 
         Hue test_bridge(getBridgeIp(), getBridgePort(), "", handler);
 
+        nlohmann::json hue_bridge_state{ {"lights", {}} };
+        EXPECT_CALL(
+            *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+            .Times(1)
+            .WillOnce(Return(hue_bridge_state));
         std::string username = test_bridge.requestUsername();
 
         EXPECT_EQ(username, test_bridge.getUsername()) << "Returned username not matching";
         EXPECT_EQ(test_bridge.getBridgeIP(), getBridgeIp()) << "Bridge IP not matching";
         EXPECT_EQ(test_bridge.getUsername(), getBridgeUsername()) << "Bridge username not matching";
-
-        // Verify that username is correctly set in api requests
-        nlohmann::json hue_bridge_state {{"lights", {}}};
-        EXPECT_CALL(
-            *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-            .Times(1)
-            .WillOnce(Return(hue_bridge_state));
-
-        test_bridge.lights().getAll();
     }
 }
 
