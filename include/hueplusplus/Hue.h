@@ -156,6 +156,10 @@ public:
     //! Should only be called rarely, as a full refresh is costly and usually not necessary.
     //! Instead refresh only the parts you are interested in or rely on periodic refreshes
     //! that happen automatically when calling non-const methods.
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     void refresh();
 
     //! \brief Function to get the ip address of the hue bridge
