@@ -282,5 +282,6 @@ void Hue::setHttpHandler(std::shared_ptr<const IHttpHandler> handler)
     scheduleList = CreateableResourceList<Schedule, int, CreateSchedule>(stateCache, "schedules", refreshDuration);
     sceneList = CreateableResourceList<Scene, std::string, CreateScene>(stateCache, "scenes", refreshDuration);
     bridgeConfig = BridgeConfig(stateCache, refreshDuration);
+    stateCache->refresh();
 }
 } // namespace hueplusplus
