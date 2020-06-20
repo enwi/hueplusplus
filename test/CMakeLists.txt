@@ -32,6 +32,8 @@ target_compile_features(gtest PUBLIC cxx_std_14)
 set(TEST_SOURCES
     test_APICache.cpp
     test_BaseHttpHandler.cpp
+    test_BridgeConfig.cpp
+    test_ColorUnits.cpp
     test_ExtendedColorHueStrategy.cpp
     test_ExtendedColorTemperatureStrategy.cpp
 	test_Group.cpp
@@ -48,7 +50,7 @@ set(TEST_SOURCES
     test_SimpleColorHueStrategy.cpp
     test_SimpleColorTemperatureStrategy.cpp
     test_StateTransaction.cpp
-    test_TimePattern.cpp "test_ColorUnits.cpp" "test_BridgeConfig.cpp")
+    test_TimePattern.cpp)
 
 set(HuePlusPlus_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
 
