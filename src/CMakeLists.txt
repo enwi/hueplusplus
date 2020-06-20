@@ -1,6 +1,7 @@
 set(hueplusplus_SOURCES
 	APICache.cpp
     BaseHttpHandler.cpp
+    BridgeConfig.cpp
     ColorUnits.cpp
     ExtendedColorHueStrategy.cpp
     ExtendedColorTemperatureStrategy.cpp
@@ -19,7 +20,7 @@ set(hueplusplus_SOURCES
     StateTransaction.cpp
     TimePattern.cpp
     UPnP.cpp
-    Utils.cpp "BridgeConfig.cpp")
+    Utils.cpp)
 
 # on windows we want to compile the WinHttpHandler
 if(WIN32)
