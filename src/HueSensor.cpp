@@ -21,17 +21,15 @@
 
 #include "hueplusplus/HueSensor.h"
 
-#include "hueplusplus/HueThing.h"
 #include "json/json.hpp"
 
 namespace hueplusplus
 {
 int HueSensor::getButtonEvent()
 {
-    refreshState();
     if (hasButtonEvent())
     {
-        return state["state"]["buttonevent"];
+        return state.getValue().at("state").at("buttonevent");
     }
     return 0;
 }
@@ -40,17 +38,16 @@ int HueSensor::getButtonEvent() const
 {
     if (hasButtonEvent())
     {
-        return state["state"]["buttonevent"];
+        return state.getValue().at("state").at("buttonevent");
     }
     return 0;
 }
 
 int HueSensor::getStatus()
 {
-    refreshState();
     if (hasStatus())
     {
-        return state["state"]["status"];
+        return state.getValue().at("state").at("status");
     }
     return 0;
 }
@@ -59,24 +56,22 @@ int HueSensor::getStatus() const
 {
     if (hasStatus())
     {
-        return state["state"]["status"];
+        return state.getValue().at("state").at("status");
     }
     return 0;
 }
 
 bool HueSensor::hasButtonEvent() const
 {
-    return state["state"].count("buttonevent") > 0;
+    return state.getValue().at("state").count("buttonevent") != 0;
 }
 
 bool HueSensor::hasStatus() const
 {
-    return state["state"].count("status") > 0;
+    return state.getValue().at("state").count("status") != 0;
 }
 
-HueSensor::HueSensor(int id, const HueCommandAPI& commands)
-    : HueThing(id, commands, "/sensors/")
-{
-    refreshState();
-}
+HueSensor::HueSensor(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration)
+    : BaseDevice(id, commands, "/sensors/", refreshDuration)
+{ }
 } // namespace hueplusplus

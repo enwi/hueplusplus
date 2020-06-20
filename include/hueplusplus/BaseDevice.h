@@ -1,5 +1,5 @@
 /**
-    \file HueThing.h
+    \file BaseDevice.h
     Copyright Notice\n
     Copyright (C) 2017  Jan Rogall		- developer\n
     Copyright (C) 2017  Moritz Wirger	- developer\n
@@ -25,70 +25,68 @@
 
 #include <memory>
 
-#include "HueCommandAPI.h"
+#include "APICache.h"
 
 #include "json/json.hpp"
 
 namespace hueplusplus
 {
-//!
-//! Class for Hue Thing fixtures
-//!
-class HueThing
+//! \brief Base class for physical devices connected to the bridge (sensor or light).
+class BaseDevice
 {
 public:
-    //! \brief std dtor
-    ~HueThing() = default;
+    //! \brief Virtual destructor
+    virtual ~BaseDevice() = default;
 
-    //! \brief Const function that returns the id of this thing
+    //! \brief Const function that returns the id of this device
     //!
-    //! \return integer representing the thing id
+    //! \return integer representing the device id
     virtual int getId() const;
 
-    //! \brief Const function that returns the thing type
+    //! \brief Const function that returns the device type
     //!
     //! \return String containing the type
     virtual std::string getType() const;
 
-    //! \brief Function that returns the name of the thing.
+    //! \brief Function that returns the name of the device.
     //!
-    //! \return String containig the name of the thing
+    //! \return String containig the name of the device
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual std::string getName();
 
-    //! \brief Const function that returns the name of the thing.
+    //! \brief Const function that returns the name of the device.
     //!
-    //! \note This will not refresh the thing state
+    //! \note This will not refresh the device state
     //! \return String containig the name of the thing
     virtual std::string getName() const;
 
-    //! \brief Const function that returns the modelid of the thing
+    //! \brief Const function that returns the modelid of the device
     //!
-    //! \return String conatining the modelid
+    //! \return String containing the modelid
     virtual std::string getModelId() const;
 
-    //! \brief Const function that returns the uniqueid of the thing
+    //! \brief Const function that returns the uniqueid of the device
     //!
     //! \note Only working on bridges with versions starting at 1.4
     //! \return String containing the uniqueid or an empty string when the function is not supported
     virtual std::string getUId() const;
 
-    //! \brief Const function that returns the manufacturername of the thing
+    //! \brief Const function that returns the manufacturername of the device
     //!
     //! \note Only working on bridges with versions starting at 1.7
     //! \return String containing the manufacturername or an empty string when the function is not supported
     virtual std::string getManufacturername() const;
 
-    //! \brief Const function that returns the productname of the thing
+    //! \brief Const function that returns the productname of the device
     //!
     //! \note Only working on bridges with versions starting at 1.24
     //! \return String containing the productname or an empty string when the function is not supported
     virtual std::string getProductname() const;
 
-    //! \brief Function that returns the software version of the thing
+    //! \brief Function that returns the software version of the device
     //!
     //! \return String containing the software version
     //! \throws std::system_error when system or socket operations fail
@@ -97,13 +95,13 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual std::string getSwVersion();
 
-    //! \brief Const function that returns the software version of the thing
+    //! \brief Const function that returns the software version of the device
     //!
-    //! \note This will not refresh the thing state
+    //! \note This will not refresh the device state
     //! \return String containing the software version
     virtual std::string getSwVersion() const;
 
-    //! \brief Function that sets the name of the thing
+    //! \brief Function that sets the name of the device
     //!
     //! \return Bool that is true on success
     //! \throws std::system_error when system or socket operations fail
@@ -112,24 +110,25 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual bool setName(const std::string& name);
 
+    //! \brief Refreshes internal cached state.
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
+    virtual void refresh();
+
 protected:
-    //! \brief Protected ctor that is used by \ref Hue class.
+    //! \brief Protected ctor that is used by subclasses.
     //!
-    //! \param id Integer that specifies the id of this thing
+    //! \param id Integer that specifies the id of this device
     //! \param commands HueCommandAPI for communication with the bridge
-    //!
-    //! leaves strategies unset
-    HueThing(int id, const HueCommandAPI& commands, const std::string& path);
+    //! \param path Base path for the resource type, ending with a '/'. Example: \c "/lights/"
+    //! \param refreshDuration Time between refreshing the cached state.
+    BaseDevice(int id, const HueCommandAPI& commands, const std::string& path,
+        std::chrono::steady_clock::duration refreshDuration);
 
-    //! \brief Protected function that sets the HueCommandAPI.
+    //! \brief Utility function to send a put request to the device.
     //!
-    //! The HueCommandAPI is used for bridge communication
-    //! \param commandAPI the new HueCommandAPI
-    virtual void setCommandAPI(const HueCommandAPI& commandAPI) { commands = commandAPI; };
-
-    //! \brief Utility function to send a put request to the thing.
-    //!
-    //! \throws nlohmann::json::parse_error if the reply could not be parsed
     //! \param request A nlohmann::json aka the request to send
     //! \param subPath A path that is appended to the uri, note it should always start with a slash ("/")
     //! \param fileInfo FileInfo from calling function for exception details.
@@ -138,21 +137,12 @@ protected:
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual nlohmann::json SendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo);
-
-    //! \brief Virtual function that refreshes the \ref state of the thing.
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual void refreshState();
+    virtual nlohmann::json sendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo);
 
 protected:
-    int id; //!< holds the id of the thing
-    std::string path; //!< holds the path of the thing
-    nlohmann::json state; //!< holds the current state of the thing updated by \ref refreshState
-
-    HueCommandAPI commands; //!< A IHttpHandler that is used to communicate with the bridge
+    int id; //!< holds the id of the device
+    std::string path; //!< holds the path of the device
+    APICache state; //!< holds the current state of the device
 };
 } // namespace hueplusplus
 

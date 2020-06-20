@@ -145,6 +145,7 @@ Hue::Hue(const std::string& ip, const int port, const std::string& username,
       groupList(stateCache, "groups", refreshDuration),
       scheduleList(stateCache, "schedules", refreshDuration),
       sceneList(stateCache, "scenes", refreshDuration),
+      sensorList(stateCache, "sensors", refreshDuration),
       bridgeConfig(stateCache, refreshDuration)
 { }
 
@@ -231,35 +232,6 @@ const BridgeConfig& Hue::config() const
     return bridgeConfig;
 }
 
-HueSensor& Hue::getSensor(int id)
-{
-    auto pos = sensors.find(id);
-    if (pos != sensors.end())
-    {
-        pos->second.refreshState();
-        return pos->second;
-    }
-    refreshState();
-    if (!state["sensors"].count(std::to_string(id)))
-    {
-        std::cerr << "Error in Hue getSensor(): sensor with id " << id << " is not valid\n";
-        throw HueException(CURRENT_FILE_INFO, "Sensor id is not valid");
-    }
-    // std::cout << state["sensors"][std::to_string(id)] << std::endl;
-    std::string type = state["sensors"][std::to_string(id)]["modelid"];
-    // std::cout << type << std::endl;
-    if (type == "RWL021" || type == "PHDL00" || type == "PHWA01")
-    {
-        // Hue dimmer switch
-        HueSensor sensor = HueSensor(id, commands);
-        sensors.emplace(id, sensor);
-        return sensors.find(id)->second;
-    }
-    std::cerr << "Could not determine HueSensor type:" << type << "!\n";
-    throw HueException(CURRENT_FILE_INFO, "Could not determine HueSensor type!");
-}
-
-
 Hue::LightList& Hue::lights()
 {
     return lightList;
@@ -275,23 +247,7 @@ Hue::GroupList& Hue::groups()
     return groupList;
 }
 
-std::vector<std::reference_wrapper<HueSensor>> Hue::getAllSensors()
-{
-    refreshState();
-    nlohmann::json sensorsState = state["sensors"];
-    for (nlohmann::json::iterator it = sensorsState.begin(); it != sensorsState.end(); ++it)
-    {
-        getSensor(std::stoi(it.key()));
-    }
-    std::vector<std::reference_wrapper<HueSensor>> result;
-    for (auto& entry : sensors)
-    {
-        result.emplace_back(entry.second);
-    }
-    return result;
-}
-
-bool Hue::lightExists(int id)
+const Hue::GroupList& Hue::groups() const
 {
     return groupList;
 }
@@ -316,6 +272,16 @@ const Hue::SceneList& Hue::scenes() const
     return sceneList;
 }
 
+Hue::SensorList& Hue::sensors()
+{
+    return sensorList;
+}
+
+const Hue::SensorList& Hue::sensors() const
+{
+    return sensorList;
+}
+
 void Hue::setHttpHandler(std::shared_ptr<const IHttpHandler> handler)
 {
     http_handler = handler;
@@ -323,9 +289,10 @@ void Hue::setHttpHandler(std::shared_ptr<const IHttpHandler> handler)
     lightList = ResourceList<HueLight, int>(stateCache, "lights", refreshDuration,
         [factory = HueLightFactory(stateCache->getCommandAPI(), refreshDuration)](
             int id, const nlohmann::json& state) mutable { return factory.createLight(state, id); });
-    groupList = GroupResourceList<Group, CreateGroup>(stateCache, "groups", refreshDuration);
-    scheduleList = CreateableResourceList<Schedule, int, CreateSchedule>(stateCache, "schedules", refreshDuration);
-    sceneList = CreateableResourceList<Scene, std::string, CreateScene>(stateCache, "scenes", refreshDuration);
+    groupList = GroupList(stateCache, "groups", refreshDuration);
+    scheduleList = ScheduleList(stateCache, "schedules", refreshDuration);
+    sceneList = SceneList(stateCache, "scenes", refreshDuration);
+    sensorList = SensorList(stateCache, "sensors", refreshDuration);
     bridgeConfig = BridgeConfig(stateCache, refreshDuration);
     stateCache->refresh();
 }

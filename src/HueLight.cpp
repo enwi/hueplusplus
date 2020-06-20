@@ -27,7 +27,6 @@
 #include <thread>
 
 #include "hueplusplus/HueExceptionMacro.h"
-#include "hueplusplus/HueThing.h"
 #include "hueplusplus/Utils.h"
 #include "json/json.hpp"
 
@@ -56,16 +55,6 @@ bool HueLight::isOn() const
 std::string HueLight::getLuminaireUId() const
 {
     return state.getValue().value("luminaireuniqueid", std::string());
-}
-
-std::string HueLight::getSwVersion()
-{
-    return state.getValue()["swversion"].get<std::string>();
-}
-
-std::string HueLight::getSwVersion() const
-{
-    return state.getValue()["swversion"].get<std::string>();
 }
 
 ColorType HueLight::getColorType() const
@@ -123,27 +112,16 @@ StateTransaction HueLight::transaction()
         state.getCommandAPI(), "/lights/" + std::to_string(id) + "/state", &state.getValue().at("state"));
 }
 
-void HueLight::refresh()
-{
-    state.refresh();
-}
-
-HueLight::HueLight(int id, const HueCommandAPI& commands) : HueLight(id, commands, nullptr, nullptr, nullptr) {}
+HueLight::HueLight(int id, const HueCommandAPI& commands) : HueLight(id, commands, nullptr, nullptr, nullptr) { }
 
 HueLight::HueLight(int id, const HueCommandAPI& commands, std::shared_ptr<const BrightnessStrategy> brightnessStrategy,
     std::shared_ptr<const ColorTemperatureStrategy> colorTempStrategy,
-    std::shared_ptr<const ColorHueStrategy> colorHueStrategy, chrono::steady_clock::duration refreshDuration)
-    : HueThing(id, commands, "/lights/"),
+    std::shared_ptr<const ColorHueStrategy> colorHueStrategy, std::chrono::steady_clock::duration refreshDuration)
+    : BaseDevice(id, commands, "/lights/", refreshDuration),
       colorType(ColorType::NONE),
       brightnessStrategy(std::move(brightnessStrategy)),
       colorTemperatureStrategy(std::move(colorTempStrategy)),
       colorHueStrategy(std::move(colorHueStrategy))
 {
-    state.refresh();
-}
-
-nlohmann::json HueLight::sendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo)
-{
-    return state.getCommandAPI().PUTRequest("/lights/" + std::to_string(id) + subPath, request, std::move(fileInfo));
 }
 } // namespace hueplusplus

@@ -26,11 +26,11 @@
 #include <memory>
 
 #include "APICache.h"
+#include "BaseDevice.h"
 #include "BrightnessStrategy.h"
 #include "ColorHueStrategy.h"
 #include "ColorTemperatureStrategy.h"
 #include "HueCommandAPI.h"
-#include "HueThing.h"
 #include "StateTransaction.h"
 
 #include "json/json.hpp"
@@ -96,7 +96,7 @@ enum class ColorType
 //! \brief Class for Hue Light fixtures
 //!
 //! Provides methods to query and control lights.
-class HueLight : public HueThing
+class HueLight : public BaseDevice
 {
     friend class HueLightFactory;
     friend class SimpleBrightnessStrategy;
@@ -106,84 +106,8 @@ class HueLight : public HueThing
     friend class ExtendedColorTemperatureStrategy;
 
 public:
-    //! \brief std dtor
-    ~HueLight() = default;
-
     //! \name General information
     ///@{
-
-    //! \brief Function that turns the light off.
-    //!
-    //! \param transition Optional parameter to set the transition from current state to new, standard is 4 = 400ms
-    //! \return Bool that is true on success
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual bool Off(uint8_t transition = 4);
-
-    //! \brief Function to check whether a light is on or off
-    //!
-    //! \return Bool that is true, when the light is on and false, when off
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual bool isOn();
-
-    //! \brief Const function to check whether a light is on or off
-    //!
-    //! \note This will not refresh the light state
-    //! \return Bool that is true, when the light is on and false, when off
-    virtual bool isOn() const;
-
-    //! \brief Const function that returns the id of this light
-    //!
-    //! \return integer representing the light id
-    virtual int getId() const;
-
-    //! \brief Const function that returns the light type
-    //!
-    //! \return String containing the type
-    virtual std::string getType() const;
-
-    //! \brief Function that returns the name of the light.
-    //!
-    //! \return String containig the name of the light
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual std::string getName();
-
-    //! \brief Const function that returns the name of the light.
-    //!
-    //! \note This will not refresh the light state
-    //! \return String containig the name of the light
-    virtual std::string getName() const;
-
-    //! \brief Const function that returns the modelid of the light
-    //!
-    //! \return String conatining the modelid
-    virtual std::string getModelId() const;
-
-    //! \brief Const function that returns the uniqueid of the light
-    //!
-    //! \note Only working on bridges with versions starting at 1.4
-    //! \return String containing the uniqueid or an empty string when the function is not supported
-    virtual std::string getUId() const;
-
-    //! \brief Const function that returns the manufacturername of the light
-    //!
-    //! \note Only working on bridges with versions starting at 1.7
-    //! \return String containing the manufacturername or an empty string when the function is not supported
-    virtual std::string getManufacturername() const;
-
-    //! \brief Const function that returns the productname of the light
-    //!
-    //! \note Only working on bridges with versions starting at 1.24
-    //! \return String containing the productname or an empty string when the function is not supported
-    virtual std::string getProductname() const;
 
     //! \brief Const function that returns the luminaireuniqueid of the light
     //!
@@ -325,7 +249,7 @@ public:
         return 0;
     };
 
-    //! \brief Fucntion that sets the color temperature of this light in mired.
+    //! \brief Function that sets the color temperature of this light in mired.
     //!
     //! \note The color temperature will only be set if the light has a reference
     //! to a specific \ref ColorTemperatureStrategy. The color temperature can
@@ -670,13 +594,6 @@ public:
 
     ///@}
 
-    //! \brief Refreshes internal cached state.
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual void refresh();
-
 protected:
     //! \brief Protected ctor that is used by \ref Hue class.
     //!
@@ -734,21 +651,7 @@ protected:
         colorHueStrategy = std::move(strat);
     };
 
-    //! \brief Utility function to send a put request to the light.
-    //!
-    //! \param request A nlohmann::json aka the request to send
-    //! \param subPath A path that is appended to the uri, note it should always start with a slash ("/")
-    //! \param fileInfo FileInfo from calling function for exception details.
-    //! \return The parsed reply
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual nlohmann::json sendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo);
-
 protected:
-    int id; //!< holds the id of the light
-    APICache state; //!< holds the current state of the light
     ColorType colorType; //!< holds the \ref ColorType of the light
 
     std::shared_ptr<const BrightnessStrategy>

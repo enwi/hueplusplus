@@ -132,6 +132,7 @@ public:
     using GroupList = GroupResourceList<Group, CreateGroup>;
     using ScheduleList = CreateableResourceList<Schedule, int, CreateSchedule>;
     using SceneList = CreateableResourceList<Scene, std::string, CreateScene>;
+    using SensorList = ResourceList<HueSensor, int>;
 
 public:
     //! \brief Constructor of Hue class
@@ -223,6 +224,12 @@ public:
     //! \note Does not refresh state.
     const SceneList& scenes() const;
 
+    //! \brief Provides access to the HueSensor%s on the bridge.
+    SensorList& sensors();
+    //! \brief Provides access to the HueSensor%s on the bridge.
+    //! \note Does not refresh state.
+    const SensorList& sensors() const;
+
 private:
     //! \brief Function that sets the HttpHandler and updates the HueCommandAPI.
     //! \param handler a HttpHandler of type \ref IHttpHandler
@@ -247,6 +254,7 @@ private:
     detail::MakeCopyable<GroupList> groupList;
     detail::MakeCopyable<ScheduleList> scheduleList;
     detail::MakeCopyable<SceneList> sceneList;
+    detail::MakeCopyable<SensorList> sensorList;
     detail::MakeCopyable<BridgeConfig> bridgeConfig;
 };
 } // namespace hueplusplus
