@@ -19,6 +19,9 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
+#ifndef INCLUDE_HUEPLUSPLUS_BRIDGE_CONFIG_H
+#define INCLUDE_HUEPLUSPLUS_BRIDGE_CONFIG_H
+
 #include <string>
 #include <vector>
 
@@ -54,7 +57,6 @@ class BridgeConfig
 public:
     //! \brief Construct BridgeConfig
     BridgeConfig(std::shared_ptr<APICache> baseCache, std::chrono::steady_clock::duration refreshDuration);
-
 
     //! \brief Refreshes internal cached state.
     //! \throws std::system_error when system or socket operations fail
@@ -103,3 +105,5 @@ private:
     APICache cache;
 };
 } // namespace hueplusplus
+
+#endif

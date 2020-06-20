@@ -42,6 +42,7 @@
 #include "ResourceList.h"
 #include "Scene.h"
 #include "Schedule.h"
+#include "Utils.h"
 
 #include "json/json.hpp"
 
@@ -116,14 +117,6 @@ private:
     std::map<std::string, std::string> usernames; //!< Maps all macs to usernames added by \ref
                                                   //!< HueFinder::AddUsername
     std::shared_ptr<const IHttpHandler> http_handler;
-};
-
-template <typename T>
-class MakeCopyable : public T
-{
-public:
-    using T::T;
-    using T::operator=;
 };
 
 //! \brief Hue class for a bridge.
@@ -204,7 +197,7 @@ public:
     //! \brief Provides access to the configuration of the bridge.
     //! \note Does not refresh state.
     const BridgeConfig& config() const;
-    
+
     //! \brief Provides access to the HueLight%s on the bridge.
     LightList& lights();
     //! \brief Provides access to the HueLight%s on the bridge.
@@ -238,6 +231,7 @@ private:
     //! before Hue is used.
     //! Resets all caches and resource lists.
     void setHttpHandler(std::shared_ptr<const IHttpHandler> handler);
+
 private:
     std::string ip; //!< IP-Address of the hue bridge in dotted decimal notation
                     //!< like "192.168.2.1"
@@ -248,11 +242,11 @@ private:
                                                       //!< bridge
     std::chrono::steady_clock::duration refreshDuration;
     std::shared_ptr<APICache> stateCache;
-    MakeCopyable<LightList> lightList;
-    MakeCopyable<GroupList> groupList;
-    MakeCopyable<ScheduleList> scheduleList;
-    MakeCopyable<SceneList> sceneList;
-    MakeCopyable<BridgeConfig> bridgeConfig;
+    detail::MakeCopyable<LightList> lightList;
+    detail::MakeCopyable<GroupList> groupList;
+    detail::MakeCopyable<ScheduleList> scheduleList;
+    detail::MakeCopyable<SceneList> sceneList;
+    detail::MakeCopyable<BridgeConfig> bridgeConfig;
 };
 } // namespace hueplusplus
 

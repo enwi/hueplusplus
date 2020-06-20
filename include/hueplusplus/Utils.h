@@ -95,6 +95,23 @@ nlohmann::json safeGetMember(const nlohmann::json& json, Paths&&... paths)
 }
 
 } // namespace utils
+
+namespace detail
+{
+//! \brief Makes a class with protected copy constructor copyable.
+//!
+//! Used in private members to expose mutable references to \c T
+//! while not allowing them to be assigned to.
+//! Make sure \c T is actually designed to be used this way!
+template <typename T>
+class MakeCopyable : public T
+{
+public:
+    // Make copy constructor and assignment operator public
+    using T::T;
+    using T::operator=;
+};
+} // namespace detail
 } // namespace hueplusplus
 
 #endif
