@@ -24,8 +24,8 @@
 
 #include <memory>
 
+#include "BaseDevice.h"
 #include "HueCommandAPI.h"
-#include "HueThing.h"
 
 #include "json/json.hpp"
 
@@ -34,7 +34,7 @@ namespace hueplusplus
 //!
 //! Class for Hue Sensor fixtures
 //!
-class HueSensor : public HueThing
+class HueSensor : public BaseDevice
 {
     friend class Hue;
 
@@ -89,9 +89,8 @@ protected:
     //!
     //! \param id Integer that specifies the id of this sensor
     //! \param commands HueCommandAPI for communication with the bridge
-    //!
-    //! leaves strategies unset
-    HueSensor(int id, const HueCommandAPI& commands);
+    //! \param refreshDuration Time between refreshing the cached state.
+    HueSensor(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration);
 };
 } // namespace hueplusplus
 
