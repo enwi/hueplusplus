@@ -26,13 +26,14 @@
 
 #include "BaseDevice.h"
 #include "HueCommandAPI.h"
+#include "TimePattern.h"
 
 #include "json/json.hpp"
 
 namespace hueplusplus
 {
 //!
-//! Class for Hue sensors
+//! Generic class for Hue sensors
 //!
 class Sensor : public BaseDevice
 {
@@ -42,47 +43,62 @@ public:
     //! \brief std dtor
     ~Sensor() = default;
 
-    //! \brief Function to get button event
-    //!
-    //! \return integer representing the button event
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual int getButtonEvent();
+    bool hasOn() const;
+    // Check whether sensor is on. Does not update when off
+    bool isOn() const;
+    void setOn(bool on);
 
-    //! \brief Const function to get button event
-    //!
-    //! \note This will not refresh the sensor state
-    //! \return integer representing the button event
-    virtual int getButtonEvent() const;
+    bool hasBatteryState() const;
+    // Battery state in percent
+    int getBatteryState() const;
+    bool isReachable() const;
 
-    //! \brief Function to get sensor status
-    //!
-    //! \return integer representing the status
-    //! \throws std::system_error when system or socket operations fail
-    //! \throws HueException when response contained no body
-    //! \throws HueAPIResponseException when response contains an error
-    //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual int getStatus();
+    bool hasAlert() const;
+    std::string getLastAlert() const;
+    void sendAlert(const std::string& alert);
 
-    //! \brief Const function to get sensor status
-    //!
-    //! \note This will not refresh the sensor state
-    //! \return integer representing the button event
-    virtual int getStatus() const;
+    bool hasReachable() const;
+    bool isReachable() const;
 
-    //! \brief Const function to check whether this sensor has a button event
-    //!
-    //! \return Bool that is true when the sensor has specified abilities and false
-    //! when not
-    virtual bool hasButtonEvent() const;
+    time::AbsoluteTime getLastUpdated() const;
 
-    //! \brief Const function to check whether this sensor has a status
-    //!
-    //! \return Bool that is true when the sensor has specified abilities and false
-    //! when not
-    virtual bool hasStatus() const;
+    bool hasUserTest() const;
+    void setUserTest(bool enabled);
+
+    bool hasURL() const;
+    std::string getURL() const;
+    void setURL(const std::string& url);
+
+    std::vector<std::string> getPendingConfig() const;
+
+    bool hasLEDIndication() const;
+    bool getLEDIndication() const;
+    void setLEDIndication(bool on);
+
+    nlohmann::json getState() const;
+    time::AbsoluteTime getLastUpdated() const;
+
+    bool isCertified() const;
+    bool isPrimary() const;
+
+    template <typename T>
+    T asSensorType() const
+    {
+        if (getType() != T::type_str)
+        {
+            throw HueException(FileInfo {__FILE__, __LINE__, __func__}, "Sensor type does not match: " + getType());
+        }
+        return T(*this);
+    }
+    template <typename T>
+    T asSensorType() &&
+    {
+        if (getType() != T::typeStr)
+        {
+            throw HueException(FileInfo {__FILE__, __LINE__, __func__}, "Sensor type does not match: " + getType());
+        }
+        return T(std::move(*this));
+    }
 
 protected:
     //! \brief Protected ctor that is used by \ref Bridge class.
@@ -92,6 +108,36 @@ protected:
     //! \param refreshDuration Time between refreshing the cached state.
     Sensor(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration);
 };
+
+namespace sensors
+{
+class DaylightSensor : public BaseDevice
+{
+public:
+    DaylightSensor(Sensor sensor) : BaseDevice(std::move(sensor)) { }
+
+    bool isOn() const;
+    void setOn(bool on);
+
+    bool hasBattery() const;
+    int getBatteryState() const;
+    void setBatteryState(int percent);
+
+    void setCoordinates(std::string latitude, std::string longitude);
+
+    int getSunriseOffset() const;
+    void setSunriseOffset(int minutes);
+
+    int getSunsetOffeset() const;
+    void setSunsetOffest(int minutes);
+
+    bool isDaylight() const;
+
+    static constexpr const char* typeStr = "Daylight";
+};
+
+} // namespace sensors
+
 } // namespace hueplusplus
 
 #endif
