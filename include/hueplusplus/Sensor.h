@@ -32,6 +32,12 @@
 
 namespace hueplusplus
 {
+enum class Alert
+{
+    none,
+    select,
+    lselect
+};
 //!
 //! Generic class for Hue sensors
 //!
@@ -51,11 +57,11 @@ public:
     bool hasBatteryState() const;
     // Battery state in percent
     int getBatteryState() const;
-    bool isReachable() const;
+    void setBatteryState(int percent);
 
     bool hasAlert() const;
-    std::string getLastAlert() const;
-    void sendAlert(const std::string& alert);
+    Alert getLastAlert() const;
+    void sendAlert(Alert type);
 
     bool hasReachable() const;
     bool isReachable() const;
@@ -76,7 +82,7 @@ public:
     void setLEDIndication(bool on);
 
     nlohmann::json getState() const;
-    time::AbsoluteTime getLastUpdated() const;
+    void setStateAttribute(const std::string& key, const nlohmann::json& value);
 
     bool isCertified() const;
     bool isPrimary() const;

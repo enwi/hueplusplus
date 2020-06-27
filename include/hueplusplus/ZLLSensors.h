@@ -28,13 +28,6 @@ namespace hueplusplus
 {
 namespace sensors
 {
-enum class Alert
-{
-    none,
-    select,
-    lselect
-};
-
 class ZGPSwitch : public BaseDevice
 {
 public:
