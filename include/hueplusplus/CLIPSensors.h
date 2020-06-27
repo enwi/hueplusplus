@@ -28,20 +28,9 @@ namespace hueplusplus
 {
 namespace sensors
 {
-class CLIPSwitch : public BaseDevice
+class BaseCLIP : public BaseDevice
 {
 public:
-    CLIPSwitch(Sensor sensor) : BaseDevice(std::move(sensor)) { }
-
-    int getButtonEvent() const;
-
-    static constexpr const char* typeStr = "CLIPSwitch";
-};
-class CLIPOpenClose : public BaseDevice
-{
-public:
-    CLIPOpenClose(Sensor sensor) : BaseDevice(std::move(sensor)) { }
-
     bool isOn() const;
     void setOn(bool on);
 
@@ -55,110 +44,71 @@ public:
     std::string getURL() const;
     void setURL(const std::string& url);
 
-    bool isOpen() const;
-
     time::AbsoluteTime getLastUpdated() const;
+protected:
+    BaseCLIP(Sensor sensor) : BaseDevice(std::move(sensor)) { }
+};
+class CLIPSwitch : public BaseCLIP
+{
+public:
+    CLIPSwitch(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
+
+    int getButtonEvent() const;
+    void setButtonEvent(int code);
+
+    static constexpr const char* typeStr = "CLIPSwitch";
+};
+class CLIPOpenClose : public BaseCLIP
+{
+public:
+    CLIPOpenClose(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
+
+    bool isOpen() const;
 
     static constexpr const char* typeStr = "CLIPOpenClose";
 };
 
-class CLIPPresence : public BaseDevice
+class CLIPPresence : public BaseCLIP
 {
 public:
-    bool isOn() const;
-    void setOn(bool on);
-
-    bool hasBattery() const;
-    int getBatteryState() const;
-    void setBatteryState(int percent);
-
-    bool isReachable() const;
-
-    bool hasURL() const;
-    std::string getURL() const;
-    void setURL(const std::string& url);
+    CLIPPresence(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
 
     bool getPresence() const;
     void setPresence(bool presence);
 
-    time::AbsoluteTime getLastUpdated() const;
-
     static constexpr const char* typeStr = "CLIPPresence";
 };
 
-class CLIPTemperature : public BaseDevice
+class CLIPTemperature : public BaseCLIP
 {
 public:
-    CLIPTemperature(Sensor sensor) : BaseDevice(std::move(sensor)) { }
-
-    bool isOn() const;
-    void setOn(bool on);
-
-    bool hasBattery() const;
-    int getBatteryState() const;
-    void setBatteryState(int percent);
-
-    bool isReachable() const;
-
-    bool hasURL() const;
-    std::string getURL() const;
-    void setURL(const std::string& url);
+    CLIPTemperature(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
 
     int getTemperature() const;
     void setTemperature(int temperature);
 
-    time::AbsoluteTime getLastUpdated() const;
-
     static constexpr const char* typeStr = "CLIPTemperature";
 };
-class CLIPHumidity : public BaseDevice
+class CLIPHumidity : public BaseCLIP
 {
 public:
-    CLIPHumidity(Sensor sensor) : BaseDevice(std::move(sensor)) { }
-
-    bool isOn() const;
-    void setOn(bool on);
-
-    bool hasBattery() const;
-    int getBatteryState() const;
-    void setBatteryState(int percent);
-
-    bool isReachable() const;
-
-    bool hasURL() const;
-    std::string getURL() const;
-    void setURL(const std::string& url);
+    CLIPHumidity(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
 
     int getHumidity() const;
     void setHumidity(int humidity);
 
-    time::AbsoluteTime getLastUpdated() const;
-
     static constexpr const char* typeStr = "CLIPHumidity";
 };
-class CLIPLightLevel : public BaseDevice
+class CLIPLightLevel : public BaseCLIP
 {
 public:
-    CLIPLightLevel(Sensor sensor) : BaseDevice(std::move(sensor)) { }
-
-    bool isOn() const;
-    void setOn(bool on);
-
-    bool hasBattery() const;
-    int getBatteryState() const;
-    void setBatteryState(int percent);
-
-    bool isReachable() const;
+    CLIPLightLevel(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
 
     int getDarkThreshold() const;
     void setDarkThreshold(int threshold);
 
     int getThresholdOffset() const;
     void setThresholdOffset(int offset);
-
-    bool hasURL() const;
-    std::string getURL() const;
-    void setURL(const std::string& url);
 
     void setLightLevel(int level);
     int getLightLevel() const;
@@ -167,46 +117,20 @@ public:
 
     static constexpr const char* typeStr = "CLIPLightLevel";
 };
-class CLIPGenericFlag : public BaseDevice
+class CLIPGenericFlag : public BaseCLIP
 {
 public:
-    CLIPGenericFlag(Sensor sensor) : BaseDevice(std::move(sensor)) { }
-
-    bool isOn() const;
-    void setOn(bool on);
-
-    bool hasBattery() const;
-    int getBatteryState() const;
-    void setBatteryState(int percent);
-
-    bool isReachable() const;
-
-    bool hasURL() const;
-    std::string getURL() const;
-    void setURL(const std::string& url);
+    CLIPGenericFlag(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
 
     bool getFlag() const;
     void setFlag(bool flag);
 
     static constexpr const char* typeStr = "CLIPGenericFlag";
 };
-class CLIPGenericStatus : public BaseDevice
+class CLIPGenericStatus : public BaseCLIP
 {
 public:
-    CLIPGenericStatus(Sensor sensor) : BaseDevice(std::move(sensor)) { }
-
-    bool isOn() const;
-    void setOn(bool on);
-
-    bool hasBattery() const;
-    int getBatteryState() const;
-    void setBatteryState(int percent);
-
-    bool isReachable() const;
-
-    bool hasURL() const;
-    std::string getURL() const;
-    void setURL(const std::string& url);
+    CLIPGenericStatus(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
 
     int getStatus() const;
     void setStatus(int status);
