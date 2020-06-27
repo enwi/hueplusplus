@@ -26,18 +26,18 @@
 #include <iostream>
 #include <thread>
 
-#include "hueplusplus/APIConfig.h"
+#include "hueplusplus/LibConfig.h"
 #include "hueplusplus/HueExceptionMacro.h"
 #include "hueplusplus/Utils.h"
 
 namespace hueplusplus
 {
-bool SimpleColorTemperatureStrategy::setColorTemperature(unsigned int mired, uint8_t transition, HueLight& light) const
+bool SimpleColorTemperatureStrategy::setColorTemperature(unsigned int mired, uint8_t transition, Light& light) const
 {
     return light.transaction().setColorTemperature(mired).setTransition(transition).commit();
 }
 
-bool SimpleColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLight& light) const
+bool SimpleColorTemperatureStrategy::alertTemperature(unsigned int mired, Light& light) const
 {
     // Careful, only use state until any light function might refresh the value and invalidate the reference
     const nlohmann::json& state = light.state.getValue()["state"];
@@ -64,12 +64,12 @@ bool SimpleColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLig
     }
 }
 
-unsigned int SimpleColorTemperatureStrategy::getColorTemperature(HueLight& light) const
+unsigned int SimpleColorTemperatureStrategy::getColorTemperature(Light& light) const
 {
     return light.state.getValue()["state"]["ct"].get<unsigned int>();
 }
 
-unsigned int SimpleColorTemperatureStrategy::getColorTemperature(const HueLight& light) const
+unsigned int SimpleColorTemperatureStrategy::getColorTemperature(const Light& light) const
 {
     return light.state.getValue()["state"]["ct"].get<unsigned int>();
 }

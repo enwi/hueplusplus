@@ -1,5 +1,5 @@
 /**
-    \file HueLight.cpp
+    \file Light.cpp
     Copyright Notice\n
     Copyright (C) 2017  Jan Rogall		- developer\n
     Copyright (C) 2017  Moritz Wirger	- developer\n
@@ -20,7 +20,7 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include "hueplusplus/HueLight.h"
+#include "hueplusplus/Light.h"
 
 #include <cmath>
 #include <iostream>
@@ -32,37 +32,37 @@
 
 namespace hueplusplus
 {
-bool HueLight::On(uint8_t transition)
+bool Light::On(uint8_t transition)
 {
     return transaction().setOn(true).setTransition(transition).commit();
 }
 
-bool HueLight::Off(uint8_t transition)
+bool Light::Off(uint8_t transition)
 {
     return transaction().setOn(false).setTransition(transition).commit();
 }
 
-bool HueLight::isOn()
+bool Light::isOn()
 {
     return state.getValue().at("state").at("on").get<bool>();
 }
 
-bool HueLight::isOn() const
+bool Light::isOn() const
 {
     return state.getValue().at("state").at("on").get<bool>();
 }
 
-std::string HueLight::getLuminaireUId() const
+std::string Light::getLuminaireUId() const
 {
     return state.getValue().value("luminaireuniqueid", std::string());
 }
 
-ColorType HueLight::getColorType() const
+ColorType Light::getColorType() const
 {
     return colorType;
 }
 
-ColorGamut HueLight::getColorGamut() const
+ColorGamut Light::getColorGamut() const
 {
     switch (colorType)
     {
@@ -91,30 +91,30 @@ ColorGamut HueLight::getColorGamut() const
     }
 }
 
-unsigned int HueLight::KelvinToMired(unsigned int kelvin) const
+unsigned int Light::KelvinToMired(unsigned int kelvin) const
 {
     return int(0.5f + (1000000 / kelvin));
 }
 
-unsigned int HueLight::MiredToKelvin(unsigned int mired) const
+unsigned int Light::MiredToKelvin(unsigned int mired) const
 {
     return int(0.5f + (1000000 / mired));
 }
 
-bool HueLight::alert()
+bool Light::alert()
 {
     return transaction().alert().commit();
 }
 
-StateTransaction HueLight::transaction()
+StateTransaction Light::transaction()
 {
     return StateTransaction(
         state.getCommandAPI(), "/lights/" + std::to_string(id) + "/state", &state.getValue().at("state"));
 }
 
-HueLight::HueLight(int id, const HueCommandAPI& commands) : HueLight(id, commands, nullptr, nullptr, nullptr) { }
+Light::Light(int id, const HueCommandAPI& commands) : Light(id, commands, nullptr, nullptr, nullptr) { }
 
-HueLight::HueLight(int id, const HueCommandAPI& commands, std::shared_ptr<const BrightnessStrategy> brightnessStrategy,
+Light::Light(int id, const HueCommandAPI& commands, std::shared_ptr<const BrightnessStrategy> brightnessStrategy,
     std::shared_ptr<const ColorTemperatureStrategy> colorTempStrategy,
     std::shared_ptr<const ColorHueStrategy> colorHueStrategy, std::chrono::steady_clock::duration refreshDuration)
     : BaseDevice(id, commands, "/lights/", refreshDuration),

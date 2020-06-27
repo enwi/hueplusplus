@@ -24,7 +24,7 @@
 #define INCLUDE_HUEPLUSPLUS_SIMPLE_BRIGHTNESS_STRATEGY_H
 
 #include "BrightnessStrategy.h"
-#include "HueLight.h"
+#include "Light.h"
 
 namespace hueplusplus
 {
@@ -39,19 +39,19 @@ public:
     //! \param transition The time it takes to fade to the new brightness in
     //! multiples of 100ms, 4 = 400ms and should be seen as the default \param
     //! light A reference of the light
-    bool setBrightness(unsigned int bri, uint8_t transition, HueLight& light) const override;
+    bool setBrightness(unsigned int bri, uint8_t transition, Light& light) const override;
     //! \brief Function that returns the current brightness of the light
     //!
     //! Updates the lights state by calling refreshState()
     //! \param light A reference of the light
     //! \return Unsigned int representing the brightness
-    unsigned int getBrightness(HueLight& light) const override;
+    unsigned int getBrightness(Light& light) const override;
     //! \brief Function that returns the current brightness of the light
     //!
     //! \note This does not update the lights state
     //! \param light A const reference of the light
     //! \return Unsigned int representing the brightness
-    unsigned int getBrightness(const HueLight& light) const override;
+    unsigned int getBrightness(const Light& light) const override;
 };
 } // namespace hueplusplus
 

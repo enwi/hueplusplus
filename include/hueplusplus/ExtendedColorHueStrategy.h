@@ -23,7 +23,7 @@
 #ifndef INCLUDE_HUEPLUSPLUS_EXTENDED_COLOR_HUE_STRATEGY_H
 #define INCLUDE_HUEPLUSPLUS_EXTENDED_COLOR_HUE_STRATEGY_H
 
-#include "HueLight.h"
+#include "Light.h"
 #include "SimpleColorHueStrategy.h"
 
 namespace hueplusplus
@@ -39,15 +39,15 @@ public:
     //! \param hueSat The color in hue and saturation
     //! \param light A reference of the light
     //!
-    //! Blocks for the time a \ref HueLight::alert() needs
-    bool alertHueSaturation(const HueSaturation& hueSat, HueLight& light) const override;
+    //! Blocks for the time a \ref Light::alert() needs
+    bool alertHueSaturation(const HueSaturation& hueSat, Light& light) const override;
     //! \brief Function that lets the light perform one breath cycle in the
     //! specified color.
     //! \param xy The color in XY and brightness
     //! \param light A reference of the light
     //!
-    //! Blocks for the time a \ref HueLight::alert() needs
-    bool alertXY(const XYBrightness& xy, HueLight& light) const override;
+    //! Blocks for the time a \ref Light::alert() needs
+    bool alertXY(const XYBrightness& xy, Light& light) const override;
 };
 } // namespace hueplusplus
 

@@ -1,5 +1,5 @@
 /**
-    \file HueSensor.h
+    \file Sensor.h
     Copyright Notice\n
     Copyright (C) 2020  Stefan Herbrechtsmeier	- developer\n
 
@@ -32,15 +32,15 @@
 namespace hueplusplus
 {
 //!
-//! Class for Hue Sensor fixtures
+//! Class for Hue sensors
 //!
-class HueSensor : public BaseDevice
+class Sensor : public BaseDevice
 {
-    friend class Hue;
+    friend class Bridge;
 
 public:
     //! \brief std dtor
-    ~HueSensor() = default;
+    ~Sensor() = default;
 
     //! \brief Function to get button event
     //!
@@ -85,12 +85,12 @@ public:
     virtual bool hasStatus() const;
 
 protected:
-    //! \brief Protected ctor that is used by \ref Hue class.
+    //! \brief Protected ctor that is used by \ref Bridge class.
     //!
     //! \param id Integer that specifies the id of this sensor
     //! \param commands HueCommandAPI for communication with the bridge
     //! \param refreshDuration Time between refreshing the cached state.
-    HueSensor(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration);
+    Sensor(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration);
 };
 } // namespace hueplusplus
 

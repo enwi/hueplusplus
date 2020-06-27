@@ -26,45 +26,45 @@
 #include <iostream>
 #include <thread>
 
-#include "hueplusplus/APIConfig.h"
+#include "hueplusplus/LibConfig.h"
 #include "hueplusplus/HueExceptionMacro.h"
 #include "hueplusplus/Utils.h"
 
 namespace hueplusplus
 {
-bool SimpleColorHueStrategy::setColorHue(uint16_t hue, uint8_t transition, HueLight& light) const
+bool SimpleColorHueStrategy::setColorHue(uint16_t hue, uint8_t transition, Light& light) const
 {
     return light.transaction().setColorHue(hue).setTransition(transition).commit();
 }
 
-bool SimpleColorHueStrategy::setColorSaturation(uint8_t sat, uint8_t transition, HueLight& light) const
+bool SimpleColorHueStrategy::setColorSaturation(uint8_t sat, uint8_t transition, Light& light) const
 {
     return light.transaction().setColorSaturation(sat).setTransition(transition).commit();
 }
 
 bool SimpleColorHueStrategy::setColorHueSaturation(
-    const HueSaturation& hueSat, uint8_t transition, HueLight& light) const
+    const HueSaturation& hueSat, uint8_t transition, Light& light) const
 {
     return light.transaction().setColor(hueSat).setTransition(transition).commit();
 }
 
-bool SimpleColorHueStrategy::setColorXY(const XYBrightness& xy, uint8_t transition, HueLight& light) const
+bool SimpleColorHueStrategy::setColorXY(const XYBrightness& xy, uint8_t transition, Light& light) const
 {
     return light.transaction().setColor(xy).setTransition(transition).commit();
 }
 
-bool SimpleColorHueStrategy::setColorLoop(bool on, HueLight& light) const
+bool SimpleColorHueStrategy::setColorLoop(bool on, Light& light) const
 {
     return light.transaction().setColorLoop(true).commit();
 }
 
-bool SimpleColorHueStrategy::alertHueSaturation(const HueSaturation& hueSat, HueLight& light) const
+bool SimpleColorHueStrategy::alertHueSaturation(const HueSaturation& hueSat, Light& light) const
 {
     // Careful, only use state until any light function might refresh the value and invalidate the reference
     const nlohmann::json& state = light.state.getValue()["state"];
     std::string cType = state["colormode"].get<std::string>();
     bool on = state["on"].get<bool>();
-    const HueLight& cLight = light;
+    const Light& cLight = light;
     if (cType == "hs")
     {
         HueSaturation oldHueSat = cLight.getColorHueSaturation();
@@ -101,14 +101,14 @@ bool SimpleColorHueStrategy::alertHueSaturation(const HueSaturation& hueSat, Hue
     }
 }
 
-bool SimpleColorHueStrategy::alertXY(const XYBrightness& xy, HueLight& light) const
+bool SimpleColorHueStrategy::alertXY(const XYBrightness& xy, Light& light) const
 {
     // Careful, only use state until any light function might refresh the value and invalidate the reference
     const nlohmann::json& state = light.state.getValue()["state"];
     std::string cType = state["colormode"].get<std::string>();
     bool on = state["on"].get<bool>();
     // const reference to prevent refreshes
-    const HueLight& cLight = light;
+    const Light& cLight = light;
     if (cType == "hs")
     {
         HueSaturation oldHueSat = cLight.getColorHueSaturation();
@@ -146,27 +146,27 @@ bool SimpleColorHueStrategy::alertXY(const XYBrightness& xy, HueLight& light) co
     }
 }
 
-HueSaturation SimpleColorHueStrategy::getColorHueSaturation(HueLight& light) const
+HueSaturation SimpleColorHueStrategy::getColorHueSaturation(Light& light) const
 {
     // Save value, so there are no inconsistent results if it is refreshed between two calls
     const nlohmann::json& state = light.state.getValue()["state"];
     return HueSaturation {state["hue"].get<int>(), state["sat"].get<int>()};
 }
 
-HueSaturation SimpleColorHueStrategy::getColorHueSaturation(const HueLight& light) const
+HueSaturation SimpleColorHueStrategy::getColorHueSaturation(const Light& light) const
 {
     return HueSaturation {
         light.state.getValue()["state"]["hue"].get<int>(), light.state.getValue()["state"]["sat"].get<int>()};
 }
 
-XYBrightness SimpleColorHueStrategy::getColorXY(HueLight& light) const
+XYBrightness SimpleColorHueStrategy::getColorXY(Light& light) const
 {
     // Save value, so there are no inconsistent results if it is refreshed between two calls
     const nlohmann::json& state = light.state.getValue()["state"];
     return XYBrightness {{state["xy"][0].get<float>(), state["xy"][1].get<float>()}, state["bri"].get<int>() / 254.f};
 }
 
-XYBrightness SimpleColorHueStrategy::getColorXY(const HueLight& light) const
+XYBrightness SimpleColorHueStrategy::getColorXY(const Light& light) const
 {
     const nlohmann::json& state = light.state.getValue()["state"];
     return XYBrightness {{state["xy"][0].get<float>(), state["xy"][1].get<float>()}, state["bri"].get<int>() / 254.f};

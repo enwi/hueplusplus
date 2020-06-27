@@ -2,20 +2,20 @@ set(hueplusplus_SOURCES
 	APICache.cpp
     BaseDevice.cpp
     BaseHttpHandler.cpp
+    Bridge.cpp
     BridgeConfig.cpp
     ColorUnits.cpp
     ExtendedColorHueStrategy.cpp
     ExtendedColorTemperatureStrategy.cpp
 	Group.cpp
-    Hue.cpp
     HueCommandAPI.cpp
 	HueDeviceTypes.cpp
     HueException.cpp
-    HueLight.cpp
-    HueSensor.cpp
+    Light.cpp
     ModelPictures.cpp
     Scene.cpp
     Schedule.cpp
+    Sensor.cpp
     SimpleBrightnessStrategy.cpp
     SimpleColorHueStrategy.cpp
     SimpleColorTemperatureStrategy.cpp

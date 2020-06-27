@@ -32,7 +32,7 @@
 #include "hueplusplus/ExtendedColorHueStrategy.h"
 #include "json/json.hpp"
 #include "mocks/mock_HttpHandler.h"
-#include "mocks/mock_HueLight.h"
+#include "mocks/mock_Light.h"
 
 using namespace hueplusplus;
 
@@ -44,7 +44,7 @@ TEST(ExtendedColorHueStrategy, alertHueSaturation)
         *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
-    MockHueLight light(handler);
+    MockLight light(handler);
 
     const HueSaturation hueSat {200, 100};
     // Needs to update the state so transactions are correctly trimmed
@@ -123,7 +123,7 @@ TEST(ExtendedColorHueStrategy, alertXY)
         *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
-    MockHueLight light(handler);
+    MockLight light(handler);
 
     const XYBrightness xy {{0.1f, 0.1f}, 1.f};
     // Needs to update the state so transactions are correctly trimmed

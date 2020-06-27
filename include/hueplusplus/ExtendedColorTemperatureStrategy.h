@@ -23,7 +23,7 @@
 #ifndef INCLUDE_HUEPLUSPLUS_EXTENDED_COLOR_TEMPERATURE_STRATEGY_H
 #define INCLUDE_HUEPLUSPLUS_EXTENDED_COLOR_TEMPERATURE_STRATEGY_H
 
-#include "HueLight.h"
+#include "Light.h"
 #include "SimpleColorTemperatureStrategy.h"
 
 namespace hueplusplus
@@ -36,10 +36,10 @@ public:
     //! specified color.
     //!
     //! It uses this_thread::sleep_for to accomodate for the time an \ref
-    //! HueLight::alert() needs The color temperature in mired ranges from 153 to
+    //! Light::alert() needs The color temperature in mired ranges from 153 to
     //! 500 whereas 153 is cold and 500 is warm. \param mired The color
     //! temperature in mired \param light A reference of the light
-    bool alertTemperature(unsigned int mired, HueLight& light) const override;
+    bool alertTemperature(unsigned int mired, Light& light) const override;
 };
 } // namespace hueplusplus
 
