@@ -25,7 +25,7 @@
 
 #include "testhelper.h"
 
-#include "hueplusplus/Hue.h"
+#include "hueplusplus/Bridge.h"
 #include "json/json.hpp"
 #include "mocks/mock_HttpHandler.h"
 

@@ -29,12 +29,12 @@
 
 using namespace hueplusplus;
 
-TEST(HueLightFactory, createLight_noGamut)
+TEST(LightFactory, createLight_noGamut)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
 
-    HueLightFactory factory(HueCommandAPI(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler),
+    LightFactory factory(HueCommandAPI(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler),
         std::chrono::steady_clock::duration::max());
 
     nlohmann::json lightState
@@ -49,7 +49,7 @@ TEST(HueLightFactory, createLight_noGamut)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(lightState));
 
-    HueLight test_light_1 = factory.createLight(lightState, 1);
+    Light test_light_1 = factory.createLight(lightState, 1);
     EXPECT_EQ(test_light_1.getColorType(), ColorType::TEMPERATURE);
 
     lightState["type"] = "Dimmable light";
@@ -76,12 +76,12 @@ TEST(HueLightFactory, createLight_noGamut)
     ASSERT_THROW(factory.createLight(lightState, 1), HueException);
 }
 
-TEST(HueLightFactory, createLight_gamutCapabilities)
+TEST(LightFactory, createLight_gamutCapabilities)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
 
-    HueLightFactory factory(HueCommandAPI(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler),
+    LightFactory factory(HueCommandAPI(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler),
         std::chrono::steady_clock::duration::max());
 
     nlohmann::json lightState
@@ -97,7 +97,7 @@ TEST(HueLightFactory, createLight_gamutCapabilities)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(lightState));
 
-    HueLight test_light_1 = factory.createLight(lightState, 1);
+    Light test_light_1 = factory.createLight(lightState, 1);
     EXPECT_EQ(test_light_1.getColorType(), ColorType::GAMUT_A);
 
     lightState["capabilities"]["control"]["colorgamuttype"] = "B";
@@ -160,12 +160,12 @@ TEST(HueLightFactory, createLight_gamutCapabilities)
     EXPECT_EQ(test_light_1.getColorType(), ColorType::GAMUT_C_TEMPERATURE);
 }
 
-TEST(HueLightFactory, createLight_gamutModelid)
+TEST(LightFactory, createLight_gamutModelid)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
 
-    HueLightFactory factory(HueCommandAPI(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler),
+    LightFactory factory(HueCommandAPI(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler),
         std::chrono::steady_clock::duration::max());
 
     const std::string gamutAModel = "LST001";
@@ -184,7 +184,7 @@ TEST(HueLightFactory, createLight_gamutModelid)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(lightState));
 
-    HueLight test_light_1 = factory.createLight(lightState, 1);
+    Light test_light_1 = factory.createLight(lightState, 1);
     EXPECT_EQ(test_light_1.getColorType(), ColorType::GAMUT_A);
 
     lightState["modelid"] = gamutBModel;

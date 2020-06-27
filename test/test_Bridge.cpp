@@ -1,5 +1,5 @@
 /**
-    \file test_Hue.cpp
+    \file test_Bridge.cpp
     Copyright Notice\n
     Copyright (C) 2017  Jan Rogall		- developer\n
     Copyright (C) 2017  Moritz Wirger	- developer\n
@@ -28,8 +28,8 @@
 
 #include "testhelper.h"
 
-#include "hueplusplus/APIConfig.h"
-#include "hueplusplus/Hue.h"
+#include "hueplusplus/Bridge.h"
+#include "hueplusplus/LibConfig.h"
 #include "json/json.hpp"
 #include "mocks/mock_HttpHandler.h"
 
@@ -64,18 +64,18 @@ protected:
 
 TEST_F(HueFinderTest, FindBridges)
 {
-    HueFinder finder(handler);
-    std::vector<HueFinder::HueIdentification> bridges = finder.FindBridges();
+    BridgeFinder finder(handler);
+    std::vector<BridgeFinder::BridgeIdentification> bridges = finder.FindBridges();
 
-    HueFinder::HueIdentification bridge_to_comp;
+    BridgeFinder::BridgeIdentification bridge_to_comp;
     bridge_to_comp.ip = getBridgeIp();
     bridge_to_comp.port = getBridgePort();
     bridge_to_comp.mac = getBridgeMac();
 
-    EXPECT_EQ(bridges.size(), 1) << "HueFinder found more than one Bridge";
-    EXPECT_EQ(bridges[0].ip, bridge_to_comp.ip) << "HueIdentification ip does not match";
-    EXPECT_EQ(bridges[0].port, bridge_to_comp.port) << "HueIdentification port does not match";
-    EXPECT_EQ(bridges[0].mac, bridge_to_comp.mac) << "HueIdentification mac does not match";
+    EXPECT_EQ(bridges.size(), 1) << "BridgeFinder found more than one Bridge";
+    EXPECT_EQ(bridges[0].ip, bridge_to_comp.ip) << "BridgeIdentification ip does not match";
+    EXPECT_EQ(bridges[0].port, bridge_to_comp.port) << "BridgeIdentification port does not match";
+    EXPECT_EQ(bridges[0].mac, bridge_to_comp.mac) << "BridgeIdentification mac does not match";
 
     // Test invalid description
     EXPECT_CALL(*handler, GETString("/description.xml", "application/xml", "", getBridgeIp(), getBridgePort()))
@@ -97,8 +97,8 @@ TEST_F(HueFinderTest, GetBridge)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(errorResponse));
 
-    HueFinder finder(handler);
-    std::vector<HueFinder::HueIdentification> bridges = finder.FindBridges();
+    BridgeFinder finder(handler);
+    std::vector<BridgeFinder::BridgeIdentification> bridges = finder.FindBridges();
 
     ASSERT_THROW(finder.GetBridge(bridges[0]), HueException);
 
@@ -108,10 +108,10 @@ TEST_F(HueFinderTest, GetBridge)
         .Times(1)
         .WillOnce(Return(successResponse));
 
-    finder = HueFinder(handler);
+    finder = BridgeFinder(handler);
     bridges = finder.FindBridges();
 
-    Hue test_bridge = finder.GetBridge(bridges[0]);
+    Bridge test_bridge = finder.GetBridge(bridges[0]);
 
     EXPECT_EQ(test_bridge.getBridgeIP(), getBridgeIp()) << "Bridge IP not matching";
     EXPECT_EQ(test_bridge.getBridgePort(), getBridgePort()) << "Bridge Port not matching";
@@ -122,11 +122,11 @@ TEST_F(HueFinderTest, GetBridge)
 
 TEST_F(HueFinderTest, AddUsername)
 {
-    HueFinder finder(handler);
-    std::vector<HueFinder::HueIdentification> bridges = finder.FindBridges();
+    BridgeFinder finder(handler);
+    std::vector<BridgeFinder::BridgeIdentification> bridges = finder.FindBridges();
 
     finder.AddUsername(bridges[0].mac, getBridgeUsername());
-    Hue test_bridge = finder.GetBridge(bridges[0]);
+    Bridge test_bridge = finder.GetBridge(bridges[0]);
 
     EXPECT_EQ(test_bridge.getBridgeIP(), getBridgeIp()) << "Bridge IP not matching";
     EXPECT_EQ(test_bridge.getBridgePort(), getBridgePort()) << "Bridge Port not matching";
@@ -135,8 +135,8 @@ TEST_F(HueFinderTest, AddUsername)
 
 TEST_F(HueFinderTest, GetAllUsernames)
 {
-    HueFinder finder(handler);
-    std::vector<HueFinder::HueIdentification> bridges = finder.FindBridges();
+    BridgeFinder finder(handler);
+    std::vector<BridgeFinder::BridgeIdentification> bridges = finder.FindBridges();
 
     finder.AddUsername(bridges[0].mac, getBridgeUsername());
 
@@ -144,17 +144,17 @@ TEST_F(HueFinderTest, GetAllUsernames)
     EXPECT_EQ(users[getBridgeMac()], getBridgeUsername()) << "Username of MAC:" << getBridgeMac() << "not matching";
 }
 
-TEST(Hue, Constructor)
+TEST(Bridge, Constructor)
 {
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
-    Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+    Bridge test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
     EXPECT_EQ(test_bridge.getBridgeIP(), getBridgeIp()) << "Bridge IP not matching";
     EXPECT_EQ(test_bridge.getBridgePort(), getBridgePort()) << "Bridge Port not matching";
     EXPECT_EQ(test_bridge.getUsername(), getBridgeUsername()) << "Bridge username not matching";
 }
 
-TEST(Hue, requestUsername)
+TEST(Bridge, requestUsername)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
@@ -168,7 +168,7 @@ TEST(Hue, requestUsername)
             .Times(AtLeast(1))
             .WillRepeatedly(Return(errorResponse));
 
-        Hue test_bridge(getBridgeIp(), getBridgePort(), "", handler);
+        Bridge test_bridge(getBridgeIp(), getBridgePort(), "", handler);
 
         std::string username = test_bridge.requestUsername();
         EXPECT_EQ(username, "") << "Returned username not matching";
@@ -180,7 +180,7 @@ TEST(Hue, requestUsername)
         int otherError = 1;
         nlohmann::json exceptionResponse
             = {{{"error", {{"type", otherError}, {"address", ""}, {"description", "some error"}}}}};
-        Hue testBridge(getBridgeIp(), getBridgePort(), "", handler);
+        Bridge testBridge(getBridgeIp(), getBridgePort(), "", handler);
 
         EXPECT_CALL(*handler, POSTJson("/api", request, getBridgeIp(), getBridgePort()))
             .WillOnce(Return(exceptionResponse));
@@ -206,9 +206,9 @@ TEST(Hue, requestUsername)
             .Times(1)
             .WillRepeatedly(Return(successResponse));
 
-        Hue test_bridge(getBridgeIp(), getBridgePort(), "", handler);
+        Bridge test_bridge(getBridgeIp(), getBridgePort(), "", handler);
 
-        nlohmann::json hue_bridge_state{ {"lights", {}} };
+        nlohmann::json hue_bridge_state {{"lights", {}}};
         EXPECT_CALL(
             *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
             .Times(1)
@@ -221,25 +221,25 @@ TEST(Hue, requestUsername)
     }
 }
 
-TEST(Hue, setIP)
+TEST(Bridge, setIP)
 {
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
-    Hue test_bridge(getBridgeIp(), getBridgePort(), "", handler);
+    Bridge test_bridge(getBridgeIp(), getBridgePort(), "", handler);
     EXPECT_EQ(test_bridge.getBridgeIP(), getBridgeIp()) << "Bridge IP not matching after initialization";
     test_bridge.setIP("192.168.2.112");
     EXPECT_EQ(test_bridge.getBridgeIP(), "192.168.2.112") << "Bridge IP not matching after setting it";
 }
 
-TEST(Hue, setPort)
+TEST(Bridge, setPort)
 {
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
-    Hue test_bridge = Hue(getBridgeIp(), getBridgePort(), "", handler);
+    Bridge test_bridge = Bridge(getBridgeIp(), getBridgePort(), "", handler);
     EXPECT_EQ(test_bridge.getBridgePort(), getBridgePort()) << "Bridge Port not matching after initialization";
     test_bridge.setPort(81);
     EXPECT_EQ(test_bridge.getBridgePort(), 81) << "Bridge Port not matching after setting it";
 }
 
-TEST(Hue, getLight)
+TEST(Bridge, getLight)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
@@ -247,7 +247,7 @@ TEST(Hue, getLight)
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .Times(1);
 
-    Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+    Bridge test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
     // Test exception
     ASSERT_THROW(test_bridge.lights().get(1), HueException);
@@ -272,10 +272,10 @@ TEST(Hue, getLight)
         .WillRepeatedly(Return(hue_bridge_state["lights"]["1"]));
 
     // Refresh cache
-    test_bridge = Hue(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+    test_bridge = Bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
     // Test when correct data is sent
-    HueLight test_light_1 = test_bridge.lights().get(1);
+    Light test_light_1 = test_bridge.lights().get(1);
     EXPECT_EQ(test_light_1.getName(), "Hue ambiance lamp 1");
     EXPECT_EQ(test_light_1.getColorType(), ColorType::TEMPERATURE);
 
@@ -286,7 +286,7 @@ TEST(Hue, getLight)
     EXPECT_EQ(test_light_1.getColorType(), ColorType::TEMPERATURE);
 }
 
-TEST(Hue, removeLight)
+TEST(Bridge, removeLight)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
@@ -303,7 +303,7 @@ TEST(Hue, removeLight)
         .Times(1)
         .WillOnce(Return(hue_bridge_state));
 
-    Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+    Bridge test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
     EXPECT_CALL(*handler,
         GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
@@ -322,14 +322,14 @@ TEST(Hue, removeLight)
         .WillOnce(Return(nlohmann::json()));
 
     // Test when correct data is sent
-    HueLight test_light_1 = test_bridge.lights().get(1);
+    Light test_light_1 = test_bridge.lights().get(1);
 
     EXPECT_EQ(test_bridge.lights().remove(1), true);
 
     EXPECT_EQ(test_bridge.lights().remove(1), false);
 }
 
-TEST(Hue, getAllLights)
+TEST(Bridge, getAllLights)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
@@ -352,15 +352,15 @@ TEST(Hue, getAllLights)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(hue_bridge_state["lights"]["1"]));
 
-    Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+    Bridge test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
-    std::vector<std::reference_wrapper<HueLight>> test_lights = test_bridge.lights().getAll();
+    std::vector<std::reference_wrapper<Light>> test_lights = test_bridge.lights().getAll();
     ASSERT_EQ(1, test_lights.size());
     EXPECT_EQ(test_lights[0].get().getName(), "Hue ambiance lamp 1");
     EXPECT_EQ(test_lights[0].get().getColorType(), ColorType::TEMPERATURE);
 }
 
-TEST(Hue, lightExists)
+TEST(Bridge, lightExists)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
@@ -377,7 +377,7 @@ TEST(Hue, lightExists)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(hue_bridge_state));
 
-    Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+    Bridge test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
     test_bridge.refresh();
 
@@ -385,7 +385,7 @@ TEST(Hue, lightExists)
     EXPECT_FALSE(Const(test_bridge).lights().exists(2));
 }
 
-TEST(Hue, getGroup)
+TEST(Bridge, getGroup)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
@@ -393,7 +393,7 @@ TEST(Hue, getGroup)
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .Times(1);
 
-    Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+    Bridge test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
     // Test exception
     ASSERT_THROW(test_bridge.groups().get(1), HueException);
@@ -417,7 +417,7 @@ TEST(Hue, getGroup)
         .WillRepeatedly(Return(hue_bridge_state["groups"]["1"]));
 
     // Refresh cache
-    test_bridge = Hue(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+    test_bridge = Bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
     // Test when correct data is sent
     Group test_group_1 = test_bridge.groups().get(1);
@@ -430,7 +430,7 @@ TEST(Hue, getGroup)
     EXPECT_EQ(test_group_1.getType(), "LightGroup");
 }
 
-TEST(Hue, removeGroup)
+TEST(Bridge, removeGroup)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
@@ -446,7 +446,7 @@ TEST(Hue, removeGroup)
         .Times(1)
         .WillOnce(Return(hue_bridge_state));
 
-    Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+    Bridge test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
     EXPECT_CALL(*handler,
         GETJson("/api/" + getBridgeUsername() + "/groups/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
@@ -472,7 +472,7 @@ TEST(Hue, removeGroup)
     EXPECT_EQ(test_bridge.groups().remove(1), false);
 }
 
-TEST(Hue, groupExists)
+TEST(Bridge, groupExists)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
@@ -488,7 +488,7 @@ TEST(Hue, groupExists)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(hue_bridge_state));
 
-    Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+    Bridge test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
     test_bridge.refresh();
 
@@ -496,7 +496,7 @@ TEST(Hue, groupExists)
     EXPECT_EQ(false, Const(test_bridge).groups().exists(2));
 }
 
-TEST(Hue, getAllGroups)
+TEST(Bridge, getAllGroups)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
@@ -518,7 +518,7 @@ TEST(Hue, getAllGroups)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(hue_bridge_state["groups"]["1"]));
 
-    Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+    Bridge test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
     std::vector<std::reference_wrapper<Group>> test_groups = test_bridge.groups().getAll();
     ASSERT_EQ(1, test_groups.size());
@@ -526,14 +526,14 @@ TEST(Hue, getAllGroups)
     EXPECT_EQ(test_groups[0].get().getType(), "LightGroup");
 }
 
-TEST(Hue, createGroup)
+TEST(Bridge, createGroup)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .Times(AtLeast(1));
-    Hue test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+    Bridge test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
     CreateGroup create = CreateGroup::Room({2, 3}, "Nice room", "LivingRoom");
     nlohmann::json request = create.getRequest();
     const int id = 4;

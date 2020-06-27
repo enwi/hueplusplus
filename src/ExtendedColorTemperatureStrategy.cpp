@@ -26,19 +26,19 @@
 #include <iostream>
 #include <thread>
 
-#include "hueplusplus/APIConfig.h"
+#include "hueplusplus/LibConfig.h"
 #include "hueplusplus/HueExceptionMacro.h"
 #include "hueplusplus/Utils.h"
 
 namespace hueplusplus
 {
-bool ExtendedColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLight& light) const
+bool ExtendedColorTemperatureStrategy::alertTemperature(unsigned int mired, Light& light) const
 {
     // Careful, only use state until any light function might refresh the value and invalidate the reference
     const nlohmann::json& state = light.state.getValue()["state"];
     std::string cType = state["colormode"].get<std::string>();
     bool on = state["on"].get<bool>();
-    const HueLight& cLight = light;
+    const Light& cLight = light;
     if (cType == "ct")
     {
         return SimpleColorTemperatureStrategy::alertTemperature(mired, light);

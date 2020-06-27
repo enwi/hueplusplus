@@ -32,7 +32,7 @@
 #include "hueplusplus/SimpleBrightnessStrategy.h"
 #include "json/json.hpp"
 #include "mocks/mock_HttpHandler.h"
-#include "mocks/mock_HueLight.h"
+#include "mocks/mock_Light.h"
 
 using namespace hueplusplus;
 
@@ -44,7 +44,7 @@ TEST(SimpleBrightnessStrategy, setBrightness)
         *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
-    MockHueLight test_light(handler);
+    MockLight test_light(handler);
 
     const std::string statePath = "/api/" + getBridgeUsername() + "/lights/1/state";
 
@@ -84,10 +84,10 @@ TEST(SimpleBrightnessStrategy, getBrightness)
         *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
-    MockHueLight test_light(handler);
+    MockLight test_light(handler);
 
     test_light.getState()["state"]["bri"] = 200;
     EXPECT_EQ(200, SimpleBrightnessStrategy().getBrightness(test_light));
     test_light.getState()["state"]["bri"] = 0;
-    EXPECT_EQ(0, SimpleBrightnessStrategy().getBrightness(static_cast<const HueLight>(test_light)));
+    EXPECT_EQ(0, SimpleBrightnessStrategy().getBrightness(static_cast<const Light>(test_light)));
 }

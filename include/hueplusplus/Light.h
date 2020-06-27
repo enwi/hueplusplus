@@ -1,5 +1,5 @@
 /**
-    \file HueLight.h
+    \file Light.h
     Copyright Notice\n
     Copyright (C) 2017  Jan Rogall		- developer\n
     Copyright (C) 2017  Moritz Wirger	- developer\n
@@ -37,47 +37,6 @@
 
 namespace hueplusplus
 {
-/*enum ModelType
-{
-UNDEFINED,	// undefined model
-LCT001,		// Hue bulb A19, Color Gamut B, ECL
-LCT007,		// Hue bulb A19, Color Gamut B, ECL
-LCT010,		// Hue bulb A19, Color Gamut C, ECL
-LCT014,		// Hue bulb A19, Color Gamut C, ECL
-
-LCT002,		// Hue Spot BR30, Color Gamut B, ECL
-LCT003,		// Hue Spot GU10, Color Gamut B, ECL
-
-LCT011,		// Hue BR30, Color Gamut C, ECL
-
-LST001,		// Hue LightStrips, Color Gamut A, CL
-LST002,		// Hue LightStrips Plus, Color Gamut C, ECL
-
-LLC010,		// Hue Living Colors Iris, Color Gamut A, CL
-LLC011,		// Hue Living Colors Bloom, Color Gamut A, CL
-LLC012,		// Hue Living Colors Bloom, Color Gamut A, CL
-LLC006,		// Living Colors Gen3 Iris, Color Gamut A, CL, NO HUE FRIEND
-LLC007,		// Living Colors Gen3 Bloom, Aura, Color Gamut A, CL, NO HUE FRIEND
-LLC013,		// Disney Living Colors, Color Gamut A, CL
-
-LWB004,		// Hue A19 Lux, Color Gamut -, DL
-LWB006,		// Hue A19 Lux, Color Gamut -, DL
-LWB007,		// Hue A19 Lux, Color Gamut -, DL
-LWB010,		// Hue A19 Lux, Color Gamut -, DL
-LWB014,		// Hue A19 Lux, Color Gamut -, DL
-
-LLM001,		// Color Light Module, Color Gamut B, ECL
-LLM010,		// Color Temperature Module, Color Gamut 2200K-6500K, CTL
-LLM011,		// Color Temperature Module, Color Gamut 2200K-6500K, CTL
-LLM012,		// Color Temperature Module, Color Gamut 2200K-6500K, CTL
-
-LTW001,		// Hue Spot BR30, Color Gamut 2200K-6500K, CTL
-LTW004,		// Hue Spot BR30, Color Gamut 2200K-6500K, CTL
-LTW013,		// Hue Spot BR30, Color Gamut 2200K-6500K, CTL
-LTW014,		// Hue Spot BR30, Color Gamut 2200K-6500K, CTL
-
-LLC020		// Hue Go, Color Gamut C, ECL
-};*/
 
 //! enum that specifies the color type of all HueLights
 enum class ColorType
@@ -96,9 +55,9 @@ enum class ColorType
 //! \brief Class for Hue Light fixtures
 //!
 //! Provides methods to query and control lights.
-class HueLight : public BaseDevice
+class Light : public BaseDevice
 {
-    friend class HueLightFactory;
+    friend class LightFactory;
     friend class SimpleBrightnessStrategy;
     friend class SimpleColorHueStrategy;
     friend class ExtendedColorHueStrategy;
@@ -595,15 +554,15 @@ public:
     ///@}
 
 protected:
-    //! \brief Protected ctor that is used by \ref Hue class.
+    //! \brief Protected ctor that is used by \ref Bridge class.
     //!
     //! \param id Integer that specifies the id of this light
     //! \param commands HueCommandAPI for communication with the bridge
     //!
     //! leaves strategies unset
-    HueLight(int id, const HueCommandAPI& commands);
+    Light(int id, const HueCommandAPI& commands);
 
-    //! \brief Protected ctor that is used by \ref Hue class, also sets
+    //! \brief Protected ctor that is used by \ref Bridge class, also sets
     //! strategies.
     //!
     //! \param id Integer that specifies the id of this light
@@ -617,7 +576,7 @@ protected:
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    HueLight(int id, const HueCommandAPI& commands, std::shared_ptr<const BrightnessStrategy> brightnessStrategy,
+    Light(int id, const HueCommandAPI& commands, std::shared_ptr<const BrightnessStrategy> brightnessStrategy,
         std::shared_ptr<const ColorTemperatureStrategy> colorTempStrategy,
         std::shared_ptr<const ColorHueStrategy> colorHueStrategy,
         std::chrono::steady_clock::duration refreshDuration = std::chrono::seconds(10));

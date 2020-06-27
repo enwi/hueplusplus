@@ -1,5 +1,5 @@
 /**
-    \file mock_HueLight.h
+    \file mock_Light.h
     Copyright Notice\n
     Copyright (C) 2017  Jan Rogall		- developer\n
     Copyright (C) 2017  Moritz Wirger	- developer\n
@@ -29,15 +29,15 @@
 #include <gmock/gmock.h>
 
 #include "../testhelper.h"
-#include "hueplusplus/HueLight.h"
+#include "hueplusplus/Light.h"
 #include "json/json.hpp"
 
 //! Mock Class
-class MockHueLight : public hueplusplus::HueLight
+class MockLight : public hueplusplus::Light
 {
 public:
-    MockHueLight(std::shared_ptr<const hueplusplus::IHttpHandler> handler)
-        : HueLight(1, hueplusplus::HueCommandAPI(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler), nullptr,
+    MockLight(std::shared_ptr<const hueplusplus::IHttpHandler> handler)
+        : Light(1, hueplusplus::HueCommandAPI(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler), nullptr,
               nullptr, nullptr, std::chrono::steady_clock::duration::max())
     {
         // Set refresh duration to max, so random refreshes do not hinder the test setups

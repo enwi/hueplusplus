@@ -24,7 +24,7 @@
 
 #include <thread>
 
-#include "hueplusplus/APIConfig.h"
+#include "hueplusplus/LibConfig.h"
 #include "hueplusplus/HueExceptionMacro.h"
 
 namespace hueplusplus

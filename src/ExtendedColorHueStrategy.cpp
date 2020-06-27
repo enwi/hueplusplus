@@ -26,11 +26,11 @@
 #include <iostream>
 #include <thread>
 
-#include "hueplusplus/APIConfig.h"
+#include "hueplusplus/LibConfig.h"
 
 namespace hueplusplus
 {
-bool ExtendedColorHueStrategy::alertHueSaturation(const HueSaturation& hueSat, HueLight& light) const
+bool ExtendedColorHueStrategy::alertHueSaturation(const HueSaturation& hueSat, Light& light) const
 {
     // Careful, only use state until any light function might refresh the value and invalidate the reference
     const nlohmann::json& state = light.state.getValue()["state"];
@@ -57,14 +57,14 @@ bool ExtendedColorHueStrategy::alertHueSaturation(const HueSaturation& hueSat, H
     }
 }
 
-bool ExtendedColorHueStrategy::alertXY(const XYBrightness& xy, HueLight& light) const
+bool ExtendedColorHueStrategy::alertXY(const XYBrightness& xy, Light& light) const
 {
     // Careful, only use state until any light function might refresh the value and invalidate the reference
     const nlohmann::json& state = light.state.getValue()["state"];
     std::string cType = state["colormode"].get<std::string>();
     bool on = state["on"].get<bool>();
     // const reference to prevent refreshes
-    const HueLight& cLight = light;
+    const Light& cLight = light;
     if (cType != "ct")
     {
         return SimpleColorHueStrategy::alertXY(xy, light);

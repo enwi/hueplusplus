@@ -1,5 +1,5 @@
 /**
-    \file Hue.cpp
+    \file Bridge.cpp
     Copyright Notice\n
     Copyright (C) 2017  Jan Rogall		- developer\n
     Copyright (C) 2017  Moritz Wirger	- developer\n
@@ -20,7 +20,7 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include "hueplusplus/Hue.h"
+#include "hueplusplus/Bridge.h"
 
 #include <algorithm>
 #include <cctype>
@@ -31,27 +31,27 @@
 #include <stdexcept>
 #include <thread>
 
-#include "hueplusplus/APIConfig.h"
+#include "hueplusplus/LibConfig.h"
 #include "hueplusplus/HueExceptionMacro.h"
 #include "hueplusplus/UPnP.h"
 #include "hueplusplus/Utils.h"
 
 namespace hueplusplus
 {
-HueFinder::HueFinder(std::shared_ptr<const IHttpHandler> handler) : http_handler(std::move(handler)) { }
+BridgeFinder::BridgeFinder(std::shared_ptr<const IHttpHandler> handler) : http_handler(std::move(handler)) { }
 
-std::vector<HueFinder::HueIdentification> HueFinder::FindBridges() const
+std::vector<BridgeFinder::BridgeIdentification> BridgeFinder::FindBridges() const
 {
     UPnP uplug;
     std::vector<std::pair<std::string, std::string>> foundDevices = uplug.getDevices(http_handler);
 
-    std::vector<HueIdentification> foundBridges;
+    std::vector<BridgeIdentification> foundBridges;
     for (const std::pair<std::string, std::string>& p : foundDevices)
     {
         size_t found = p.second.find("IpBridge");
         if (found != std::string::npos)
         {
-            HueIdentification bridge;
+            BridgeIdentification bridge;
             size_t start = p.first.find("//") + 2;
             size_t length = p.first.find(":", start) - start;
             bridge.ip = p.first.substr(start, length);
@@ -68,15 +68,15 @@ std::vector<HueFinder::HueIdentification> HueFinder::FindBridges() const
     return foundBridges;
 }
 
-Hue HueFinder::GetBridge(const HueIdentification& identification)
+Bridge BridgeFinder::GetBridge(const BridgeIdentification& identification)
 {
     std::string normalizedMac = NormalizeMac(identification.mac);
     auto pos = usernames.find(normalizedMac);
     if (pos != usernames.end())
     {
-        return Hue(identification.ip, identification.port, pos->second, http_handler);
+        return Bridge(identification.ip, identification.port, pos->second, http_handler);
     }
-    Hue bridge(identification.ip, identification.port, "", http_handler);
+    Bridge bridge(identification.ip, identification.port, "", http_handler);
     bridge.requestUsername();
     if (bridge.getUsername().empty())
     {
@@ -88,17 +88,17 @@ Hue HueFinder::GetBridge(const HueIdentification& identification)
     return bridge;
 }
 
-void HueFinder::AddUsername(const std::string& mac, const std::string& username)
+void BridgeFinder::AddUsername(const std::string& mac, const std::string& username)
 {
     usernames[NormalizeMac(mac)] = username;
 }
 
-const std::map<std::string, std::string>& HueFinder::GetAllUsernames() const
+const std::map<std::string, std::string>& BridgeFinder::GetAllUsernames() const
 {
     return usernames;
 }
 
-std::string HueFinder::NormalizeMac(std::string input)
+std::string BridgeFinder::NormalizeMac(std::string input)
 {
     // Remove any non alphanumeric characters (e.g. ':' and whitespace)
     input.erase(std::remove_if(input.begin(), input.end(), [](char c) { return !std::isalnum(c, std::locale()); }),
@@ -108,7 +108,7 @@ std::string HueFinder::NormalizeMac(std::string input)
     return input;
 }
 
-std::string HueFinder::ParseDescription(const std::string& description)
+std::string BridgeFinder::ParseDescription(const std::string& description)
 {
     const char* model = "<modelName>Philips hue bridge";
     const char* serialBegin = "<serialNumber>";
@@ -130,7 +130,7 @@ std::string HueFinder::ParseDescription(const std::string& description)
     return std::string();
 }
 
-Hue::Hue(const std::string& ip, const int port, const std::string& username,
+Bridge::Bridge(const std::string& ip, const int port, const std::string& username,
     std::shared_ptr<const IHttpHandler> handler, std::chrono::steady_clock::duration refreshDuration)
     : ip(ip),
       username(username),
@@ -140,7 +140,7 @@ Hue::Hue(const std::string& ip, const int port, const std::string& username,
       stateCache(std::make_shared<APICache>(
           "", HueCommandAPI(ip, port, username, http_handler), std::chrono::steady_clock::duration::max())),
       lightList(stateCache, "lights", refreshDuration,
-          [factory = HueLightFactory(stateCache->getCommandAPI(), refreshDuration)](
+          [factory = LightFactory(stateCache->getCommandAPI(), refreshDuration)](
               int id, const nlohmann::json& state) mutable { return factory.createLight(state, id); }),
       groupList(stateCache, "groups", refreshDuration),
       scheduleList(stateCache, "schedules", refreshDuration),
@@ -149,22 +149,22 @@ Hue::Hue(const std::string& ip, const int port, const std::string& username,
       bridgeConfig(stateCache, refreshDuration)
 { }
 
-void Hue::refresh()
+void Bridge::refresh()
 {
     stateCache->refresh();
 }
 
-std::string Hue::getBridgeIP() const
+std::string Bridge::getBridgeIP() const
 {
     return ip;
 }
 
-int Hue::getBridgePort() const
+int Bridge::getBridgePort() const
 {
     return port;
 }
 
-std::string Hue::requestUsername()
+std::string Bridge::requestUsername()
 {
     std::chrono::steady_clock::duration timeout = Config::instance().getRequestUsernameTimeout();
     std::chrono::steady_clock::duration checkInterval = Config::instance().getRequestUsernameAttemptInterval();
@@ -207,87 +207,87 @@ std::string Hue::requestUsername()
     return username;
 }
 
-std::string Hue::getUsername() const
+std::string Bridge::getUsername() const
 {
     return username;
 }
 
-void Hue::setIP(const std::string& ip)
+void Bridge::setIP(const std::string& ip)
 {
     this->ip = ip;
 }
 
-void Hue::setPort(const int port)
+void Bridge::setPort(const int port)
 {
     this->port = port;
 }
 
-BridgeConfig& Hue::config()
+BridgeConfig& Bridge::config()
 {
     return bridgeConfig;
 }
 
-const BridgeConfig& Hue::config() const
+const BridgeConfig& Bridge::config() const
 {
     return bridgeConfig;
 }
 
-Hue::LightList& Hue::lights()
+Bridge::LightList& Bridge::lights()
 {
     return lightList;
 }
 
-const Hue::LightList& Hue::lights() const
+const Bridge::LightList& Bridge::lights() const
 {
     return lightList;
 }
 
-Hue::GroupList& Hue::groups()
+Bridge::GroupList& Bridge::groups()
 {
     return groupList;
 }
 
-const Hue::GroupList& Hue::groups() const
+const Bridge::GroupList& Bridge::groups() const
 {
     return groupList;
 }
 
-Hue::ScheduleList& Hue::schedules()
+Bridge::ScheduleList& Bridge::schedules()
 {
     return scheduleList;
 }
 
-const Hue::ScheduleList& Hue::schedules() const
+const Bridge::ScheduleList& Bridge::schedules() const
 {
     return scheduleList;
 }
 
-Hue::SceneList& Hue::scenes()
+Bridge::SceneList& Bridge::scenes()
 {
     return sceneList;
 }
 
-const Hue::SceneList& Hue::scenes() const
+const Bridge::SceneList& Bridge::scenes() const
 {
     return sceneList;
 }
 
-Hue::SensorList& Hue::sensors()
+Bridge::SensorList& Bridge::sensors()
 {
     return sensorList;
 }
 
-const Hue::SensorList& Hue::sensors() const
+const Bridge::SensorList& Bridge::sensors() const
 {
     return sensorList;
 }
 
-void Hue::setHttpHandler(std::shared_ptr<const IHttpHandler> handler)
+void Bridge::setHttpHandler(std::shared_ptr<const IHttpHandler> handler)
 {
     http_handler = handler;
     stateCache = std::make_shared<APICache>("", HueCommandAPI(ip, port, username, handler), refreshDuration);
-    lightList = ResourceList<HueLight, int>(stateCache, "lights", refreshDuration,
-        [factory = HueLightFactory(stateCache->getCommandAPI(), refreshDuration)](
+    lightList = ResourceList<Light, int>(stateCache, "lights", refreshDuration,
+        [factory = LightFactory(stateCache->getCommandAPI(), refreshDuration)](
             int id, const nlohmann::json& state) mutable { return factory.createLight(state, id); });
     groupList = GroupList(stateCache, "groups", refreshDuration);
     scheduleList = ScheduleList(stateCache, "schedules", refreshDuration);

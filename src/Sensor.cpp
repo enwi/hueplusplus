@@ -1,5 +1,5 @@
 /**
-    \file HueSensor.cpp
+    \file Sensor.cpp
     Copyright Notice\n
     Copyright (C) 2020  Stefan Herbrechtsmeier - developer\n
 
@@ -19,13 +19,13 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include "hueplusplus/HueSensor.h"
+#include "hueplusplus/Sensor.h"
 
 #include "json/json.hpp"
 
 namespace hueplusplus
 {
-int HueSensor::getButtonEvent()
+int Sensor::getButtonEvent()
 {
     if (hasButtonEvent())
     {
@@ -34,7 +34,7 @@ int HueSensor::getButtonEvent()
     return 0;
 }
 
-int HueSensor::getButtonEvent() const
+int Sensor::getButtonEvent() const
 {
     if (hasButtonEvent())
     {
@@ -43,7 +43,7 @@ int HueSensor::getButtonEvent() const
     return 0;
 }
 
-int HueSensor::getStatus()
+int Sensor::getStatus()
 {
     if (hasStatus())
     {
@@ -52,7 +52,7 @@ int HueSensor::getStatus()
     return 0;
 }
 
-int HueSensor::getStatus() const
+int Sensor::getStatus() const
 {
     if (hasStatus())
     {
@@ -61,17 +61,17 @@ int HueSensor::getStatus() const
     return 0;
 }
 
-bool HueSensor::hasButtonEvent() const
+bool Sensor::hasButtonEvent() const
 {
     return state.getValue().at("state").count("buttonevent") != 0;
 }
 
-bool HueSensor::hasStatus() const
+bool Sensor::hasStatus() const
 {
     return state.getValue().at("state").count("status") != 0;
 }
 
-HueSensor::HueSensor(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration)
+Sensor::Sensor(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration)
     : BaseDevice(id, commands, "/sensors/", refreshDuration)
 { }
 } // namespace hueplusplus
