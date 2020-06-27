@@ -32,7 +32,7 @@
 #include "hueplusplus/ExtendedColorTemperatureStrategy.h"
 #include "json/json.hpp"
 #include "mocks/mock_HttpHandler.h"
-#include "mocks/mock_HueLight.h"
+#include "mocks/mock_Light.h"
 
 using namespace hueplusplus;
 
@@ -44,7 +44,7 @@ TEST(ExtendedColorTemperatureStrategy, alertTemperature)
         *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
-    MockHueLight light(handler);
+    MockLight light(handler);
 
     const auto setCTLambda = [&](unsigned int ct, int transition) {
         light.getState()["state"]["colormode"] = "ct";

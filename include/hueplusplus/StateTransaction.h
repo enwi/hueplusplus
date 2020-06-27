@@ -77,7 +77,7 @@ public:
     //! the current state are removed. This reduces load on the bridge. On the other hand, an outdated
     //! state might cause requests to be dropped unexpectedly. Has no effect on groups.
     //! \returns true on success or when no change was requested.
-    //! \note After changing the state of a HueLight or Group,
+    //! \note After changing the state of a Light or Group,
     //! refresh() must be called if the updated values are needed immediately.
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contains no body

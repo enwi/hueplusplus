@@ -19,14 +19,14 @@ A simple and easy to use library for Philips Hue Lights.
 ### <a name="searchingBridges"></a>Searching for Bridges
 To start searching for a Hue Bridge you will need to choose an IHttpHandler and create one. The options are a [WinHttpHandler](@ref hueplusplus::WinHttpHandler) (for windows) or a [LinHttpHandler](@ref hueplusplus::LinHttpHandler) (for linux or linux-like).
 
-Then create a [HueFinder](@ref hueplusplus::HueFinder) object with the handler.
+Then create a [BridgeFinder](@ref hueplusplus::BridgeFinder) object with the handler.
 The handler is needed, because it tells the finder which functions to use to communicate with a bridge or your local network.
-After that you can call [FindBridges()](@ref hueplusplus::HueFinder::FindBridges), which will return a vector containing the ip and mac address of all found Bridges.
+After that you can call [FindBridges()](@ref hueplusplus::BridgeFinder::FindBridges), which will return a vector containing the ip and mac address of all found Bridges.
 ```{.cpp}
 // For windows use std::make_shared<hueplusplus::WinHttpHandler>();
 handler = std::make_shared<hueplusplus::LinHttpHandler>();
-hueplusplus::HueFinder finder(handler);
-std::vector<hueplusplus::HueFinder::HueIdentification> bridges = finder.FindBridges();
+hueplusplus::BridgeFinder finder(handler);
+std::vector<hueplusplus::BridgeFinder::BridgeIdentification> bridges = finder.FindBridges();
 if (bridges.empty())
 {
 	std::cerr << "No bridges found\n";
@@ -37,35 +37,35 @@ if (bridges.empty())
 
 ### Authenticate Bridges
 If you have found the Bridge you were looking for, you can then move on with the authentication process.
-To get a new username from the Bridge (for now) you simply call [GetBridge(bridges[\<index\>])](@ref hueplusplus::HueFinder::GetBridge),
+To get a new username from the Bridge (for now) you simply call [GetBridge(bridges[\<index\>])](@ref hueplusplus::BridgeFinder::GetBridge),
 where index is your preferred Bridge from the part [Searching for Bridges](#searchingBridges). This requires the user to press the link button.
 ```{.cpp}
-hueplusplus::Hue bridge = finder.GetBridge(bridges[0]);
+hueplusplus::Bridge bridge = finder.GetBridge(bridges[0]);
 ```
 If you on the other hand already have a username you can add your bridge like so
 ```{.cpp}
 finder.AddUsername(bridges[0].mac, "<username>");
-hueplusplus::Hue bridge = finder.GetBridge(bridges[0]);
+hueplusplus::Bridge bridge = finder.GetBridge(bridges[0]);
 ```
-If you do not want to use the HueFinder or you already know the ip and username of your bridge you have the option to create your own Hue object.
+If you do not want to use the BridgeFinder or you already know the ip and username of your bridge you have the option to create your own Bridge object.
 Here you will need to provide the ip address, the port number, a username and an HttpHandler
 ```{.cpp}
 // For windows use std::make_shared<hueplusplus::WinHttpHandler>();
 handler = std::make_shared<hueplusplus::LinHttpHandler>();
-hueplusplus::Hue bridge("192.168.2.102", 80, "<username>", handler);
+hueplusplus::Bridge bridge("192.168.2.102", 80, "<username>", handler);
 ```
 
 ### Controlling lights
 If you have your Bridge all set up, you can now control its lights.
-For that create a new HueLight object and call [lights().get(\<id\>)](@ref hueplusplus::ResourceList::get) on your bridge object to get a reference to a specific light, where id
+For that create a new Light object and call [lights().get(\<id\>)](@ref hueplusplus::ResourceList::get) on your bridge object to get a reference to a specific light, where id
 is the id of the light set internally by the Hue Bridge.
 ```{.cpp}
-hueplusplus::HueLight light1 = bridge.lights().get(1);
+hueplusplus::Light light1 = bridge.lights().get(1);
 ```
 If you don't know the id of a specific light or want to get an overview over all lights that are controlled by your bridge, 
 you can get a vector containing them by calling [getAll()](@ref hueplusplus::ResourceList::getAll) on your bridge object. If no lights are found the vector will be empty.
 ```{.cpp}
-std::vector<std::reference_wrapper<hueplusplus::HueLight>> lights = bridge.lights().getAll();
+std::vector<std::reference_wrapper<hueplusplus::Light>> lights = bridge.lights().getAll();
 ```
 If you now want to control a light, call a specific function of it.
 ```{.cpp}
@@ -79,7 +79,7 @@ lights.at(1).setColorHue(4562);
 ```
 But keep in mind that some light types do not have all functions available. So you might call a
 specific function, but nothing will happen. For that you might want to check what type
-of a light you are controlling. For that you can call the function [getColorType()](@ref hueplusplus::HueLight::getColorType()), which will return
+of a light you are controlling. For that you can call the function [getColorType()](@ref hueplusplus::Light::getColorType()), which will return
 a ColorType.
 ```{.cpp}
 hueplusplus::ColorType type1 = light1.getColorType();

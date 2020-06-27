@@ -26,27 +26,27 @@
 #include <memory>
 #include <string>
 
-#include "HueLight.h"
+#include "Light.h"
 
 namespace hueplusplus
 {
-class HueLightFactory
+class LightFactory
 {
 public:
-    //! \brief Create a factory for HueLight%s
+    //! \brief Create a factory for Light%s
     //! \param commands HueCommandAPI for communication with the bridge
     //! \param refreshDuration Time between refreshing the cached light state.
-    HueLightFactory(const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration);
+    LightFactory(const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration);
 
-    //! \brief Create a HueLight with the correct type from the JSON state.
+    //! \brief Create a Light with the correct type from the JSON state.
     //! \param lightState Light JSON as returned from the bridge (not only the "state" part of it).
     //! \param id Light id.
-    //! \returns HueLight with matching id, strategies and \ref ColorType.
+    //! \returns Light with matching id, strategies and \ref ColorType.
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when light type is unknown
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    HueLight createLight(const nlohmann::json& lightState, int id);
+    Light createLight(const nlohmann::json& lightState, int id);
 
 private:
     //! \brief Get color type from light JSON.

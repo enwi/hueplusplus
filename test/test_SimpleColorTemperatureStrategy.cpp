@@ -33,7 +33,7 @@
 #include "hueplusplus/SimpleColorTemperatureStrategy.h"
 #include "json/json.hpp"
 #include "mocks/mock_HttpHandler.h"
-#include "mocks/mock_HueLight.h"
+#include "mocks/mock_Light.h"
 
 using namespace hueplusplus;
 
@@ -45,7 +45,7 @@ TEST(SimpleColorTemperatureStrategy, setColorTemperature)
         *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
-    MockHueLight test_light(handler);
+    MockLight test_light(handler);
 
     const std::string statePath = "/api/" + getBridgeUsername() + "/lights/1/state";
 
@@ -87,7 +87,7 @@ TEST(SimpleColorTemperatureStrategy, alertTemperature)
         *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
-    MockHueLight light(handler);
+    MockLight light(handler);
 
     const auto setCTLambda = [&](unsigned int ct, int transition) {
         light.getState()["state"]["colormode"] = "ct";
@@ -146,10 +146,10 @@ TEST(SimpleColorTemperatureStrategy, getColorTemperature)
         *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
-    MockHueLight test_light(handler);
+    MockLight test_light(handler);
 
     test_light.getState()["state"]["ct"] = 200;
     EXPECT_EQ(200, SimpleColorTemperatureStrategy().getColorTemperature(test_light));
     test_light.getState()["state"]["ct"] = 500;
-    EXPECT_EQ(500, SimpleColorTemperatureStrategy().getColorTemperature(static_cast<const HueLight>(test_light)));
+    EXPECT_EQ(500, SimpleColorTemperatureStrategy().getColorTemperature(static_cast<const Light>(test_light)));
 }

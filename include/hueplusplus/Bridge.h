@@ -1,5 +1,5 @@
 /**
-    \file Hue.h
+    \file Bridge.h
     Copyright Notice\n
     Copyright (C) 2017  Jan Rogall		- developer\n
     Copyright (C) 2017  Moritz Wirger	- developer\n
@@ -37,12 +37,12 @@
 #include "Group.h"
 #include "HueCommandAPI.h"
 #include "HueDeviceTypes.h"
-#include "HueLight.h"
-#include "HueSensor.h"
 #include "IHttpHandler.h"
+#include "Light.h"
 #include "ResourceList.h"
 #include "Scene.h"
 #include "Schedule.h"
+#include "Sensor.h"
 #include "Utils.h"
 
 #include "json/json.hpp"
@@ -51,15 +51,15 @@
 namespace hueplusplus
 {
 // forward declarations
-class Hue;
+class Bridge;
 
 //!
 //! Class to find all Hue bridges on the network and create usernames for them.
 //!
-class HueFinder
+class BridgeFinder
 {
 public:
-    struct HueIdentification
+    struct BridgeIdentification
     {
         std::string ip;
         int port = 80;
@@ -67,10 +67,10 @@ public:
     };
 
 public:
-    //! \brief Constructor of HueFinder class
+    //! \brief Constructor of BridgeFinder class
     //!
     //! \param handler HttpHandler of type \ref IHttpHandler for communication with the bridge
-    HueFinder(std::shared_ptr<const IHttpHandler> handler);
+    BridgeFinder(std::shared_ptr<const IHttpHandler> handler);
 
     //! \brief Finds all bridges in the network and returns them.
     //!
@@ -78,17 +78,17 @@ public:
     //! \return vector containing ip and mac of all found bridges
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
-    std::vector<HueIdentification> FindBridges() const;
+    std::vector<BridgeIdentification> FindBridges() const;
 
-    //! \brief Gets a \ref Hue bridge based on its identification
+    //! \brief Gets a Hue bridge based on its identification
     //!
-    //! \param identification \ref HueIdentification that specifies a bridge
-    //! \return \ref Hue class object
+    //! \param identification \ref BridgeIdentification that specifies a bridge
+    //! \return \ref Bridge class object
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body or username could not be requested
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    Hue GetBridge(const HueIdentification& identification);
+    Bridge GetBridge(const BridgeIdentification& identification);
 
     //! \brief Function that adds a username to the usernames map
     //!
@@ -116,26 +116,26 @@ private:
     static std::string ParseDescription(const std::string& description);
 
     std::map<std::string, std::string> usernames; //!< Maps all macs to usernames added by \ref
-                                                  //!< HueFinder::AddUsername
+                                                  //!< BridgeFinder::AddUsername
     std::shared_ptr<const IHttpHandler> http_handler;
 };
 
-//! \brief Hue class for a bridge.
+//! \brief Bridge class for a bridge.
 //!
 //! This is the main class used to interact with the Hue bridge.
-class Hue
+class Bridge
 {
-    friend class HueFinder;
+    friend class BridgeFinder;
 
 public:
-    using LightList = ResourceList<HueLight, int>;
+    using LightList = ResourceList<Light, int>;
     using GroupList = GroupResourceList<Group, CreateGroup>;
     using ScheduleList = CreateableResourceList<Schedule, int, CreateSchedule>;
     using SceneList = CreateableResourceList<Scene, std::string, CreateScene>;
-    using SensorList = ResourceList<HueSensor, int>;
+    using SensorList = ResourceList<Sensor, int>;
 
 public:
-    //! \brief Constructor of Hue class
+    //! \brief Constructor of Bridge class
     //!
     //! \param ip IP address in dotted decimal notation like "192.168.2.1"
     //! \param port Port of the hue bridge
@@ -143,7 +143,8 @@ public:
     //! the bridge. Can be left empty and acquired in \ref requestUsername.
     //! \param handler HttpHandler for communication with the bridge
     //! \param refreshDuration Time between refreshing the cached state.
-    Hue(const std::string& ip, const int port, const std::string& username, std::shared_ptr<const IHttpHandler> handler,
+    Bridge(const std::string& ip, const int port, const std::string& username,
+        std::shared_ptr<const IHttpHandler> handler,
         std::chrono::steady_clock::duration refreshDuration = std::chrono::seconds(10));
 
     //! \brief Refreshes the bridge state.
@@ -200,9 +201,9 @@ public:
     //! \note Does not refresh state.
     const BridgeConfig& config() const;
 
-    //! \brief Provides access to the HueLight%s on the bridge.
+    //! \brief Provides access to the Light%s on the bridge.
     LightList& lights();
-    //! \brief Provides access to the HueLight%s on the bridge.
+    //! \brief Provides access to the Light%s on the bridge.
     //! \note Does not refresh state.
     const LightList& lights() const;
 
@@ -224,9 +225,9 @@ public:
     //! \note Does not refresh state.
     const SceneList& scenes() const;
 
-    //! \brief Provides access to the HueSensor%s on the bridge.
+    //! \brief Provides access to the Sensor%s on the bridge.
     SensorList& sensors();
-    //! \brief Provides access to the HueSensor%s on the bridge.
+    //! \brief Provides access to the Sensor%s on the bridge.
     //! \note Does not refresh state.
     const SensorList& sensors() const;
 
@@ -236,7 +237,7 @@ private:
     //!
     //! The HttpHandler and HueCommandAPI are used for bridge communication.
     //! Resetting the HttpHandler should only be done when the username is first set,
-    //! before Hue is used.
+    //! before Bridge is used.
     //! Resets all caches and resource lists.
     void setHttpHandler(std::shared_ptr<const IHttpHandler> handler);
 

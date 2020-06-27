@@ -1,5 +1,5 @@
 /**
-    \file APIConfig.h
+    \file LibConfig.h
     Copyright Notice\n
     Copyright (C) 2017  Jan Rogall		- developer\n
     Copyright (C) 2017  Moritz Wirger	- developer\n
@@ -47,7 +47,7 @@ public:
     //! \brief Delay between bridge requests
     duration getBridgeRequestDelay() const { return bridgeRequestDelay; }
 
-    //! \brief Timeout for Hue::requestUsername, waits until link button was pressed
+    //! \brief Timeout for Bridge::requestUsername, waits until link button was pressed
     duration getRequestUsernameTimeout() const { return requestUsernameDelay; }
 
     //! \brief Interval in which username requests are attempted

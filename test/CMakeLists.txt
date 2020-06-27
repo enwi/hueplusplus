@@ -32,15 +32,15 @@ target_compile_features(gtest PUBLIC cxx_std_14)
 set(TEST_SOURCES
     test_APICache.cpp
     test_BaseHttpHandler.cpp
+    test_Bridge.cpp
     test_BridgeConfig.cpp
     test_ColorUnits.cpp
     test_ExtendedColorHueStrategy.cpp
     test_ExtendedColorTemperatureStrategy.cpp
 	test_Group.cpp
-    test_Hue.cpp
-    test_HueLight.cpp
-    test_HueLightFactory.cpp
     test_HueCommandAPI.cpp
+    test_Light.cpp
+    test_LightFactory.cpp
     test_Main.cpp
     test_UPnP.cpp
     test_ResourceList.cpp

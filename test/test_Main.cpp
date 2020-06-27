@@ -21,7 +21,7 @@
 **/
 
 #include <gtest/gtest.h>
-#include <hueplusplus/APIConfig.h>
+#include <hueplusplus/LibConfig.h>
 
 namespace
 {

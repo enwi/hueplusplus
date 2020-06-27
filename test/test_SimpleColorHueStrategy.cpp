@@ -32,7 +32,7 @@
 #include "hueplusplus/SimpleColorHueStrategy.h"
 #include "json/json.hpp"
 #include "mocks/mock_HttpHandler.h"
-#include "mocks/mock_HueLight.h"
+#include "mocks/mock_Light.h"
 
 using namespace hueplusplus;
 
@@ -44,7 +44,7 @@ TEST(SimpleColorHueStrategy, setColorHue)
         *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
-    MockHueLight test_light(handler);
+    MockLight test_light(handler);
 
     const std::string statePath = "/api/" + getBridgeUsername() + "/lights/1/state";
 
@@ -78,7 +78,7 @@ TEST(SimpleColorHueStrategy, setColorSaturation)
         *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
-    MockHueLight test_light(handler);
+    MockLight test_light(handler);
 
     const std::string statePath = "/api/" + getBridgeUsername() + "/lights/1/state";
 
@@ -112,7 +112,7 @@ TEST(SimpleColorHueStrategy, setColorHueSaturation)
         *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
-    MockHueLight test_light(handler);
+    MockLight test_light(handler);
 
     const std::string statePath = "/api/" + getBridgeUsername() + "/lights/1/state";
 
@@ -150,7 +150,7 @@ TEST(SimpleColorHueStrategy, setColorXY)
         *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
-    MockHueLight test_light(handler);
+    MockLight test_light(handler);
 
     const std::string statePath = "/api/" + getBridgeUsername() + "/lights/1/state";
 
@@ -179,7 +179,7 @@ TEST(SimpleColorHueStrategy, setColorLoop)
         *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
-    MockHueLight test_light(handler);
+    MockLight test_light(handler);
 
     const std::string statePath = "/api/" + getBridgeUsername() + "/lights/1/state";
 
@@ -210,7 +210,7 @@ TEST(SimpleColorHueStrategy, alertHueSaturation)
         *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
-    MockHueLight light(handler);
+    MockLight light(handler);
 
     // Invalid colormode
     {
@@ -335,7 +335,7 @@ TEST(SimpleColorHueStrategy, alertXY)
         *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
-    MockHueLight light(handler);
+    MockLight light(handler);
 
     // Invalid colormode
     {
@@ -455,7 +455,7 @@ TEST(SimpleColorHueStrategy, getColorHueSaturation)
         *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
-    MockHueLight test_light(handler);
+    MockLight test_light(handler);
 
     test_light.getState()["state"]["hue"] = 5000;
     test_light.getState()["state"]["sat"] = 128;
@@ -463,7 +463,7 @@ TEST(SimpleColorHueStrategy, getColorHueSaturation)
     test_light.getState()["state"]["hue"] = 50000;
     test_light.getState()["state"]["sat"] = 158;
     EXPECT_EQ((HueSaturation {50000, 158}),
-        SimpleColorHueStrategy().getColorHueSaturation(static_cast<const HueLight>(test_light)));
+        SimpleColorHueStrategy().getColorHueSaturation(static_cast<const Light>(test_light)));
 }
 
 TEST(SimpleColorHueStrategy, getColorXY)
@@ -474,7 +474,7 @@ TEST(SimpleColorHueStrategy, getColorXY)
         *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
         .Times(AtLeast(1))
         .WillRepeatedly(Return(nlohmann::json::object()));
-    MockHueLight test_light(handler);
+    MockLight test_light(handler);
 
     test_light.getState()["state"]["xy"][0] = 0.1234;
     test_light.getState()["state"]["xy"][1] = 0.1234;

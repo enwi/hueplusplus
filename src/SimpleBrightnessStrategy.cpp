@@ -31,18 +31,18 @@
 
 namespace hueplusplus
 {
-bool SimpleBrightnessStrategy::setBrightness(unsigned int bri, uint8_t transition, HueLight& light) const
+bool SimpleBrightnessStrategy::setBrightness(unsigned int bri, uint8_t transition, Light& light) const
 {
     // Careful, only use state until any light function might refresh the value and invalidate the reference
     return light.transaction().setBrightness(bri).setTransition(transition).commit();
 }
 
-unsigned int SimpleBrightnessStrategy::getBrightness(HueLight& light) const
+unsigned int SimpleBrightnessStrategy::getBrightness(Light& light) const
 {
     return light.state.getValue()["state"]["bri"].get<unsigned int>();
 }
 
-unsigned int SimpleBrightnessStrategy::getBrightness(const HueLight& light) const
+unsigned int SimpleBrightnessStrategy::getBrightness(const Light& light) const
 {
     return light.state.getValue()["state"]["bri"].get<unsigned int>();
 }
