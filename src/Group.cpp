@@ -37,7 +37,11 @@ std::vector<int> Group::getLightIds() const
     ids.reserve(lights.size());
     for (const nlohmann::json& id : lights)
     {
-        ids.push_back(std::stoi(id.get<std::string>()));
+        // Luminaires can have null ids if not all light have been added
+        if (!id.is_null())
+        {
+            ids.push_back(std::stoi(id.get<std::string>()));
+        }
     }
     return ids;
 }
@@ -141,8 +145,7 @@ std::string Group::getActionColorMode() const
 StateTransaction Group::transaction()
 {
     // Do not pass state, because it is not the state of ALL lights in the group
-    return StateTransaction(
-        state.getCommandAPI(), "/groups/" + std::to_string(id) + "/action", nullptr);
+    return StateTransaction(state.getCommandAPI(), "/groups/" + std::to_string(id) + "/action", nullptr);
 }
 
 void Group::setOn(bool on, uint8_t transition)
@@ -256,6 +259,6 @@ nlohmann::json CreateGroup::getRequest() const
 CreateGroup::CreateGroup(
     const std::vector<int>& lights, const std::string& name, const std::string& type, const std::string& roomType)
     : lights(lights), name(name), type(type), roomType(roomType)
-{}
+{ }
 
 } // namespace hueplusplus
