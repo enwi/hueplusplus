@@ -22,7 +22,7 @@ set(hueplusplus_SOURCES
     StateTransaction.cpp
     TimePattern.cpp
     UPnP.cpp
-    Utils.cpp "ZLLSensors.cpp")
+    Utils.cpp "ZLLSensors.cpp" "CLIPSensors.cpp")
 
 # on windows we want to compile the WinHttpHandler
 if(WIN32)

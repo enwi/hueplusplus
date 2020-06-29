@@ -84,7 +84,7 @@ std::string BaseDevice::getSwVersion() const
 bool BaseDevice::setName(const std::string& name)
 {
     nlohmann::json request = { {"name", name} };
-    nlohmann::json reply = sendPutRequest(request, "/name", CURRENT_FILE_INFO);
+    nlohmann::json reply = sendPutRequest("/name", request, CURRENT_FILE_INFO);
 
     // Check whether request was successful (returned name is not necessarily the actually set name)
     // If it already exists, a number is added, if it is too long to be returned, "Updated" is returned
@@ -98,7 +98,7 @@ BaseDevice::BaseDevice(
     state.refresh();
 }
 
-nlohmann::json BaseDevice::sendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo)
+nlohmann::json BaseDevice::sendPutRequest(const std::string& subPath, const nlohmann::json& request, FileInfo fileInfo)
 {
     return state.getCommandAPI().PUTRequest(path + std::to_string(id) + subPath, request, std::move(fileInfo));
 }

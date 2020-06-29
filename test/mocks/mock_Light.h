@@ -124,7 +124,7 @@ public:
     MOCK_METHOD1(setColorLoop, bool(bool on));
 
     MOCK_METHOD3(sendPutRequest,
-        nlohmann::json(const nlohmann::json& request, const std::string& subPath, hueplusplus::FileInfo fileInfo));
+        nlohmann::json(const std::string& subPath, const nlohmann::json& request,hueplusplus::FileInfo fileInfo));
 };
 
 #endif

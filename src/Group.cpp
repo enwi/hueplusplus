@@ -49,7 +49,7 @@ std::vector<int> Group::getLightIds() const
 void Group::setName(const std::string& name)
 {
     nlohmann::json request = {{"name", name}};
-    sendPutRequest(request, "", CURRENT_FILE_INFO);
+    sendPutRequest("", request, CURRENT_FILE_INFO);
     refresh();
 }
 
@@ -60,7 +60,7 @@ void Group::setLights(const std::vector<int>& ids)
     {
         lights.push_back(std::to_string(id));
     }
-    sendPutRequest({{"lights", lights}}, "", CURRENT_FILE_INFO);
+    sendPutRequest("", {{"lights", lights}}, CURRENT_FILE_INFO);
     refresh();
 }
 
@@ -180,7 +180,7 @@ void Group::setColorLoop(bool on, uint8_t transition)
 
 void Group::setScene(const std::string& scene)
 {
-    sendPutRequest({{"scene", scene}}, "/action", CURRENT_FILE_INFO);
+    sendPutRequest("/action", {{"scene", scene}}, CURRENT_FILE_INFO);
 }
 
 ScheduleCommand Group::scheduleScene(const std::string& scene) const
@@ -191,7 +191,7 @@ ScheduleCommand Group::scheduleScene(const std::string& scene) const
     return ScheduleCommand(command);
 }
 
-nlohmann::json Group::sendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo)
+nlohmann::json Group::sendPutRequest(const std::string& subPath, const nlohmann::json& request, FileInfo fileInfo)
 {
     return state.getCommandAPI().PUTRequest("/groups/" + std::to_string(id) + subPath, request, std::move(fileInfo));
 }
@@ -203,7 +203,7 @@ std::string Group::getRoomType() const
 
 void Group::setRoomType(const std::string& type)
 {
-    sendPutRequest({{"class", type}}, "", CURRENT_FILE_INFO);
+    sendPutRequest("", {{"class", type}}, CURRENT_FILE_INFO);
     refresh();
 }
 

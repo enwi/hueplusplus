@@ -209,7 +209,7 @@ bool ZLLLightLevel::isReachable() const
 }
 int ZLLLightLevel::getDarkThreshold() const
 {
-    return state.getValue().at("config").at("tholddark").get<bool>();
+    return state.getValue().at("config").at("tholddark").get<int>();
 }
 
 void ZLLLightLevel::setDarkThreshold(int threshold)
@@ -218,7 +218,7 @@ void ZLLLightLevel::setDarkThreshold(int threshold)
 }
 int ZLLLightLevel::getThresholdOffset() const
 {
-    return state.getValue().at("config").at("tholdoffset").get<bool>();
+    return state.getValue().at("config").at("tholdoffset").get<int>();
 }
 
 void ZLLLightLevel::setThresholdOffset(int offset)
