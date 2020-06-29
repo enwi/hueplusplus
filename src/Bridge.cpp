@@ -55,13 +55,18 @@ std::vector<BridgeFinder::BridgeIdentification> BridgeFinder::FindBridges() cons
             size_t start = p.first.find("//") + 2;
             size_t length = p.first.find(":", start) - start;
             bridge.ip = p.first.substr(start, length);
-            std::string desc
-                = http_handler->GETString("/description.xml", "application/xml", "", bridge.ip, bridge.port);
-            std::string mac = ParseDescription(desc);
-            if (!mac.empty())
-            {
-                bridge.mac = NormalizeMac(mac);
-                foundBridges.push_back(std::move(bridge));
+            try {
+                std::string desc
+                    = http_handler->GETString("/description.xml", "application/xml", "", bridge.ip, bridge.port);
+                std::string mac = ParseDescription(desc);
+                if (!mac.empty())
+                {
+                    bridge.mac = NormalizeMac(mac);
+                    foundBridges.push_back(std::move(bridge));
+                }
+            }
+            catch (const HueException&) {
+                // No body found in response, skip this device
             }
         }
     }

@@ -49,6 +49,8 @@ public:
     //! \brief std dtor
     ~Sensor() = default;
 
+    bool hasSwupdate() const;
+
     bool hasOn() const;
     // Check whether sensor is on. Does not update when off
     bool isOn() const;
@@ -84,11 +86,14 @@ public:
     nlohmann::json getState() const;
     void setStateAttribute(const std::string& key, const nlohmann::json& value);
 
+    nlohmann::json getConfig() const;
+    void setConfigAttribute(const std::string& key, const nlohmann::json& value);
+
     bool isCertified() const;
     bool isPrimary() const;
 
     template <typename T>
-    T asSensorType() const
+    T asSensorType() const &
     {
         if (getType() != T::type_str)
         {
@@ -125,17 +130,18 @@ public:
     bool isOn() const;
     void setOn(bool on);
 
-    bool hasBattery() const;
+    bool hasBatteryState() const;
     int getBatteryState() const;
     void setBatteryState(int percent);
 
-    void setCoordinates(std::string latitude, std::string longitude);
+    void setCoordinates(const std::string& latitude, const std::string& longitude);
+    bool isConfigured() const;
 
     int getSunriseOffset() const;
     void setSunriseOffset(int minutes);
 
-    int getSunsetOffeset() const;
-    void setSunsetOffest(int minutes);
+    int getSunsetOffset() const;
+    void setSunsetOffset(int minutes);
 
     bool isDaylight() const;
 

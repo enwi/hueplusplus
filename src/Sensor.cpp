@@ -27,6 +27,11 @@
 
 namespace hueplusplus
 {
+bool Sensor::hasSwupdate() const
+{
+    return state.getValue().at("config").count("swupdate") != 0;
+}
+
 bool Sensor::hasOn() const
 {
     return state.getValue().at("config").count("on") != 0;
@@ -173,6 +178,16 @@ void Sensor::setStateAttribute(const std::string& key, const nlohmann::json& val
     sendPutRequest("/state", nlohmann::json {{"key", value}}, CURRENT_FILE_INFO);
 }
 
+nlohmann::json Sensor::getConfig() const
+{
+    return state.getValue().at("config");
+}
+
+void Sensor::setConfigAttribute(const std::string& key, const nlohmann::json& value)
+{
+    sendPutRequest("/config", nlohmann::json {{"key", value}}, CURRENT_FILE_INFO);
+}
+
 bool Sensor::isCertified() const
 {
     nlohmann::json certified = utils::safeGetMember(state.getValue(), "capabilities", "certified");
@@ -188,4 +203,72 @@ bool Sensor::isPrimary() const
 Sensor::Sensor(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration)
     : BaseDevice(id, commands, "/sensors/", refreshDuration)
 { }
+
+namespace sensors
+{
+
+bool DaylightSensor::isOn() const
+{
+    return state.getValue().at("config").at("on").get<bool>();
+}
+
+void DaylightSensor::setOn(bool on)
+{
+    sendPutRequest("/config", {"on", on}, CURRENT_FILE_INFO);
+}
+
+bool DaylightSensor::hasBatteryState() const
+{
+    return state.getValue().at("config").count("battery") != 0;
+}
+int DaylightSensor::getBatteryState() const
+{
+    return state.getValue().at("config").at("battery").get<int>();
+}
+void DaylightSensor::setBatteryState(int percent)
+{
+    sendPutRequest("/config", nlohmann::json {{"battery", percent}}, CURRENT_FILE_INFO);
+}
+void DaylightSensor::setCoordinates(const std::string& latitude, const std::string& longitude)
+{
+    nlohmann::json request {{"lat", latitude}, {"long", longitude}};
+    // Currently, "none" is supposed to be used for reset; may change to null in the future,
+    // so the functionality is implemented already
+    if (latitude.empty())
+    {
+        request["lat"] = nullptr;
+    }
+    if (longitude.empty())
+    {
+        request["long"] = nullptr;
+    }
+    sendPutRequest("/config", request, CURRENT_FILE_INFO);
+}
+bool DaylightSensor::isConfigured() const
+{
+    return state.getValue().at("config").at("configured").get<bool>();
+}
+int DaylightSensor::getSunriseOffset() const
+{
+    return state.getValue().at("config").at("sunriseoffset").get<int>();
+}
+void DaylightSensor::setSunriseOffset(int minutes)
+{
+    sendPutRequest("/config", nlohmann::json {{"sunriseoffset", minutes}}, CURRENT_FILE_INFO);
+}
+
+int DaylightSensor::getSunsetOffset() const
+{
+    return state.getValue().at("config").at("sunsetoffset").get<int>();
+}
+void DaylightSensor::setSunsetOffset(int minutes)
+{
+    sendPutRequest("/config", nlohmann::json {{"sunsetoffset", minutes}}, CURRENT_FILE_INFO);
+}
+
+bool DaylightSensor::isDaylight() const
+{
+    return state.getValue().at("config").at("daylight").get<bool>();
+}
+} // namespace sensors
 } // namespace hueplusplus
