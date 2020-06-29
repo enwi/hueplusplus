@@ -27,6 +27,36 @@
 
 namespace hueplusplus
 {
+std::string alertToString(Alert alert)
+{
+    switch (alert)
+    {
+    case Alert::lselect:
+        return "lselect";
+    case Alert::select:
+        return "select";
+        break;
+    default:
+        return "none";
+    }
+}
+
+Alert alertFromString(const std::string& s)
+{
+    if (s == "select")
+    {
+        return Alert::select;
+    }
+    else if (s == "lselect")
+    {
+        return Alert::lselect;
+    }
+    else
+    {
+        return Alert::none;
+    }
+}
+
 bool Sensor::hasSwupdate() const
 {
     return state.getValue().at("config").count("swupdate") != 0;
@@ -44,7 +74,7 @@ bool Sensor::isOn() const
 
 void Sensor::setOn(bool on)
 {
-    sendPutRequest("/config", {"on", on}, CURRENT_FILE_INFO);
+    sendPutRequest("/config", nlohmann::json{ {"on", on} }, CURRENT_FILE_INFO);
 }
 
 bool Sensor::hasBatteryState() const

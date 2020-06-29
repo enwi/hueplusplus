@@ -34,7 +34,7 @@ public:
     bool isOn() const;
     void setOn(bool on);
 
-    bool hasBattery() const;
+    bool hasBatteryState() const;
     int getBatteryState() const;
     void setBatteryState(int percent);
 
