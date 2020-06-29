@@ -38,6 +38,8 @@ enum class Alert
     select,
     lselect
 };
+std::string alertToString(Alert alert);
+Alert alertFromString(const std::string& s);
 //!
 //! Generic class for Hue sensors
 //!
