@@ -36,7 +36,7 @@ public:
     bool isOn() const;
     void setOn(bool on);
 
-    int getButtonEvent();
+    int getButtonEvent() const;
 
     static constexpr int c_button1 = 34;
     static constexpr int c_button2 = 16;
@@ -53,7 +53,7 @@ public:
     bool isOn() const;
     void setOn(bool on);
 
-    bool hasBattery() const;
+    bool hasBatteryState() const;
     int getBatteryState() const;
 
     Alert getLastAlert() const;
@@ -91,7 +91,7 @@ public:
     bool isOn() const;
     void setOn(bool on);
 
-    bool hasBattery() const;
+    bool hasBatteryState() const;
     int getBatteryState() const;
 
     Alert getLastAlert() const;
@@ -118,7 +118,7 @@ public:
     bool isOn() const;
     void setOn(bool on);
 
-    bool hasBattery() const;
+    bool hasBatteryState() const;
     int getBatteryState() const;
 
     Alert getLastAlert() const;
@@ -138,9 +138,8 @@ public:
     bool isOn() const;
     void setOn(bool on);
 
-    bool hasBattery() const;
+    bool hasBatteryState() const;
     int getBatteryState() const;
-    void setBatteryState(int percent);
 
     bool isReachable() const;
 
@@ -153,6 +152,8 @@ public:
     int getLightLevel() const;
     bool isDark() const;
     bool isDaylight() const;
+
+    time::AbsoluteTime getLastUpdated() const;
 
     static constexpr const char* typeStr = "ZLLLightLevel";
 };
