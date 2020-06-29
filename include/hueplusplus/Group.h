@@ -283,7 +283,7 @@ protected:
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    nlohmann::json sendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo);
+    nlohmann::json sendPutRequest(const std::string& subPath, const nlohmann::json& request, FileInfo fileInfo);
 
 protected:
     int id;

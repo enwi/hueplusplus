@@ -129,15 +129,15 @@ protected:
 
     //! \brief Utility function to send a put request to the device.
     //!
-    //! \param request A nlohmann::json aka the request to send
     //! \param subPath A path that is appended to the uri, note it should always start with a slash ("/")
+    //! \param request A nlohmann::json aka the request to send
     //! \param fileInfo FileInfo from calling function for exception details.
     //! \return The parsed reply
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual nlohmann::json sendPutRequest(const nlohmann::json& request, const std::string& subPath, FileInfo fileInfo);
+    virtual nlohmann::json sendPutRequest(const std::string& subPath, const nlohmann::json& request, FileInfo fileInfo);
 
 protected:
     int id; //!< holds the id of the device

@@ -64,6 +64,7 @@ public:
     CLIPOpenClose(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
 
     bool isOpen() const;
+    void setOpen(bool open);
 
     static constexpr const char* typeStr = "CLIPOpenClose";
 };
@@ -110,8 +111,8 @@ public:
     int getThresholdOffset() const;
     void setThresholdOffset(int offset);
 
-    void setLightLevel(int level);
     int getLightLevel() const;
+    void setLightLevel(int level);
     bool isDark() const;
     bool isDaylight() const;
 
