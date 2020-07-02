@@ -277,12 +277,12 @@ const Bridge::SceneList& Bridge::scenes() const
     return sceneList;
 }
 
-Bridge::SensorList& Bridge::sensors()
+hueplusplus::SensorList& Bridge::sensors()
 {
     return sensorList;
 }
 
-const Bridge::SensorList& Bridge::sensors() const
+const hueplusplus::SensorList& Bridge::sensors() const
 {
     return sensorList;
 }
