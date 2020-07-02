@@ -122,6 +122,21 @@ protected:
     Sensor(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration);
 };
 
+class CreateSensor
+{
+public:
+    CreateSensor(const std::string& name, const std::string& modelid, const std::string& swversion,
+        const std::string& type, const std::string& uniqueid, const std::string& manufacturername);
+
+    CreateSensor& setState(const nlohmann::json& state);
+    CreateSensor& setConfig(const nlohmann::json& config);
+    CreateSensor& setRecycle(bool recycle);
+
+    nlohmann::json getRequest() const;
+protected:
+    nlohmann::json request;
+};
+
 namespace sensors
 {
 class DaylightSensor : public BaseDevice
