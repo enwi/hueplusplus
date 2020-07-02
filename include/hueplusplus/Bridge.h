@@ -43,6 +43,7 @@
 #include "Scene.h"
 #include "Schedule.h"
 #include "Sensor.h"
+#include "SensorList.h"
 #include "Utils.h"
 
 #include "json/json.hpp"
@@ -132,7 +133,6 @@ public:
     using GroupList = GroupResourceList<Group, CreateGroup>;
     using ScheduleList = CreateableResourceList<Schedule, int, CreateSchedule>;
     using SceneList = CreateableResourceList<Scene, std::string, CreateScene>;
-    using SensorList = ResourceList<Sensor, int>;
 
 public:
     //! \brief Constructor of Bridge class

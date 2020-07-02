@@ -48,6 +48,7 @@ public:
 protected:
     BaseCLIP(Sensor sensor) : BaseDevice(std::move(sensor)) { }
 };
+
 class CLIPSwitch : public BaseCLIP
 {
 public:

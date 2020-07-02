@@ -74,7 +74,7 @@ bool Sensor::isOn() const
 
 void Sensor::setOn(bool on)
 {
-    sendPutRequest("/config", nlohmann::json{ {"on", on} }, CURRENT_FILE_INFO);
+    sendPutRequest("/config", nlohmann::json {{"on", on}}, CURRENT_FILE_INFO);
 }
 
 bool Sensor::hasBatteryState() const
@@ -233,6 +233,35 @@ bool Sensor::isPrimary() const
 Sensor::Sensor(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration)
     : BaseDevice(id, commands, "/sensors/", refreshDuration)
 { }
+
+CreateSensor::CreateSensor(const std::string& name, const std::string& modelid, const std::string& swversion,
+    const std::string& type, const std::string& uniqueid, const std::string& manufacturername)
+    : request({{"name", name}, {"modelid", modelid}, {"swversion", swversion}, {"type", type}, {"uniqueid", uniqueid},
+        {"manufacturername", manufacturername}})
+{ }
+
+CreateSensor& CreateSensor::setState(const nlohmann::json& state)
+{
+    request["state"] = state;
+    return *this;
+}
+
+CreateSensor& CreateSensor::setConfig(const nlohmann::json& config)
+{
+    request["config"] = config;
+    return *this;
+}
+
+CreateSensor& CreateSensor::setRecycle(bool recycle)
+{
+    request["recycle"] = recycle;
+    return *this;
+}
+
+nlohmann::json CreateSensor::getRequest() const
+{
+    return request;
+}
 
 namespace sensors
 {
