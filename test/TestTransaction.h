@@ -33,7 +33,7 @@
 class TestTransaction : public hueplusplus::StateTransaction
 {
 public:
-    TestTransaction(hueplusplus::StateTransaction&& t) : hueplusplus::StateTransaction(std::move(t)) {}
+    TestTransaction(hueplusplus::StateTransaction& t) : hueplusplus::StateTransaction(std::move(t)) {}
 
     nlohmann::json getRequest() const { return request; }
     nlohmann::json getResponse() const

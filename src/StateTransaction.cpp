@@ -34,7 +34,7 @@ StateTransaction::StateTransaction(const HueCommandAPI& commands, const std::str
     : commands(commands), path(path), state(currentState), request(nlohmann::json::object())
 {}
 
-bool StateTransaction::commit(bool trimRequest) &&
+bool StateTransaction::commit(bool trimRequest)
 {
     const nlohmann::json& stateJson = (state != nullptr) ? *state : nlohmann::json::object();
     // Check this before request is trimmed
@@ -83,126 +83,126 @@ bool StateTransaction::commit(bool trimRequest) &&
     return true;
 }
 
-ScheduleCommand StateTransaction::toScheduleCommand() &&
+ScheduleCommand StateTransaction::toScheduleCommand()
 {
     nlohmann::json command {{"method", "PUT"}, {"address", commands.combinedPath(path)}, {"body", request}};
     return ScheduleCommand(command);
 }
 
-StateTransaction&& StateTransaction::setOn(bool on) &&
+StateTransaction& StateTransaction::setOn(bool on)
 {
     request["on"] = on;
-    return std::move(*this);
+    return *this;
 }
 
-StateTransaction&& StateTransaction::setBrightness(uint8_t brightness) &&
+StateTransaction& StateTransaction::setBrightness(uint8_t brightness)
 {
     uint8_t clamped = std::min<uint8_t>(brightness, 254);
     request["bri"] = clamped;
-    return std::move(*this);
+    return *this;
 }
 
-StateTransaction&& StateTransaction::setColorSaturation(uint8_t saturation) &&
+StateTransaction& StateTransaction::setColorSaturation(uint8_t saturation)
 {
     uint8_t clamped = std::min<uint8_t>(saturation, 254);
     request["sat"] = clamped;
-    return std::move(*this);
+    return *this;
 }
 
-StateTransaction&& StateTransaction::setColorHue(uint16_t hue) &&
+StateTransaction& StateTransaction::setColorHue(uint16_t hue)
 {
     request["hue"] = hue;
-    return std::move(*this);
+    return *this;
 }
 
-StateTransaction&& StateTransaction::setColor(const HueSaturation& hueSat)
+StateTransaction& StateTransaction::setColor(const HueSaturation& hueSat)
 {
     request["hue"] = std::max(0, std::min(hueSat.hue, (1 << 16) - 1));
     request["sat"] = std::max(0, std::min(hueSat.saturation, 254));
-    return std::move(*this);
+    return *this;
 }
 
-StateTransaction&& StateTransaction::setColor(const XY& xy) &&
+StateTransaction& StateTransaction::setColor(const XY& xy)
 {
     float clampedX = std::max(0.f, std::min(xy.x, 1.f));
     float clampedY = std::max(0.f, std::min(xy.y, 1.f));
     request["xy"] = {clampedX, clampedY};
-    return std::move(*this);
+    return *this;
 }
 
-StateTransaction&& StateTransaction::setColor(const XYBrightness& xy) &&
+StateTransaction& StateTransaction::setColor(const XYBrightness& xy)
 {
     int clamped = std::max(0, std::min(static_cast<int>(std::round(xy.brightness * 254.f)), 254));
     request["bri"] = clamped;
 
-    return std::move(*this).setColor(xy.xy);
+    return this->setColor(xy.xy);
 }
 
-StateTransaction&& StateTransaction::setColorTemperature(unsigned int mired) &&
+StateTransaction& StateTransaction::setColorTemperature(unsigned int mired)
 {
     unsigned int clamped = std::max(153u, std::min(mired, 500u));
     request["ct"] = clamped;
-    return std::move(*this);
+    return *this;
 }
 
-StateTransaction&& StateTransaction::setColorLoop(bool on) &&
+StateTransaction& StateTransaction::setColorLoop(bool on)
 {
     request["effect"] = on ? "colorloop" : "none";
-    return std::move(*this);
+    return *this;
 }
 
-StateTransaction&& StateTransaction::incrementBrightness(int increment) &&
+StateTransaction& StateTransaction::incrementBrightness(int increment)
 {
     request["bri_inc"] = std::max(-254, std::min(increment, 254));
-    return std::move(*this);
+    return *this;
 }
 
-StateTransaction&& StateTransaction::incrementSaturation(int increment) &&
+StateTransaction& StateTransaction::incrementSaturation(int increment)
 {
     request["sat_inc"] = std::max(-254, std::min(increment, 254));
-    return std::move(*this);
+    return *this;
 }
 
-StateTransaction&& StateTransaction::incrementHue(int increment) &&
+StateTransaction& StateTransaction::incrementHue(int increment)
 {
     request["hue_inc"] = std::max(-65534, std::min(increment, 65534));
-    return std::move(*this);
+    return *this;
 }
 
-StateTransaction&& StateTransaction::incrementColorTemperature(int increment) &&
+StateTransaction& StateTransaction::incrementColorTemperature(int increment)
 {
     request["ct_inc"] = std::max(-65534, std::min(increment, 65534));
-    return std::move(*this);
+    return *this;
 }
 
-StateTransaction&& StateTransaction::incrementColorXY(float xInc, float yInc) &&
+StateTransaction& StateTransaction::incrementColorXY(float xInc, float yInc)
 {
     request["xy_inc"] = {std::max(-0.5f, std::min(xInc, 0.5f)), std::max(-0.5f, std::min(yInc, 0.5f))};
-    return std::move(*this);
+    return *this;
 }
 
-StateTransaction&& StateTransaction::setTransition(uint16_t transition) &&
+StateTransaction& StateTransaction::setTransition(uint16_t transition)
 {
     if (transition != 4)
     {
         request["transitiontime"] = transition;
     }
-    return std::move(*this);
+    return *this;
 }
-StateTransaction&& StateTransaction::alert() &&
+StateTransaction& StateTransaction::alert()
 {
     request["alert"] = "select";
-    return std::move(*this);
+    return *this;
 }
-StateTransaction&& StateTransaction::longAlert() &&
+StateTransaction& StateTransaction::longAlert()
 {
     request["alert"] = "lselect";
-    return std::move(*this);
+    return *this;
 }
-StateTransaction&& StateTransaction::stopAlert() &&
+StateTransaction& StateTransaction::stopAlert()
 {
     request["alert"] = "none";
-    return std::move(*this);
+    return *this;
 }
 
 void StateTransaction::trimRequest()
