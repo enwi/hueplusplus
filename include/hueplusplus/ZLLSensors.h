@@ -31,7 +31,7 @@ namespace sensors
 class ZGPSwitch : public BaseDevice
 {
 public:
-    ZGPSwitch(Sensor sensor) : BaseDevice(std::move(sensor)) { }
+    explicit ZGPSwitch(Sensor sensor) : BaseDevice(std::move(sensor)) { }
 
     bool isOn() const;
     void setOn(bool on);
@@ -48,7 +48,7 @@ public:
 class ZLLSwitch : public BaseDevice
 {
 public:
-    ZLLSwitch(Sensor sensor) : BaseDevice(std::move(sensor)) { }
+    explicit ZLLSwitch(Sensor sensor) : BaseDevice(std::move(sensor)) { }
 
     bool isOn() const;
     void setOn(bool on);
@@ -87,7 +87,7 @@ public:
 class ZLLPresence : public BaseDevice
 {
 public:
-    ZLLPresence(Sensor sensor) : BaseDevice(std::move(sensor)) { }
+    explicit ZLLPresence(Sensor sensor) : BaseDevice(std::move(sensor)) { }
     bool isOn() const;
     void setOn(bool on);
 
@@ -113,7 +113,7 @@ public:
 class ZLLTemperature : public BaseDevice
 {
 public:
-    ZLLTemperature(Sensor sensor) : BaseDevice(std::move(sensor)) { }
+    explicit ZLLTemperature(Sensor sensor) : BaseDevice(std::move(sensor)) { }
 
     bool isOn() const;
     void setOn(bool on);
@@ -133,7 +133,7 @@ public:
 class ZLLLightLevel : public BaseDevice
 {
 public:
-    ZLLLightLevel(Sensor sensor) : BaseDevice(std::move(sensor)) { }
+    explicit ZLLLightLevel(Sensor sensor) : BaseDevice(std::move(sensor)) { }
 
     bool isOn() const;
     void setOn(bool on);
