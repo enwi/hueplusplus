@@ -27,16 +27,34 @@
 
 namespace hueplusplus
 {
+//! \brief Handles a list of Sensor%s with type specific getters
+//!
+//! Allows to directly get the requested sensor type or all sensors of a given type.
 class SensorList : public CreateableResourceList<Sensor, int, CreateSensor>
 {
 public:
     using CreateableResourceList::CreateableResourceList;
 
+    //! \brief Get sensor specified by id, convert to \c T
+    //! \param id Sensor id
+    //! \tparam T Sensor type to convert to (from \ref sensors)
+    //! \returns The sensor matching the id and type
+    //! \throws HueException when id does not exist or type does not match
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     template <typename T>
     T getAsType(int id)
     {
         return get(id).asSensorType<T>();
     }
+    //! \brief Get all sensors of type \c T
+    //! \tparam T Sensor type to get (from \ref sensors)
+    //! \returns All sensors matching the type
+    //! \throws HueException when response contains no body
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     template <typename T>
     std::vector<T> getAllByType()
     {
@@ -54,7 +72,9 @@ public:
     }
 
 protected:
+    //! \brief Protected defaulted move constructor
     SensorList(SensorList&&) = default;
+    //! \brief Protected defaulted move assignment
     SensorList& operator=(SensorList&&) = default;
 };
 } // namespace hueplusplus
