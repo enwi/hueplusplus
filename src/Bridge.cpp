@@ -36,6 +36,7 @@
 #include "hueplusplus/UPnP.h"
 #include "hueplusplus/Utils.h"
 
+
 namespace hueplusplus
 {
 BridgeFinder::BridgeFinder(std::shared_ptr<const IHttpHandler> handler) : http_handler(std::move(handler)) { }

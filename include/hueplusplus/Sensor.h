@@ -2,6 +2,7 @@
     \file Sensor.h
     Copyright Notice\n
     Copyright (C) 2020  Stefan Herbrechtsmeier	- developer\n
+    Copyright (C) 2020  Jan Rogall          	- developer\n
 
     This file is part of hueplusplus.
 
@@ -45,13 +46,15 @@ Alert alertFromString(const std::string& s);
 //!
 class Sensor : public BaseDevice
 {
-    friend class Bridge;
-
 public:
-    //! \brief std dtor
-    ~Sensor() = default;
+    //! \brief Construct Sensor.
+    //! \param id Integer that specifies the id of this sensor
+    //! \param commands HueCommandAPI for communication with the bridge
+    //! \param refreshDuration Time between refreshing the cached state.
+    Sensor(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration);
 
-    bool hasSwupdate() const;
+    //!\name Config attributes
+    ///@{
 
     bool hasOn() const;
     // Check whether sensor is on. Does not update when off
@@ -70,26 +73,28 @@ public:
     bool hasReachable() const;
     bool isReachable() const;
 
-    time::AbsoluteTime getLastUpdated() const;
-
     bool hasUserTest() const;
     void setUserTest(bool enabled);
 
     bool hasURL() const;
     std::string getURL() const;
     void setURL(const std::string& url);
-
+ 
     std::vector<std::string> getPendingConfig() const;
-
+  
     bool hasLEDIndication() const;
     bool getLEDIndication() const;
     void setLEDIndication(bool on);
 
-    nlohmann::json getState() const;
-    void setStateAttribute(const std::string& key, const nlohmann::json& value);
-
     nlohmann::json getConfig() const;
     void setConfigAttribute(const std::string& key, const nlohmann::json& value);
+
+    ///@}
+    
+    time::AbsoluteTime getLastUpdated() const;
+       
+    nlohmann::json getState() const;
+    void setStateAttribute(const std::string& key, const nlohmann::json& value);
 
     bool isCertified() const;
     bool isPrimary() const;
@@ -97,7 +102,7 @@ public:
     template <typename T>
     T asSensorType() const &
     {
-        if (getType() != T::type_str)
+        if (getType() != T::typeStr)
         {
             throw HueException(FileInfo {__FILE__, __LINE__, __func__}, "Sensor type does not match: " + getType());
         }
@@ -112,14 +117,6 @@ public:
         }
         return T(std::move(*this));
     }
-
-protected:
-    //! \brief Protected ctor that is used by \ref Bridge class.
-    //!
-    //! \param id Integer that specifies the id of this sensor
-    //! \param commands HueCommandAPI for communication with the bridge
-    //! \param refreshDuration Time between refreshing the cached state.
-    Sensor(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration);
 };
 
 class CreateSensor
@@ -142,7 +139,7 @@ namespace sensors
 class DaylightSensor : public BaseDevice
 {
 public:
-    DaylightSensor(Sensor sensor) : BaseDevice(std::move(sensor)) { }
+    explicit DaylightSensor(Sensor sensor) : BaseDevice(std::move(sensor)) { }
 
     bool isOn() const;
     void setOn(bool on);

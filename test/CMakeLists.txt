@@ -31,6 +31,7 @@ target_compile_features(gtest PUBLIC cxx_std_14)
 # define all test sources
 set(TEST_SOURCES
     test_APICache.cpp
+    test_BaseDevice.cpp
     test_BaseHttpHandler.cpp
     test_Bridge.cpp
     test_BridgeConfig.cpp
@@ -46,6 +47,8 @@ set(TEST_SOURCES
     test_ResourceList.cpp
     test_Scene.cpp
     test_Schedule.cpp
+    test_Sensor.cpp
+    test_SensorList.cpp
     test_SimpleBrightnessStrategy.cpp
     test_SimpleColorHueStrategy.cpp
     test_SimpleColorTemperatureStrategy.cpp

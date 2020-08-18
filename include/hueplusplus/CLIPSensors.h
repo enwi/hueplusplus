@@ -45,14 +45,15 @@ public:
     void setURL(const std::string& url);
 
     time::AbsoluteTime getLastUpdated() const;
+
 protected:
-    BaseCLIP(Sensor sensor) : BaseDevice(std::move(sensor)) { }
+    explicit BaseCLIP(Sensor sensor) : BaseDevice(std::move(sensor)) { }
 };
 
 class CLIPSwitch : public BaseCLIP
 {
 public:
-    CLIPSwitch(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
+    explicit CLIPSwitch(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
 
     int getButtonEvent() const;
     void setButtonEvent(int code);
@@ -62,7 +63,7 @@ public:
 class CLIPOpenClose : public BaseCLIP
 {
 public:
-    CLIPOpenClose(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
+    explicit CLIPOpenClose(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
 
     bool isOpen() const;
     void setOpen(bool open);
@@ -73,7 +74,7 @@ public:
 class CLIPPresence : public BaseCLIP
 {
 public:
-    CLIPPresence(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
+    explicit CLIPPresence(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
 
     bool getPresence() const;
     void setPresence(bool presence);
@@ -84,7 +85,7 @@ public:
 class CLIPTemperature : public BaseCLIP
 {
 public:
-    CLIPTemperature(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
+    explicit CLIPTemperature(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
 
     int getTemperature() const;
     void setTemperature(int temperature);
@@ -94,7 +95,7 @@ public:
 class CLIPHumidity : public BaseCLIP
 {
 public:
-    CLIPHumidity(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
+    explicit CLIPHumidity(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
 
     int getHumidity() const;
     void setHumidity(int humidity);
@@ -104,7 +105,7 @@ public:
 class CLIPLightLevel : public BaseCLIP
 {
 public:
-    CLIPLightLevel(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
+    explicit CLIPLightLevel(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
 
     int getDarkThreshold() const;
     void setDarkThreshold(int threshold);
@@ -122,7 +123,7 @@ public:
 class CLIPGenericFlag : public BaseCLIP
 {
 public:
-    CLIPGenericFlag(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
+    explicit CLIPGenericFlag(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
 
     bool getFlag() const;
     void setFlag(bool flag);
@@ -132,7 +133,7 @@ public:
 class CLIPGenericStatus : public BaseCLIP
 {
 public:
-    CLIPGenericStatus(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
+    explicit CLIPGenericStatus(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
 
     int getStatus() const;
     void setStatus(int status);
