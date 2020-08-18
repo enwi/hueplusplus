@@ -261,6 +261,8 @@ nlohmann::json CreateSensor::getRequest() const
 namespace sensors
 {
 
+constexpr const char* DaylightSensor::typeStr;
+
 bool DaylightSensor::isOn() const
 {
     return state.getValue().at("config").at("on").get<bool>();
