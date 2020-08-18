@@ -35,13 +35,13 @@
 
 using namespace hueplusplus;
 
-class HueFinderTest : public ::testing::Test
+class BridgeFinderTest : public ::testing::Test
 {
 protected:
     std::shared_ptr<MockHttpHandler> handler;
 
 protected:
-    HueFinderTest() : handler(std::make_shared<MockHttpHandler>())
+    BridgeFinderTest() : handler(std::make_shared<MockHttpHandler>())
     {
         using namespace ::testing;
 
@@ -59,10 +59,10 @@ protected:
             .Times(AtLeast(1))
             .WillRepeatedly(Return(getBridgeXml()));
     }
-    ~HueFinderTest() {};
+    ~BridgeFinderTest() {};
 };
 
-TEST_F(HueFinderTest, FindBridges)
+TEST_F(BridgeFinderTest, FindBridges)
 {
     BridgeFinder finder(handler);
     std::vector<BridgeFinder::BridgeIdentification> bridges = finder.FindBridges();
@@ -85,7 +85,7 @@ TEST_F(HueFinderTest, FindBridges)
     EXPECT_TRUE(bridges.empty());
 }
 
-TEST_F(HueFinderTest, GetBridge)
+TEST_F(BridgeFinderTest, GetBridge)
 {
     using namespace ::testing;
     nlohmann::json request {{"devicetype", "HuePlusPlus#User"}};
@@ -120,7 +120,7 @@ TEST_F(HueFinderTest, GetBridge)
     Mock::VerifyAndClearExpectations(handler.get());
 }
 
-TEST_F(HueFinderTest, AddUsername)
+TEST_F(BridgeFinderTest, AddUsername)
 {
     BridgeFinder finder(handler);
     std::vector<BridgeFinder::BridgeIdentification> bridges = finder.FindBridges();
@@ -133,7 +133,7 @@ TEST_F(HueFinderTest, AddUsername)
     EXPECT_EQ(test_bridge.getUsername(), getBridgeUsername()) << "Bridge username not matching";
 }
 
-TEST_F(HueFinderTest, GetAllUsernames)
+TEST_F(BridgeFinderTest, GetAllUsernames)
 {
     BridgeFinder finder(handler);
     std::vector<BridgeFinder::BridgeIdentification> bridges = finder.FindBridges();

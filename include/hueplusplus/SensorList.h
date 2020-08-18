@@ -40,12 +40,15 @@ public:
     template <typename T>
     std::vector<T> getAllByType()
     {
+        nlohmann::json state = this->stateCache.getValue();
         std::vector<T> result;
-        std::string type = T::typeStr;
-        // TODO: Maybe only parse the sensors with correct type
-        for (Sensor& s : getAll())
+        for (auto it = state.begin(); it != state.end(); ++it)
         {
-            result.push_back(s.asSensorType<T>());
+            // Only parse the sensors with the correct type
+            if (it->value("type", "") == T::typeStr)
+            {
+                result.push_back(get(maybeStoi(it.key())).asSensorType<T>());
+            }
         }
         return result;
     }

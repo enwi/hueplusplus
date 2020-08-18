@@ -57,11 +57,6 @@ Alert alertFromString(const std::string& s)
     }
 }
 
-bool Sensor::hasSwupdate() const
-{
-    return state.getValue().at("config").count("swupdate") != 0;
-}
-
 bool Sensor::hasOn() const
 {
     return state.getValue().at("config").count("on") != 0;
@@ -124,7 +119,7 @@ void Sensor::sendAlert(Alert type)
         alertStr = "none";
         break;
     }
-    sendPutRequest("/state", nlohmann::json {{"alert", alertStr}}, CURRENT_FILE_INFO);
+    sendPutRequest("/config", nlohmann::json {{"alert", alertStr}}, CURRENT_FILE_INFO);
 }
 bool Sensor::hasReachable() const
 {
@@ -205,7 +200,7 @@ nlohmann::json Sensor::getState() const
 }
 void Sensor::setStateAttribute(const std::string& key, const nlohmann::json& value)
 {
-    sendPutRequest("/state", nlohmann::json {{"key", value}}, CURRENT_FILE_INFO);
+    sendPutRequest("/state", nlohmann::json {{key, value}}, CURRENT_FILE_INFO);
 }
 
 nlohmann::json Sensor::getConfig() const
@@ -215,7 +210,7 @@ nlohmann::json Sensor::getConfig() const
 
 void Sensor::setConfigAttribute(const std::string& key, const nlohmann::json& value)
 {
-    sendPutRequest("/config", nlohmann::json {{"key", value}}, CURRENT_FILE_INFO);
+    sendPutRequest("/config", nlohmann::json {{key, value}}, CURRENT_FILE_INFO);
 }
 
 bool Sensor::isCertified() const
