@@ -27,6 +27,13 @@ namespace hueplusplus
 {
 namespace sensors
 {
+
+constexpr int ZGPSwitch::c_button1;
+constexpr int ZGPSwitch::c_button2;
+constexpr int ZGPSwitch::c_button3;
+constexpr int ZGPSwitch::c_button4;
+constexpr const char* ZGPSwitch::typeStr;
+
 bool ZGPSwitch::isOn() const
 {
     return state.getValue().at("config").at("on").get<bool>();
@@ -34,13 +41,31 @@ bool ZGPSwitch::isOn() const
 
 void ZGPSwitch::setOn(bool on)
 {
-    sendPutRequest("/config", nlohmann::json{ {"on", on} }, CURRENT_FILE_INFO);
+    sendPutRequest("/config", nlohmann::json {{"on", on}}, CURRENT_FILE_INFO);
 }
 
 int ZGPSwitch::getButtonEvent() const
 {
     return state.getValue().at("state").at("buttonevent").get<int>();
 }
+
+constexpr int ZLLSwitch::c_ON_INITIAL_PRESS;
+constexpr int ZLLSwitch::c_ON_HOLD;
+constexpr int ZLLSwitch::c_ON_SHORT_RELEASED;
+constexpr int ZLLSwitch::c_ON_LONG_RELEASED;
+constexpr int ZLLSwitch::c_UP_INITIAL_PRESS;
+constexpr int ZLLSwitch::c_UP_HOLD;
+constexpr int ZLLSwitch::c_UP_SHORT_RELEASED;
+constexpr int ZLLSwitch::c_UP_LONG_RELEASED;
+constexpr int ZLLSwitch::c_DOWN_INITIAL_PRESS;
+constexpr int ZLLSwitch::c_DOWN_HOLD;
+constexpr int ZLLSwitch::c_DOWN_SHORT_RELEASED;
+constexpr int ZLLSwitch::c_DOWN_LONG_RELEASED;
+constexpr int ZLLSwitch::c_OFF_INITIAL_PRESS;
+constexpr int ZLLSwitch::c_OFF_HOLD;
+constexpr int ZLLSwitch::c_OFF_SHORT_RELEASED;
+constexpr int ZLLSwitch::c_OFF_LONG_RELEASED;
+constexpr const char* ZLLSwitch::typeStr;
 
 bool ZLLSwitch::isOn() const
 {
@@ -49,7 +74,7 @@ bool ZLLSwitch::isOn() const
 
 void ZLLSwitch::setOn(bool on)
 {
-    sendPutRequest("/config", nlohmann::json{ {"on", on} }, CURRENT_FILE_INFO);
+    sendPutRequest("/config", nlohmann::json {{"on", on}}, CURRENT_FILE_INFO);
 }
 bool ZLLSwitch::hasBatteryState() const
 {
@@ -89,6 +114,8 @@ time::AbsoluteTime ZLLSwitch::getLastUpdated() const
     return time::AbsoluteTime::parseUTC(it->get<std::string>());
 }
 
+constexpr const char* ZLLPresence::typeStr;
+
 bool ZLLPresence::isOn() const
 {
     return state.getValue().at("config").at("on").get<bool>();
@@ -96,7 +123,7 @@ bool ZLLPresence::isOn() const
 
 void ZLLPresence::setOn(bool on)
 {
-    sendPutRequest("/config", nlohmann::json{ {"on", on} }, CURRENT_FILE_INFO);
+    sendPutRequest("/config", nlohmann::json {{"on", on}}, CURRENT_FILE_INFO);
 }
 bool ZLLPresence::hasBatteryState() const
 {
@@ -149,6 +176,8 @@ time::AbsoluteTime ZLLPresence::getLastUpdated() const
     return time::AbsoluteTime::parseUTC(it->get<std::string>());
 }
 
+constexpr const char* ZLLTemperature::typeStr;
+
 bool ZLLTemperature::isOn() const
 {
     return state.getValue().at("config").at("on").get<bool>();
@@ -156,7 +185,7 @@ bool ZLLTemperature::isOn() const
 
 void ZLLTemperature::setOn(bool on)
 {
-    sendPutRequest("/config", { "on", on }, CURRENT_FILE_INFO);
+    sendPutRequest("/config", {"on", on}, CURRENT_FILE_INFO);
 }
 bool ZLLTemperature::hasBatteryState() const
 {
@@ -174,7 +203,7 @@ Alert ZLLTemperature::getLastAlert() const
 }
 void ZLLTemperature::sendAlert(Alert type)
 {
-    sendPutRequest("/state", nlohmann::json{ {"alert", alertToString(type)} }, CURRENT_FILE_INFO);
+    sendPutRequest("/state", nlohmann::json {{"alert", alertToString(type)}}, CURRENT_FILE_INFO);
 }
 bool ZLLTemperature::isReachable() const
 {
@@ -186,6 +215,8 @@ int ZLLTemperature::getTemperature() const
     return state.getValue().at("state").at("temperature").get<int>();
 }
 
+constexpr const char* ZLLLightLevel::typeStr;
+
 bool ZLLLightLevel::isOn() const
 {
     return state.getValue().at("config").at("on").get<bool>();
@@ -193,7 +224,7 @@ bool ZLLLightLevel::isOn() const
 
 void ZLLLightLevel::setOn(bool on)
 {
-    sendPutRequest("/config", { "on", on }, CURRENT_FILE_INFO);
+    sendPutRequest("/config", {"on", on}, CURRENT_FILE_INFO);
 }
 bool ZLLLightLevel::hasBatteryState() const
 {
@@ -214,7 +245,7 @@ int ZLLLightLevel::getDarkThreshold() const
 
 void ZLLLightLevel::setDarkThreshold(int threshold)
 {
-    sendPutRequest("/config", nlohmann::json{ { "tholddark", threshold} }, CURRENT_FILE_INFO);
+    sendPutRequest("/config", nlohmann::json {{"tholddark", threshold}}, CURRENT_FILE_INFO);
 }
 int ZLLLightLevel::getThresholdOffset() const
 {
@@ -223,7 +254,7 @@ int ZLLLightLevel::getThresholdOffset() const
 
 void ZLLLightLevel::setThresholdOffset(int offset)
 {
-    sendPutRequest("/config", nlohmann::json{ { "tholdoffset", offset} }, CURRENT_FILE_INFO);
+    sendPutRequest("/config", nlohmann::json {{"tholdoffset", offset}}, CURRENT_FILE_INFO);
 }
 
 int ZLLLightLevel::getLightLevel() const
@@ -247,7 +278,7 @@ time::AbsoluteTime ZLLLightLevel::getLastUpdated() const
     auto it = stateJson.find("lastupdated");
     if (it == stateJson.end() || !it->is_string() || *it == "none")
     {
-        return time::AbsoluteTime(std::chrono::system_clock::time_point(std::chrono::seconds{ 0 }));
+        return time::AbsoluteTime(std::chrono::system_clock::time_point(std::chrono::seconds {0}));
     }
     return time::AbsoluteTime::parseUTC(it->get<std::string>());
 }

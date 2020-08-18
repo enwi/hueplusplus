@@ -97,6 +97,7 @@ public:
     //! \brief Get whether sensor has alerts
     bool hasAlert() const;
     //! \brief Get last sent alert
+    //! \note This is not cleared when the alert ends.
     //! \throws nlohmann::json::out_of_range when sensor has no alert.
     Alert getLastAlert() const;
     //! \brief Send alert
@@ -285,7 +286,7 @@ public:
     bool hasBatteryState() const;
     //! \brief Get battery state
     //! \returns Battery state in percent
-    //! \throws nlohmann::json::out_of_range when sensor has no battery status.
+    //! \throws nlohmann::json::out_of_range when sensor has no battery state.
     int getBatteryState() const;
     //! \brief Set battery state
     //! \throws std::system_error when system or socket operations fail
