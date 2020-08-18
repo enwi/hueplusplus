@@ -33,17 +33,28 @@
 
 namespace hueplusplus
 {
+//! \brief Specifies light alert modes
 enum class Alert
 {
-    none,
-    select,
-    lselect
+    none, //!< No alert
+    select, //!< Select alert (breathe cycle)
+    lselect //!< Long select alert (15s breathe)
 };
+
+//! \brief Convert alert to string form
+//! \param alert Enum value
+//! \returns "none", "select" or "lselect"
 std::string alertToString(Alert alert);
+
+//! \brief Convert string to Alert enum
+//! \param s String representation
+//! \returns Alert::select or Alert::lselect when \c s matches, otherwise Alert::none
 Alert alertFromString(const std::string& s);
+
+//! \brief Class for generic or unknown sensor types
 //!
-//! Generic class for Hue sensors
-//!
+//! It is recommended to instead use the classes for specific types in \ref sensors.
+//! This class should only be used if the type cannot be known or is not supported.
 class Sensor : public BaseDevice
 {
 public:
@@ -56,51 +67,134 @@ public:
     //!\name Config attributes
     ///@{
 
+    //! \brief Get whether sensor has an on attribute
     bool hasOn() const;
-    // Check whether sensor is on. Does not update when off
+    //! \brief Get whether sensor is turned on
+    //!
+    //! Sensors which are off do not change their status
+    //! \throws nlohmann::json::out_of_range when on attribute does not exist.
     bool isOn() const;
+    //! \brief Turn sensor on or off
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     void setOn(bool on);
 
+    //! \brief Get whether sensor has a battery state
     bool hasBatteryState() const;
-    // Battery state in percent
+    //! \brief Get battery state
+    //! \returns Battery state in percent
+    //! \throws nlohmann::json::out_of_range when sensor has no battery status.
     int getBatteryState() const;
+    //! \brief Set battery state
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     void setBatteryState(int percent);
 
+    //! \brief Get whether sensor has alerts
     bool hasAlert() const;
+    //! \brief Get last sent alert
+    //! \throws nlohmann::json::out_of_range when sensor has no alert.
     Alert getLastAlert() const;
+    //! \brief Send alert
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     void sendAlert(Alert type);
 
+    //! \brief Get whether sensor has reachable validation
     bool hasReachable() const;
+    //! \brief Get whether sensor is reachable
+    //! \throws nlohmann::json::out_of_range when sensor has no reachable validation
     bool isReachable() const;
 
+    //! \brief Get whether sensor has user test mode
     bool hasUserTest() const;
+    //! \brief Enable or disable user test mode
+    //!
+    //! In user test mode, changes are reported more frequently.#
+    //! It remains on for 120 seconds or until turned off.
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     void setUserTest(bool enabled);
 
+    //! \brief Get whether sensor has a URL
     bool hasURL() const;
+    //! \brief Get sensor URL
+    //!
+    //! Only CLIP sensors can have a URL.
     std::string getURL() const;
+    //! \brief Set sensor URL
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     void setURL(const std::string& url);
- 
+
+    //! \brief Get pending config entries, if they exist
+    //! \returns The keys of config entries which have been modified,
+    //! but were not committed to the device.
+    //!
+    //! Attempts to set pending config entries may cause errors.
     std::vector<std::string> getPendingConfig() const;
-  
+
+    //! \brief Get whether the sensor has a LED indicator
     bool hasLEDIndication() const;
+    //! \brief Get whether the indicator LED is on
+    //! \throws nlohmann::json::out_of_range when sensor has no LED
     bool getLEDIndication() const;
+    //! \brief Turn LED indicator on or off
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     void setLEDIndication(bool on);
 
+    //! \brief Get entire config object
+    //! \returns A json object with the sensor configuration.
     nlohmann::json getConfig() const;
+    //! \brief Set attribute in the sensor config
+    //! \param key Key of the config attribute
+    //! \param value Any value to set the attribute to
+    //!
+    //! Can be used to configure sensors with additional config entries.
     void setConfigAttribute(const std::string& key, const nlohmann::json& value);
 
     ///@}
-    
+
+    //! \brief Get time of last status update
+    //! \returns The last update time, or a time with a zero duration from epoch
+    //! if the last update time is not set.
     time::AbsoluteTime getLastUpdated() const;
-       
+
+    //! \brief Get state object
     nlohmann::json getState() const;
+    //! \brief Set part of the sensor state
+    //! \param key Key in the state object
+    //! \param value New value
+    //!
+    //! The state can usually only be set on CLIP sensors, not on physical devices.
     void setStateAttribute(const std::string& key, const nlohmann::json& value);
 
+    //! \brief Check if sensor is Hue certified
     bool isCertified() const;
+    //! \brief Check if sensor is primary sensor of the device
+    //!
+    //! When there are multiple sensors on one physical device (same MAC address),
+    //! the primary device is used for the device information.
     bool isPrimary() const;
 
+    //! \brief Convert sensor to a specific type
+    //! \tparam T Sensor type to convert to (from \ref sensors)
+    //! \throws HueException when sensor type does not match requested type
     template <typename T>
-    T asSensorType() const &
+    T asSensorType() const&
     {
         if (getType() != T::typeStr)
         {
@@ -108,6 +202,11 @@ public:
         }
         return T(*this);
     }
+    //! \brief Convert sensor to a specific type
+    //! \tparam T Sensor type to convert to (from \ref sensors)
+    //! \throws HueException when sensor type does not match requested type
+    //!
+    //! Move construct \c T to be more efficient when the type is wanted directly.
     template <typename T>
     T asSensorType() &&
     {
@@ -119,46 +218,124 @@ public:
     }
 };
 
+//! \brief Parameters for creating a new Sensor
+//!
+//! Can be used like a builder object with chained calls.
 class CreateSensor
 {
 public:
+    //! \brief Construct with necessary parameters
+    //! \param name Human readable name
+    //! \param modelid Model id of the sensor
+    //! \param swversion Software version, may be empty
+    //! \param type Sensor type name (see types in \ref sensors)
+    //! \param uniqueid Globally unique ID
+    //! (MAC address of the device, extended with a unique endpoint id)
+    //! \param manufacturername Name of the device manufacturer
     CreateSensor(const std::string& name, const std::string& modelid, const std::string& swversion,
         const std::string& type, const std::string& uniqueid, const std::string& manufacturername);
 
+    //! \brief Set state object
+    //! \param state Sensor state, contents depend on the type.
+    //! \returns this object for chaining calls
     CreateSensor& setState(const nlohmann::json& state);
+    //! \brief Set config object
+    //! \param config Sensor config, configs depend on the type. See getters in Sensor for examples.
+    //! \returns this object for chaining calls
     CreateSensor& setConfig(const nlohmann::json& config);
+    //! \brief Enable recycling, delete automatically when not referenced
+    //! \returns this object for chaining calls
     CreateSensor& setRecycle(bool recycle);
 
+    //! \brief Get request to create the sensor
+    //! \returns JSON request for a POST to create the new sensor
     nlohmann::json getRequest() const;
+
 protected:
     nlohmann::json request;
 };
 
+//! \brief Classes for specific sensor types
+//!
+//! Classes should have a typeStr member with the type name.
 namespace sensors
 {
+//! \brief Daylight sensor to detect sunrise and sunset
+//!
+//! Every bridge has a daylight sensor always available.
 class DaylightSensor : public BaseDevice
 {
 public:
+    //! \brief Construct from generic sensor
     explicit DaylightSensor(Sensor sensor) : BaseDevice(std::move(sensor)) { }
 
+    //! \brief Check if sensor is on
+    //!
+    //! Sensors which are off do not change their status
     bool isOn() const;
+
+    //! \brief Enable or disable sensor
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     void setOn(bool on);
 
+    //! \brief Get whether sensor has a battery state
     bool hasBatteryState() const;
+    //! \brief Get battery state
+    //! \returns Battery state in percent
+    //! \throws nlohmann::json::out_of_range when sensor has no battery status.
     int getBatteryState() const;
+    //! \brief Set battery state
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     void setBatteryState(int percent);
 
+    //! \brief Set GPS coordinates for the calculation
+    //! \param latitude Decimal latitude coordinate "DDD.DDDD{N|S}" with leading zeros ending with N or S.
+    //! "none" to reset. (Empty string is null, which may be used instead of none in the future)
+    //! \param longitude Longitude coordinate (same format as latitude), ending with W or E
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     void setCoordinates(const std::string& latitude, const std::string& longitude);
+    //! \brief Check whether coordinates are configured
+    //!
+    //! There is no way to retrieve the configured coordinates.
     bool isConfigured() const;
 
+    //! \brief Get time offset in minutes to sunrise
+    //!
+    //! The daylight is true if it is \c offset minutes after sunrise.
     int getSunriseOffset() const;
+    //! \brief Set sunrise offset time
+    //! \param minutes Minutes from -120 to 120
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     void setSunriseOffset(int minutes);
 
+    //! \brief Get time offset in minutes to sunset
+    //!
+    //! The daylight is false if it is \c offset minutes after sunset.
     int getSunsetOffset() const;
+    //! \brief Set sunset offset time
+    //! \param minutes Minutes from -120 to 120
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
     void setSunsetOffset(int minutes);
 
+    //! \brief Get reported daylight status
     bool isDaylight() const;
 
+    //! \brief Daylight sensor type name
     static constexpr const char* typeStr = "Daylight";
 };
 

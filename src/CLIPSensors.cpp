@@ -63,9 +63,8 @@ std::string BaseCLIP::getURL() const
 }
 void BaseCLIP::setURL(const std::string& url)
 {
-    sendPutRequest("/config", nlohmann::json{ {"url", url} }, CURRENT_FILE_INFO);
+    sendPutRequest("/config", nlohmann::json {{"url", url}}, CURRENT_FILE_INFO);
 }
-
 
 time::AbsoluteTime BaseCLIP::getLastUpdated() const
 {
@@ -73,10 +72,12 @@ time::AbsoluteTime BaseCLIP::getLastUpdated() const
     auto it = stateJson.find("lastupdated");
     if (it == stateJson.end() || !it->is_string() || *it == "none")
     {
-        return time::AbsoluteTime(std::chrono::system_clock::time_point(std::chrono::seconds{ 0 }));
+        return time::AbsoluteTime(std::chrono::system_clock::time_point(std::chrono::seconds {0}));
     }
     return time::AbsoluteTime::parseUTC(it->get<std::string>());
 }
+
+constexpr const char* CLIPSwitch::typeStr;
 
 int CLIPSwitch::getButtonEvent() const
 {
@@ -84,8 +85,10 @@ int CLIPSwitch::getButtonEvent() const
 }
 void CLIPSwitch::setButtonEvent(int code)
 {
-    sendPutRequest("/state", nlohmann::json{ {"buttonevent", code} }, CURRENT_FILE_INFO);
+    sendPutRequest("/state", nlohmann::json {{"buttonevent", code}}, CURRENT_FILE_INFO);
 }
+
+constexpr const char* CLIPOpenClose::typeStr;
 
 bool CLIPOpenClose::isOpen() const
 {
@@ -93,8 +96,10 @@ bool CLIPOpenClose::isOpen() const
 }
 void CLIPOpenClose::setOpen(bool open)
 {
-    sendPutRequest("/state", nlohmann::json{ {"open", open} }, CURRENT_FILE_INFO);
+    sendPutRequest("/state", nlohmann::json {{"open", open}}, CURRENT_FILE_INFO);
 }
+
+constexpr const char* CLIPPresence::typeStr;
 
 bool CLIPPresence::getPresence() const
 {
@@ -102,8 +107,10 @@ bool CLIPPresence::getPresence() const
 }
 void CLIPPresence::setPresence(bool presence)
 {
-    sendPutRequest("/state", nlohmann::json{ {"presence", presence} }, CURRENT_FILE_INFO);
+    sendPutRequest("/state", nlohmann::json {{"presence", presence}}, CURRENT_FILE_INFO);
 }
+
+constexpr const char* CLIPTemperature::typeStr;
 
 int CLIPTemperature::getTemperature() const
 {
@@ -111,9 +118,10 @@ int CLIPTemperature::getTemperature() const
 }
 void CLIPTemperature::setTemperature(int temperature)
 {
-    sendPutRequest("/state", nlohmann::json{ {"temperature", temperature} }, CURRENT_FILE_INFO);
+    sendPutRequest("/state", nlohmann::json {{"temperature", temperature}}, CURRENT_FILE_INFO);
 }
 
+constexpr const char* CLIPHumidity::typeStr;
 
 int CLIPHumidity::getHumidity() const
 {
@@ -121,8 +129,10 @@ int CLIPHumidity::getHumidity() const
 }
 void CLIPHumidity::setHumidity(int humidity)
 {
-    sendPutRequest("/state", nlohmann::json{ {"humidity", humidity} }, CURRENT_FILE_INFO);
+    sendPutRequest("/state", nlohmann::json {{"humidity", humidity}}, CURRENT_FILE_INFO);
 }
+
+constexpr const char* CLIPLightLevel::typeStr;
 
 int CLIPLightLevel::getDarkThreshold() const
 {
@@ -131,7 +141,7 @@ int CLIPLightLevel::getDarkThreshold() const
 
 void CLIPLightLevel::setDarkThreshold(int threshold)
 {
-    sendPutRequest("/config", nlohmann::json{ { "tholddark", threshold} }, CURRENT_FILE_INFO);
+    sendPutRequest("/config", nlohmann::json {{"tholddark", threshold}}, CURRENT_FILE_INFO);
 }
 int CLIPLightLevel::getThresholdOffset() const
 {
@@ -140,7 +150,7 @@ int CLIPLightLevel::getThresholdOffset() const
 
 void CLIPLightLevel::setThresholdOffset(int offset)
 {
-    sendPutRequest("/config", nlohmann::json{ { "tholdoffset", offset} }, CURRENT_FILE_INFO);
+    sendPutRequest("/config", nlohmann::json {{"tholdoffset", offset}}, CURRENT_FILE_INFO);
 }
 
 int CLIPLightLevel::getLightLevel() const
@@ -150,7 +160,7 @@ int CLIPLightLevel::getLightLevel() const
 
 void CLIPLightLevel::setLightLevel(int level)
 {
-    sendPutRequest("/state", nlohmann::json{ {"lightlevel", level} }, CURRENT_FILE_INFO);
+    sendPutRequest("/state", nlohmann::json {{"lightlevel", level}}, CURRENT_FILE_INFO);
 }
 
 bool CLIPLightLevel::isDark() const
@@ -163,14 +173,18 @@ bool CLIPLightLevel::isDaylight() const
     return state.getValue().at("state").at("daylight").get<bool>();
 }
 
+constexpr const char* CLIPGenericFlag::typeStr;
+
 bool CLIPGenericFlag::getFlag() const
 {
     return state.getValue().at("state").at("flag").get<bool>();
 }
 void CLIPGenericFlag::setFlag(bool flag)
 {
-    sendPutRequest("/state", nlohmann::json{ {"flag", flag} }, CURRENT_FILE_INFO);
+    sendPutRequest("/state", nlohmann::json {{"flag", flag}}, CURRENT_FILE_INFO);
 }
+
+constexpr const char* CLIPGenericStatus::typeStr;
 
 int CLIPGenericStatus::getStatus() const
 {
@@ -179,7 +193,7 @@ int CLIPGenericStatus::getStatus() const
 
 void CLIPGenericStatus::setStatus(int status)
 {
-    sendPutRequest("/config", nlohmann::json{ { "status", status} }, CURRENT_FILE_INFO);
+    sendPutRequest("/config", nlohmann::json {{"status", status}}, CURRENT_FILE_INFO);
 }
 } // namespace sensors
 } // namespace hueplusplus
