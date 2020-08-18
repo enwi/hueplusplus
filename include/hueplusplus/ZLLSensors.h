@@ -243,6 +243,7 @@ public:
     bool isReachable() const;
 
     //! \brief Get recorded temperature
+    //! \returns Temperature in 0.01 degrees Celsius.
     int getTemperature() const;
 
     //! \brief ZLLTemperature sensor type name
