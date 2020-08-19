@@ -188,12 +188,12 @@ constexpr const char* CLIPGenericStatus::typeStr;
 
 int CLIPGenericStatus::getStatus() const
 {
-    return state.getValue().at("config").at("status").get<int>();
+    return state.getValue().at("state").at("status").get<int>();
 }
 
 void CLIPGenericStatus::setStatus(int status)
 {
-    sendPutRequest("/config", nlohmann::json {{"status", status}}, CURRENT_FILE_INFO);
+    sendPutRequest("/state", nlohmann::json {{"status", status}}, CURRENT_FILE_INFO);
 }
 } // namespace sensors
 } // namespace hueplusplus
