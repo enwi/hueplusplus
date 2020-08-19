@@ -92,7 +92,7 @@ Alert ZLLSwitch::getLastAlert() const
 }
 void ZLLSwitch::sendAlert(Alert type)
 {
-    sendPutRequest("/state", nlohmann::json {{"alert", alertToString(type)}}, CURRENT_FILE_INFO);
+    sendPutRequest("/config", nlohmann::json {{"alert", alertToString(type)}}, CURRENT_FILE_INFO);
 }
 bool ZLLSwitch::isReachable() const
 {
@@ -141,7 +141,7 @@ Alert ZLLPresence::getLastAlert() const
 }
 void ZLLPresence::sendAlert(Alert type)
 {
-    sendPutRequest("/state", nlohmann::json {{"alert", alertToString(type)}}, CURRENT_FILE_INFO);
+    sendPutRequest("/config", nlohmann::json {{"alert", alertToString(type)}}, CURRENT_FILE_INFO);
 }
 bool ZLLPresence::isReachable() const
 {
@@ -158,7 +158,7 @@ int ZLLPresence::getMaxSensitivity() const
 }
 void ZLLPresence::setSensitivity(int sensitivity)
 {
-    sendPutRequest("/state", nlohmann::json {{"sensitivity", sensitivity}}, CURRENT_FILE_INFO);
+    sendPutRequest("/config", nlohmann::json {{"sensitivity", sensitivity}}, CURRENT_FILE_INFO);
 }
 bool ZLLPresence::getPresence() const
 {
@@ -185,7 +185,7 @@ bool ZLLTemperature::isOn() const
 
 void ZLLTemperature::setOn(bool on)
 {
-    sendPutRequest("/config", {"on", on}, CURRENT_FILE_INFO);
+    sendPutRequest("/config", {{"on", on}}, CURRENT_FILE_INFO);
 }
 bool ZLLTemperature::hasBatteryState() const
 {
@@ -203,7 +203,7 @@ Alert ZLLTemperature::getLastAlert() const
 }
 void ZLLTemperature::sendAlert(Alert type)
 {
-    sendPutRequest("/state", nlohmann::json {{"alert", alertToString(type)}}, CURRENT_FILE_INFO);
+    sendPutRequest("/config", nlohmann::json {{"alert", alertToString(type)}}, CURRENT_FILE_INFO);
 }
 bool ZLLTemperature::isReachable() const
 {
@@ -224,7 +224,7 @@ bool ZLLLightLevel::isOn() const
 
 void ZLLLightLevel::setOn(bool on)
 {
-    sendPutRequest("/config", {"on", on}, CURRENT_FILE_INFO);
+    sendPutRequest("/config", {{"on", on}}, CURRENT_FILE_INFO);
 }
 bool ZLLLightLevel::hasBatteryState() const
 {

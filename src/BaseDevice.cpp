@@ -93,7 +93,7 @@ bool BaseDevice::setName(const std::string& name)
 
 BaseDevice::BaseDevice(
     int id, const HueCommandAPI& commands, const std::string& path, std::chrono::steady_clock::duration refreshDuration)
-    : id(id), state(path + std::to_string(id), commands, refreshDuration), path(path)
+    : id(id), path(path), state(path + std::to_string(id), commands, refreshDuration)
 {
     state.refresh();
 }

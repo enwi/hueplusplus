@@ -35,6 +35,7 @@ set(TEST_SOURCES
     test_BaseHttpHandler.cpp
     test_Bridge.cpp
     test_BridgeConfig.cpp
+    test_SensorImpls.cpp
     test_ColorUnits.cpp
     test_ExtendedColorHueStrategy.cpp
     test_ExtendedColorTemperatureStrategy.cpp
