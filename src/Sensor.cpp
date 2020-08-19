@@ -270,7 +270,7 @@ bool DaylightSensor::isOn() const
 
 void DaylightSensor::setOn(bool on)
 {
-    sendPutRequest("/config", {"on", on}, CURRENT_FILE_INFO);
+    sendPutRequest("/config", { {"on", on} }, CURRENT_FILE_INFO);
 }
 
 bool DaylightSensor::hasBatteryState() const
@@ -324,7 +324,7 @@ void DaylightSensor::setSunsetOffset(int minutes)
 
 bool DaylightSensor::isDaylight() const
 {
-    return state.getValue().at("config").at("daylight").get<bool>();
+    return state.getValue().at("state").at("daylight").get<bool>();
 }
 } // namespace sensors
 } // namespace hueplusplus
