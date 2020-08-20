@@ -44,7 +44,7 @@ TEST(BridgeConfig, refresh)
     EXPECT_CALL(*handler,
         GETJson("/api/" + getBridgeUsername() + "/config", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .WillOnce(Return(nlohmann::json::object()));
-    config.refresh();
+    config.refresh(true);
 }
 
 TEST(BridgeConfig, getWhitelistedUsers)
@@ -107,7 +107,7 @@ TEST(BridgeConfig, getLinkButton)
     EXPECT_CALL(*handler,
         GETJson("/api/" + getBridgeUsername() + "/config", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .WillOnce(Return(nlohmann::json {{"linkbutton", false}}));
-    config.refresh();
+    config.refresh(true);
     EXPECT_FALSE(config.getLinkButton());
 }
 

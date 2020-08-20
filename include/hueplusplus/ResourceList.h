@@ -112,7 +112,7 @@ public:
         auto pos = resources.find(id);
         if (pos != resources.end())
         {
-            pos->second.refresh();
+            pos->second.refresh(true);
             return pos->second;
         }
         const nlohmann::json& state = stateCache.getValue();
