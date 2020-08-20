@@ -10,9 +10,16 @@ Group::Group(int id, const HueCommandAPI& commands, std::chrono::steady_clock::d
     state.refresh();
 }
 
-void Group::refresh()
+void Group::refresh(bool force)
 {
-    state.refresh();
+    if (force)
+    {
+        state.refresh();
+    }
+    else
+    {
+        state.getValue();
+    }
 }
 
 int Group::getId() const
@@ -50,7 +57,7 @@ void Group::setName(const std::string& name)
 {
     nlohmann::json request = {{"name", name}};
     sendPutRequest("", request, CURRENT_FILE_INFO);
-    refresh();
+    refresh(true);
 }
 
 void Group::setLights(const std::vector<int>& ids)
@@ -61,7 +68,7 @@ void Group::setLights(const std::vector<int>& ids)
         lights.push_back(std::to_string(id));
     }
     sendPutRequest("", {{"lights", lights}}, CURRENT_FILE_INFO);
-    refresh();
+    refresh(true);
 }
 
 bool Group::getAllOn()
@@ -204,7 +211,7 @@ std::string Group::getRoomType() const
 void Group::setRoomType(const std::string& type)
 {
     sendPutRequest("", {{"class", type}}, CURRENT_FILE_INFO);
-    refresh();
+    refresh(true);
 }
 
 std::string Group::getModelId() const
