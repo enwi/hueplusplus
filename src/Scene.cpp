@@ -24,7 +24,7 @@
 
 namespace hueplusplus
 {
-LightState::LightState(const nlohmann::json& state) : state(state) {}
+LightState::LightState(const nlohmann::json& state) : state(state) { }
 
 bool LightState::isOn() const
 {
@@ -156,9 +156,16 @@ Scene::Scene(const std::string& id, const HueCommandAPI& commands, std::chrono::
     refresh();
 }
 
-void Scene::refresh()
+void Scene::refresh(bool force)
 {
-    state.refresh();
+    if (force)
+    {
+        state.refresh();
+    }
+    else
+    {
+        state.getValue();
+    }
 }
 
 std::string Scene::getId() const

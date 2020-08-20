@@ -59,11 +59,13 @@ public:
     BridgeConfig(std::shared_ptr<APICache> baseCache, std::chrono::steady_clock::duration refreshDuration);
 
     //! \brief Refreshes internal cached state.
+    //! \param force \c true forces a refresh, regardless of how long the last refresh was ago.
+    //! \c false to only refresh when enough time has passed (needed e.g. when calling only const methods).
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    void refresh();
+    void refresh(bool force = false);
 
     //! \brief Get the list of whitelisted users
     //! \returns All users authorized for API access

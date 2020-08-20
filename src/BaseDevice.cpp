@@ -83,7 +83,7 @@ std::string BaseDevice::getSwVersion() const
 
 bool BaseDevice::setName(const std::string& name)
 {
-    nlohmann::json request = { {"name", name} };
+    nlohmann::json request = {{"name", name}};
     nlohmann::json reply = sendPutRequest("/name", request, CURRENT_FILE_INFO);
 
     // Check whether request was successful (returned name is not necessarily the actually set name)
@@ -103,9 +103,16 @@ nlohmann::json BaseDevice::sendPutRequest(const std::string& subPath, const nloh
     return state.getCommandAPI().PUTRequest(path + std::to_string(id) + subPath, request, std::move(fileInfo));
 }
 
-void BaseDevice::refresh()
+void BaseDevice::refresh(bool force)
 {
-    state.refresh();
+    if (force)
+    {
+        state.refresh();
+    }
+    else
+    {
+        state.getValue();
+    }
 }
 
 } // namespace hueplusplus

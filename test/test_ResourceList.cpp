@@ -34,7 +34,7 @@ class TestResource
 public:
     TestResource(int id, HueCommandAPI api, std::chrono::steady_clock::duration refreshDuration) : id(id) {}
 
-    void refresh() {}
+    void refresh(bool force = false) {}
 
 public:
     int id;
@@ -42,7 +42,7 @@ public:
 class TestResourceFactory
 {
 public:
-    void refresh() {}
+    void refresh(bool force = false) {}
 };
 class TestStringResource
 {
@@ -50,7 +50,7 @@ public:
     TestStringResource(const std::string& id, HueCommandAPI api, std::chrono::steady_clock::duration refreshDuration)
         : id(id)
     {}
-    void refresh() {}
+    void refresh(bool force = false) {}
 
 public:
     std::string id;

@@ -27,9 +27,17 @@ namespace hueplusplus
 BridgeConfig::BridgeConfig(std::shared_ptr<APICache> baseCache, std::chrono::steady_clock::duration refreshDuration)
     : cache(std::move(baseCache), "config", refreshDuration)
 { }
-void BridgeConfig::refresh()
+
+void BridgeConfig::refresh(bool force)
 {
-    cache.refresh();
+    if (force)
+    {
+        cache.refresh();
+    }
+    else
+    {
+        cache.getValue();
+    }
 }
 std::vector<WhitelistedUser> BridgeConfig::getWhitelistedUsers() const
 {

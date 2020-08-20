@@ -319,7 +319,7 @@ TEST_F(SceneTest, refresh)
     expectGetState(id);
     Scene scene(id, commands, std::chrono::seconds(0));
     expectGetState(id);
-    scene.refresh();
+    scene.refresh(true);
 }
 
 TEST_F(SceneTest, setName)
