@@ -319,7 +319,7 @@ public:
             this->stateCache.refresh();
             return this->maybeStoi(idStr);
         }
-        return BaseResourceList::IdType {};
+        return typename BaseResourceList::IdType {};
     }
 
 protected:

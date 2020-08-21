@@ -326,5 +326,16 @@ bool DaylightSensor::isDaylight() const
 {
     return state.getValue().at("state").at("daylight").get<bool>();
 }
+
+time::AbsoluteTime DaylightSensor::getLastUpdated() const
+{
+    const nlohmann::json& stateJson = state.getValue().at("state");
+    auto it = stateJson.find("lastupdated");
+    if (it == stateJson.end() || !it->is_string() || *it == "none")
+    {
+        return time::AbsoluteTime(std::chrono::system_clock::time_point(std::chrono::seconds{ 0 }));
+    }
+    return time::AbsoluteTime::parseUTC(it->get<std::string>());
+}
 } // namespace sensors
 } // namespace hueplusplus

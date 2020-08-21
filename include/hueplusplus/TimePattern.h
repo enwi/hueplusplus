@@ -24,6 +24,7 @@
 
 #include <chrono>
 #include <string>
+#include <cstddef>
 
 namespace hueplusplus
 {
@@ -422,7 +423,7 @@ private:
     Type type;
     union
     {
-        nullptr_t undefined;
+        std::nullptr_t undefined;
         AbsoluteVariedTime absolute;
         RecurringTime recurring;
         TimeInterval interval;
