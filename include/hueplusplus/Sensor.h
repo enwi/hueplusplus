@@ -336,6 +336,11 @@ public:
     //! \brief Get reported daylight status
     bool isDaylight() const;
 
+    //! \brief Get time of last status update
+    //! \returns The last update time, or a time with a zero duration from epoch
+    //! if the last update time is not set.
+    time::AbsoluteTime getLastUpdated() const;
+
     //! \brief Daylight sensor type name
     static constexpr const char* typeStr = "Daylight";
 };
