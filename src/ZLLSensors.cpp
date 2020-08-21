@@ -215,6 +215,17 @@ int ZLLTemperature::getTemperature() const
     return state.getValue().at("state").at("temperature").get<int>();
 }
 
+time::AbsoluteTime ZLLTemperature::getLastUpdated() const
+{
+    const nlohmann::json& stateJson = state.getValue().at("state");
+    auto it = stateJson.find("lastupdated");
+    if (it == stateJson.end() || !it->is_string() || *it == "none")
+    {
+        return time::AbsoluteTime(std::chrono::system_clock::time_point(std::chrono::seconds{ 0 }));
+    }
+    return time::AbsoluteTime::parseUTC(it->get<std::string>());
+}
+
 constexpr const char* ZLLLightLevel::typeStr;
 
 bool ZLLLightLevel::isOn() const

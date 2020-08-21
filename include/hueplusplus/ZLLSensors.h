@@ -246,6 +246,11 @@ public:
     //! \returns Temperature in 0.01 degrees Celsius.
     int getTemperature() const;
 
+    //! \brief Get time of last status update
+    //! \returns The last update time, or a time with a zero duration from epoch
+    //! if the last update time is not set.
+    time::AbsoluteTime getLastUpdated() const;
+
     //! \brief ZLLTemperature sensor type name
     static constexpr const char* typeStr = "ZLLTemperature";
 };

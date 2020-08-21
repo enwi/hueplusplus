@@ -97,7 +97,7 @@ TYPED_TEST_SUITE(SensorReachableTest, SensorReachableTypes);
 template <typename T>
 class SensorUpdateTest : public SensorImplTest<T>
 { };
-using SensorUpdateTypes = Types<CLIPSwitch, ZLLSwitch, ZLLPresence, ZLLLightLevel>;
+using SensorUpdateTypes = Types<CLIPSwitch, ZLLSwitch, ZLLPresence, ZLLLightLevel, ZLLTemperature, DaylightSensor>;
 TYPED_TEST_SUITE(SensorUpdateTest, SensorUpdateTypes);
 
 template <typename T>
