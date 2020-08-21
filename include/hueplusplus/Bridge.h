@@ -129,10 +129,10 @@ class Bridge
     friend class BridgeFinder;
 
 public:
-    using LightList = ResourceList<Light, int>;
+    using LightList = SearchableResourceList<Light>;
     using GroupList = GroupResourceList<Group, CreateGroup>;
-    using ScheduleList = CreateableResourceList<Schedule, int, CreateSchedule>;
-    using SceneList = CreateableResourceList<Scene, std::string, CreateScene>;
+    using ScheduleList = CreateableResourceList<ResourceList<Schedule, int>, CreateSchedule>;
+    using SceneList = CreateableResourceList<ResourceList<Scene, std::string>, CreateScene>;
 
 public:
     //! \brief Constructor of Bridge class

@@ -292,7 +292,7 @@ void Bridge::setHttpHandler(std::shared_ptr<const IHttpHandler> handler)
 {
     http_handler = handler;
     stateCache = std::make_shared<APICache>("", HueCommandAPI(ip, port, username, handler), refreshDuration);
-    lightList = ResourceList<Light, int>(stateCache, "lights", refreshDuration,
+    lightList = LightList(stateCache, "lights", refreshDuration,
         [factory = LightFactory(stateCache->getCommandAPI(), refreshDuration)](
             int id, const nlohmann::json& state) mutable { return factory.createLight(state, id); });
     groupList = GroupList(stateCache, "groups", refreshDuration);

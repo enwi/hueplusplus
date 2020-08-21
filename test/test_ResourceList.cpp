@@ -32,9 +32,9 @@ using namespace testing;
 class TestResource
 {
 public:
-    TestResource(int id, HueCommandAPI api, std::chrono::steady_clock::duration refreshDuration) : id(id) {}
+    TestResource(int id, HueCommandAPI api, std::chrono::steady_clock::duration refreshDuration) : id(id) { }
 
-    void refresh(bool force = false) {}
+    void refresh(bool force = false) { }
 
 public:
     int id;
@@ -42,15 +42,15 @@ public:
 class TestResourceFactory
 {
 public:
-    void refresh(bool force = false) {}
+    void refresh(bool force = false) { }
 };
 class TestStringResource
 {
 public:
     TestStringResource(const std::string& id, HueCommandAPI api, std::chrono::steady_clock::duration refreshDuration)
         : id(id)
-    {}
-    void refresh(bool force = false) {}
+    { }
+    void refresh(bool force = false) { }
 
 public:
     std::string id;
@@ -149,12 +149,12 @@ TEST(ResourceList, get)
         TestStringResource& r2 = list.get(id);
         EXPECT_EQ(id, r2.id);
     }
-    
+
     {
         ResourceList<TestResourceFactory, int> list(commands, path, std::chrono::steady_clock::duration::max());
 
         const int id = 2;
-        const nlohmann::json response = { {std::to_string(id), {{"resource", "state"}}} };
+        const nlohmann::json response = {{std::to_string(id), {{"resource", "state"}}}};
         EXPECT_CALL(*handler,
             GETJson("/api/" + getBridgeUsername() + path, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
             .WillOnce(Return(response));
@@ -162,10 +162,10 @@ TEST(ResourceList, get)
     }
     {
         ResourceList<TestResourceFactory, int> list(commands, path, std::chrono::steady_clock::duration::max(),
-            [](int, const nlohmann::json&) {return TestResourceFactory(); });
+            [](int, const nlohmann::json&) { return TestResourceFactory(); });
 
         const int id = 2;
-        const nlohmann::json response = { {std::to_string(id), {{"resource", "state"}}} };
+        const nlohmann::json response = {{std::to_string(id), {{"resource", "state"}}}};
         EXPECT_CALL(*handler,
             GETJson("/api/" + getBridgeUsername() + path, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
             .WillOnce(Return(response));
@@ -238,22 +238,59 @@ TEST(ResourceList, remove)
     EXPECT_FALSE(list.remove(id));
 }
 
+TEST(SearchableResourceList, search)
+{
+    auto handler = std::make_shared<MockHttpHandler>();
+    HueCommandAPI commands(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+
+    const std::string path = "/resources";
+    SearchableResourceList<TestResource> list(commands, path, std::chrono::steady_clock::duration::max());
+    const nlohmann::json response = {{{"success", {{path, "Searching for new devices"}}}}};
+    EXPECT_CALL(*handler,
+        POSTJson("/api/" + getBridgeUsername() + path, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+        .WillOnce(Return(response));
+    list.search();
+
+    EXPECT_CALL(*handler,
+        POSTJson("/api/" + getBridgeUsername() + path, nlohmann::json({{"deviceid", {"abcd", "def", "fgh"}}}),
+            getBridgeIp(), getBridgePort()))
+        .WillOnce(Return(response));
+    list.search({"abcd", "def", "fgh"});
+}
+
+TEST(SearchableResourceList, getNewDevices)
+{
+    auto handler = std::make_shared<MockHttpHandler>();
+    HueCommandAPI commands(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+
+    const std::string path = "/resources";
+    SearchableResourceList<TestResource> list(commands, path, std::chrono::steady_clock::duration::max());
+    const nlohmann::json response = {{"lastscan", "active"}, {"1", {{"name", "A"}}}};
+    EXPECT_CALL(*handler,
+        GETJson(
+            "/api/" + getBridgeUsername() + path + "/new", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+        .WillOnce(Return(response));
+    NewDeviceList newDevices = list.getNewDevices();
+    EXPECT_TRUE(newDevices.isScanActive());
+    EXPECT_THAT(newDevices.getNewDevices(), ElementsAre(std::make_pair(1, "A")));
+}
+
 TEST(CreateableResourceList, create)
 {
     auto handler = std::make_shared<MockHttpHandler>();
     HueCommandAPI commands(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
     const std::string path = "/resources";
-    const nlohmann::json response = { {{"success", {{"id", path + "/2"}}}} };
-    const nlohmann::json request = { {"name", "bla"} };
-    CreateableResourceList<TestResource, int, TestCreateType> list(commands, path, std::chrono::steady_clock::duration::max());
-    EXPECT_CALL(*handler, POSTJson(
-        "/api/" + getBridgeUsername() + path, request, getBridgeIp(), getBridgePort()))
+    const nlohmann::json response = {{{"success", {{"id", path + "/2"}}}}};
+    const nlohmann::json request = {{"name", "bla"}};
+    CreateableResourceList<ResourceList<TestResource, int>, TestCreateType> list(
+        commands, path, std::chrono::steady_clock::duration::max());
+    EXPECT_CALL(*handler, POSTJson("/api/" + getBridgeUsername() + path, request, getBridgeIp(), getBridgePort()))
         .WillOnce(Return(response))
         .WillOnce(Return(nlohmann::json()));
-    EXPECT_CALL(*handler, GETJson(
-        "/api/" + getBridgeUsername() + path, _, getBridgeIp(), getBridgePort()))
-        .Times(AnyNumber()).WillRepeatedly(Return(nlohmann::json::object()));
+    EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername() + path, _, getBridgeIp(), getBridgePort()))
+        .Times(AnyNumber())
+        .WillRepeatedly(Return(nlohmann::json::object()));
     TestCreateType params;
     EXPECT_CALL(params, getRequest()).Times(2).WillRepeatedly(Return(request));
     EXPECT_EQ(2, list.create(params));

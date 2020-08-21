@@ -29,21 +29,24 @@
 
 #include "APICache.h"
 #include "HueException.h"
+#include "NewDeviceList.h"
 #include "Utils.h"
 
 namespace hueplusplus
 {
 //! \brief Handles a list of a certain API resource
 //! \tparam Resource Resource type that is in the list
-//! \tparam IdType Type of the resource id. int or std::string
+//! \tparam IdT Type of the resource id. int or std::string
 //!
 //! The resources are assumed to be in an object with ids as keys.
 //! The Resource class needs a constructor that accepts \c id, HueCommandAPI and \c refreshDuration;
 //! otherwise a factory function needs to be provided that takes \c id and the JSON state.
-template <typename Resource, typename IdType>
+template <typename Resource, typename IdT>
 class ResourceList
 {
 public:
+    using ResourceType = Resource;
+    using IdType = IdT;
     static_assert(std::is_integral<IdType>::value || std::is_same<std::string, IdType>::value,
         "IdType must be integral or string");
 
@@ -236,16 +239,59 @@ protected:
     std::map<IdType, Resource> resources;
 };
 
-//! \brief Handles a ResourceList where Resources can be added by the user
+//! \brief Handles a ResourceList of physical devices which can be searched for
 //! \tparam Resource Resource type that is in the list
-//! \tparam IdType Type of the resource id. int or std::string
-//! \tparam CreateType Type that provides parameters for creation.
-//! Must have a const getRequest() function returning the JSON for the POST request.
-template <typename Resource, typename IdType, typename CreateType>
-class CreateableResourceList : public ResourceList<Resource, IdType>
+template <typename Resource>
+class SearchableResourceList : public ResourceList<Resource, int>
 {
 public:
-    using ResourceList<Resource, IdType>::ResourceList;
+    using ResourceList<Resource, int>::ResourceList;
+
+    //! \brief Start search for new devices
+    //! \param deviceIds Serial numbers of the devices to search for (max. 10)
+    //!
+    //! Takes more than 40s. If many devices were found a second search command might be necessary.
+    void search(const std::vector<std::string>& deviceIds = {})
+    {
+        std::string requestPath = this->path;
+        // Remove trailing slash
+        requestPath.pop_back();
+        if (deviceIds.empty())
+        {
+            this->stateCache.getCommandAPI().POSTRequest(
+                requestPath, nlohmann::json::object(), FileInfo {__FILE__, __LINE__, __func__});
+        }
+        else
+        {
+            this->stateCache.getCommandAPI().POSTRequest(
+                requestPath, nlohmann::json {{"deviceid", deviceIds}}, FileInfo {__FILE__, __LINE__, __func__});
+        }
+    }
+
+    //! \brief Get devices found in last search
+    NewDeviceList getNewDevices() const
+    {
+        nlohmann::json response = this->stateCache.getCommandAPI().GETRequest(
+            this->path + "new", nlohmann::json::object(), FileInfo {__FILE__, __LINE__, __func__});
+        return NewDeviceList::parse(response);
+    }
+
+protected:
+    //! \brief Protected defaulted move constructor
+    SearchableResourceList(SearchableResourceList&&) = default;
+    //! \brief Protected defaulted move assignment
+    SearchableResourceList& operator=(SearchableResourceList&&) = default;
+};
+
+//! \brief Handles a ResourceList where Resources can be added by the user
+//! \tparam BaseResourceList Base resource list type (ResourceList or SearchableResourceList).
+//! \tparam CreateType Type that provides parameters for creation.
+//! Must have a const getRequest() function returning the JSON for the POST request.
+template <typename BaseResourceList, typename CreateType>
+class CreateableResourceList : public BaseResourceList
+{
+public:
+    using BaseResourceList::BaseResourceList;
 
     //! \brief Create a new resource
     //! \param params Parameters for the new resource
@@ -255,7 +301,7 @@ public:
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
     //! \throws std::invalid_argument when IdType is int and std::stoi fails
-    IdType create(const CreateType& params)
+    typename BaseResourceList::IdType create(const CreateType& params)
     {
         std::string requestPath = this->path;
         // Remove slash
@@ -273,8 +319,9 @@ public:
             this->stateCache.refresh();
             return this->maybeStoi(idStr);
         }
-        return IdType {};
+        return BaseResourceList::IdType {};
     }
+
 protected:
     //! \brief Protected defaulted move constructor
     CreateableResourceList(CreateableResourceList&&) = default;
@@ -287,10 +334,12 @@ protected:
 //! \tparam CreateType Type that provides parameters for creation.
 //! Must have a const getRequest() function returning the JSON for the POST request.
 template <typename Resource, typename CreateType>
-class GroupResourceList : public CreateableResourceList<Resource, int, CreateType>
+class GroupResourceList : public CreateableResourceList<ResourceList<Resource, int>, CreateType>
 {
+    using Base = CreateableResourceList<ResourceList<Resource, int>, CreateType>;
+
 public:
-    using CreateableResourceList<Resource, int, CreateType>::CreateableResourceList;
+    using Base::Base;
     //! \brief Get group, specially handles group 0
     //! \see ResourceList::get
     Resource& get(const int& id)
@@ -311,7 +360,7 @@ public:
     }
     //! \brief Get group, specially handles group 0
     //! \see ResourceList::exists
-    bool exists(int id) const { return id == 0 || CreateableResourceList<Resource, int, CreateType>::exists(id); }
+    bool exists(int id) const { return id == 0 || Base::exists(id); }
 
 protected:
     //! \brief Protected defaulted move constructor
