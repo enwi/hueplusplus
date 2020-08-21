@@ -33,16 +33,23 @@ namespace
 {
 std::tm timestampToTm(const std::string& timestamp)
 {
-    std::tm tm {};
-    tm.tm_year = std::stoi(timestamp.substr(0, 4)) - 1900;
-    tm.tm_mon = std::stoi(timestamp.substr(5, 2)) - 1;
-    tm.tm_mday = std::stoi(timestamp.substr(8, 2));
-    tm.tm_hour = std::stoi(timestamp.substr(11, 2));
-    tm.tm_min = std::stoi(timestamp.substr(14, 2));
-    tm.tm_sec = std::stoi(timestamp.substr(17, 2));
-    // Auto detect daylight savings time
-    tm.tm_isdst = -1;
-    return tm;
+    try
+    {
+        std::tm tm {};
+        tm.tm_year = std::stoi(timestamp.substr(0, 4)) - 1900;
+        tm.tm_mon = std::stoi(timestamp.substr(5, 2)) - 1;
+        tm.tm_mday = std::stoi(timestamp.substr(8, 2));
+        tm.tm_hour = std::stoi(timestamp.substr(11, 2));
+        tm.tm_min = std::stoi(timestamp.substr(14, 2));
+        tm.tm_sec = std::stoi(timestamp.substr(17, 2));
+        // Auto detect daylight savings time
+        tm.tm_isdst = -1;
+        return tm;
+    }
+    catch (const std::invalid_argument& e)
+    {
+        throw HueException(CURRENT_FILE_INFO, std::string("Invalid argument: ") + e.what());
+    }
 }
 } // namespace
 

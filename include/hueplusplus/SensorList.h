@@ -30,7 +30,7 @@ namespace hueplusplus
 //! \brief Handles a list of Sensor%s with type specific getters
 //!
 //! Allows to directly get the requested sensor type or all sensors of a given type.
-class SensorList : public CreateableResourceList<Sensor, int, CreateSensor>
+class SensorList : public CreateableResourceList<SearchableResourceList<Sensor>, CreateSensor>
 {
 public:
     using CreateableResourceList::CreateableResourceList;
