@@ -385,9 +385,9 @@ TEST_F(HueLightTest, setName)
     HueLight test_light_2 = test_bridge.getLight(2);
     HueLight test_light_3 = test_bridge.getLight(3);
 
-    EXPECT_EQ(true, test_light_1.setName(expected_request["name"]));
-    EXPECT_EQ(false, test_light_2.setName(expected_request["name"]));
-    EXPECT_EQ(true, test_light_3.setName(expected_request["name"]));
+    EXPECT_EQ(true, test_light_1.setName(expected_request["name"].get<std::string>()));
+    EXPECT_EQ(false, test_light_2.setName(expected_request["name"].get<std::string>()));
+    EXPECT_EQ(true, test_light_3.setName(expected_request["name"].get<std::string>()));
 }
 
 TEST_F(HueLightTest, getColorType)

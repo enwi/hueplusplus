@@ -183,7 +183,7 @@ std::string Hue::requestUsername()
             if (jsonUser != nullptr)
             {
                 // [{"success":{"username": "<username>"}}]
-                username = jsonUser;
+                username = jsonUser.get<std::string>();
                 // Update commands with new username and ip
                 commands = HueCommandAPI(ip, port, username, http_handler);
                 std::cout << "Success! Link button was pressed!\n";
@@ -235,7 +235,7 @@ HueLight& Hue::getLight(int id)
         throw HueException(CURRENT_FILE_INFO, "Light id is not valid");
     }
     // std::cout << state["lights"][std::to_string(id)] << std::endl;
-    std::string type = state["lights"][std::to_string(id)]["modelid"];
+    std::string type = state["lights"][std::to_string(id)]["modelid"].get<std::string>();
     // std::cout << type << std::endl;
     if (type == "LCT001" || type == "LCT002" || type == "LCT003" || type == "LCT007" || type == "LLM001")
     {

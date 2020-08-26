@@ -71,12 +71,12 @@ bool ExtendedColorTemperatureStrategy::setColorTemperature(
 bool ExtendedColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLight& light) const
 {
     light.refreshState();
-    std::string cType = light.state["state"]["colormode"];
-    bool on = light.state["state"]["on"];
+    std::string cType = light.state["state"]["colormode"].get<std::string>();
+    bool on = light.state["state"]["on"].get<bool>();
     if (cType == "hs")
     {
-        uint16_t oldHue = light.state["state"]["hue"];
-        uint8_t oldSat = light.state["state"]["sat"];
+        uint16_t oldHue = light.state["state"]["hue"].get<uint16_t>();
+        uint8_t oldSat = light.state["state"]["sat"].get<uint8_t>();
         if (!light.setColorTemperature(mired, 1))
         {
             return false;
@@ -99,8 +99,8 @@ bool ExtendedColorTemperatureStrategy::alertTemperature(unsigned int mired, HueL
     }
     else if (cType == "xy")
     {
-        float oldX = light.state["state"]["xy"][0];
-        float oldY = light.state["state"]["xy"][1];
+        float oldX = light.state["state"]["xy"][0].get<float>();
+        float oldY = light.state["state"]["xy"][1].get<float>();
         if (!light.setColorTemperature(mired, 1))
         {
             return false;
@@ -123,7 +123,7 @@ bool ExtendedColorTemperatureStrategy::alertTemperature(unsigned int mired, HueL
     }
     else if (cType == "ct")
     {
-        uint16_t oldCT = light.state["state"]["ct"];
+        uint16_t oldCT = light.state["state"]["ct"].get<uint16_t>();
         if (!light.setColorTemperature(mired, 1))
         {
             return false;

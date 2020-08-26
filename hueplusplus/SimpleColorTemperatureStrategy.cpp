@@ -70,11 +70,11 @@ bool SimpleColorTemperatureStrategy::setColorTemperature(unsigned int mired, uin
 bool SimpleColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLight& light) const
 {
     light.refreshState();
-    std::string cType = light.state["state"]["colormode"];
-    bool on = light.state["state"]["on"];
+    std::string cType = light.state["state"]["colormode"].get<std::string>();
+    bool on = light.state["state"]["on"].get<bool>();
     if (cType == "ct")
     {
-        uint16_t oldCT = light.state["state"]["ct"];
+        uint16_t oldCT = light.state["state"]["ct"].get<uint16_t>();
         if (!light.setColorTemperature(mired, 1))
         {
             return false;
@@ -104,10 +104,10 @@ bool SimpleColorTemperatureStrategy::alertTemperature(unsigned int mired, HueLig
 unsigned int SimpleColorTemperatureStrategy::getColorTemperature(HueLight& light) const
 {
     light.refreshState();
-    return light.state["state"]["ct"];
+    return light.state["state"]["ct"].get<unsigned int>();
 }
 
 unsigned int SimpleColorTemperatureStrategy::getColorTemperature(const HueLight& light) const
 {
-    return light.state["state"]["ct"];
+    return light.state["state"]["ct"].get<unsigned int>();
 }

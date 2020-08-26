@@ -45,12 +45,12 @@ bool HueLight::Off(uint8_t transition)
 bool HueLight::isOn()
 {
     refreshState();
-    return state["state"]["on"];
+    return state["state"]["on"].get<bool>();
 }
 
 bool HueLight::isOn() const
 {
-    return state["state"]["on"];
+    return state["state"]["on"].get<bool>();
 }
 
 int HueLight::getId() const
@@ -60,30 +60,30 @@ int HueLight::getId() const
 
 std::string HueLight::getType() const
 {
-    return state["type"];
+    return state["type"].get<std::string>();
 }
 
 std::string HueLight::getName()
 {
     refreshState();
-    return state["name"];
+    return state["name"].get<std::string>();
 }
 
 std::string HueLight::getName() const
 {
-    return state["name"];
+    return state["name"].get<std::string>();
 }
 
 std::string HueLight::getModelId() const
 {
-    return state["modelid"];
+    return state["modelid"].get<std::string>();
 }
 
 std::string HueLight::getUId() const
 {
     if (state.count("uniqueid"))
     {
-        return state["uniqueid"];
+        return state["uniqueid"].get<std::string>();
     }
     return std::string();
 }
@@ -92,7 +92,7 @@ std::string HueLight::getManufacturername() const
 {
     if (state.count("manufacturername"))
     {
-        return state["manufacturername"];
+        return state["manufacturername"].get<std::string>();
     }
     return std::string();
 }
@@ -101,7 +101,7 @@ std::string HueLight::getProductname() const
 {
     if (state.count("productname"))
     {
-        return state["productname"];
+        return state["productname"].get<std::string>();
     }
     return std::string();
 }
@@ -110,7 +110,7 @@ std::string HueLight::getLuminaireUId() const
 {
     if (state.count("luminaireuniqueid"))
     {
-        return state["luminaireuniqueid"];
+        return state["luminaireuniqueid"].get<std::string>();
     }
     return std::string();
 }
@@ -118,12 +118,12 @@ std::string HueLight::getLuminaireUId() const
 std::string HueLight::getSwVersion()
 {
     refreshState();
-    return state["swversion"];
+    return state["swversion"].get<std::string>();
 }
 
 std::string HueLight::getSwVersion() const
 {
-    return state["swversion"];
+    return state["swversion"].get<std::string>();
 }
 
 bool HueLight::setName(const std::string& name)
