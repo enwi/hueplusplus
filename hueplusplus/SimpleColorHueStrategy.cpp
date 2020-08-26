@@ -221,12 +221,12 @@ bool SimpleColorHueStrategy::setColorLoop(bool on, HueLight& light) const
 bool SimpleColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, HueLight& light) const
 {
     light.refreshState();
-    std::string cType = light.state["state"]["colormode"];
-    bool on = light.state["state"]["on"];
+    std::string cType = light.state["state"]["colormode"].get<std::string>();
+    bool on = light.state["state"]["on"].get<bool>();
     if (cType == "hs")
     {
-        uint16_t oldHue = light.state["state"]["hue"];
-        uint8_t oldSat = light.state["state"]["sat"];
+        uint16_t oldHue = light.state["state"]["hue"].get<uint16_t>();
+        uint8_t oldSat = light.state["state"]["sat"].get<uint8_t>();
         if (!light.setColorHueSaturation(hue, sat, 1))
         {
             return false;
@@ -249,8 +249,8 @@ bool SimpleColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, HueLi
     }
     else if (cType == "xy")
     {
-        float oldX = light.state["state"]["xy"][0];
-        float oldY = light.state["state"]["xy"][1];
+        float oldX = light.state["state"]["xy"][0].get<float>();
+        float oldY = light.state["state"]["xy"][1].get<float>();
         if (!light.setColorHueSaturation(hue, sat, 1))
         {
             return false;
@@ -280,12 +280,12 @@ bool SimpleColorHueStrategy::alertHueSaturation(uint16_t hue, uint8_t sat, HueLi
 bool SimpleColorHueStrategy::alertXY(float x, float y, HueLight& light) const
 {
     light.refreshState();
-    std::string cType = light.state["state"]["colormode"];
-    bool on = light.state["state"]["on"];
+    std::string cType = light.state["state"]["colormode"].get<std::string>();
+    bool on = light.state["state"]["on"].get<bool>();
     if (cType == "hs")
     {
-        uint16_t oldHue = light.state["state"]["hue"];
-        uint8_t oldSat = light.state["state"]["sat"];
+        uint16_t oldHue = light.state["state"]["hue"].get<uint16_t>();
+        uint8_t oldSat = light.state["state"]["sat"].get<uint8_t>();
         if (!light.setColorXY(x, y, 1))
         {
             return false;
@@ -308,8 +308,8 @@ bool SimpleColorHueStrategy::alertXY(float x, float y, HueLight& light) const
     }
     else if (cType == "xy")
     {
-        float oldX = light.state["state"]["xy"][0];
-        float oldY = light.state["state"]["xy"][1];
+        float oldX = light.state["state"]["xy"][0].get<float>();
+        float oldY = light.state["state"]["xy"][1].get<float>();
         if (!light.setColorXY(x, y, 1))
         {
             return false;
@@ -339,12 +339,12 @@ bool SimpleColorHueStrategy::alertXY(float x, float y, HueLight& light) const
 bool SimpleColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLight& light) const
 {
     light.refreshState();
-    std::string cType = light.state["state"]["colormode"];
-    bool on = light.state["state"]["on"];
+    std::string cType = light.state["state"]["colormode"].get<std::string>();
+    bool on = light.state["state"]["on"].get<bool>();
     if (cType == "hs")
     {
-        uint16_t oldHue = light.state["state"]["hue"];
-        uint8_t oldSat = light.state["state"]["sat"];
+        uint16_t oldHue = light.state["state"]["hue"].get<uint16_t>();
+        uint8_t oldSat = light.state["state"]["sat"].get<uint8_t>();
         if (!light.setColorRGB(r, g, b, 1))
         {
             return false;
@@ -367,8 +367,8 @@ bool SimpleColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLight&
     }
     else if (cType == "xy")
     {
-        float oldX = light.state["state"]["xy"][0];
-        float oldY = light.state["state"]["xy"][1];
+        float oldX = light.state["state"]["xy"][0].get<float>();
+        float oldY = light.state["state"]["xy"][1].get<float>();
         if (!light.setColorRGB(r, g, b, 1))
         {
             return false;
@@ -398,25 +398,23 @@ bool SimpleColorHueStrategy::alertRGB(uint8_t r, uint8_t g, uint8_t b, HueLight&
 std::pair<uint16_t, uint8_t> SimpleColorHueStrategy::getColorHueSaturation(HueLight& light) const
 {
     light.refreshState();
-    return std::pair<uint16_t, uint8_t>(
-        static_cast<uint16_t>(light.state["state"]["hue"]), static_cast<uint8_t>(light.state["state"]["sat"]));
+    return std::make_pair(light.state["state"]["hue"].get<uint16_t>(), light.state["state"]["sat"].get<uint8_t>());
 }
 
 std::pair<uint16_t, uint8_t> SimpleColorHueStrategy::getColorHueSaturation(const HueLight& light) const
 {
-    return std::pair<uint16_t, uint8_t>(
-        static_cast<uint16_t>(light.state["state"]["hue"]), static_cast<uint8_t>(light.state["state"]["sat"]));
+    return std::make_pair(light.state["state"]["hue"].get<uint16_t>(), light.state["state"]["sat"].get<uint8_t>());
 }
 
 std::pair<float, float> SimpleColorHueStrategy::getColorXY(HueLight& light) const
 {
     light.refreshState();
-    return std::pair<float, float>(light.state["state"]["xy"][0], light.state["state"]["xy"][1]);
+    return std::make_pair(light.state["state"]["xy"][0].get<float>(), light.state["state"]["xy"][1].get<float>());
 }
 
 std::pair<float, float> SimpleColorHueStrategy::getColorXY(const HueLight& light) const
 {
-    return std::pair<float, float>(light.state["state"]["xy"][0], light.state["state"]["xy"][1]);
+    return std::make_pair(light.state["state"]["xy"][0].get<float>(), light.state["state"]["xy"][1].get<float>());
 }
 /*bool SimpleColorHueStrategy::pointInTriangle(float pointx, float pointy, float
 x0, float y0, float x1, float y1, float x2, float y2)
