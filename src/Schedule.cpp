@@ -118,13 +118,13 @@ time::TimePattern Schedule::getTime() const
     // return time::TimePattern::parse(state.getValue().at("time").get<std::string>());
 }
 
-Schedule::Status Schedule::getStatus() const
+bool Schedule::isEnabled() const
 {
     if (state.getValue().at("status").get<std::string>() == "enabled")
     {
-        return Status::enabled;
+        return true;
     }
-    return Status::disabled;
+    return false;
 }
 
 bool Schedule::getAutodelete() const
@@ -174,9 +174,9 @@ void Schedule::setTime(const time::TimePattern& timePattern)
     refresh();
 }
 
-void Schedule::setStatus(Status status)
+void Schedule::setEnabled(bool enabled)
 {
-    sendPutRequest({{"status", status == Status::enabled ? "enabled" : "disabled"}}, CURRENT_FILE_INFO);
+    sendPutRequest({{"status", enabled ? "enabled" : "disabled"}}, CURRENT_FILE_INFO);
     refresh();
 }
 
@@ -215,9 +215,9 @@ CreateSchedule& CreateSchedule::setTime(const time::TimePattern& time)
     return *this;
 }
 
-CreateSchedule& CreateSchedule::setStatus(Schedule::Status status)
+CreateSchedule& CreateSchedule::setStatus(bool enabled)
 {
-    request["status"] = (status == Schedule::Status::enabled) ? "enabled" : "disabled";
+    request["status"] = enabled ? "enabled" : "disabled";
     return *this;
 }
 
