@@ -31,6 +31,8 @@ namespace hueplusplus
 //!
 //! The command makes either a POST, PUT or DELETE request with a given body
 //! to an address on the bridge.
+//!
+//! A ScheduleCommand can also be created by StateTransaction::toScheduleCommand().
 class ScheduleCommand
 {
 public:
@@ -74,14 +76,6 @@ private:
 class Schedule
 {
 public:
-    //! \brief Enabled status of the Schedule
-    enum class Status
-    {
-        disabled, //!< Schedule is disabled
-        enabled //!< Schedule is enabled
-    };
-
-public:
     //! \brief Construct Schedule that exists in the bridge
     //! \param id Schedule ID
     //! \param commands HueCommandAPI for requests
@@ -109,8 +103,8 @@ public:
     //! \brief Get time when the event(s) will occur
     //! \returns TimePattern in local timezone
     time::TimePattern getTime() const;
-    //! \brief Get schedule enabled/disabled status
-    Status getStatus() const;
+    //! \brief Get whether schedule is enabled or disabled
+    bool isEnabled() const;
     //! \brief Get autodelete
     //!
     //! When autodelete is set to true, the schedule is removed after it expires.
@@ -161,7 +155,7 @@ public:
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    void setStatus(Status status);
+    void setEnabled(bool enabled);
     //! \brief Set autodelete
     //! \param autodelete Whether to delete the schedule after it expires
     //! \throws std::system_error when system or socket operations fail
@@ -202,8 +196,8 @@ public:
     //! \see Schedule::setTime
     CreateSchedule& setTime(const time::TimePattern& time);
     //! \brief Set status
-    //! \see Schedule::setStatus
-    CreateSchedule& setStatus(Schedule::Status status);
+    //! \see Schedule::setEnabled
+    CreateSchedule& setStatus(bool enabled);
     //! \brief Set autodelete
     //! \see Schedule::setAutodelete
     CreateSchedule& setAutodelete(bool autodelete);
@@ -213,7 +207,7 @@ public:
     CreateSchedule& setRecycle(bool recycle);
 
     //! \brief Get request to create the schedule.
-//! \returns JSON request for a POST to create the new schedule
+    //! \returns JSON request for a POST to create the new schedule
     nlohmann::json getRequest() const;
 
 private:

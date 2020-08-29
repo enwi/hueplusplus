@@ -149,13 +149,13 @@ TEST_F(ScheduleTest, getStatus)
         scheduleState["status"] = "enabled";
         expectGetState(id);
         const Schedule schedule(id, commands, std::chrono::seconds(0));
-        EXPECT_EQ(Schedule::Status::enabled, schedule.getStatus());
+        EXPECT_EQ(true, schedule.isEnabled());
     }
     {
         scheduleState["status"] = "disabled";
         expectGetState(id);
         const Schedule schedule(id, commands, std::chrono::seconds(0));
-        EXPECT_EQ(Schedule::Status::disabled, schedule.getStatus());
+        EXPECT_EQ(false, schedule.isEnabled());
     }
 }
 
@@ -261,7 +261,7 @@ TEST_F(ScheduleTest, setStatus)
             *handler, PUTJson("/api/" + getBridgeUsername() + "/schedules/1", request, getBridgeIp(), getBridgePort()))
             .WillOnce(Return(response));
         expectGetState(id);
-        schedule.setStatus(Schedule::Status::enabled);
+        schedule.setEnabled(true);
     }
     {
         nlohmann::json request = {{"status", "disabled"}};
@@ -270,7 +270,7 @@ TEST_F(ScheduleTest, setStatus)
             *handler, PUTJson("/api/" + getBridgeUsername() + "/schedules/1", request, getBridgeIp(), getBridgePort()))
             .WillOnce(Return(response));
         expectGetState(id);
-        schedule.setStatus(Schedule::Status::disabled);
+        schedule.setEnabled(false);
     }
 }
 
@@ -329,11 +329,11 @@ TEST(CreateSchedule, setStatus)
 {
     {
         const nlohmann::json request = {{"status", "enabled"}};
-        EXPECT_EQ(request, CreateSchedule().setStatus(Schedule::Status::enabled).getRequest());
+        EXPECT_EQ(request, CreateSchedule().setStatus(true).getRequest());
     }
     {
         const nlohmann::json request = {{"status", "disabled"}};
-        EXPECT_EQ(request, CreateSchedule().setStatus(Schedule::Status::disabled).getRequest());
+        EXPECT_EQ(request, CreateSchedule().setStatus(false).getRequest());
     }
 }
 
