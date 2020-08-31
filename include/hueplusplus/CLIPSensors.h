@@ -43,7 +43,7 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     void setOn(bool on);
 
-    //! \brief Get whether sensor has a battery state
+    //! \brief Check whether the sensor has a battery state
     bool hasBatteryState() const;
     //! \brief Get battery state
     //! \returns Battery state in percent
@@ -56,11 +56,11 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     void setBatteryState(int percent);
 
-    //! \brief Get whether sensor is reachable
+    //! \brief Check whether the sensor is reachable
     //! \note Reachable verification is not implemented for CLIP sensors yet
     bool isReachable() const;
 
-    //! \brief Get whether sensor has a URL
+    //! \brief Check whether the sensor has a URL
     bool hasURL() const;
     //! \brief Get sensor URL
     std::string getURL() const;
@@ -108,7 +108,7 @@ public:
     //! \brief Construct from generic sensor
     explicit CLIPOpenClose(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
 
-    //! \brief Get whether switch is open
+    //! \brief Check whether the switch is open
     bool isOpen() const;
     //! \brief Set switch state
     //!
@@ -130,7 +130,7 @@ public:
     //! \brief Construct from generic sensor
     explicit CLIPPresence(Sensor sensor) : BaseCLIP(std::move(sensor)) { }
 
-    //! \brief Get whether presence was dtected
+    //! \brief Check whether presence was detected
     bool getPresence() const;
     //! \brief Set presence state
     //! \throws std::system_error when system or socket operations fail
@@ -176,7 +176,7 @@ public:
     //! \returns Humidity in 0.01% steps
     int getHumidity() const;
     //! \brief Set humidity
-    //! \param humidity Humidity in 0.01%
+    //! \param humidity Humidity in 0.01% steps
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
