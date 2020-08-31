@@ -11,6 +11,7 @@ A simple and easy to use library for Philips Hue Lights
 * function to assign a username or set one manually
 * all common light functions (brightness, color, temperature)
 * extended alert() functions, which alert in a specific color (good for notifications)
+* creating custom sensors and reading sensor values
 * [documented with doxygen](https://enwi.github.io/hueplusplus/)
 * tested with google test, google mock and gcov/lcov
 

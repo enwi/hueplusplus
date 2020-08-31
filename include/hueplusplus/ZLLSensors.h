@@ -82,7 +82,7 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     void setOn(bool on);
 
-    //! \brief Get whether sensor has a battery state
+    //! \brief Check whether the sensor has a battery state
     bool hasBatteryState() const;
     //! \brief Get battery state
     //! \returns Battery state in percent
@@ -98,7 +98,7 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     void sendAlert(Alert type);
 
-    //! \brief Get whether sensor is reachable
+    //! \brief Check whether the sensor is reachable
     bool isReachable() const;
 
     //! \brief Get the code of the last switch event.
@@ -166,7 +166,7 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     void setOn(bool on);
 
-    //! \brief Get whether sensor has a battery state
+    //! \brief Check whether the sensor has a battery state
     bool hasBatteryState() const;
     //! \brief Get battery state
     //! \returns Battery state in percent
@@ -182,7 +182,7 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     void sendAlert(Alert type);
 
-    //! \brief Get whether sensor is reachable
+    //! \brief Check whether the sensor is reachable
     bool isReachable() const;
 
     //! \brief Get sensor sensitivity
@@ -223,7 +223,7 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     void setOn(bool on);
 
-    //! \brief Get whether sensor has a battery state
+    //! \brief Check whether the sensor has a battery state
     bool hasBatteryState() const;
     //! \brief Get battery state
     //! \returns Battery state in percent
@@ -239,7 +239,7 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     void sendAlert(Alert type);
 
-    //! \brief Get whether sensor is reachable
+    //! \brief Check whether the sensor is reachable
     bool isReachable() const;
 
     //! \brief Get recorded temperature
@@ -273,13 +273,13 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     void setOn(bool on);
 
-    //! \brief Get whether sensor has a battery state
+    //! \brief Check whether the sensor has a battery state
     bool hasBatteryState() const;
     //! \brief Get battery state
     //! \returns Battery state in percent
     int getBatteryState() const;
 
-    //! \brief Get whether sensor is reachable
+    //! \brief Check whether the sensor is reachable
     bool isReachable() const;
 
     //! \brief Get threshold to detect darkness

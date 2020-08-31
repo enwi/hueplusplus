@@ -67,9 +67,9 @@ public:
     //!\name Config attributes
     ///@{
 
-    //! \brief Get whether sensor has an on attribute
+    //! \brief Check whether the sensor has an on attribute
     bool hasOn() const;
-    //! \brief Get whether sensor is turned on
+    //! \brief check whether the sensor is turned on
     //!
     //! Sensors which are off do not change their status
     //! \throws nlohmann::json::out_of_range when on attribute does not exist.
@@ -81,7 +81,7 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     void setOn(bool on);
 
-    //! \brief Get whether sensor has a battery state
+    //! \brief Check whether the sensor has a battery state
     bool hasBatteryState() const;
     //! \brief Get battery state
     //! \returns Battery state in percent
@@ -94,7 +94,7 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     void setBatteryState(int percent);
 
-    //! \brief Get whether sensor has alerts
+    //! \brief Check whether the sensor has alerts
     bool hasAlert() const;
     //! \brief Get last sent alert
     //! \note This is not cleared when the alert ends.
@@ -107,13 +107,13 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     void sendAlert(Alert type);
 
-    //! \brief Get whether sensor has reachable validation
+    //! \brief Check whether the sensor has reachable validation
     bool hasReachable() const;
     //! \brief Get whether sensor is reachable
     //! \throws nlohmann::json::out_of_range when sensor has no reachable validation
     bool isReachable() const;
 
-    //! \brief Get whether sensor has user test mode
+    //! \brief Check whether the sensor has a user test mode
     bool hasUserTest() const;
     //! \brief Enable or disable user test mode
     //!
@@ -125,7 +125,7 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     void setUserTest(bool enabled);
 
-    //! \brief Get whether sensor has a URL
+    //! \brief Check whether the sensor has a URL
     bool hasURL() const;
     //! \brief Get sensor URL
     //!
@@ -145,7 +145,7 @@ public:
     //! Attempts to set pending config entries may cause errors.
     std::vector<std::string> getPendingConfig() const;
 
-    //! \brief Get whether the sensor has a LED indicator
+    //! \brief Check whether the sensor has an LED indicator
     bool hasLEDIndication() const;
     //! \brief Get whether the indicator LED is on
     //! \throws nlohmann::json::out_of_range when sensor has no LED
@@ -183,9 +183,9 @@ public:
     //! The state can usually only be set on CLIP sensors, not on physical devices.
     void setStateAttribute(const std::string& key, const nlohmann::json& value);
 
-    //! \brief Check if sensor is Hue certified
+    //! \brief Check if the sensor is Hue certified
     bool isCertified() const;
-    //! \brief Check if sensor is primary sensor of the device
+    //! \brief Check if the sensor is primary sensor of the device
     //!
     //! When there are multiple sensors on one physical device (same MAC address),
     //! the primary device is used for the device information.
@@ -270,7 +270,7 @@ public:
     //! \brief Construct from generic sensor
     explicit DaylightSensor(Sensor sensor) : BaseDevice(std::move(sensor)) { }
 
-    //! \brief Check if sensor is on
+    //! \brief Check if the sensor is on
     //!
     //! Sensors which are off do not change their status
     bool isOn() const;
@@ -282,7 +282,7 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     void setOn(bool on);
 
-    //! \brief Get whether sensor has a battery state
+    //! \brief Check whether the sensor has a battery state
     bool hasBatteryState() const;
     //! \brief Get battery state
     //! \returns Battery state in percent
@@ -333,7 +333,7 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     void setSunsetOffset(int minutes);
 
-    //! \brief Get reported daylight status
+    //! \brief Check whether it is daylight or not
     bool isDaylight() const;
 
     //! \brief Get time of last status update
