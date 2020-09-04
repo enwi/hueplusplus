@@ -23,53 +23,11 @@
 #define INCLUDE_HUEPLUSPLUS_SCHEDULE_H
 
 #include "APICache.h"
+#include "Action.h"
 #include "TimePattern.h"
 
 namespace hueplusplus
 {
-//! \brief Command executed on a Schedule
-//!
-//! The command makes either a POST, PUT or DELETE request with a given body
-//! to an address on the bridge.
-//!
-//! A ScheduleCommand can also be created by StateTransaction::toScheduleCommand().
-class ScheduleCommand
-{
-public:
-    //! \brief Create ScheduleCommand from json
-    //! \param json JSON object with address, method and body
-    explicit ScheduleCommand(const nlohmann::json& json);
-
-    //! \brief Method used for the command
-    enum class Method
-    {
-        post, //!< POST request
-        put, //!< PUT request
-        deleteMethod //!< DELETE request
-    };
-
-    //! \brief Get address the request is made to
-    std::string getAddress() const;
-    //! \brief Get request method
-    Method getMethod() const;
-    //! \brief Get request body
-    const nlohmann::json& getBody() const;
-
-    //! \brief Get json object of command
-    const nlohmann::json& toJson() const;
-
-private:
-    //! \brief Parse Method from string
-    //! \param s \c POST, \c PUT or \c DELETE
-    static Method parseMethod(const std::string& s);
-    //! \brief Get string from Method
-    //! \returns \c POST, \c PUT or \c DELETE
-    static std::string methodToString(Method m);
-
-private:
-    nlohmann::json json;
-};
-
 //! \brief Schedule stored in the bridge
 //!
 //! A schedule can be created by the user to trigger actions at specific times.
@@ -99,7 +57,7 @@ public:
     //! \brief Get schedule description
     std::string getDescription() const;
     //! \brief Get schedule command
-    ScheduleCommand getCommand() const;
+    Action getCommand() const;
     //! \brief Get time when the event(s) will occur
     //! \returns TimePattern in local timezone
     time::TimePattern getTime() const;
@@ -134,12 +92,12 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     void setDescription(const std::string& description);
     //! \brief Set schedule command
-    //! \param command New command that is executed when the time event occurs.
+    //! \param command New action that is executed when the time event occurs.
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    void setCommand(const ScheduleCommand& command);
+    void setCommand(const Action& command);
     //! \brief Set new time when the event will occur
     //! \param timePattern Any possible value of TimePattern
     //! \throws std::system_error when system or socket operations fail
@@ -191,7 +149,7 @@ public:
     CreateSchedule& setDescription(const std::string& description);
     //! \brief Set command
     //! \see Schedule::setCommand
-    CreateSchedule& setCommand(const ScheduleCommand& command);
+    CreateSchedule& setCommand(const Action& command);
     //! \brief Set time
     //! \see Schedule::setTime
     CreateSchedule& setTime(const time::TimePattern& time);

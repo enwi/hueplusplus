@@ -30,6 +30,7 @@
 
 # build directory
 /build*
+/out
 
 # Generated documentation
 /doc/html

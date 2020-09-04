@@ -60,17 +60,17 @@ TEST(StateTransaction, commit)
     }
 }
 
-TEST(StateTransaction, toScheduleCommand)
+TEST(StateTransaction, toAction)
 {
     auto handler = std::make_shared<MockHttpHandler>();
     HueCommandAPI commands(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
     const std::string requestPath = "/api/" + getBridgeUsername() + "/path";
     nlohmann::json request = {{"on", false}, {"bri", 100}};
 
-    ScheduleCommand command
-        = StateTransaction(commands, "/path", nullptr).setOn(false).setBrightness(100).toScheduleCommand();
+    hueplusplus::Action command
+        = StateTransaction(commands, "/path", nullptr).setOn(false).setBrightness(100).toAction();
     Mock::VerifyAndClearExpectations(handler.get());
-    EXPECT_EQ(ScheduleCommand::Method::put, command.getMethod());
+    EXPECT_EQ(hueplusplus::Action::Method::put, command.getMethod());
     EXPECT_EQ(request, command.getBody());
     EXPECT_EQ(requestPath, command.getAddress());
 }

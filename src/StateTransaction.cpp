@@ -83,10 +83,10 @@ bool StateTransaction::commit(bool trimRequest)
     return true;
 }
 
-ScheduleCommand StateTransaction::toScheduleCommand()
+Action StateTransaction::toAction()
 {
     nlohmann::json command {{"method", "PUT"}, {"address", commands.combinedPath(path)}, {"body", request}};
-    return ScheduleCommand(command);
+    return Action(command);
 }
 
 StateTransaction& StateTransaction::setOn(bool on)
