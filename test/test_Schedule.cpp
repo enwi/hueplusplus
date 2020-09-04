@@ -29,31 +29,6 @@
 using namespace hueplusplus;
 using namespace testing;
 
-TEST(ScheduleCommand, Constructor)
-{
-    const std::string address = "/api/abcd/test";
-    const nlohmann::json body = {{"test", "value"}};
-    const nlohmann::json json = {{"address", address}, {"method", "PUT"}, {"body", body}};
-    ScheduleCommand command(json);
-
-    EXPECT_EQ(address, command.getAddress());
-    EXPECT_EQ(ScheduleCommand::Method::put, command.getMethod());
-    EXPECT_EQ(body, command.getBody());
-    EXPECT_EQ(json, command.toJson());
-}
-
-TEST(ScheduleCommand, getMethod)
-{
-    nlohmann::json json = {{"address", "/test"}, {"method", "PUT"}, {"body", {}}};
-    EXPECT_EQ(ScheduleCommand::Method::put, ScheduleCommand(json).getMethod());
-    json["method"] = "POST";
-    EXPECT_EQ(ScheduleCommand::Method::post, ScheduleCommand(json).getMethod());
-    json["method"] = "DELETE";
-    EXPECT_EQ(ScheduleCommand::Method::deleteMethod, ScheduleCommand(json).getMethod());
-    json["method"] = "unknown";
-    EXPECT_THROW(ScheduleCommand(json).getMethod(), HueException);
-}
-
 class ScheduleTest : public Test
 {
 protected:
@@ -125,10 +100,10 @@ TEST_F(ScheduleTest, getCommand)
     scheduleState["command"] = {{"address", addr}, {"body", body}, {"method", "PUT"}};
     expectGetState(id);
     const Schedule schedule(id, commands, std::chrono::seconds(0));
-    ScheduleCommand command = schedule.getCommand();
+    hueplusplus::Action command = schedule.getCommand();
     EXPECT_EQ(addr, command.getAddress());
     EXPECT_EQ(body, command.getBody());
-    EXPECT_EQ(ScheduleCommand::Method::put, command.getMethod());
+    EXPECT_EQ(hueplusplus::Action::Method::put, command.getMethod());
 }
 
 TEST_F(ScheduleTest, getTime)
@@ -224,7 +199,7 @@ TEST_F(ScheduleTest, setCommand)
     const int id = 1;
     expectGetState(id);
     Schedule schedule(id, commands, std::chrono::steady_clock::duration::max());
-    const ScheduleCommand command({{"address", "abcd"}, {"body", {}}, {"method", "PUT"}});
+    const hueplusplus::Action command({{"address", "abcd"}, {"body", {}}, {"method", "PUT"}});
     nlohmann::json request = {{"command", command.toJson()}};
     nlohmann::json response = {{"success", {"/schedules/1/command", command.toJson()}}};
     EXPECT_CALL(
@@ -313,7 +288,7 @@ TEST(CreateSchedule, setDescription)
 TEST(CreateSchedule, setCommand)
 {
     const nlohmann::json commandJson = {{"address", "/api/asdf"}, {"method", "PUT"}, {"body", {}}};
-    ScheduleCommand command {commandJson};
+    hueplusplus::Action command {commandJson};
     const nlohmann::json request = {{"command", commandJson}};
     EXPECT_EQ(request, CreateSchedule().setCommand(command).getRequest());
 }

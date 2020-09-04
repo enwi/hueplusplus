@@ -25,9 +25,9 @@
 
 #include <string>
 
+#include "Action.h"
 #include "ColorUnits.h"
 #include "HueCommandAPI.h"
-#include "Schedule.h"
 
 #include "json/json.hpp"
 
@@ -54,7 +54,7 @@ namespace hueplusplus
 //! In this case, it is especially important that the light and the state of the light MUST NOT invalidate.
 //! That means
 //! \li the light variable has to live longer than the transaction
-//! \li especially no non-const method calls on the light while the transaction is open, 
+//! \li especially no non-const method calls on the light while the transaction is open,
 //! or committing other transactions
 //!
 //! In general, this method is easier to screw up and should only be used when really necessary.
@@ -85,9 +85,9 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     bool commit(bool trimRequest = true);
 
-    //! \brief Create a ScheduleCommand from the transaction
-    //! \returns A ScheduleCommand that can be used to execute this transaction on a Schedule.
-    ScheduleCommand toScheduleCommand();
+    //! \brief Create an Action from the transaction
+    //! \returns An Action that can be used to execute this transaction on a Schedule or Rule.
+    Action toAction();
 
     //! \brief Turn light on or off.
     //! \param on true for on, false for off

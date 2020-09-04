@@ -253,15 +253,15 @@ TEST_F(GroupTest, setScene)
     group.setScene(scene);
 }
 
-TEST_F(GroupTest, scheduleScene)
+TEST_F(GroupTest, createSceneAction)
 {
     const int id = 1;
     expectGetState(id);
     const Group group(id, commands, std::chrono::steady_clock::duration::max());
     const std::string scene = "testScene";
     nlohmann::json request = { {"scene", scene} };
-    ScheduleCommand command = group.scheduleScene(scene);
-    EXPECT_EQ(ScheduleCommand::Method::put, command.getMethod());
+    hueplusplus::Action command = group.createSceneAction(scene);
+    EXPECT_EQ(hueplusplus::Action::Method::put, command.getMethod());
     EXPECT_EQ("/api/" + getBridgeUsername() + "/groups/1/action", command.getAddress());
     EXPECT_EQ(request, command.getBody());
 }

@@ -25,8 +25,8 @@
 #include <string>
 
 #include "APICache.h"
+#include "Action.h"
 #include "HueCommandAPI.h"
-#include "Schedule.h"
 #include "TimePattern.h"
 
 namespace hueplusplus
@@ -59,6 +59,7 @@ public:
     nlohmann::json toJson() const;
 
     static Condition parse(const nlohmann::json& json);
+
 private:
     std::string address;
     Operator op;
@@ -105,7 +106,8 @@ public:
     std::string getOwner() const;
 
     std::vector<Condition> getConditions() const;
-    std::vector<ScheduleCommand> getActions() const;
+    std::vector<Action> getActions() const;
+
 private:
     int id;
     APICache state;

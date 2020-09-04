@@ -190,12 +190,12 @@ void Group::setScene(const std::string& scene)
     sendPutRequest("/action", {{"scene", scene}}, CURRENT_FILE_INFO);
 }
 
-ScheduleCommand Group::scheduleScene(const std::string& scene) const
+Action Group::createSceneAction(const std::string& scene) const
 {
     const nlohmann::json command {{"method", "PUT"},
         {"address", state.getCommandAPI().combinedPath("/groups/" + std::to_string(id) + "/action")},
         {"body", {{"scene", scene}}}};
-    return ScheduleCommand(command);
+    return Action(command);
 }
 
 nlohmann::json Group::sendPutRequest(const std::string& subPath, const nlohmann::json& request, FileInfo fileInfo)
