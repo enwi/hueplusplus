@@ -27,6 +27,7 @@
 #include <vector>
 
 #include "APICache.h"
+#include "Action.h"
 #include "HueCommandAPI.h"
 #include "StateTransaction.h"
 
@@ -265,12 +266,12 @@ public:
     //! \param scene Scene name.
     void setScene(const std::string& scene);
 
-    //! \brief Get ScheduleCommand to set scene
+    //! \brief Get Action to set scene
     //! \param scene Scene name
-    //! \returns A ScheduleCommand that can be used to set the scene on a Schedule
+    //! \returns A Action that can be used to set the scene on a Schedule
     //!
     //! To set other light properties in a scene, use transaction().
-    ScheduleCommand scheduleScene(const std::string& scene) const;
+    Action createSceneAction(const std::string& scene) const;
 
     ///@}
 

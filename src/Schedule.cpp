@@ -24,62 +24,6 @@
 
 namespace hueplusplus
 {
-
-ScheduleCommand::ScheduleCommand(const nlohmann::json& json) : json(json) {}
-
-std::string ScheduleCommand::getAddress() const
-{
-    return json.at("address").get<std::string>();
-}
-
-ScheduleCommand::Method ScheduleCommand::getMethod() const
-{
-    return parseMethod(json.at("method").get<std::string>());
-}
-
-const nlohmann::json& ScheduleCommand::getBody() const
-{
-    return json.at("body");
-}
-
-const nlohmann::json& ScheduleCommand::toJson() const
-{
-    return json;
-}
-
-ScheduleCommand::Method ScheduleCommand::parseMethod(const std::string& s)
-{
-    if (s == "POST")
-    {
-        return Method::post;
-    }
-    else if (s == "PUT")
-    {
-        return Method::put;
-    }
-    else if (s == "DELETE")
-    {
-        return Method::deleteMethod;
-    }
-    throw HueException(CURRENT_FILE_INFO, "Unknown ScheduleCommand method: " + s);
-}
-
-std::string ScheduleCommand::methodToString(Method m)
-{
-    switch (m)
-    {
-    case Method::post:
-        return "POST";
-    case Method::put:
-        return "PUT";
-    case Method::deleteMethod:
-        return "DELETE";
-    default:
-        throw HueException(
-            CURRENT_FILE_INFO, "Unknown ScheduleCommand method enum: " + std::to_string(static_cast<int>(m)));
-    }
-}
-
 Schedule::Schedule(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration)
     : id(id), state("/schedules/" + std::to_string(id), commands, refreshDuration)
 {
@@ -106,9 +50,9 @@ std::string Schedule::getDescription() const
     return state.getValue().at("description").get<std::string>();
 }
 
-ScheduleCommand Schedule::getCommand() const
+Action Schedule::getCommand() const
 {
-    return ScheduleCommand(state.getValue().at("command"));
+    return Action(state.getValue().at("command"));
 }
 
 time::TimePattern Schedule::getTime() const
@@ -154,7 +98,7 @@ void Schedule::setDescription(const std::string& description)
     refresh();
 }
 
-void Schedule::setCommand(const ScheduleCommand& command)
+void Schedule::setCommand(const Action& command)
 {
     sendPutRequest({{"command", command.toJson()}}, CURRENT_FILE_INFO);
     refresh();
@@ -203,7 +147,7 @@ CreateSchedule& CreateSchedule::setDescription(const std::string& description)
     return *this;
 }
 
-CreateSchedule& CreateSchedule::setCommand(const ScheduleCommand& command)
+CreateSchedule& CreateSchedule::setCommand(const Action& command)
 {
     request["command"] = command.toJson();
     return *this;
