@@ -203,6 +203,11 @@ void Sensor::setStateAttribute(const std::string& key, const nlohmann::json& val
     sendPutRequest("/state", nlohmann::json {{key, value}}, CURRENT_FILE_INFO);
 }
 
+std::string Sensor::getStateAddress(const std::string& key) const
+{
+    return path + "/state/" + key;
+}
+
 nlohmann::json Sensor::getConfig() const
 {
     return state.getValue().at("config");
@@ -270,7 +275,7 @@ bool DaylightSensor::isOn() const
 
 void DaylightSensor::setOn(bool on)
 {
-    sendPutRequest("/config", { {"on", on} }, CURRENT_FILE_INFO);
+    sendPutRequest("/config", {{"on", on}}, CURRENT_FILE_INFO);
 }
 
 bool DaylightSensor::hasBatteryState() const
@@ -333,9 +338,15 @@ time::AbsoluteTime DaylightSensor::getLastUpdated() const
     auto it = stateJson.find("lastupdated");
     if (it == stateJson.end() || !it->is_string() || *it == "none")
     {
-        return time::AbsoluteTime(std::chrono::system_clock::time_point(std::chrono::seconds{ 0 }));
+        return time::AbsoluteTime(std::chrono::system_clock::time_point(std::chrono::seconds {0}));
     }
     return time::AbsoluteTime::parseUTC(it->get<std::string>());
 }
+
+detail::ConditionHelper<bool> makeCondition(const DaylightSensor& sensor)
+{
+    return detail::ConditionHelper<bool>("/sensors/" + std::to_string(sensor.getId()) + "/state/daylight");
+}
+
 } // namespace sensors
 } // namespace hueplusplus

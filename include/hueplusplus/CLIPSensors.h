@@ -123,6 +123,8 @@ public:
     static constexpr const char* typeStr = "CLIPOpenClose";
 };
 
+detail::ConditionHelper<bool> makeCondition(const CLIPOpenClose& sensor);
+
 //! \brief CLIP sensor to detect presence
 class CLIPPresence : public BaseCLIP
 {
@@ -186,6 +188,8 @@ public:
     //! \brief CLIPHumidity sensor type name
     static constexpr const char* typeStr = "CLIPHumidity";
 };
+
+detail::ConditionHelper<int> makeCondition(const CLIPHumidity& sensor);
 
 //! \brief CLIP sensor for light level
 class CLIPLightLevel : public BaseCLIP
@@ -257,6 +261,8 @@ public:
     static constexpr const char* typeStr = "CLIPGenericFlag";
 };
 
+detail::ConditionHelper<bool> makeCondition(const CLIPGenericFlag& sensor);
+
 //! \brief CLIP sensor for a generic 3rd party status
 //!
 //! Can be created by POST.
@@ -278,6 +284,9 @@ public:
     //! \brief CLIPGenericStatus sensor type name
     static constexpr const char* typeStr = "CLIPGenericStatus";
 };
+
+detail::ConditionHelper<int> makeCondition(const CLIPGenericStatus& sensor);
+
 } // namespace sensors
 } // namespace hueplusplus
 
