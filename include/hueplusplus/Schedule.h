@@ -106,7 +106,7 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     void setTime(const time::TimePattern& timePattern);
     //! \brief Enable or disable schedule
-    //! \param status Enabled or disabled
+    //! \param enabled true to enable, false to disable.
     //!
     //! Can be used to reset a timer by setting to disabled and enabled again.
     //! \throws std::system_error when system or socket operations fail

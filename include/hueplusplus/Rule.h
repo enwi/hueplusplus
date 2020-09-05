@@ -33,6 +33,12 @@
 namespace hueplusplus
 {
 
+//! \brief Rule stored in the bridge.
+//!
+//! Rules are used to automatically trigger Action%s when certain events happen.
+//! The bridge can only support a limited number of rules, conditions and actions.
+//!
+//! They are deactivated if any errors occur when they are evaluated.
 class Rule
 {
 public:
@@ -55,7 +61,18 @@ public:
     int getId() const;
 
     //! \brief Get rule name
+    //!
+    //! The rule name is always unique for the bridge.
     std::string getName() const;
+
+    //! \brief Set rule name.
+    //! \param name New name for the rule.
+    //! Must be unique for all rules, otherwise a number is added.
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
+    void setName(const std::string& name);
 
     //! \brief Get created time
     time::AbsoluteTime getCreated() const;
@@ -68,16 +85,83 @@ public:
 
     //! \brief Get whether rule is enabled or disabled
     bool isEnabled() const;
+    //! \brief Enable or disable rule.
+    //! \param enabled whether the rule is triggered.
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
+    void setEnabled(bool enabled);
 
     //! \brief Get user that created or last changed the rule.
     std::string getOwner() const;
 
+    //! \brief Get the conditions that have to be met
+    //!
+    //! The rule triggers the actions when all conditions are true.
+    //! At least one condition must exist.
     std::vector<Condition> getConditions() const;
+    //! \brief Get the actions that are executed
+    //!
+    //! At least one action must exist.
     std::vector<Action> getActions() const;
+
+    //! \brief Set conditions for the rule
+    //! \param conditions All conditions that need to be fulfilled. Must not be empty.
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
+    void setConditions(const std::vector<Condition>& conditions);
+    //! \brief Set actions for the rule
+    //! \param actions The actions that are triggered when the conditions are met.
+    //! Must not be empty.
+    void setActions(const std::vector<Action>& actions);
+
+private:
+    //! \brief Utility function to send a put request to the group.
+    //!
+    //! \param request The request to send
+    //! \param fileInfo FileInfo from calling function for exception details.
+    //! \returns The parsed reply
+    //! \throws std::system_error when system or socket operations fail
+    //! \throws HueException when response contained no body
+    //! \throws HueAPIResponseException when response contains an error
+    //! \throws nlohmann::json::parse_error when response could not be parsed
+    nlohmann::json sendPutRequest(const nlohmann::json& request, FileInfo fileInfo);
 
 private:
     int id;
     APICache state;
+};
+
+//! \brief Parameters for creating a new Rule.
+//!
+//! Can be used like a builder object with chained calls.
+class CreateRule
+{
+public:
+    //! \brief Set name
+    //! \see Rule::setName
+    CreateRule& setName(const std::string& name);
+
+    //! \brief Set status
+    //! \see Rule::setEnabled
+    CreateRule& setStatus(bool enabled);
+
+    //! \brief Set conditions
+    //! \see Rule::setConditions
+    CreateRule& setConditions(const std::vector<Condition>& conditions);
+    //! \brief Set actions
+    //! \see Rule::setActions
+    CreateRule& setActions(const std::vector<Action>& actions);
+
+    //! \brief Get request to create the rule.
+    //! \returns JSON request for a POST to create the new rule.
+    nlohmann::json getRequest() const;
+
+private:
+    nlohmann::json request;
 };
 
 } // namespace hueplusplus

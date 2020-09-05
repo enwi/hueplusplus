@@ -122,7 +122,7 @@ Condition Condition::parse(const nlohmann::json& json)
     }
     else
     {
-        throw HueException("Unknown condition operator: " + opStr, CURRENT_FILE_INFO);
+        throw HueException(CURRENT_FILE_INFO, "Unknown condition operator: " + opStr);
     }
 
     return Condition(address, op, value);
@@ -154,6 +154,13 @@ std::string Rule::getName() const
     return state.getValue().at("name").get<std::string>();
 }
 
+void Rule::setName(const std::string& name)
+{
+    nlohmann::json request = {{"name", name}};
+    sendPutRequest(request, CURRENT_FILE_INFO);
+    refresh(true);
+}
+
 time::AbsoluteTime Rule::getCreated() const
 {
     return time::AbsoluteTime::parseUTC(state.getValue().at("creationtime").get<std::string>());
@@ -172,6 +179,11 @@ int Rule::getTimesTriggered() const
 bool Rule::isEnabled() const
 {
     return state.getValue().at("status").get<std::string>() == "enabled";
+}
+
+void Rule::setEnabled(bool enabled)
+{
+    sendPutRequest({{"status", enabled ? "enabled" : "disabled"}}, CURRENT_FILE_INFO);
 }
 
 std::string Rule::getOwner() const
@@ -199,6 +211,72 @@ std::vector<Action> Rule::getActions() const
         result.emplace_back(a);
     }
     return result;
+}
+
+void Rule::setConditions(const std::vector<Condition>& conditions)
+{
+    nlohmann::json json;
+    for (const Condition& c : conditions)
+    {
+        json.push_back(c.toJson());
+    }
+
+    sendPutRequest({{"conditions", json}}, CURRENT_FILE_INFO);
+}
+
+void Rule::setActions(const std::vector<Action>& actions)
+{
+    nlohmann::json json;
+    for (const Action& a : actions)
+    {
+        json.push_back(a.toJson());
+    }
+
+    sendPutRequest({{"actions", json}}, CURRENT_FILE_INFO);
+}
+
+nlohmann::json Rule::sendPutRequest(const nlohmann::json& request, FileInfo fileInfo)
+{
+    return state.getCommandAPI().PUTRequest("/groups/" + std::to_string(id), request, std::move(fileInfo));
+}
+
+CreateRule& CreateRule::setName(const std::string& name)
+{
+    request["name"] = name;
+    return *this;
+}
+
+CreateRule& CreateRule::setStatus(bool enabled)
+{
+    request["status"] = enabled ? "enabled" : "disabled";
+    return *this;
+}
+
+CreateRule& CreateRule::setConditions(const std::vector<Condition>& conditions)
+{
+    nlohmann::json conditionsJson;
+    for (const Condition& c : conditions)
+    {
+        conditionsJson.push_back(c.toJson());
+    }
+    request["conditions"] = conditionsJson;
+    return *this;
+}
+
+CreateRule& CreateRule::setActions(const std::vector<Action>& actions)
+{
+    nlohmann::json actionsJson;
+    for (const Action& a : actions)
+    {
+        actionsJson.push_back(a.toJson());
+    }
+    request["actions"] = actionsJson;
+    return *this;
+}
+
+nlohmann::json CreateRule::getRequest() const
+{
+    return request;
 }
 
 } // namespace hueplusplus
