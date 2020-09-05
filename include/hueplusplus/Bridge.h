@@ -40,6 +40,7 @@
 #include "IHttpHandler.h"
 #include "Light.h"
 #include "ResourceList.h"
+#include "Rule.h"
 #include "Scene.h"
 #include "Schedule.h"
 #include "Sensor.h"
@@ -133,6 +134,7 @@ public:
     using GroupList = GroupResourceList<Group, CreateGroup>;
     using ScheduleList = CreateableResourceList<ResourceList<Schedule, int>, CreateSchedule>;
     using SceneList = CreateableResourceList<ResourceList<Scene, std::string>, CreateScene>;
+    using RuleList = CreateableResourceList<ResourceList<Rule, int>, CreateRule>;
 
 public:
     //! \brief Constructor of Bridge class
@@ -231,6 +233,11 @@ public:
     //! \note Does not refresh state.
     const SensorList& sensors() const;
 
+    //! \brief Provides access to the Rule%s on the bridge.
+    RuleList& rules();
+    //! \brief Provides access to the Rule%s on the bridge
+    //! \note Does not refresh state.
+    const RuleList& rules() const;
 private:
     //! \brief Function that sets the HttpHandler and updates the HueCommandAPI.
     //! \param handler a HttpHandler of type \ref IHttpHandler
@@ -256,6 +263,7 @@ private:
     detail::MakeCopyable<ScheduleList> scheduleList;
     detail::MakeCopyable<SceneList> sceneList;
     detail::MakeCopyable<SensorList> sensorList;
+    detail::MakeCopyable<RuleList> ruleList;
     detail::MakeCopyable<BridgeConfig> bridgeConfig;
 };
 } // namespace hueplusplus
