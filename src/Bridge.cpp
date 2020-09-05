@@ -31,11 +31,10 @@
 #include <stdexcept>
 #include <thread>
 
-#include "hueplusplus/LibConfig.h"
 #include "hueplusplus/HueExceptionMacro.h"
+#include "hueplusplus/LibConfig.h"
 #include "hueplusplus/UPnP.h"
 #include "hueplusplus/Utils.h"
-
 
 namespace hueplusplus
 {
@@ -56,7 +55,8 @@ std::vector<BridgeFinder::BridgeIdentification> BridgeFinder::FindBridges() cons
             size_t start = p.first.find("//") + 2;
             size_t length = p.first.find(":", start) - start;
             bridge.ip = p.first.substr(start, length);
-            try {
+            try
+            {
                 std::string desc
                     = http_handler->GETString("/description.xml", "application/xml", "", bridge.ip, bridge.port);
                 std::string mac = ParseDescription(desc);
@@ -66,7 +66,8 @@ std::vector<BridgeFinder::BridgeIdentification> BridgeFinder::FindBridges() cons
                     foundBridges.push_back(std::move(bridge));
                 }
             }
-            catch (const HueException&) {
+            catch (const HueException&)
+            {
                 // No body found in response, skip this device
             }
         }
@@ -152,6 +153,7 @@ Bridge::Bridge(const std::string& ip, const int port, const std::string& usernam
       scheduleList(stateCache, "schedules", refreshDuration),
       sceneList(stateCache, "scenes", refreshDuration),
       sensorList(stateCache, "sensors", refreshDuration),
+      ruleList(stateCache, "rules", refreshDuration),
       bridgeConfig(stateCache, refreshDuration)
 { }
 
@@ -286,6 +288,16 @@ hueplusplus::SensorList& Bridge::sensors()
 const hueplusplus::SensorList& Bridge::sensors() const
 {
     return sensorList;
+}
+
+Bridge::RuleList& Bridge::rules()
+{
+    return ruleList;
+}
+
+const Bridge::RuleList& Bridge::rules() const
+{
+    return ruleList;
 }
 
 void Bridge::setHttpHandler(std::shared_ptr<const IHttpHandler> handler)

@@ -1,5 +1,5 @@
 /**
-    \file ConditionHelper.h
+    \file Condition.h
     Copyright Notice\n
     Copyright (C) 2020  Jan Rogall          	- developer\n
 
@@ -28,7 +28,12 @@
 
 namespace hueplusplus
 {
-
+//! \brief Condition for a Rule
+//!
+//! The condition checks whether a resource attribute (usually a Sensor value) matches the
+//! specified Operator.
+//!
+//! Conditions from sensors can be created more easily using the makeCondition() helper functions.
 class Condition
 {
 public:
@@ -48,14 +53,26 @@ public:
 
 public:
     //! \brief Create a condition from any address on the bridge
+    //! \param address Path to an attribute of the bridge
+    //! \param op Operator used for comparison.
+    //! \param value String representation of the value to check against. Empty for some operators.
     Condition(const std::string& address, Operator op, const std::string& value);
 
+    //! \brief Get address on the bridge
     std::string getAddress() const;
+    //! \brief Get used operator
     Operator getOperator() const;
+    //! \brief Get value the attribute is checked against
     std::string getValue() const;
 
+    //! \brief Create the json form of the condition
+    //! \returns A json object with address, operator and value
     nlohmann::json toJson() const;
 
+    //! \brief Parse condition from json value
+    //! \param json Json object with address, operator and value
+    //! \returns The parsed condition with the same values
+    //! \throws HueException when the operator is unknown.
     static Condition parse(const nlohmann::json& json);
 
 private:
@@ -66,6 +83,9 @@ private:
 
 namespace detail
 {
+//! Helper class to make creating conditions more convenient.
+//! Specializations for each data type provide methods for the supported operators.
+//! This allows the user to write <code>makeCondition(sensor).eq(value)</code>
 template <typename T>
 class ConditionHelper
 { };
@@ -137,6 +157,7 @@ struct make_void
 {
     typedef void type;
 };
+//! c++17 void_t
 template <typename... Ts>
 using void_t = typename make_void<Ts...>::type;
 
