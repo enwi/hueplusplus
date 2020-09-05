@@ -26,6 +26,7 @@
 #include <memory>
 
 #include "BaseDevice.h"
+#include "Condition.h"
 #include "HueCommandAPI.h"
 #include "TimePattern.h"
 
@@ -182,6 +183,11 @@ public:
     //!
     //! The state can usually only be set on CLIP sensors, not on physical devices.
     void setStateAttribute(const std::string& key, const nlohmann::json& value);
+
+    //! \brief Get address of the given state attribute, used for conditions
+    //! \param key Key in the state object
+    //! \returns \c key prefixed with the path to the sensor state
+    std::string getStateAddress(const std::string& key) const;
 
     //! \brief Check if the sensor is Hue certified
     bool isCertified() const;
@@ -344,6 +350,36 @@ public:
     //! \brief Daylight sensor type name
     static constexpr const char* typeStr = "Daylight";
 };
+
+detail::ConditionHelper<bool> makeCondition(const DaylightSensor& sensor);
+
+template <typename SensorT, detail::void_t<decltype(std::declval<const SensorT>().getLastUpdated())>* = nullptr>
+detail::ConditionHelper<time::AbsoluteTime> makeConditionLastUpdate(const SensorT& sensor)
+{
+    return detail::ConditionHelper<time::AbsoluteTime>(
+        "/sensors/" + std::to_string(sensor.getId()) + "/state/lastupdated");
+}
+
+template <typename ButtonSensor, detail::void_t<decltype(std::declval<const ButtonSensor>().getButtonEvent())>* = nullptr>
+detail::ConditionHelper<int> makeCondition(const ButtonSensor& sensor)
+{
+    return detail::ConditionHelper<int>(
+        "/sensors/" + std::to_string(sensor.getId()) + "/state/buttonevent");
+}
+
+template <typename PresenceSensor, detail::void_t<decltype(std::declval<const PresenceSensor>().getPresence())>* = nullptr>
+detail::ConditionHelper<bool> makeCondition(const PresenceSensor& sensor)
+{
+    return detail::ConditionHelper<bool>(
+        "/sensors/" + std::to_string(sensor.getId()) + "/state/presence");
+}
+
+template <typename TemperatureSensor, detail::void_t<decltype(std::declval<const TemperatureSensor>().getPresence())>* = nullptr>
+detail::ConditionHelper<int> makeCondition(const TemperatureSensor& sensor)
+{
+    return detail::ConditionHelper<int>(
+        "/sensors/" + std::to_string(sensor.getId()) + "/state/temperature");
+}
 
 } // namespace sensors
 

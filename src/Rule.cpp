@@ -19,6 +19,7 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
+#include <hueplusplus/HueExceptionMacro.h>
 #include <hueplusplus/Rule.h>
 
 namespace hueplusplus
@@ -62,14 +63,14 @@ nlohmann::json Condition::toJson() const
     case Operator::stable:
         opStr = "stable";
         break;
-    case Operator::not_stable:
-        opStr = "eq";
+    case Operator::notStable:
+        opStr = "not stable";
         break;
     case Operator::in:
-        opStr = "eq";
+        opStr = "in";
         break;
-    case Operator::not_in:
-        opStr = "eq";
+    case Operator::notIn:
+        opStr = "not in";
         break;
     }
 
@@ -107,17 +108,21 @@ Condition Condition::parse(const nlohmann::json& json)
     {
         op = Operator::stable;
     }
-    else if (opStr == "not_stable")
+    else if (opStr == "not stable")
     {
-        op = Operator::not_stable;
+        op = Operator::notStable;
     }
     else if (opStr == "in")
     {
         op = Operator::in;
     }
-    else if (opStr == "not_in")
+    else if (opStr == "not in")
     {
-        op = Operator::not_in;
+        op = Operator::notIn;
+    }
+    else
+    {
+        throw HueException("Unknown condition operator: " + opStr, CURRENT_FILE_INFO);
     }
 
     return Condition(address, op, value);
@@ -185,9 +190,9 @@ std::vector<Condition> Rule::getConditions() const
     return result;
 }
 
-std::vector<ScheduleCommand> Rule::getActions() const
+std::vector<Action> Rule::getActions() const
 {
-    std::vector<ScheduleCommand> result;
+    std::vector<Action> result;
     const nlohmann::json& actions = state.getValue().at("actions");
     for (const nlohmann::json& a : actions)
     {

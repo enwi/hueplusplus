@@ -99,6 +99,12 @@ void CLIPOpenClose::setOpen(bool open)
     sendPutRequest("/state", nlohmann::json {{"open", open}}, CURRENT_FILE_INFO);
 }
 
+
+detail::ConditionHelper<bool> makeCondition(const CLIPOpenClose& sensor)
+{
+    return detail::ConditionHelper<bool>("/sensors/" + std::to_string(sensor.getId()) + "/state/open");
+}
+
 constexpr const char* CLIPPresence::typeStr;
 
 bool CLIPPresence::getPresence() const
@@ -130,6 +136,11 @@ int CLIPHumidity::getHumidity() const
 void CLIPHumidity::setHumidity(int humidity)
 {
     sendPutRequest("/state", nlohmann::json {{"humidity", humidity}}, CURRENT_FILE_INFO);
+}
+
+detail::ConditionHelper<int> makeCondition(const CLIPHumidity& sensor)
+{
+    return detail::ConditionHelper<int>("/sensors/" + std::to_string(sensor.getId()) + "/state/humidity");
 }
 
 constexpr const char* CLIPLightLevel::typeStr;
@@ -184,6 +195,11 @@ void CLIPGenericFlag::setFlag(bool flag)
     sendPutRequest("/state", nlohmann::json {{"flag", flag}}, CURRENT_FILE_INFO);
 }
 
+detail::ConditionHelper<bool> makeCondition(const CLIPGenericFlag& sensor)
+{
+    return detail::ConditionHelper<bool>("/sensors/" + std::to_string(sensor.getId()) + "/state/flag");
+}
+
 constexpr const char* CLIPGenericStatus::typeStr;
 
 int CLIPGenericStatus::getStatus() const
@@ -194,6 +210,11 @@ int CLIPGenericStatus::getStatus() const
 void CLIPGenericStatus::setStatus(int status)
 {
     sendPutRequest("/state", nlohmann::json {{"status", status}}, CURRENT_FILE_INFO);
+}
+
+detail::ConditionHelper<int> makeCondition(const CLIPGenericStatus& sensor)
+{
+    return detail::ConditionHelper<int>("/sensors/" + std::to_string(sensor.getId()) + "/state/status");
 }
 } // namespace sensors
 } // namespace hueplusplus
