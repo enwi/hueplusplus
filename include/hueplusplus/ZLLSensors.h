@@ -319,6 +319,10 @@ public:
     //! \brief ZLLLightLevel sensor type name
     static constexpr const char* typeStr = "ZLLLightLevel";
 };
+
+detail::ConditionHelper<bool> makeConditionDark(const ZLLLightLevel& sensor);
+detail::ConditionHelper<bool> makeConditionDaylight(const ZLLLightLevel& sensor);
+detail::ConditionHelper<int> makeConditionLightLevel(const ZLLLightLevel& sensor);
 } // namespace sensors
 } // namespace hueplusplus
 

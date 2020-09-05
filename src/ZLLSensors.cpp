@@ -293,5 +293,20 @@ time::AbsoluteTime ZLLLightLevel::getLastUpdated() const
     }
     return time::AbsoluteTime::parseUTC(it->get<std::string>());
 }
+
+detail::ConditionHelper<bool> makeConditionDark(const ZLLLightLevel& sensor)
+{
+    return detail::ConditionHelper<bool>("/sensors/" + std::to_string(sensor.getId()) + "/state/dark");
+}
+
+detail::ConditionHelper<bool> makeConditionDaylight(const ZLLLightLevel& sensor)
+{
+    return detail::ConditionHelper<bool>("/sensors/" + std::to_string(sensor.getId()) + "/state/daylight");
+}
+
+detail::ConditionHelper<int> makeConditionLightLevel(const ZLLLightLevel& sensor)
+{
+    return detail::ConditionHelper<int>("/sensors/" + std::to_string(sensor.getId()) + "/state/lightlevel");
+}
 } // namespace sensors
 } // namespace hueplusplus

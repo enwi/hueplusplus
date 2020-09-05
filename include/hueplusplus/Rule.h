@@ -26,45 +26,12 @@
 
 #include "APICache.h"
 #include "Action.h"
+#include "Condition.h"
 #include "HueCommandAPI.h"
 #include "TimePattern.h"
 
 namespace hueplusplus
 {
-
-class Condition
-{
-public:
-    //! \brief Specifies which operation is used to check the condition
-    enum class Operator
-    {
-        eq, //!< Attribute is equal to specified value (for bool and int)
-        gt, //!< Attribute is greater than specified value (for int)
-        lt, //!< Attribute is less than specified value (for int)
-        dx, //!< Attribute has changed (no value given)
-        ddx, //!< Delayed attribute has changed (no value given)
-        stable, //!< Stable for a given time
-        not_stable, //!< Not stable for a given time
-        in, //!< Time is in the given interval (triggered on start time)
-        not_in //!< Time is not in the interval (triggered on end time)
-    };
-
-public:
-    Condition(const std::string& address, Operator op, const std::string& value);
-
-    std::string getAddress() const;
-    Operator getOperator() const;
-    std::string getValue() const;
-
-    nlohmann::json toJson() const;
-
-    static Condition parse(const nlohmann::json& json);
-
-private:
-    std::string address;
-    Operator op;
-    std::string value;
-};
 
 class Rule
 {
