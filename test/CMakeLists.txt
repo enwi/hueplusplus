@@ -30,6 +30,7 @@ target_compile_features(gtest PUBLIC cxx_std_14)
 
 # define all test sources
 set(TEST_SOURCES
+    test_Action.cpp
     test_APICache.cpp
     test_BaseDevice.cpp
     test_BaseHttpHandler.cpp
@@ -44,8 +45,10 @@ set(TEST_SOURCES
     test_Light.cpp
     test_LightFactory.cpp
     test_Main.cpp
+    test_NewDeviceList.cpp
     test_UPnP.cpp
     test_ResourceList.cpp
+    test_Rule.cpp
     test_Scene.cpp
     test_Schedule.cpp
     test_Sensor.cpp
@@ -54,7 +57,7 @@ set(TEST_SOURCES
     test_SimpleColorHueStrategy.cpp
     test_SimpleColorTemperatureStrategy.cpp
     test_StateTransaction.cpp
-    test_TimePattern.cpp "test_NewDeviceList.cpp" "test_Action.cpp")
+    test_TimePattern.cpp)
 
 set(HuePlusPlus_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
 
