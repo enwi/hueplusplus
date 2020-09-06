@@ -120,7 +120,7 @@ Condition Condition::parse(const nlohmann::json& json)
     {
         op = Operator::notIn;
     }
-    else
+    else if(opStr != "eq")
     {
         throw HueException(CURRENT_FILE_INFO, "Unknown condition operator: " + opStr);
     }
@@ -129,8 +129,10 @@ Condition Condition::parse(const nlohmann::json& json)
 }
 
 Rule::Rule(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration)
-    : id(id), state("/rules/" + id, commands, refreshDuration)
-{ }
+    : id(id), state("/rules/" + std::to_string(id), commands, refreshDuration)
+{ 
+    state.refresh();
+}
 
 void Rule::refresh(bool force)
 {
@@ -163,12 +165,17 @@ void Rule::setName(const std::string& name)
 
 time::AbsoluteTime Rule::getCreated() const
 {
-    return time::AbsoluteTime::parseUTC(state.getValue().at("creationtime").get<std::string>());
+    return time::AbsoluteTime::parseUTC(state.getValue().at("created").get<std::string>());
 }
 
 time::AbsoluteTime Rule::getLastTriggered() const
 {
-    return time::AbsoluteTime::parseUTC(state.getValue().at("lasttriggered").get<std::string>());
+    const std::string lasttriggered = state.getValue().value("lasttriggered", "none");
+    if (lasttriggered.empty() || lasttriggered == "none")
+    {
+        return time::AbsoluteTime(std::chrono::system_clock::time_point(std::chrono::seconds(0)));
+    }
+    return time::AbsoluteTime::parseUTC(lasttriggered);
 }
 
 int Rule::getTimesTriggered() const
@@ -184,6 +191,7 @@ bool Rule::isEnabled() const
 void Rule::setEnabled(bool enabled)
 {
     sendPutRequest({{"status", enabled ? "enabled" : "disabled"}}, CURRENT_FILE_INFO);
+    refresh(true);
 }
 
 std::string Rule::getOwner() const
@@ -222,6 +230,7 @@ void Rule::setConditions(const std::vector<Condition>& conditions)
     }
 
     sendPutRequest({{"conditions", json}}, CURRENT_FILE_INFO);
+    refresh(true);
 }
 
 void Rule::setActions(const std::vector<Action>& actions)
@@ -233,11 +242,28 @@ void Rule::setActions(const std::vector<Action>& actions)
     }
 
     sendPutRequest({{"actions", json}}, CURRENT_FILE_INFO);
+    refresh(true);
 }
 
 nlohmann::json Rule::sendPutRequest(const nlohmann::json& request, FileInfo fileInfo)
 {
-    return state.getCommandAPI().PUTRequest("/groups/" + std::to_string(id), request, std::move(fileInfo));
+    return state.getCommandAPI().PUTRequest("/rules/" + std::to_string(id), request, std::move(fileInfo));
+}
+
+CreateRule::CreateRule(const std::vector<Condition>& conditions, const std::vector<Action>& actions)
+{
+    nlohmann::json conditionsJson;
+    for (const Condition& c : conditions)
+    {
+        conditionsJson.push_back(c.toJson());
+    }
+    request["conditions"] = conditionsJson;
+    nlohmann::json actionsJson;
+    for (const Action& a : actions)
+    {
+        actionsJson.push_back(a.toJson());
+    }
+    request["actions"] = actionsJson;
 }
 
 CreateRule& CreateRule::setName(const std::string& name)
@@ -249,28 +275,6 @@ CreateRule& CreateRule::setName(const std::string& name)
 CreateRule& CreateRule::setStatus(bool enabled)
 {
     request["status"] = enabled ? "enabled" : "disabled";
-    return *this;
-}
-
-CreateRule& CreateRule::setConditions(const std::vector<Condition>& conditions)
-{
-    nlohmann::json conditionsJson;
-    for (const Condition& c : conditions)
-    {
-        conditionsJson.push_back(c.toJson());
-    }
-    request["conditions"] = conditionsJson;
-    return *this;
-}
-
-CreateRule& CreateRule::setActions(const std::vector<Action>& actions)
-{
-    nlohmann::json actionsJson;
-    for (const Action& a : actions)
-    {
-        actionsJson.push_back(a.toJson());
-    }
-    request["actions"] = actionsJson;
     return *this;
 }
 

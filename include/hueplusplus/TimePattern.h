@@ -85,7 +85,7 @@ public:
 
     //! \brief Get formatted string as expected by Hue API
     //! \returns Timestamp in the format
-    //! <code>YYYY-MM-DD</code><strong>T</strong><code>hh:mm:ss</code>
+    //! <code>YYYY-MM-DD</code><strong>T</strong><code>hh:mm:ss</code> in local timezone
     std::string toString() const;
 
     //! \brief Parse AbsoluteTime from formatted string in local timezone

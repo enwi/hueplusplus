@@ -141,6 +141,10 @@ private:
 class CreateRule
 {
 public:
+    //! \brief Construct with necessary parameters
+    //! \param conditions Conditions for the rule. Must not be empty
+    //! \param actions Actions for the rule. Must not be empty
+    CreateRule(const std::vector<Condition>& conditions, const std::vector<Action>& actions);
     //! \brief Set name
     //! \see Rule::setName
     CreateRule& setName(const std::string& name);
@@ -148,13 +152,6 @@ public:
     //! \brief Set status
     //! \see Rule::setEnabled
     CreateRule& setStatus(bool enabled);
-
-    //! \brief Set conditions
-    //! \see Rule::setConditions
-    CreateRule& setConditions(const std::vector<Condition>& conditions);
-    //! \brief Set actions
-    //! \see Rule::setActions
-    CreateRule& setActions(const std::vector<Action>& actions);
 
     //! \brief Get request to create the rule.
     //! \returns JSON request for a POST to create the new rule.
