@@ -1,9 +1,11 @@
 set(hueplusplus_SOURCES
+    Action.cpp
 	APICache.cpp
     BaseDevice.cpp
     BaseHttpHandler.cpp
     Bridge.cpp
     BridgeConfig.cpp
+    CLIPSensors.cpp
     ColorUnits.cpp
     ExtendedColorHueStrategy.cpp
     ExtendedColorTemperatureStrategy.cpp
@@ -13,6 +15,8 @@ set(hueplusplus_SOURCES
     HueException.cpp
     Light.cpp
     ModelPictures.cpp
+    NewDeviceList.cpp
+    Rule.cpp
     Scene.cpp
     Schedule.cpp
     Sensor.cpp
@@ -22,7 +26,8 @@ set(hueplusplus_SOURCES
     StateTransaction.cpp
     TimePattern.cpp
     UPnP.cpp
-    Utils.cpp "ZLLSensors.cpp" "CLIPSensors.cpp" "NewDeviceList.cpp" "Action.cpp")
+    Utils.cpp 
+    ZLLSensors.cpp)
 
 # on windows we want to compile the WinHttpHandler
 if(WIN32)
