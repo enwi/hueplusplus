@@ -136,7 +136,7 @@ ColorType LightFactory::getColorType(const nlohmann::json& lightState, bool hasC
         else
         {
             // Only other type is "Other" which does not have an enum value
-            return ColorType::UNDEFINED;
+            return hasCt ? ColorType::GAMUT_OTHER_TEMPERATURE : ColorType::GAMUT_OTHER;
         }
     }
     else
@@ -155,8 +155,13 @@ ColorType LightFactory::getColorType(const nlohmann::json& lightState, bool hasC
         {
             return hasCt ? ColorType::GAMUT_C_TEMPERATURE : ColorType::GAMUT_C;
         }
-        std::cerr << "Could not determine Light color type:" << modelid << "!\n";
-        throw HueException(CURRENT_FILE_INFO, "Could not determine Light color type!");
+        else
+        {
+            std::cerr << "Warning: Could not determine Light color type:" << modelid
+                      << "!\n"
+                         "Results may not be correct.\n";
+            return ColorType::UNDEFINED;
+        }
     }
 }
 } // namespace hueplusplus
