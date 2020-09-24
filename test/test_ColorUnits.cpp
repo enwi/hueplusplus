@@ -105,6 +105,13 @@ TEST(RGB, toXY)
         EXPECT_FLOAT_EQ(xy.xy.y, 0.32902291f);
         EXPECT_FLOAT_EQ(xy.brightness, 0.99999905f);
     }
+    {
+        const RGB black{ 0,0,0 };
+        XYBrightness xy = black.toXY(gamut::maxGamut);
+        EXPECT_FLOAT_EQ(xy.xy.x, 0.0f);
+        EXPECT_FLOAT_EQ(xy.xy.y, 0.0f);
+        EXPECT_FLOAT_EQ(xy.brightness, 0.0f);
+    }
 }
 
 TEST(RGB, fromXY)
