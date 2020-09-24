@@ -49,7 +49,9 @@ enum class ColorType
     TEMPERATURE, //!< light has color temperature control
     GAMUT_A_TEMPERATURE, //!< light uses Gamut A and has color temperature control
     GAMUT_B_TEMPERATURE, //!< light uses Gamut B and has color temperature control
-    GAMUT_C_TEMPERATURE //!< light uses Gamut C and has color temperature control
+    GAMUT_C_TEMPERATURE, //!< light uses Gamut C and has color temperature control
+    GAMUT_OTHER, //!< light uses capabilities to specify a different gamut
+    GAMUT_OTHER_TEMPERATURE //!< light uses capabilities to specify a different gamut and has color temperature control
 };
 
 //! \brief Class for Hue Light fixtures

@@ -94,7 +94,7 @@ TEST(LightFactory, createLight_gamutCapabilities)
     lightState["capabilities"]["control"]["colorgamuttype"] = "Other";
 
     test_light_1 = factory.createLight(lightState, 1);
-    EXPECT_EQ(test_light_1.getColorType(), ColorType::UNDEFINED);
+    EXPECT_EQ(test_light_1.getColorType(), ColorType::GAMUT_OTHER);
 
     // With color temperature
     lightState["type"] = "Extended color light";
@@ -112,6 +112,11 @@ TEST(LightFactory, createLight_gamutCapabilities)
 
     test_light_1 = factory.createLight(lightState, 1);
     EXPECT_EQ(test_light_1.getColorType(), ColorType::GAMUT_C_TEMPERATURE);
+
+    lightState["capabilities"]["control"]["colorgamuttype"] = "Other";
+
+    test_light_1 = factory.createLight(lightState, 1);
+    EXPECT_EQ(test_light_1.getColorType(), ColorType::GAMUT_OTHER_TEMPERATURE);
 }
 
 TEST(LightFactory, createLight_gamutModelid)
@@ -164,5 +169,6 @@ TEST(LightFactory, createLight_gamutModelid)
 
     // Unknown model
     lightState["modelid"] = "Unknown model";
-    EXPECT_THROW(factory.createLight(lightState, 1), HueException);
+    test_light_1 = factory.createLight(lightState, 1);
+    EXPECT_EQ(test_light_1.getColorType(), ColorType::UNDEFINED);
 }
