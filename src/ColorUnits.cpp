@@ -107,6 +107,10 @@ XY ColorGamut::corrected(const XY& xy) const
 
 XYBrightness RGB::toXY() const
 {
+    if (r == 0 && g == 0 && b == 0)
+    {
+        return XYBrightness {XY {0.f, 0.f}, 0.f};
+    }
     const float red = r / 255.f;
     const float green = g / 255.f;
     const float blue = b / 255.f;
