@@ -74,7 +74,9 @@ ColorGamut Light::getColorGamut() const
     case ColorType::GAMUT_C:
     case ColorType::GAMUT_C_TEMPERATURE:
         return gamut::gamutC;
-    default: {
+    case ColorType::UNDEFINED:
+        return gamut::maxGamut;
+    default: { // GAMUT_OTHER, GAMUT_OTHER_TEMPERATURE
         const nlohmann::json& capabilitiesGamut
             = utils::safeGetMember(state.getValue(), "capabilities", "control", "colorgamut");
         if (capabilitiesGamut.is_array() && capabilitiesGamut.size() == 3)
