@@ -154,6 +154,16 @@ TEST(StateTransaction, setBrightness)
         EXPECT_TRUE(StateTransaction(commands, "/path", &state).setBrightness(bri).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
+    // Fixed unexpected on/off flickering
+    {
+        const int hue = 32;
+        nlohmann::json state = {{"on", false}, {"bri", 20}};
+        nlohmann::json request = { {"hue", hue}, {"bri", 0} };
+        nlohmann::json response = {{{"success", {{"/path/hue", hue}}}}};
+        EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setBrightness(0).setColorHue(hue).commit());
+        Mock::VerifyAndClearExpectations(handler.get());
+    }
 }
 
 TEST(StateTransaction, setColorHue)
@@ -303,7 +313,7 @@ TEST(StateTransaction, setColorXY)
                 }},
             {"colormode", "hs"}};
         EXPECT_CALL(*handler, PUTJson(requestPath, request, getBridgeIp(), getBridgePort())).WillOnce(Return(response));
-        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColor(XY{ x, y }).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColor(XY {x, y}).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     // No request
@@ -318,7 +328,7 @@ TEST(StateTransaction, setColorXY)
                 }},
             {"colormode", "xy"}};
         EXPECT_CALL(*handler, PUTJson(_, _, getBridgeIp(), getBridgePort())).Times(0);
-        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColor(XY{ x, y }).commit());
+        EXPECT_TRUE(StateTransaction(commands, "/path", &state).setColor(XY {x, y}).commit());
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }

@@ -39,8 +39,8 @@ bool StateTransaction::commit(bool trimRequest)
     // Check this before request is trimmed
     if (!request.count("on"))
     {
-        if (!stateJson.value("on", false)
-            && (request.value("bri", 0) != 0 || request.count("effect") || request.count("hue") || request.count("sat")
+        if (!stateJson.value("on", false) && request.value("bri", 254) != 0
+            && (request.count("bri") || request.count("effect") || request.count("hue") || request.count("sat")
                 || request.count("xy") || request.count("ct")))
         {
             // Turn on if it was turned off
