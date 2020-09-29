@@ -73,7 +73,7 @@ public:
 
     MOCK_CONST_METHOD0(getSwVersion, std::string());
 
-    MOCK_METHOD1(setName, bool(std::string& name));
+    MOCK_METHOD1(setName, bool(const std::string& name));
 
     MOCK_CONST_METHOD0(getColorType, hueplusplus::ColorType());
 

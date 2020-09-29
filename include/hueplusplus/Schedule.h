@@ -61,7 +61,7 @@ public:
     //! \brief Get time when the event(s) will occur
     //! \returns TimePattern in local timezone
     time::TimePattern getTime() const;
-    //! \brief Get whether schedule is enabled or disabled
+    //! \brief Check whether schedule is enabled or disabled
     bool isEnabled() const;
     //! \brief Get autodelete
     //!

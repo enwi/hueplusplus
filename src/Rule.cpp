@@ -72,6 +72,8 @@ nlohmann::json Condition::toJson() const
     case Operator::notIn:
         opStr = "not in";
         break;
+    default:
+        throw HueException(CURRENT_FILE_INFO, "Invalid operator enum value: " + std::to_string(static_cast<int>(op)));
     }
 
     nlohmann::json result = {{"address", address}, {"operator", opStr}};

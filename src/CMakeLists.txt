@@ -1,6 +1,6 @@
 set(hueplusplus_SOURCES
     Action.cpp
-	APICache.cpp
+    APICache.cpp
     BaseDevice.cpp
     BaseHttpHandler.cpp
     Bridge.cpp
@@ -9,9 +9,9 @@ set(hueplusplus_SOURCES
     ColorUnits.cpp
     ExtendedColorHueStrategy.cpp
     ExtendedColorTemperatureStrategy.cpp
-	Group.cpp
+    Group.cpp
     HueCommandAPI.cpp
-	HueDeviceTypes.cpp
+    HueDeviceTypes.cpp
     HueException.cpp
     Light.cpp
     ModelPictures.cpp
