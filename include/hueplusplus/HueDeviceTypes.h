@@ -46,7 +46,7 @@ public:
     //! \throws HueException when light type is unknown
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    Light createLight(const nlohmann::json& lightState, int id);
+    Light createLight(const nlohmann::json& lightState, int id, const std::shared_ptr<APICache>& baseCache = {});
 
 private:
     //! \brief Get color type from light JSON.

@@ -138,7 +138,7 @@ std::string BridgeFinder::ParseDescription(const std::string& description)
 }
 
 Bridge::Bridge(const std::string& ip, const int port, const std::string& username,
-    std::shared_ptr<const IHttpHandler> handler, std::chrono::steady_clock::duration refreshDuration)
+    std::shared_ptr<const IHttpHandler> handler, std::chrono::steady_clock::duration refreshDuration, bool sharedState)
     : ip(ip),
       username(username),
       port(port),
@@ -146,15 +146,18 @@ Bridge::Bridge(const std::string& ip, const int port, const std::string& usernam
       refreshDuration(refreshDuration),
       stateCache(std::make_shared<APICache>(
           "", HueCommandAPI(ip, port, username, http_handler), std::chrono::steady_clock::duration::max())),
-      lightList(stateCache, "lights", refreshDuration,
+      lightList(stateCache, "lights", refreshDuration, sharedState,
           [factory = LightFactory(stateCache->getCommandAPI(), refreshDuration)](
-              int id, const nlohmann::json& state) mutable { return factory.createLight(state, id); }),
-      groupList(stateCache, "groups", refreshDuration),
-      scheduleList(stateCache, "schedules", refreshDuration),
-      sceneList(stateCache, "scenes", refreshDuration),
-      sensorList(stateCache, "sensors", refreshDuration),
-      ruleList(stateCache, "rules", refreshDuration),
-      bridgeConfig(stateCache, refreshDuration)
+              int id, const nlohmann::json& state, const std::shared_ptr<APICache>& baseCache) mutable {
+              return factory.createLight(state, id, baseCache);
+          }),
+      groupList(stateCache, "groups", refreshDuration, sharedState),
+      scheduleList(stateCache, "schedules", refreshDuration, sharedState),
+      sceneList(stateCache, "scenes", refreshDuration, sharedState),
+      sensorList(stateCache, "sensors", refreshDuration, sharedState),
+      ruleList(stateCache, "rules", refreshDuration, sharedState),
+      bridgeConfig(stateCache, refreshDuration),
+      sharedState(sharedState)
 { }
 
 void Bridge::refresh()
@@ -304,13 +307,14 @@ void Bridge::setHttpHandler(std::shared_ptr<const IHttpHandler> handler)
 {
     http_handler = handler;
     stateCache = std::make_shared<APICache>("", HueCommandAPI(ip, port, username, handler), refreshDuration);
-    lightList = LightList(stateCache, "lights", refreshDuration,
-        [factory = LightFactory(stateCache->getCommandAPI(), refreshDuration)](
-            int id, const nlohmann::json& state) mutable { return factory.createLight(state, id); });
-    groupList = GroupList(stateCache, "groups", refreshDuration);
-    scheduleList = ScheduleList(stateCache, "schedules", refreshDuration);
-    sceneList = SceneList(stateCache, "scenes", refreshDuration);
-    sensorList = SensorList(stateCache, "sensors", refreshDuration);
+    lightList = LightList(stateCache, "lights", refreshDuration,sharedState,
+        [factory = LightFactory(stateCache->getCommandAPI(), refreshDuration)](int id, const nlohmann::json& state,
+            const std::shared_ptr<APICache>& baseCache) mutable { return factory.createLight(state, id, baseCache); });
+    groupList = GroupList(stateCache, "groups", refreshDuration, sharedState);
+    scheduleList = ScheduleList(stateCache, "schedules", refreshDuration, sharedState);
+    sceneList = SceneList(stateCache, "scenes", refreshDuration, sharedState);
+    sensorList = SensorList(stateCache, "sensors", refreshDuration, sharedState);
+    ruleList = RuleList(stateCache, "rules", refreshDuration, sharedState);
     bridgeConfig = BridgeConfig(stateCache, refreshDuration);
     stateCache->refresh();
 }

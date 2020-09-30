@@ -145,9 +145,11 @@ public:
     //! the bridge. Can be left empty and acquired in \ref requestUsername.
     //! \param handler HttpHandler for communication with the bridge
     //! \param refreshDuration Time between refreshing the cached state.
+    //! \param sharedState Uses a single, shared cache for all objects on the bridge.
     Bridge(const std::string& ip, const int port, const std::string& username,
         std::shared_ptr<const IHttpHandler> handler,
-        std::chrono::steady_clock::duration refreshDuration = std::chrono::seconds(10));
+        std::chrono::steady_clock::duration refreshDuration = std::chrono::seconds(10),
+        bool sharedState = false);
 
     //! \brief Refreshes the bridge state.
     //!
@@ -265,6 +267,7 @@ private:
     detail::MakeCopyable<SensorList> sensorList;
     detail::MakeCopyable<RuleList> ruleList;
     detail::MakeCopyable<BridgeConfig> bridgeConfig;
+    bool sharedState;
 };
 } // namespace hueplusplus
 

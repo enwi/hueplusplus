@@ -67,41 +67,46 @@ LightFactory::LightFactory(const HueCommandAPI& commands, std::chrono::steady_cl
       extendedColorTemperature(std::make_shared<ExtendedColorTemperatureStrategy>()),
       simpleColorHue(std::make_shared<SimpleColorHueStrategy>()),
       extendedColorHue(std::make_shared<ExtendedColorHueStrategy>())
-{}
+{ }
 
-Light LightFactory::createLight(const nlohmann::json& lightState, int id)
+Light LightFactory::createLight(const nlohmann::json& lightState, int id, const std::shared_ptr<APICache>& baseCache)
 {
     std::string type = lightState.value("type", "");
     // Ignore case
     std::transform(type.begin(), type.end(), type.begin(), [](char c) { return std::tolower(c); });
 
+    Light light = baseCache ? Light(id, baseCache) : Light(id, commands, nullptr, nullptr, nullptr, refreshDuration);
+
     if (type == "on/off light" || type == "on/off plug-in unit")
     {
-        Light light(id, commands, nullptr, nullptr, nullptr, refreshDuration);
         light.colorType = ColorType::NONE;
         return light;
     }
-    else if (type == "dimmable light" || type =="dimmable plug-in unit")
+    else if (type == "dimmable light" || type == "dimmable plug-in unit")
     {
-        Light light(id, commands, simpleBrightness, nullptr, nullptr, refreshDuration);
+        light.setBrightnessStrategy(simpleBrightness);
         light.colorType = ColorType::NONE;
         return light;
     }
     else if (type == "color temperature light")
     {
-        Light light(id, commands, simpleBrightness, simpleColorTemperature, nullptr, refreshDuration);
+        light.setBrightnessStrategy(simpleBrightness);
+        light.setColorTemperatureStrategy(simpleColorTemperature);
         light.colorType = ColorType::TEMPERATURE;
         return light;
     }
     else if (type == "color light")
     {
-        Light light(id, commands, simpleBrightness, nullptr, simpleColorHue, refreshDuration);
+        light.setBrightnessStrategy(simpleBrightness);
+        light.setColorHueStrategy(simpleColorHue);
         light.colorType = getColorType(lightState, false);
         return light;
     }
     else if (type == "extended color light")
     {
-        Light light(id, commands, simpleBrightness, extendedColorTemperature, extendedColorHue, refreshDuration);
+        light.setBrightnessStrategy(simpleBrightness);
+        light.setColorTemperatureStrategy(extendedColorTemperature);
+        light.setColorHueStrategy(extendedColorHue);
         light.colorType = getColorType(lightState, true);
         return light;
     }

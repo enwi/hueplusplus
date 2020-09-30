@@ -41,6 +41,7 @@ namespace hueplusplus
 class Group
 {
 public:
+    Group(int id, const std::shared_ptr<APICache>& baseCache);
     //! \brief Creates group with id
     //! \param id Group id in the bridge
     //! \param commands HueCommandAPI for requests

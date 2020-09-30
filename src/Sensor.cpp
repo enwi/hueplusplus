@@ -230,6 +230,11 @@ bool Sensor::isPrimary() const
     return primary.is_boolean() && primary.get<bool>();
 }
 
+Sensor::Sensor(int id, const std::shared_ptr<APICache>& baseCache)
+    : BaseDevice(id, baseCache)
+{ }
+
+
 Sensor::Sensor(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration)
     : BaseDevice(id, commands, "/sensors/", refreshDuration)
 { }
