@@ -120,6 +120,7 @@ public:
     virtual void refresh(bool force = false);
 
 protected:
+    BaseDevice(int id, const std::shared_ptr<APICache>& baseCache);
     //! \brief Protected ctor that is used by subclasses.
     //!
     //! \param id Integer that specifies the id of this device

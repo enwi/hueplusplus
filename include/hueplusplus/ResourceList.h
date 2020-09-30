@@ -45,6 +45,9 @@ template <typename Resource, typename IdT>
 class ResourceList
 {
 public:
+    struct SharedStateTag
+    { };
+
     using ResourceType = Resource;
     using IdType = IdT;
     static_assert(std::is_integral<IdType>::value || std::is_same<std::string, IdType>::value,
@@ -57,9 +60,13 @@ public:
     //! \param factory Optional factory function to create Resources.
     //! Necessary if Resource is not constructible as described above.
     ResourceList(std::shared_ptr<APICache> baseCache, const std::string& cacheEntry,
-        std::chrono::steady_clock::duration refreshDuration,
-        const std::function<Resource(IdType, const nlohmann::json&)>& factory = nullptr)
-        : stateCache(baseCache, cacheEntry, refreshDuration), factory(factory), path(stateCache.getRequestPath() + '/')
+        std::chrono::steady_clock::duration refreshDuration, bool sharedState = false,
+        const std::function<Resource(IdType, const nlohmann::json&, const std::shared_ptr<APICache>&)>& factory
+        = nullptr)
+        : stateCache(std::make_shared<APICache>(baseCache, cacheEntry, refreshDuration)),
+          factory(factory),
+          path(stateCache->getRequestPath() + '/'),
+          sharedState(sharedState)
     { }
     //! \brief Construct ResourceList with a separate cache and optional factory function
     //! \param commands HueCommandAPI for requests
@@ -69,8 +76,12 @@ public:
     //! Necessary if Resource is not constructible as described above.
     ResourceList(const HueCommandAPI& commands, const std::string& path,
         std::chrono::steady_clock::duration refreshDuration,
-        const std::function<Resource(IdType, const nlohmann::json&)>& factory = nullptr)
-        : stateCache(path, commands, refreshDuration), factory(factory), path(path + '/')
+        const std::function<Resource(IdType, const nlohmann::json&, const std::shared_ptr<APICache>&)>& factory
+        = nullptr)
+        : stateCache(std::make_shared<APICache>(path, commands, refreshDuration)),
+          factory(factory),
+          path(path + '/'),
+          sharedState(false)
     { }
 
     //! \brief Deleted copy constructor
@@ -79,7 +90,7 @@ public:
     ResourceList& operator=(const ResourceList&) = delete;
 
     //! \brief Refreshes internal state now
-    void refresh() { stateCache.refresh(); }
+    void refresh() { stateCache->refresh(); }
 
     //! \brief Get all resources that exist
     //! \returns A vector of references to every Resource
@@ -89,7 +100,7 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     std::vector<std::reference_wrapper<Resource>> getAll()
     {
-        nlohmann::json state = stateCache.getValue();
+        nlohmann::json state = stateCache->getValue();
         for (auto it = state.begin(); it != state.end(); ++it)
         {
             get(maybeStoi(it.key()));
@@ -118,7 +129,7 @@ public:
             pos->second.refresh(true);
             return pos->second;
         }
-        const nlohmann::json& state = stateCache.getValue();
+        const nlohmann::json& state = stateCache->getValue();
         std::string key = maybeToString(id);
         if (!state.count(key))
         {
@@ -141,7 +152,7 @@ public:
         {
             return true;
         }
-        return stateCache.getValue().count(maybeToString(id)) != 0;
+        return stateCache->getValue().count(maybeToString(id)) != 0;
     }
 
     //! \brief Checks whether resource with id exists
@@ -156,7 +167,7 @@ public:
         {
             return true;
         }
-        return stateCache.getValue().count(maybeToString(id)) != 0;
+        return stateCache->getValue().count(maybeToString(id)) != 0;
     }
 
     //! \brief Removes the resource
@@ -171,7 +182,7 @@ public:
     bool remove(const IdType& id)
     {
         std::string requestPath = path + maybeToString(id);
-        nlohmann::json result = stateCache.getCommandAPI().DELETERequest(
+        nlohmann::json result = stateCache->getCommandAPI().DELETERequest(
             requestPath, nlohmann::json::object(), FileInfo {__FILE__, __LINE__, __func__});
         bool success = utils::safeGetMember(result, 0, "success") == requestPath + " deleted";
         auto it = resources.find(id);
@@ -208,11 +219,18 @@ private:
     {
         if (factory)
         {
-            return factory(id, state);
+            return factory(id, state, sharedState ? stateCache : std::shared_ptr<APICache>());
         }
         else
         {
-            return Resource(id, stateCache.getCommandAPI(), stateCache.getRefreshDuration());
+            if (sharedState)
+            {
+                return Resource(id, stateCache);
+            }
+            else
+            {
+                return Resource(id, stateCache->getCommandAPI(), stateCache->getRefreshDuration());
+            }
         }
     }
     // Resource is not constructable
@@ -223,7 +241,7 @@ private:
             throw HueException(FileInfo {__FILE__, __LINE__, __func__},
                 "Resource is not constructable with default parameters, but no factory given");
         }
-        return factory(id, state);
+        return factory(id, state, sharedState ? stateCache : std::shared_ptr<APICache>());
     }
 
 private:
@@ -233,10 +251,11 @@ private:
     static std::string maybeToString(const IdType& id, std::false_type) { return id; }
 
 protected:
-    APICache stateCache;
-    std::function<Resource(IdType, const nlohmann::json&)> factory;
+    std::shared_ptr<APICache> stateCache;
+    std::function<Resource(IdType, const nlohmann::json&, const std::shared_ptr<APICache>&)> factory;
     std::string path;
     std::map<IdType, Resource> resources;
+    bool sharedState;
 };
 
 //! \brief Handles a ResourceList of physical devices which can be searched for
@@ -258,12 +277,12 @@ public:
         requestPath.pop_back();
         if (deviceIds.empty())
         {
-            this->stateCache.getCommandAPI().POSTRequest(
+            this->stateCache->getCommandAPI().POSTRequest(
                 requestPath, nlohmann::json::object(), FileInfo {__FILE__, __LINE__, __func__});
         }
         else
         {
-            this->stateCache.getCommandAPI().POSTRequest(
+            this->stateCache->getCommandAPI().POSTRequest(
                 requestPath, nlohmann::json {{"deviceid", deviceIds}}, FileInfo {__FILE__, __LINE__, __func__});
         }
     }
@@ -271,7 +290,7 @@ public:
     //! \brief Get devices found in last search
     NewDeviceList getNewDevices() const
     {
-        nlohmann::json response = this->stateCache.getCommandAPI().GETRequest(
+        nlohmann::json response = this->stateCache->getCommandAPI().GETRequest(
             this->path + "new", nlohmann::json::object(), FileInfo {__FILE__, __LINE__, __func__});
         return NewDeviceList::parse(response);
     }
@@ -306,7 +325,7 @@ public:
         std::string requestPath = this->path;
         // Remove slash
         requestPath.pop_back();
-        nlohmann::json response = this->stateCache.getCommandAPI().POSTRequest(
+        nlohmann::json response = this->stateCache->getCommandAPI().POSTRequest(
             requestPath, params.getRequest(), FileInfo {__FILE__, __LINE__, __func__});
         nlohmann::json id = utils::safeGetMember(response, 0, "success", "id");
         if (id.is_string())
@@ -316,7 +335,7 @@ public:
             {
                 idStr.erase(0, this->path.size());
             }
-            this->stateCache.refresh();
+            this->stateCache->refresh();
             return this->maybeStoi(idStr);
         }
         return typename BaseResourceList::IdType {};
@@ -350,7 +369,7 @@ public:
             pos->second.refresh();
             return pos->second;
         }
-        const nlohmann::json& state = this->stateCache.getValue();
+        const nlohmann::json& state = this->stateCache->getValue();
         std::string key = this->maybeToString(id);
         if (!state.count(key) && id != 0)
         {

@@ -58,7 +58,7 @@ public:
     template <typename T>
     std::vector<T> getAllByType()
     {
-        nlohmann::json state = this->stateCache.getValue();
+        nlohmann::json state = this->stateCache->getValue();
         std::vector<T> result;
         for (auto it = state.begin(); it != state.end(); ++it)
         {

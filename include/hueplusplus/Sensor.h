@@ -59,6 +59,8 @@ Alert alertFromString(const std::string& s);
 class Sensor : public BaseDevice
 {
 public:
+    Sensor(int id, const std::shared_ptr<APICache>& baseCache);
+
     //! \brief Construct Sensor.
     //! \param id Integer that specifies the id of this sensor
     //! \param commands HueCommandAPI for communication with the bridge
