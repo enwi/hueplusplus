@@ -91,6 +91,10 @@ bool BaseDevice::setName(const std::string& name)
     return utils::safeGetMember(reply, 0, "success", "/lights/" + std::to_string(id) + "/name").is_string();
 }
 
+BaseDevice::BaseDevice(int id, const std::shared_ptr<APICache>& baseCache)
+    : id(id), state(baseCache, std::to_string(id), baseCache->getRefreshDuration())
+{ }
+
 BaseDevice::BaseDevice(
     int id, const HueCommandAPI& commands, const std::string& path, std::chrono::steady_clock::duration refreshDuration)
     : id(id), path(path), state(path + std::to_string(id), commands, refreshDuration)

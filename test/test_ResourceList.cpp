@@ -32,6 +32,7 @@ using namespace testing;
 class TestResource
 {
 public:
+    TestResource(int id, std::shared_ptr<APICache> baseCache) {}
     TestResource(int id, HueCommandAPI api, std::chrono::steady_clock::duration refreshDuration) : id(id) { }
 
     void refresh(bool force = false) { }
@@ -47,6 +48,7 @@ public:
 class TestStringResource
 {
 public:
+    TestStringResource(const std::string& id, std::shared_ptr<APICache> baseCache) {}
     TestStringResource(const std::string& id, HueCommandAPI api, std::chrono::steady_clock::duration refreshDuration)
         : id(id)
     { }
@@ -122,8 +124,8 @@ TEST(ResourceList, get)
         const nlohmann::json state = {{"resource", "state"}};
         const nlohmann::json response = {{std::to_string(id), state}};
 
-        MockFunction<TestResource(int, const nlohmann::json&)> factory;
-        EXPECT_CALL(factory, Call(id, state))
+        MockFunction<TestResource(int, const nlohmann::json&, const std::shared_ptr<APICache>&)> factory;
+        EXPECT_CALL(factory, Call(id, state, std::shared_ptr<APICache>()))
             .WillOnce(Return(TestResource(id, commands, std::chrono::steady_clock::duration::max())));
 
         ResourceList<TestResource, int> list(
@@ -162,7 +164,7 @@ TEST(ResourceList, get)
     }
     {
         ResourceList<TestResourceFactory, int> list(commands, path, std::chrono::steady_clock::duration::max(),
-            [](int, const nlohmann::json&) { return TestResourceFactory(); });
+            [](int, const nlohmann::json&, const std::shared_ptr<APICache>&) { return TestResourceFactory(); });
 
         const int id = 2;
         const nlohmann::json response = {{std::to_string(id), {{"resource", "state"}}}};

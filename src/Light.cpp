@@ -114,6 +114,9 @@ StateTransaction Light::transaction()
 
 Light::Light(int id, const HueCommandAPI& commands) : Light(id, commands, nullptr, nullptr, nullptr) { }
 
+Light::Light(int id, const std::shared_ptr<APICache>& baseCache) : BaseDevice(id, baseCache), colorType(ColorType::NONE)
+{ }
+
 Light::Light(int id, const HueCommandAPI& commands, std::shared_ptr<const BrightnessStrategy> brightnessStrategy,
     std::shared_ptr<const ColorTemperatureStrategy> colorTempStrategy,
     std::shared_ptr<const ColorHueStrategy> colorHueStrategy, std::chrono::steady_clock::duration refreshDuration)
@@ -122,6 +125,5 @@ Light::Light(int id, const HueCommandAPI& commands, std::shared_ptr<const Bright
       brightnessStrategy(std::move(brightnessStrategy)),
       colorTemperatureStrategy(std::move(colorTempStrategy)),
       colorHueStrategy(std::move(colorHueStrategy))
-{
-}
+{ }
 } // namespace hueplusplus

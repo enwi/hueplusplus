@@ -554,6 +554,7 @@ public:
     ///@}
 
 protected:
+
     //! \brief Protected ctor that is used by \ref Bridge class.
     //!
     //! \param id Integer that specifies the id of this light
@@ -561,6 +562,9 @@ protected:
     //!
     //! leaves strategies unset
     Light(int id, const HueCommandAPI& commands);
+
+
+    Light(int id, const std::shared_ptr<APICache>& baseCache);
 
     //! \brief Protected ctor that is used by \ref Bridge class, also sets
     //! strategies.
