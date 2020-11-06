@@ -237,6 +237,34 @@ std::string Bridge::requestUsername()
     return username;
 }
 
+bool Bridge::StartStreaming(std::string group_identifier)
+{
+    nlohmann::json request;
+
+    request["stream"]["active"] = true;
+
+    nlohmann::json answer;
+
+    std::string uri = "/api/" + username + "/groups/" + group_identifier;
+
+    answer = http_handler->PUTJson(uri, request, ip, port);
+
+    if(answer[0].contains("success"))
+    {
+        std::string key = "/groups/" + group_identifier + "/stream/active";
+
+        if(answer[0]["success"].contains(key))
+        {
+            if(answer[0]["success"][key] == true)
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 std::string Bridge::getUsername() const
 {
     return username;
