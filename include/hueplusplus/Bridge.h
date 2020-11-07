@@ -185,6 +185,11 @@ public:
     //! \return bool - whether stream request was successful
     bool StartStreaming(std::string group_identifier);
 
+    //! \brief Function to set stream mode to active for entertainment mode
+    //!
+    //! \return bool - whether stream request was successful
+    bool StopStreaming(std::string group_identifier);
+
     //! \brief Function to get the port of the hue bridge
     //!
     //! \return integer containing port
