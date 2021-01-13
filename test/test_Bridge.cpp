@@ -88,7 +88,7 @@ TEST_F(BridgeFinderTest, FindBridges)
 TEST_F(BridgeFinderTest, GetBridge)
 {
     using namespace ::testing;
-    nlohmann::json request {{"devicetype", "HuePlusPlus#User"}};
+    nlohmann::json request {{"devicetype":"HuePlusPlus#User","generateclientkey":true}};
 
     nlohmann::json errorResponse
         = {{{"error", {{"type", 101}, {"address", ""}, {"description", "link button not pressed"}}}}};
@@ -158,7 +158,7 @@ TEST(Bridge, requestUsername)
 {
     using namespace ::testing;
     std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
-    nlohmann::json request {{"devicetype", "HuePlusPlus#User"}};
+    nlohmann::json request {{"devicetype":"HuePlusPlus#User","generateclientkey":true}};
 
     {
         nlohmann::json errorResponse
