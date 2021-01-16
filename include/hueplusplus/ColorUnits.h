@@ -58,6 +58,7 @@ struct XY
 //! \brief Color and brightness in CIE
 //!
 //! The brightness is needed to convert back to RGB colors if necessary.
+//! \note brightness is not the actual luminance of the color, but instead the brightness the light is set to.
 struct XYBrightness
 {
     //! \brief XY color
@@ -128,12 +129,16 @@ struct RGB
     //! \brief Create from XYBrightness
     //!
     //! Performs gamma correction so the light color matches the screen color better.
+    //! \note The conversion formula is not exact, it can be off by up to 9 for each channel.
+    //! This is because the color luminosity is not saved.
     static RGB fromXY(const XYBrightness& xy);
     //! \brief Create from XYBrightness and clip to \c gamut
     //!
     //! A light may have XY set out of its range. Then this function returns the actual color
     //! the light shows rather than what it is set to.
     //! Performs gamma correction so the light color matches the screen color better.
+    //! \note The conversion formula is not exact, it can be off by up to 9 for each channel.
+    //! This is because the color luminosity is not saved.
     static RGB fromXY(const XYBrightness& xy, const ColorGamut& gamut);
 };
 } // namespace hueplusplus

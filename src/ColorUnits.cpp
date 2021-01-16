@@ -19,6 +19,7 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
+#include <algorithm>
 #include <cmath>
 
 #include <hueplusplus/ColorUnits.h>
@@ -109,7 +110,8 @@ XYBrightness RGB::toXY() const
 {
     if (r == 0 && g == 0 && b == 0)
     {
-        return XYBrightness {XY {0.f, 0.f}, 0.f};
+        // Return white with minimum brightness
+        return XYBrightness {XY {0.32272673f, 0.32902291f}, 0.f};
     }
     const float red = r / 255.f;
     const float green = g / 255.f;
@@ -125,7 +127,9 @@ XYBrightness RGB::toXY() const
 
     const float x = X / (X + Y + Z);
     const float y = Y / (X + Y + Z);
-    return XYBrightness {XY {x, y}, Y};
+    // Set brightness to the brightest channel value (rather than average of them),
+    // so full red/green/blue can be displayed
+    return XYBrightness {XY {x, y}, std::max({red, green, blue})};
 }
 
 XYBrightness RGB::toXY(const ColorGamut& gamut) const
@@ -140,8 +144,19 @@ XYBrightness RGB::toXY(const ColorGamut& gamut) const
 
 RGB RGB::fromXY(const XYBrightness& xy)
 {
+    if (xy.brightness < 1e-4)
+    {
+        return RGB{ 0,0,0 };
+    }
     const float z = 1.f - xy.xy.x - xy.xy.y;
-    const float Y = xy.brightness;
+    // use a fixed luminosity and rescale the resulting rgb values using brightness
+    // randomly sampled conversions shown a minimum difference between original values
+    // and values after rgb -> xy -> rgb conversion for Y = 0.3
+    // (r-r')^2, (g-g')^2, (b-b')^2: 
+    // 4.48214,  4.72039,  3.12141
+    // Max. Difference:
+    // 9,        9,        8
+    const float Y = 0.3f;
     const float X = (Y / xy.xy.y) * xy.xy.x;
     const float Z = (Y / xy.xy.y) * z;
 
@@ -154,8 +169,20 @@ RGB RGB::fromXY(const XYBrightness& xy)
     const float gammaG = g <= 0.0031308f ? 12.92f * g : (1.0f + 0.055f) * pow(g, (1.0f / 2.4f)) - 0.055f;
     const float gammaB = b <= 0.0031308f ? 12.92f * b : (1.0f + 0.055f) * pow(b, (1.0f / 2.4f)) - 0.055f;
 
-    return RGB {static_cast<uint8_t>(std::round(gammaR * 255.f)), static_cast<uint8_t>(std::round(gammaG * 255.f)),
-        static_cast<uint8_t>(std::round(gammaB * 255.f))};
+    // Scale color values so that the brightness matches
+    const float maxColor = std::max({gammaR, gammaG, gammaB});
+    if (maxColor < 1e-4)
+    {
+        // Low color values, out of gamut?
+        return RGB {0, 0, 0};
+    }
+    const float rScaled = gammaR / maxColor * xy.brightness * 255.f;
+    const float gScaled = gammaG / maxColor * xy.brightness * 255.f;
+    const float bScaled = gammaB / maxColor * xy.brightness * 255.f;
+
+    return RGB {static_cast<uint8_t>(std::round(std::max(0.f, rScaled))),
+        static_cast<uint8_t>(std::round(std::max(0.f, gScaled))),
+        static_cast<uint8_t>(std::round(std::max(0.f, bScaled)))};
 }
 
 RGB RGB::fromXY(const XYBrightness& xy, const ColorGamut& gamut)

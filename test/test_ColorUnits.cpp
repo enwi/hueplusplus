@@ -19,6 +19,8 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
+#include <random>
+
 #include <hueplusplus/ColorUnits.h>
 
 #include <gtest/gtest.h>
@@ -75,41 +77,41 @@ TEST(RGB, toXY)
         XYBrightness xy = red.toXY();
         EXPECT_FLOAT_EQ(xy.xy.x, 0.70060623f);
         EXPECT_FLOAT_EQ(xy.xy.y, 0.299301f);
-        EXPECT_FLOAT_EQ(xy.brightness, 0.28388101f);
+        EXPECT_FLOAT_EQ(xy.brightness, 1.f);
     }
     {
         const RGB red {255, 0, 0};
         XYBrightness xy = red.toXY(gamut::gamutC);
         EXPECT_FLOAT_EQ(xy.xy.x, 0.69557756f);
         EXPECT_FLOAT_EQ(xy.xy.y, 0.30972576f);
-        EXPECT_FLOAT_EQ(xy.brightness, 0.28388101f);
+        EXPECT_FLOAT_EQ(xy.brightness, 1.f);
     }
     {
         const RGB white {255, 255, 255};
         XYBrightness xy = white.toXY();
         EXPECT_FLOAT_EQ(xy.xy.x, 0.32272673f);
         EXPECT_FLOAT_EQ(xy.xy.y, 0.32902291f);
-        EXPECT_FLOAT_EQ(xy.brightness, 0.99999905f);
+        EXPECT_FLOAT_EQ(xy.brightness, 1.f);
     }
     {
         const RGB white {255, 255, 255};
         XYBrightness xy = white.toXY(gamut::gamutA);
         EXPECT_FLOAT_EQ(xy.xy.x, 0.32272673f);
         EXPECT_FLOAT_EQ(xy.xy.y, 0.32902291f);
-        EXPECT_FLOAT_EQ(xy.brightness, 0.99999905f);
+        EXPECT_FLOAT_EQ(xy.brightness, 1.f);
     }
     {
         const RGB white {255, 255, 255};
         XYBrightness xy = white.toXY(gamut::gamutB);
         EXPECT_FLOAT_EQ(xy.xy.x, 0.32272673f);
         EXPECT_FLOAT_EQ(xy.xy.y, 0.32902291f);
-        EXPECT_FLOAT_EQ(xy.brightness, 0.99999905f);
+        EXPECT_FLOAT_EQ(xy.brightness, 1.f);
     }
     {
         const RGB black{ 0,0,0 };
         XYBrightness xy = black.toXY(gamut::maxGamut);
-        EXPECT_FLOAT_EQ(xy.xy.x, 0.0f);
-        EXPECT_FLOAT_EQ(xy.xy.y, 0.0f);
+        EXPECT_FLOAT_EQ(xy.xy.x, 0.32272673f);
+        EXPECT_FLOAT_EQ(xy.xy.y, 0.32902291f);
         EXPECT_FLOAT_EQ(xy.brightness, 0.0f);
     }
 }
@@ -117,7 +119,7 @@ TEST(RGB, toXY)
 TEST(RGB, fromXY)
 {
     {
-        const XYBrightness xyRed {{0.70060623f, 0.299301f}, 0.28388101f};
+        const XYBrightness xyRed {{0.70060623f, 0.299301f}, 1.f};
         const RGB red = RGB::fromXY(xyRed);
         EXPECT_EQ(255, red.r);
         EXPECT_EQ(0, red.g);
@@ -128,10 +130,61 @@ TEST(RGB, fromXY)
         EXPECT_FLOAT_EQ(xyRed.brightness, reversed.brightness);
     }
     {
-        const XYBrightness xyRed {{0.70060623f, 0.299301f}, 0.28388101f};
-        const RGB red = RGB::fromXY(xyRed, gamut::gamutB);
-        EXPECT_EQ(242, red.r);
-        EXPECT_EQ(63, red.g);
-        EXPECT_EQ(208, red.b);
+        const XYBrightness xyWhite{ {0.32272673f, 0.32902291f}, 1.f };
+        const RGB white = RGB::fromXY(xyWhite);
+        EXPECT_EQ(255, white.r);
+        EXPECT_EQ(255, white.g);
+        EXPECT_EQ(255, white.b);
+        const XYBrightness reversed = white.toXY();
+        EXPECT_FLOAT_EQ(xyWhite.xy.x, reversed.xy.x);
+        EXPECT_FLOAT_EQ(xyWhite.xy.y, reversed.xy.y);
+        EXPECT_FLOAT_EQ(xyWhite.brightness, reversed.brightness);
     }
+    {
+        const XYBrightness xyRed {{0.70060623f, 0.299301f}, 1.f};
+        const RGB red = RGB::fromXY(xyRed, gamut::gamutB);
+        const RGB red2 = RGB::fromXY({ gamut::gamutB.corrected(xyRed.xy), xyRed.brightness });
+        EXPECT_EQ(red2.r, red.r);
+        EXPECT_EQ(red2.g, red.g);
+        EXPECT_EQ(red2.b, red.b);
+    }
+
+    // Statistical tests of conversion accuracy
+    // Fixed seed so the tests dont fail randomly
+    std::mt19937 rng {12374682};
+    std::uniform_int_distribution<int> dist(0, 255);
+
+    uint64_t N = 1000;
+
+    uint64_t totalDiffR = 0;
+    uint64_t totalDiffG = 0;
+    uint64_t totalDiffB = 0;
+    int maxDiffR = 0;
+    int maxDiffG = 0;
+    int maxDiffB = 0;
+    for (int i = 0; i < N; ++i)
+    {
+        const RGB rgb {dist(rng), dist(rng), dist(rng)};
+        const XYBrightness xy = rgb.toXY();
+        const RGB back = RGB::fromXY(xy);
+        int diffR = (rgb.r - back.r) * (rgb.r - back.r);
+        int diffG = (rgb.g - back.g) * (rgb.g - back.g);
+        int diffB = (rgb.b - back.b) * (rgb.b - back.b);
+        totalDiffR += diffR;
+        totalDiffG += diffG;
+        totalDiffB += diffB;
+        maxDiffR = std::max(diffR, maxDiffR);
+        maxDiffG = std::max(diffG, maxDiffG);
+        maxDiffB = std::max(diffB, maxDiffB);
+    }
+    float varR = (float)totalDiffR / N;
+    float varG = (float)totalDiffG / N;
+    float varB = (float)totalDiffB / N;
+    EXPECT_LT(varR, 5.f);
+    EXPECT_LT(varG, 5.f);
+    EXPECT_LT(varB, 4.f);
+    EXPECT_LE(maxDiffR, 81);
+    EXPECT_LE(maxDiffG, 81);
+    EXPECT_LE(maxDiffB, 64);
+
 }
