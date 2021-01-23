@@ -63,9 +63,9 @@ set(HuePlusPlus_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
 
 # test executable
 add_executable(test_HuePlusPlus ${TEST_SOURCES})
-if(DO_CLANG_TIDY)
-	set_target_properties(test_HuePlusPlus PROPERTIES CXX_CLANG_TIDY ${DO_CLANG_TIDY})
-endif()
+#if(DO_CLANG_TIDY)
+#	set_target_properties(test_HuePlusPlus PROPERTIES CXX_CLANG_TIDY ${DO_CLANG_TIDY})
+#endif()
 target_compile_features(test_HuePlusPlus PUBLIC cxx_std_14)
 set_property(TARGET test_HuePlusPlus PROPERTY CXX_EXTENSIONS OFF)
 
