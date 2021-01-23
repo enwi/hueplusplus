@@ -1,5 +1,3 @@
-#include <algorithm>
-#include <iostream>
 
 #include <hueplusplus/Bridge.h>
 
@@ -56,6 +54,41 @@ hue::Bridge connectToBridge()
     return finder.getBridge(*it);
 }
 
+void lightsOff(hue::Bridge& hue)
+{
+    std::vector<hue::Light> lights = hue.lights().getAll();
+
+    // Save current on state of the lights
+    std::map<int, bool> onMap;
+    for (const hue::Light& l : lights)
+    {
+        onMap.emplace(l.getId(), l.isOn());
+    }
+    
+    // Group 0 contains all lights, turn all off with a transition of 1 second
+    hue.groups().get(0).setOn(false, 10);
+    std::cout << "Turned off all lights\n";
+
+    std::this_thread::sleep_for(std::chrono::seconds(20));
+
+    // Restore the original state of the lights
+    for (hue::Light& l : lights)
+    {
+        if (onMap[l.getId()])
+        {
+            // Refresh, because the state change from the group is not updated in the light.
+            // This is not strictly necessary in this case, because the state is updated
+            // automatically every 10 seconds.
+            // However, when the sleep above is shorter, no refresh can cause the on request
+            // to be removed, because the light thinks it is still on.
+            l.refresh(true);
+            l.on();
+        }
+    }
+
+    std::cout << "Turned lights back on\n";
+}
+
 int main(int argc, char** argv)
 {
 
@@ -64,9 +97,12 @@ int main(int argc, char** argv)
         hue::Bridge hue = connectToBridge();
 
         std::cout << "Connected to bridge. IP: " << hue.getBridgeIP() << ", username: " << hue.getUsername() << '\n';
+
+        lightsOff(hue);
     }
     catch (...)
-    { }
+    {
+    }
 
     std::cout << "Press enter to exit\n";
     std::cin.get();

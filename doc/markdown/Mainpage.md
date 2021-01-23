@@ -17,7 +17,8 @@ A simple and easy to use library for Philips Hue Lights.
 * Espressif ESP32 SDK & Arduino
 
 ## How to use
-### <a name="searchingBridges"></a>Searching for Bridges
+- [Getting Started](@ref getting-started)
+### Searching for Bridges
 To start searching for a Hue Bridge you will need to choose an IHttpHandler and create one. The options are a [WinHttpHandler](@ref hueplusplus::WinHttpHandler) (for windows) or a [LinHttpHandler](@ref hueplusplus::LinHttpHandler) (for linux or linux-like).
 
 Then create a [BridgeFinder](@ref hueplusplus::BridgeFinder) object with the handler.
@@ -94,6 +95,8 @@ light1.hasColorControl();
 These will either return true(light has specified function) or false(light lacks specified function).
 
 ## Build and install
+- [Build and install guide](@ref build)
+
 ### Basic installation
 If you want to build the library you can use cmake (at least version 3.8). First create a build folder and then execute cmake.
 ```bash
