@@ -1,3 +1,4 @@
+#include <thread>
 
 #include <hueplusplus/Bridge.h>
 
@@ -60,13 +61,17 @@ void lightsOff(hue::Bridge& hue)
 
     // Save current on state of the lights
     std::map<int, bool> onMap;
-    for (const hue::Light& l : lights)
+    for (hue::Light& l : lights)
     {
         onMap.emplace(l.getId(), l.isOn());
+        l.Off();
     }
-    
+
+    // This would be preferrable, but does not work because it also resets the brightness of all lights
     // Group 0 contains all lights, turn all off with a transition of 1 second
-    hue.groups().get(0).setOn(false, 10);
+    // hue.groups().get(0).setOn(false, 10);
+    // -------------------------------------
+
     std::cout << "Turned off all lights\n";
 
     std::this_thread::sleep_for(std::chrono::seconds(20));
@@ -76,12 +81,6 @@ void lightsOff(hue::Bridge& hue)
     {
         if (onMap[l.getId()])
         {
-            // Refresh, because the state change from the group is not updated in the light.
-            // This is not strictly necessary in this case, because the state is updated
-            // automatically every 10 seconds.
-            // However, when the sleep above is shorter, no refresh can cause the on request
-            // to be removed, because the light thinks it is still on.
-            l.refresh(true);
             l.on();
         }
     }
@@ -101,8 +100,7 @@ int main(int argc, char** argv)
         lightsOff(hue);
     }
     catch (...)
-    {
-    }
+    { }
 
     std::cout << "Press enter to exit\n";
     std::cin.get();
