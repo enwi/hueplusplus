@@ -10,4 +10,4 @@ target_link_libraries(lights_off hueplusplusstatic)
 
 
 add_custom_target(hueplusplus_examples)
-add_dependencies(hueplusplus_examples bridge_setup)
+add_dependencies(hueplusplus_examples bridge_setup lights_off)
