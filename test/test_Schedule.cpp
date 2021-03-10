@@ -59,14 +59,14 @@ TEST_F(ScheduleTest, Constructor)
     {
         const int id = 13;
         expectGetState(id);
-        const Schedule schedule(id, commands, std::chrono::seconds(0));
+        const Schedule schedule(id, commands, std::chrono::seconds(0), nullptr);
         EXPECT_EQ(id, schedule.getId());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     {
         const int id = 0;
         expectGetState(id);
-        const Schedule schedule(id, commands, std::chrono::seconds(0));
+        const Schedule schedule(id, commands, std::chrono::seconds(0), nullptr);
         EXPECT_EQ(id, schedule.getId());
         Mock::VerifyAndClearExpectations(handler.get());
     }
@@ -78,7 +78,7 @@ TEST_F(ScheduleTest, getName)
     const std::string name = "Schedule name";
     scheduleState["name"] = name;
     expectGetState(id);
-    const Schedule schedule(id, commands, std::chrono::seconds(0));
+    const Schedule schedule(id, commands, std::chrono::seconds(0), nullptr);
     EXPECT_EQ(name, schedule.getName());
 }
 
@@ -88,7 +88,7 @@ TEST_F(ScheduleTest, getDescription)
     const std::string description = "Schedule description";
     scheduleState["description"] = description;
     expectGetState(id);
-    const Schedule schedule(id, commands, std::chrono::seconds(0));
+    const Schedule schedule(id, commands, std::chrono::seconds(0), nullptr);
     EXPECT_EQ(description, schedule.getDescription());
 }
 
@@ -99,7 +99,7 @@ TEST_F(ScheduleTest, getCommand)
     const nlohmann::json body = {{"test", "value"}};
     scheduleState["command"] = {{"address", addr}, {"body", body}, {"method", "PUT"}};
     expectGetState(id);
-    const Schedule schedule(id, commands, std::chrono::seconds(0));
+    const Schedule schedule(id, commands, std::chrono::seconds(0), nullptr);
     hueplusplus::Action command = schedule.getCommand();
     EXPECT_EQ(addr, command.getAddress());
     EXPECT_EQ(body, command.getBody());
@@ -112,7 +112,7 @@ TEST_F(ScheduleTest, getTime)
     const std::string time = "T13:00:00/T14:00:00";
     scheduleState["localtime"] = time;
     expectGetState(id);
-    const Schedule schedule(id, commands, std::chrono::seconds(0));
+    const Schedule schedule(id, commands, std::chrono::seconds(0), nullptr);
     time::TimePattern pattern = schedule.getTime();
     EXPECT_EQ(time, pattern.toString());
 }
@@ -123,13 +123,13 @@ TEST_F(ScheduleTest, getStatus)
     {
         scheduleState["status"] = "enabled";
         expectGetState(id);
-        const Schedule schedule(id, commands, std::chrono::seconds(0));
+        const Schedule schedule(id, commands, std::chrono::seconds(0), nullptr);
         EXPECT_EQ(true, schedule.isEnabled());
     }
     {
         scheduleState["status"] = "disabled";
         expectGetState(id);
-        const Schedule schedule(id, commands, std::chrono::seconds(0));
+        const Schedule schedule(id, commands, std::chrono::seconds(0), nullptr);
         EXPECT_EQ(false, schedule.isEnabled());
     }
 }
@@ -140,7 +140,7 @@ TEST_F(ScheduleTest, getAutodelete)
     const bool autodelete = true;
     scheduleState["autodelete"] = autodelete;
     expectGetState(id);
-    const Schedule schedule(id, commands, std::chrono::seconds(0));
+    const Schedule schedule(id, commands, std::chrono::seconds(0), nullptr);
     EXPECT_EQ(autodelete, schedule.getAutodelete());
 }
 
@@ -150,7 +150,7 @@ TEST_F(ScheduleTest, getCreated)
     const std::string created = "2020-03-03T08:20:53";
     scheduleState["created"] = created;
     expectGetState(id);
-    const Schedule schedule(id, commands, std::chrono::seconds(0));
+    const Schedule schedule(id, commands, std::chrono::seconds(0), nullptr);
     EXPECT_EQ(created, schedule.getCreated().toString());
 }
 
@@ -160,7 +160,7 @@ TEST_F(ScheduleTest, getStartTime)
     const std::string starttime = "2020-03-03T08:20:53";
     scheduleState["starttime"] = starttime;
     expectGetState(id);
-    const Schedule schedule(id, commands, std::chrono::seconds(0));
+    const Schedule schedule(id, commands, std::chrono::seconds(0), nullptr);
     EXPECT_EQ(starttime, schedule.getStartTime().toString());
 }
 
@@ -168,7 +168,7 @@ TEST_F(ScheduleTest, setName)
 {
     const int id = 1;
     expectGetState(id);
-    Schedule schedule(id, commands, std::chrono::steady_clock::duration::max());
+    Schedule schedule(id, commands, std::chrono::steady_clock::duration::max(), nullptr);
     const std::string name = "Test schedule";
     nlohmann::json request = {{"name", name}};
     nlohmann::json response = {{"success", {"/schedules/1/name", name}}};
@@ -183,7 +183,7 @@ TEST_F(ScheduleTest, setDescription)
 {
     const int id = 1;
     expectGetState(id);
-    Schedule schedule(id, commands, std::chrono::steady_clock::duration::max());
+    Schedule schedule(id, commands, std::chrono::steady_clock::duration::max(), nullptr);
     const std::string description = "Test schedule description";
     nlohmann::json request = {{"description", description}};
     nlohmann::json response = {{"success", {"/schedules/1/description", description}}};
@@ -198,7 +198,7 @@ TEST_F(ScheduleTest, setCommand)
 {
     const int id = 1;
     expectGetState(id);
-    Schedule schedule(id, commands, std::chrono::steady_clock::duration::max());
+    Schedule schedule(id, commands, std::chrono::steady_clock::duration::max(), nullptr);
     const hueplusplus::Action command({{"address", "abcd"}, {"body", {}}, {"method", "PUT"}});
     nlohmann::json request = {{"command", command.toJson()}};
     nlohmann::json response = {{"success", {"/schedules/1/command", command.toJson()}}};
@@ -213,7 +213,7 @@ TEST_F(ScheduleTest, setTime)
 {
     const int id = 1;
     expectGetState(id);
-    Schedule schedule(id, commands, std::chrono::steady_clock::duration::max());
+    Schedule schedule(id, commands, std::chrono::steady_clock::duration::max(), nullptr);
     time::TimePattern time {time::AbsoluteVariedTime(std::chrono::system_clock::now())};
     nlohmann::json request = {{"localtime", time.toString()}};
     nlohmann::json response = {{"success", {"/schedules/1/localtime", time.toString()}}};
@@ -228,7 +228,7 @@ TEST_F(ScheduleTest, setStatus)
 {
     const int id = 1;
     expectGetState(id);
-    Schedule schedule(id, commands, std::chrono::steady_clock::duration::max());
+    Schedule schedule(id, commands, std::chrono::steady_clock::duration::max(), nullptr);
     {
         nlohmann::json request = {{"status", "enabled"}};
         nlohmann::json response = {{"success", {"/schedules/1/status", "enabled"}}};
@@ -253,7 +253,7 @@ TEST_F(ScheduleTest, setAutodelete)
 {
     const int id = 1;
     expectGetState(id);
-    Schedule schedule(id, commands, std::chrono::steady_clock::duration::max());
+    Schedule schedule(id, commands, std::chrono::steady_clock::duration::max(), nullptr);
     const bool autodelete = false;
     nlohmann::json request = {{"autodelete", autodelete}};
     nlohmann::json response = {{"success", {"/schedules/1/autodelete", autodelete}}};

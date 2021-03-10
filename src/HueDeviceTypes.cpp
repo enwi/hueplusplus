@@ -75,7 +75,7 @@ Light LightFactory::createLight(const nlohmann::json& lightState, int id, const 
     // Ignore case
     std::transform(type.begin(), type.end(), type.begin(), [](char c) { return std::tolower(c); });
 
-    Light light = baseCache ? Light(id, baseCache) : Light(id, commands, nullptr, nullptr, nullptr, refreshDuration);
+    Light light = baseCache ? Light(id, baseCache) : Light(id, commands, nullptr, nullptr, nullptr, refreshDuration, lightState);
 
     if (type == "on/off light" || type == "on/off plug-in unit")
     {

@@ -33,7 +33,7 @@ class TestResource
 {
 public:
     TestResource(int id, std::shared_ptr<APICache> baseCache) {}
-    TestResource(int id, HueCommandAPI api, std::chrono::steady_clock::duration refreshDuration) : id(id) { }
+    TestResource(int id, HueCommandAPI api, std::chrono::steady_clock::duration refreshDuration, const nlohmann::json& currentState) : id(id) { }
 
     void refresh(bool force = false) { }
 
@@ -49,7 +49,7 @@ class TestStringResource
 {
 public:
     TestStringResource(const std::string& id, std::shared_ptr<APICache> baseCache) {}
-    TestStringResource(const std::string& id, HueCommandAPI api, std::chrono::steady_clock::duration refreshDuration)
+    TestStringResource(const std::string& id, HueCommandAPI api, std::chrono::steady_clock::duration refreshDuration, const nlohmann::json& currentState)
         : id(id)
     { }
     void refresh(bool force = false) { }
@@ -81,7 +81,7 @@ TEST(ResourceList, refresh)
         Mock::VerifyAndClearExpectations(handler.get());
     }
     {
-        auto baseCache = std::make_shared<APICache>("", commands, std::chrono::steady_clock::duration::max());
+        auto baseCache = std::make_shared<APICache>("", commands, std::chrono::steady_clock::duration::max(), nullptr);
         ResourceList<TestResource, int> list(baseCache, "resources", std::chrono::steady_clock::duration::max());
         InSequence s;
         EXPECT_CALL(
@@ -113,9 +113,9 @@ TEST(ResourceList, get)
             GETJson("/api/" + getBridgeUsername() + path, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
             .WillOnce(Return(response));
 
-        TestResource& r = list.get(id);
+        TestResource r = list.get(id);
         EXPECT_EQ(id, r.id);
-        TestResource& r2 = list.get(id);
+        TestResource r2 = list.get(id);
         EXPECT_EQ(id, r2.id);
     }
     // With factory
@@ -126,7 +126,7 @@ TEST(ResourceList, get)
 
         MockFunction<TestResource(int, const nlohmann::json&, const std::shared_ptr<APICache>&)> factory;
         EXPECT_CALL(factory, Call(id, state, std::shared_ptr<APICache>()))
-            .WillOnce(Return(TestResource(id, commands, std::chrono::steady_clock::duration::max())));
+            .WillOnce(Return(TestResource(id, commands, std::chrono::steady_clock::duration::max(), nullptr)));
 
         ResourceList<TestResource, int> list(
             commands, path, std::chrono::steady_clock::duration::max(), factory.AsStdFunction());
@@ -134,7 +134,7 @@ TEST(ResourceList, get)
             GETJson("/api/" + getBridgeUsername() + path, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
             .WillOnce(Return(response));
 
-        TestResource& r = list.get(id);
+        TestResource r = list.get(id);
         EXPECT_EQ(id, r.id);
     }
     // String id without factory
@@ -146,9 +146,9 @@ TEST(ResourceList, get)
             GETJson("/api/" + getBridgeUsername() + path, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
             .WillOnce(Return(response));
 
-        TestStringResource& r = list.get(id);
+        TestStringResource r = list.get(id);
         EXPECT_EQ(id, r.id);
-        TestStringResource& r2 = list.get(id);
+        TestStringResource r2 = list.get(id);
         EXPECT_EQ(id, r2.id);
     }
 

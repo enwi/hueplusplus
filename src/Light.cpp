@@ -112,15 +112,18 @@ StateTransaction Light::transaction()
         state.getCommandAPI(), "/lights/" + std::to_string(id) + "/state", &state.getValue().at("state"));
 }
 
-Light::Light(int id, const HueCommandAPI& commands) : Light(id, commands, nullptr, nullptr, nullptr) { }
+Light::Light(int id, const HueCommandAPI& commands)
+    : Light(id, commands, nullptr, nullptr, nullptr, std::chrono::seconds(10), nullptr)
+{ }
 
 Light::Light(int id, const std::shared_ptr<APICache>& baseCache) : BaseDevice(id, baseCache), colorType(ColorType::NONE)
 { }
 
 Light::Light(int id, const HueCommandAPI& commands, std::shared_ptr<const BrightnessStrategy> brightnessStrategy,
     std::shared_ptr<const ColorTemperatureStrategy> colorTempStrategy,
-    std::shared_ptr<const ColorHueStrategy> colorHueStrategy, std::chrono::steady_clock::duration refreshDuration)
-    : BaseDevice(id, commands, "/lights/", refreshDuration),
+    std::shared_ptr<const ColorHueStrategy> colorHueStrategy, std::chrono::steady_clock::duration refreshDuration,
+    const nlohmann::json& currentState)
+    : BaseDevice(id, commands, "/lights/", refreshDuration, currentState),
       colorType(ColorType::NONE),
       brightnessStrategy(std::move(brightnessStrategy)),
       colorTemperatureStrategy(std::move(colorTempStrategy)),

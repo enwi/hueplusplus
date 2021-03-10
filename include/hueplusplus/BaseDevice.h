@@ -127,8 +127,9 @@ protected:
     //! \param commands HueCommandAPI for communication with the bridge
     //! \param path Base path for the resource type, ending with a '/'. Example: \c "/lights/"
     //! \param refreshDuration Time between refreshing the cached state.
+    //! \param currentState Current state of the device, may be null.
     BaseDevice(int id, const HueCommandAPI& commands, const std::string& path,
-        std::chrono::steady_clock::duration refreshDuration);
+        std::chrono::steady_clock::duration refreshDuration, const nlohmann::json& currentState);
 
     //! \brief Utility function to send a put request to the device.
     //!

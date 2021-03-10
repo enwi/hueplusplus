@@ -156,7 +156,7 @@ TEST_F(SceneTest, Constructor)
 {
     const std::string id = "asd89263";
     expectGetState(id);
-    const Scene scene(id, commands, std::chrono::seconds(0));
+    const Scene scene(id, commands, std::chrono::seconds(0), nullptr);
     EXPECT_EQ(id, scene.getId());
 }
 
@@ -166,7 +166,7 @@ TEST_F(SceneTest, getName)
     const std::string name = "Scene name";
     sceneState["name"] = name;
     expectGetState(id);
-    const Scene scene(id, commands, std::chrono::seconds(0));
+    const Scene scene(id, commands, std::chrono::seconds(0), nullptr);
     EXPECT_EQ(name, scene.getName());
 }
 
@@ -176,13 +176,13 @@ TEST_F(SceneTest, getType)
     {
         sceneState["type"] = "GroupScene";
         expectGetState(id);
-        const Scene scene(id, commands, std::chrono::seconds(0));
+        const Scene scene(id, commands, std::chrono::seconds(0), nullptr);
         EXPECT_EQ(Scene::Type::groupScene, scene.getType());
     }
     {
         sceneState["type"] = "LightScene";
         expectGetState(id);
-        const Scene scene(id, commands, std::chrono::seconds(0));
+        const Scene scene(id, commands, std::chrono::seconds(0), nullptr);
         EXPECT_EQ(Scene::Type::lightScene, scene.getType());
     }
 }
@@ -193,14 +193,14 @@ TEST_F(SceneTest, getGroupId)
     {
         sceneState["group"] = "3";
         expectGetState(id);
-        const Scene scene(id, commands, std::chrono::seconds(0));
+        const Scene scene(id, commands, std::chrono::seconds(0), nullptr);
         EXPECT_EQ(3, scene.getGroupId());
     }
     {
         sceneState["type"] = "LightScene";
         sceneState.erase("group");
         expectGetState(id);
-        const Scene scene(id, commands, std::chrono::seconds(0));
+        const Scene scene(id, commands, std::chrono::seconds(0), nullptr);
         EXPECT_EQ(0, scene.getGroupId());
     }
 }
@@ -210,7 +210,7 @@ TEST_F(SceneTest, getLightIds)
     const std::string id = "125asav3";
     sceneState["lights"] = {"3", "4", "5"};
     expectGetState(id);
-    const Scene scene(id, commands, std::chrono::seconds(0));
+    const Scene scene(id, commands, std::chrono::seconds(0), nullptr);
     EXPECT_THAT(scene.getLightIds(), UnorderedElementsAre(3, 4, 5));
 }
 
@@ -220,7 +220,7 @@ TEST_F(SceneTest, getOwner)
     const std::string owner = "testowner";
     sceneState["owner"] = owner;
     expectGetState(id);
-    const Scene scene(id, commands, std::chrono::seconds(0));
+    const Scene scene(id, commands, std::chrono::seconds(0), nullptr);
     EXPECT_EQ(owner, scene.getOwner());
 }
 
@@ -230,7 +230,7 @@ TEST_F(SceneTest, getRecycle)
     const bool recycle = true;
     sceneState["recycle"] = recycle;
     expectGetState(id);
-    const Scene scene(id, commands, std::chrono::seconds(0));
+    const Scene scene(id, commands, std::chrono::seconds(0), nullptr);
     EXPECT_EQ(recycle, scene.getRecycle());
 }
 
@@ -240,7 +240,7 @@ TEST_F(SceneTest, isLocked)
     const bool locked = true;
     sceneState["locked"] = locked;
     expectGetState(id);
-    const Scene scene(id, commands, std::chrono::seconds(0));
+    const Scene scene(id, commands, std::chrono::seconds(0), nullptr);
     EXPECT_EQ(locked, scene.isLocked());
 }
 
@@ -251,7 +251,7 @@ TEST_F(SceneTest, getAppdata)
     const int version = 10;
     sceneState["appdata"] = {{"version", version}, {"data", appdata}};
     expectGetState(id);
-    const Scene scene(id, commands, std::chrono::seconds(0));
+    const Scene scene(id, commands, std::chrono::seconds(0), nullptr);
     EXPECT_EQ(version, scene.getAppdataVersion());
     EXPECT_EQ(appdata, scene.getAppdata());
 }
@@ -262,7 +262,7 @@ TEST_F(SceneTest, getPicture)
     const std::string picture = "abcpicture";
     sceneState["picture"] = picture;
     expectGetState(id);
-    const Scene scene(id, commands, std::chrono::seconds(0));
+    const Scene scene(id, commands, std::chrono::seconds(0), nullptr);
     EXPECT_EQ(picture, scene.getPicture());
 }
 
@@ -270,7 +270,7 @@ TEST_F(SceneTest, getLastUpdated)
 {
     const std::string id = "125asav3";
     expectGetState(id);
-    const Scene scene(id, commands, std::chrono::seconds(0));
+    const Scene scene(id, commands, std::chrono::seconds(0), nullptr);
     const time::AbsoluteTime lastUpdated = scene.getLastUpdated();
     EXPECT_EQ(time::parseUTCTimestamp("2020-04-23T12:00:04"), lastUpdated.getBaseTime());
 }
@@ -281,7 +281,7 @@ TEST_F(SceneTest, getVersion)
     const int version = 2;
     sceneState["version"] = version;
     expectGetState(id);
-    const Scene scene(id, commands, std::chrono::seconds(0));
+    const Scene scene(id, commands, std::chrono::seconds(0), nullptr);
     EXPECT_EQ(version, scene.getVersion());
 }
 
@@ -300,7 +300,7 @@ TEST_F(SceneTest, getLightstates)
         }
         sceneState["lightstates"] = lightstatesJson;
         expectGetState(id);
-        const Scene scene(id, commands, std::chrono::seconds(0));
+        const Scene scene(id, commands, std::chrono::seconds(0), nullptr);
         const std::map<int, LightState> result = scene.getLightStates();
         EXPECT_EQ(lightstates, result);
     }
@@ -308,7 +308,7 @@ TEST_F(SceneTest, getLightstates)
     {
         sceneState.erase("lightstates");
         expectGetState(id);
-        const Scene scene(id, commands, std::chrono::seconds(0));
+        const Scene scene(id, commands, std::chrono::seconds(0), nullptr);
         EXPECT_TRUE(scene.getLightStates().empty());
     }
 }
@@ -317,7 +317,7 @@ TEST_F(SceneTest, refresh)
 {
     const std::string id = "125asav3";
     expectGetState(id);
-    Scene scene(id, commands, std::chrono::seconds(0));
+    Scene scene(id, commands, std::chrono::seconds(0), nullptr);
     expectGetState(id);
     scene.refresh(true);
 }
@@ -326,7 +326,7 @@ TEST_F(SceneTest, setName)
 {
     const std::string id = "125asav3";
     expectGetState(id);
-    Scene scene(id, commands, std::chrono::seconds(0));
+    Scene scene(id, commands, std::chrono::seconds(0), nullptr);
     const std::string name = "Scene name";
     nlohmann::json request = {{"name", name}};
     nlohmann::json response = {{"success", {"/scenes/" + id + "/name", name}}};
@@ -341,7 +341,7 @@ TEST_F(SceneTest, setLightIds)
 {
     const std::string id = "125asav3";
     expectGetState(id);
-    Scene scene(id, commands, std::chrono::seconds(0));
+    Scene scene(id, commands, std::chrono::seconds(0), nullptr);
     const std::vector<int> lightIds = {3, 4, 6, 8};
     nlohmann::json request = {{"lights", {"3", "4", "6", "8"}}};
     nlohmann::json response = {{"success", {"/scenes/" + id + "/lights", {"3", "4", "6", "8"}}}};
@@ -356,7 +356,7 @@ TEST_F(SceneTest, setAppdata)
 {
     const std::string id = "125asav3";
     expectGetState(id);
-    Scene scene(id, commands, std::chrono::seconds(0));
+    Scene scene(id, commands, std::chrono::seconds(0), nullptr);
     const std::string appdata = "New appdata";
     const int version = 3;
     nlohmann::json request = {{"appdata", {{"version", version}, {"data", appdata}}}};
@@ -381,7 +381,7 @@ TEST_F(SceneTest, setLightStates)
         lightstatesJson[std::to_string(entry.first)] = entry.second.toJson();
     }
     expectGetState(id);
-    Scene scene(id, commands, std::chrono::seconds(0));
+    Scene scene(id, commands, std::chrono::seconds(0), nullptr);
     nlohmann::json request = {{"lightstates", lightstatesJson}};
     nlohmann::json response = {{"success", {"/scenes/" + id + "/lights/3/state/on", false}},
         {"success", {"/scenes/" + id + "/lights/3/state/bri", 100}},
@@ -400,7 +400,7 @@ TEST_F(SceneTest, storeCurrentLightState)
 {
     const std::string id = "125asav3";
     expectGetState(id);
-    Scene scene(id, commands, std::chrono::seconds(0));
+    Scene scene(id, commands, std::chrono::seconds(0), nullptr);
     {
         nlohmann::json request = {{"storelightstate", true}};
         nlohmann::json response = {{"success", {"/scenes/" + id + "/storelightstate", true}}};
@@ -431,7 +431,7 @@ TEST_F(SceneTest, recall)
         expectGetState(id);
         nlohmann::json request = {{"scene", id}};
         nlohmann::json response = {{"success", {"/groups/0/action/scene", id}}};
-        Scene scene(id, commands, std::chrono::seconds(0));
+        Scene scene(id, commands, std::chrono::seconds(0), nullptr);
         EXPECT_CALL(*handler,
             PUTJson("/api/" + getBridgeUsername() + "/groups/0/action", request, getBridgeIp(), getBridgePort()))
             .WillOnce(Return(response));
@@ -446,7 +446,7 @@ TEST_F(SceneTest, recall)
         expectGetState(id);
         nlohmann::json request = {{"scene", id}};
         nlohmann::json response = {{"success", {"/groups/" + groupId + "/action/scene", id}}};
-        Scene scene(id, commands, std::chrono::seconds(0));
+        Scene scene(id, commands, std::chrono::seconds(0), nullptr);
         EXPECT_CALL(*handler,
             PUTJson("/api/" + getBridgeUsername() + "/groups/" + groupId + "/action", request, getBridgeIp(),
                 getBridgePort()))

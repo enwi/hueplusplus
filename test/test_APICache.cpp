@@ -35,23 +35,23 @@ TEST(APICache, getRefreshDuration)
     HueCommandAPI commands(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
     {
         std::chrono::steady_clock::duration refresh = std::chrono::seconds(20);
-        APICache cache("", commands, refresh);
+        APICache cache("", commands, refresh, nullptr);
         EXPECT_EQ(refresh, cache.getRefreshDuration());
     }
     {
         std::chrono::steady_clock::duration refresh = std::chrono::seconds(0);
-        APICache cache("", commands, refresh);
+        APICache cache("", commands, refresh, nullptr);
         EXPECT_EQ(refresh, cache.getRefreshDuration());
     }
     {
         std::chrono::steady_clock::duration refresh = std::chrono::steady_clock::duration::max();
-        APICache cache("", commands, refresh);
+        APICache cache("", commands, refresh, nullptr);
         EXPECT_EQ(refresh, cache.getRefreshDuration());
     }
     // With base cache, still independent duration
     {
         auto duration = std::chrono::seconds(5);
-        auto baseCache = std::make_shared<APICache>("/test", commands, std::chrono::seconds(0));
+        auto baseCache = std::make_shared<APICache>("/test", commands, std::chrono::seconds(0), nullptr);
         APICache c(baseCache, "api", duration);
         EXPECT_EQ(duration, c.getRefreshDuration());
     }
@@ -65,7 +65,7 @@ TEST(APICache, refresh)
 
     {
         std::string path = "/test/abc";
-        APICache cache(path, commands, std::chrono::seconds(10));
+        APICache cache(path, commands, std::chrono::seconds(10), nullptr);
         EXPECT_CALL(*handler,
             GETJson("/api/" + getBridgeUsername() + path, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
             .WillOnce(Return(nlohmann::json::object()));
@@ -74,7 +74,7 @@ TEST(APICache, refresh)
     }
     {
         std::string path = "";
-        APICache cache(path, commands, std::chrono::seconds(10));
+        APICache cache(path, commands, std::chrono::seconds(10), nullptr);
         EXPECT_CALL(*handler,
             GETJson("/api/" + getBridgeUsername() + path, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
             .Times(2)
@@ -94,7 +94,8 @@ TEST(APICache, refreshBase)
     const std::string childPath = "/test/abc";
     // Base cache with max duration
     {
-        auto baseCache = std::make_shared<APICache>(basePath, commands, std::chrono::steady_clock::duration::max());
+        auto baseCache
+            = std::make_shared<APICache>(basePath, commands, std::chrono::steady_clock::duration::max(), nullptr);
         APICache cache(baseCache, "abc", std::chrono::seconds(0));
 
         // First call refreshes base, second call only child
@@ -112,7 +113,7 @@ TEST(APICache, refreshBase)
     }
     // Base cache with min duration
     {
-        auto baseCache = std::make_shared<APICache>(basePath, commands, std::chrono::seconds(0));
+        auto baseCache = std::make_shared<APICache>(basePath, commands, std::chrono::seconds(0), nullptr);
         APICache cache(baseCache, "abc", std::chrono::seconds(0));
 
         // Both calls refresh base
@@ -135,7 +136,7 @@ TEST(APICache, getValue)
     // Always refresh
     {
         std::string path = "/test/abc";
-        APICache cache(path, commands, std::chrono::seconds(0));
+        APICache cache(path, commands, std::chrono::seconds(0), nullptr);
         nlohmann::json value = {{"a", "b"}};
         EXPECT_CALL(*handler,
             GETJson("/api/" + getBridgeUsername() + path, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
@@ -148,7 +149,7 @@ TEST(APICache, getValue)
     // Only refresh once
     {
         std::string path = "/test/abc";
-        APICache cache(path, commands, std::chrono::steady_clock::duration::max());
+        APICache cache(path, commands, std::chrono::steady_clock::duration::max(), nullptr);
         nlohmann::json value = {{"a", "b"}};
         EXPECT_CALL(*handler,
             GETJson("/api/" + getBridgeUsername() + path, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
@@ -160,7 +161,7 @@ TEST(APICache, getValue)
     // Only refresh once
     {
         std::string path = "/test/abc";
-        APICache cache(path, commands, std::chrono::seconds(0));
+        APICache cache(path, commands, std::chrono::seconds(0), nullptr);
         nlohmann::json value = {{"a", "b"}};
         EXPECT_CALL(*handler,
             GETJson("/api/" + getBridgeUsername() + path, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
@@ -172,12 +173,35 @@ TEST(APICache, getValue)
     // No refresh with const throws exception
     {
         std::string path = "/test/abc";
-        const APICache cache(path, commands, std::chrono::steady_clock::duration::max());
+        const APICache cache(path, commands, std::chrono::steady_clock::duration::max(), nullptr);
         nlohmann::json value = {{"a", "b"}};
         EXPECT_CALL(*handler,
             GETJson("/api/" + getBridgeUsername() + path, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
             .Times(0);
         EXPECT_THROW(cache.getValue(), HueException);
+        Mock::VerifyAndClearExpectations(handler.get());
+    }
+    // No refresh with initial value
+    {
+        std::string path = "/test/abc";
+        nlohmann::json value = {{"a", "b"}};
+        APICache cache(path, commands, std::chrono::steady_clock::duration::max(), value);
+        EXPECT_CALL(*handler,
+            GETJson("/api/" + getBridgeUsername() + path, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+            .Times(0);
+        EXPECT_EQ(value, cache.getValue());
+        EXPECT_EQ(value, cache.getValue());
+        Mock::VerifyAndClearExpectations(handler.get());
+    }
+    // No refresh with const but initial value
+    {
+        std::string path = "/test/abc";
+        nlohmann::json value = {{"a", "b"}};
+        const APICache cache(path, commands, std::chrono::steady_clock::duration::max(), value);
+        EXPECT_CALL(*handler,
+            GETJson("/api/" + getBridgeUsername() + path, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+            .Times(0);
+        EXPECT_EQ(value, cache.getValue());
         Mock::VerifyAndClearExpectations(handler.get());
     }
 }
@@ -194,7 +218,7 @@ TEST(APICache, getValueBase)
     const nlohmann::json baseValue = {{"abc", childValue}};
     // Always refresh base
     {
-        auto baseCache = std::make_shared<APICache>(basePath, commands, std::chrono::seconds(0));
+        auto baseCache = std::make_shared<APICache>(basePath, commands, std::chrono::seconds(0), nullptr);
         APICache cache(baseCache, "abc", std::chrono::seconds(0));
         EXPECT_CALL(*handler,
             GETJson("/api/" + getBridgeUsername() + basePath, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
@@ -206,7 +230,7 @@ TEST(APICache, getValueBase)
     }
     // Child duration > base duration
     {
-        auto baseCache = std::make_shared<APICache>(basePath, commands, std::chrono::seconds(0));
+        auto baseCache = std::make_shared<APICache>(basePath, commands, std::chrono::seconds(0), nullptr);
         APICache cache(baseCache, "abc", std::chrono::steady_clock::duration::max());
         EXPECT_CALL(*handler,
             GETJson("/api/" + getBridgeUsername() + basePath, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
@@ -218,16 +242,18 @@ TEST(APICache, getValueBase)
     }
     // Child duration < base duration
     {
-        auto baseCache = std::make_shared<APICache>(basePath, commands, std::chrono::steady_clock::duration::max());
+        auto baseCache
+            = std::make_shared<APICache>(basePath, commands, std::chrono::steady_clock::duration::max(), nullptr);
         APICache cache(baseCache, "abc", std::chrono::seconds(0));
-        const nlohmann::json updateChildValue = { {"test", "updated"} };
+        const nlohmann::json updateChildValue = {{"test", "updated"}};
         InSequence s;
         EXPECT_CALL(*handler,
             GETJson("/api/" + getBridgeUsername() + basePath, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
             .Times(1)
             .WillRepeatedly(Return(baseValue));
         EXPECT_CALL(*handler,
-            GETJson("/api/" + getBridgeUsername() + childPath, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+            GETJson(
+                "/api/" + getBridgeUsername() + childPath, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
             .Times(1)
             .WillRepeatedly(Return(updateChildValue));
         EXPECT_EQ(childValue, cache.getValue());
@@ -238,7 +264,8 @@ TEST(APICache, getValueBase)
     }
     // Only refresh once
     {
-        auto baseCache = std::make_shared<APICache>(basePath, commands, std::chrono::steady_clock::duration::max());
+        auto baseCache
+            = std::make_shared<APICache>(basePath, commands, std::chrono::steady_clock::duration::max(), nullptr);
         APICache cache(baseCache, "abc", std::chrono::steady_clock::duration::max());
         EXPECT_CALL(*handler,
             GETJson("/api/" + getBridgeUsername() + basePath, nlohmann::json::object(), getBridgeIp(), getBridgePort()))
@@ -259,12 +286,12 @@ TEST(APICache, getRequestPath)
     // No base cache
     {
         std::string path = "/test/api";
-        APICache c(path, commands, std::chrono::seconds(0));
+        APICache c(path, commands, std::chrono::seconds(0), nullptr);
         EXPECT_EQ(path, c.getRequestPath());
     }
     // With base cache
     {
-        auto baseCache = std::make_shared<APICache>("/test", commands, std::chrono::seconds(0));
+        auto baseCache = std::make_shared<APICache>("/test", commands, std::chrono::seconds(0), nullptr);
         APICache c(baseCache, "api", std::chrono::seconds(0));
         EXPECT_EQ("/test/api", c.getRequestPath());
     }

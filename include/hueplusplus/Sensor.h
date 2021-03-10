@@ -65,7 +65,8 @@ public:
     //! \param id Integer that specifies the id of this sensor
     //! \param commands HueCommandAPI for communication with the bridge
     //! \param refreshDuration Time between refreshing the cached state.
-    Sensor(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration);
+    //! \param currentState The current state, may be null.
+    Sensor(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration, const nlohmann::json& currentState);
 
     //!\name Config attributes
     ///@{

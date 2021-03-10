@@ -50,11 +50,6 @@ TEST(SensorList, getAsType)
     EXPECT_CALL(*handler,
         GETJson("/api/" + getBridgeUsername() + "/sensors", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .WillOnce(Return(response));
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/sensors/" + std::to_string(id), nlohmann::json::object(),
-            getBridgeIp(), getBridgePort()))
-        .Times(2)
-        .WillRepeatedly(Return(nlohmann::json {{"type", "Daylight"}}));
 
     sensors::DaylightSensor daylightSensor = sensors.getAsType<sensors::DaylightSensor>(id);
     EXPECT_THROW(sensors.getAsType<BlaSensor>(2), HueException);
@@ -96,14 +91,6 @@ TEST(SensorList, getAllByType)
             GETJson(
                 "/api/" + getBridgeUsername() + "/sensors", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
             .WillOnce(Return(response));
-        EXPECT_CALL(*handler,
-            GETJson(
-                "/api/" + getBridgeUsername() + "/sensors/2", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-            .WillOnce(Return(response["2"]));
-        EXPECT_CALL(*handler,
-            GETJson(
-                "/api/" + getBridgeUsername() + "/sensors/4", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-            .WillOnce(Return(response["4"]));
         sensors.refresh();
         std::vector<sensors::DaylightSensor> result = sensors.getAllByType<sensors::DaylightSensor>();
         EXPECT_THAT(result,

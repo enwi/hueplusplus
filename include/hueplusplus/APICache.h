@@ -48,7 +48,8 @@ public:
     //! \param path URL appended after username, may be empty.
     //! \param commands HueCommandAPI for making API requests.
     //! \param refresh Interval between cache refreshing. May be 0 to always refresh.
-    APICache(const std::string& path, const HueCommandAPI& commands, std::chrono::steady_clock::duration refresh);
+    //! \param initial Initial value, may be null. If present, assumes the value is up to date.
+    APICache(const std::string& path, const HueCommandAPI& commands, std::chrono::steady_clock::duration refresh, const nlohmann::json& initial);
 
     //! \brief Refresh cache now.
     //! \throws std::system_error when system or socket operations fail
