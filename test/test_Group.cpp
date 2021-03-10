@@ -78,14 +78,14 @@ TEST_F(GroupTest, Construtor)
     {
         const int id = 12;
         expectGetState(id);
-        Group group(id, commands, std::chrono::seconds(0));
+        Group group(id, commands, std::chrono::seconds(0), nullptr);
         EXPECT_EQ(id, group.getId());
         Mock::VerifyAndClearExpectations(handler.get());
     }
     {
         const int id = 0;
         expectGetState(id);
-        Group group(id, commands, std::chrono::seconds(0));
+        Group group(id, commands, std::chrono::seconds(0), nullptr);
         EXPECT_EQ(id, group.getId());
         Mock::VerifyAndClearExpectations(handler.get());
     }
@@ -95,7 +95,7 @@ TEST_F(GroupTest, getName)
 {
     const int id = 1;
     expectGetState(id);
-    Group group(id, commands, std::chrono::seconds(0));
+    Group group(id, commands, std::chrono::seconds(0), nullptr);
     EXPECT_EQ(groupName, Const(group).getName());
 }
 
@@ -103,7 +103,7 @@ TEST_F(GroupTest, getType)
 {
     const int id = 1;
     expectGetState(id);
-    Group group(id, commands, std::chrono::seconds(0));
+    Group group(id, commands, std::chrono::seconds(0), nullptr);
     EXPECT_EQ(type, Const(group).getType());
 }
 
@@ -111,7 +111,7 @@ TEST_F(GroupTest, getLightIds)
 {
     const int id = 1;
     expectGetState(id);
-    Group group(id, commands, std::chrono::seconds(0));
+    Group group(id, commands, std::chrono::seconds(0), nullptr);
     EXPECT_EQ(std::vector<int>({1, 2, 4}), Const(group).getLightIds());
 }
 
@@ -119,7 +119,7 @@ TEST_F(GroupTest, getRoomType)
 {
     const int id = 1;
     expectGetState(id);
-    Group group(id, commands, std::chrono::seconds(0));
+    Group group(id, commands, std::chrono::seconds(0), nullptr);
     EXPECT_EQ(roomType, Const(group).getRoomType());
 }
 
@@ -127,7 +127,7 @@ TEST_F(GroupTest, getAllOn)
 {
     const int id = 1;
     expectGetState(id);
-    Group group(id, commands, std::chrono::steady_clock::duration::max());
+    Group group(id, commands, std::chrono::steady_clock::duration::max(), nullptr);
     EXPECT_EQ(all_on, group.getAllOn());
     EXPECT_EQ(all_on, Const(group).getAllOn());
 }
@@ -136,7 +136,7 @@ TEST_F(GroupTest, getAnyOn)
 {
     const int id = 1;
     expectGetState(id);
-    Group group(id, commands, std::chrono::steady_clock::duration::max());
+    Group group(id, commands, std::chrono::steady_clock::duration::max(), nullptr);
     EXPECT_EQ(any_on, group.getAnyOn());
     EXPECT_EQ(any_on, Const(group).getAnyOn());
 }
@@ -145,7 +145,7 @@ TEST_F(GroupTest, getActionOn)
 {
     const int id = 1;
     expectGetState(id);
-    Group group(id, commands, std::chrono::steady_clock::duration::max());
+    Group group(id, commands, std::chrono::steady_clock::duration::max(), nullptr);
     EXPECT_EQ(on, group.getActionOn());
     EXPECT_EQ(on, Const(group).getActionOn());
 }
@@ -154,7 +154,7 @@ TEST_F(GroupTest, getActionHueSaturation)
 {
     const int id = 1;
     expectGetState(id);
-    Group group(id, commands, std::chrono::steady_clock::duration::max());
+    Group group(id, commands, std::chrono::steady_clock::duration::max(), nullptr);
     std::pair<uint16_t, uint8_t> hueSat {hue, sat};
     EXPECT_EQ(hueSat, group.getActionHueSaturation());
     EXPECT_EQ(hueSat, Const(group).getActionHueSaturation());
@@ -164,7 +164,7 @@ TEST_F(GroupTest, getActionBrightness)
 {
     const int id = 1;
     expectGetState(id);
-    Group group(id, commands, std::chrono::steady_clock::duration::max());
+    Group group(id, commands, std::chrono::steady_clock::duration::max(), nullptr);
     EXPECT_EQ(bri, group.getActionBrightness());
     EXPECT_EQ(bri, Const(group).getActionBrightness());
 }
@@ -173,7 +173,7 @@ TEST_F(GroupTest, getActionColorTemperature)
 {
     const int id = 1;
     expectGetState(id);
-    Group group(id, commands, std::chrono::steady_clock::duration::max());
+    Group group(id, commands, std::chrono::steady_clock::duration::max(), nullptr);
     EXPECT_EQ(ct, group.getActionColorTemperature());
     EXPECT_EQ(ct, Const(group).getActionColorTemperature());
 }
@@ -182,7 +182,7 @@ TEST_F(GroupTest, getActionColorXY)
 {
     const int id = 1;
     expectGetState(id);
-    Group group(id, commands, std::chrono::steady_clock::duration::max());
+    Group group(id, commands, std::chrono::steady_clock::duration::max(), nullptr);
     std::pair<float, float> xy {x, y};
     EXPECT_EQ(xy, group.getActionColorXY());
     EXPECT_EQ(xy, Const(group).getActionColorXY());
@@ -192,7 +192,7 @@ TEST_F(GroupTest, getActionColorMode)
 {
     const int id = 1;
     expectGetState(id);
-    Group group(id, commands, std::chrono::steady_clock::duration::max());
+    Group group(id, commands, std::chrono::steady_clock::duration::max(), nullptr);
     EXPECT_EQ(colormode, group.getActionColorMode());
     EXPECT_EQ(colormode, Const(group).getActionColorMode());
 }
@@ -201,7 +201,7 @@ TEST_F(GroupTest, setName)
 {
     const int id = 1;
     expectGetState(id);
-    Group group(id, commands, std::chrono::steady_clock::duration::max());
+    Group group(id, commands, std::chrono::steady_clock::duration::max(), nullptr);
     const std::string name = "Test group";
     nlohmann::json request = {{"name", name}};
     nlohmann::json response = {{"success", {"/groups/1/name", name}}};
@@ -215,7 +215,7 @@ TEST_F(GroupTest, setLights)
 {
     const int id = 1;
     expectGetState(id);
-    Group group(id, commands, std::chrono::steady_clock::duration::max());
+    Group group(id, commands, std::chrono::steady_clock::duration::max(), nullptr);
     const nlohmann::json lights = {"2", "4", "5"};
     nlohmann::json request = {{"lights", lights}};
     nlohmann::json response = {{"success", {"/groups/1/lights", lights}}};
@@ -229,7 +229,7 @@ TEST_F(GroupTest, setRoomType)
 {
     const int id = 1;
     expectGetState(id);
-    Group group(id, commands, std::chrono::steady_clock::duration::max());
+    Group group(id, commands, std::chrono::steady_clock::duration::max(), nullptr);
     const std::string type = "LivingRoom";
     nlohmann::json request = {{"class", type}};
     nlohmann::json response = {{"success", {"/groups/1/class", type}}};
@@ -243,7 +243,7 @@ TEST_F(GroupTest, setScene)
 {
     const int id = 1;
     expectGetState(id);
-    Group group(id, commands, std::chrono::steady_clock::duration::max());
+    Group group(id, commands, std::chrono::steady_clock::duration::max(), nullptr);
     const std::string scene = "testScene";
     nlohmann::json request = {{"scene", scene}};
     nlohmann::json response = {{"success", {"/groups/1/action/scene", scene}}};
@@ -257,7 +257,7 @@ TEST_F(GroupTest, createSceneAction)
 {
     const int id = 1;
     expectGetState(id);
-    const Group group(id, commands, std::chrono::steady_clock::duration::max());
+    const Group group(id, commands, std::chrono::steady_clock::duration::max(), nullptr);
     const std::string scene = "testScene";
     nlohmann::json request = { {"scene", scene} };
     hueplusplus::Action command = group.createSceneAction(scene);

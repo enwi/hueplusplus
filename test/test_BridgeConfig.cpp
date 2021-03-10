@@ -34,7 +34,7 @@ TEST(BridgeConfig, refresh)
 {
     auto handler = std::make_shared<MockHttpHandler>();
     HueCommandAPI commands(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
-    auto baseCache = std::make_shared<APICache>("", commands, std::chrono::steady_clock::duration::max());
+    auto baseCache = std::make_shared<APICache>("", commands, std::chrono::steady_clock::duration::max(), nullptr);
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .WillOnce(Return(nlohmann::json::object()));
@@ -59,7 +59,7 @@ TEST(BridgeConfig, getWhitelistedUsers)
                         {"create date", "2020-02-01T02:03:40"}}}}}}}};
     auto handler = std::make_shared<MockHttpHandler>();
     HueCommandAPI commands(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
-    auto baseCache = std::make_shared<APICache>("", commands, std::chrono::steady_clock::duration::max());
+    auto baseCache = std::make_shared<APICache>("", commands, std::chrono::steady_clock::duration::max(), nullptr);
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .WillOnce(Return(state));
@@ -76,7 +76,7 @@ TEST(BridgeConfig, removeUser)
 {
     auto handler = std::make_shared<MockHttpHandler>();
     HueCommandAPI commands(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
-    auto baseCache = std::make_shared<APICache>("", commands, std::chrono::steady_clock::duration::max());
+    auto baseCache = std::make_shared<APICache>("", commands, std::chrono::steady_clock::duration::max(), nullptr);
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .WillOnce(Return(nlohmann::json::object()));
@@ -96,7 +96,7 @@ TEST(BridgeConfig, getLinkButton)
     const nlohmann::json state {{"config", {{"linkbutton", true}}}};
     auto handler = std::make_shared<MockHttpHandler>();
     HueCommandAPI commands(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
-    auto baseCache = std::make_shared<APICache>("", commands, std::chrono::steady_clock::duration::max());
+    auto baseCache = std::make_shared<APICache>("", commands, std::chrono::steady_clock::duration::max(), nullptr);
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .WillOnce(Return(state));
@@ -115,7 +115,7 @@ TEST(BridgeConfig, pressLinkButton)
 {
     auto handler = std::make_shared<MockHttpHandler>();
     HueCommandAPI commands(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
-    auto baseCache = std::make_shared<APICache>("", commands, std::chrono::steady_clock::duration::max());
+    auto baseCache = std::make_shared<APICache>("", commands, std::chrono::steady_clock::duration::max(), nullptr);
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .WillOnce(Return(nlohmann::json::object()));
@@ -133,7 +133,7 @@ TEST(BridgeConfig, touchLink)
 {
     auto handler = std::make_shared<MockHttpHandler>();
     HueCommandAPI commands(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
-    auto baseCache = std::make_shared<APICache>("", commands, std::chrono::steady_clock::duration::max());
+    auto baseCache = std::make_shared<APICache>("", commands, std::chrono::steady_clock::duration::max(), nullptr);
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .WillOnce(Return(nlohmann::json::object()));
@@ -152,7 +152,7 @@ TEST(BridgeConfig, getMACAddress)
     const nlohmann::json state {{"config", {{"mac", getBridgeMac()}}}};
     auto handler = std::make_shared<MockHttpHandler>();
     HueCommandAPI commands(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
-    auto baseCache = std::make_shared<APICache>("", commands, std::chrono::steady_clock::duration::max());
+    auto baseCache = std::make_shared<APICache>("", commands, std::chrono::steady_clock::duration::max(), nullptr);
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .WillOnce(Return(state));
@@ -168,7 +168,7 @@ TEST(BridgeConfig, getUTCTime)
     const nlohmann::json state {{"config", {{"UTC", utc}}}};
     auto handler = std::make_shared<MockHttpHandler>();
     HueCommandAPI commands(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
-    auto baseCache = std::make_shared<APICache>("", commands, std::chrono::steady_clock::duration::max());
+    auto baseCache = std::make_shared<APICache>("", commands, std::chrono::steady_clock::duration::max(), nullptr);
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .WillOnce(Return(state));
@@ -184,7 +184,7 @@ TEST(BridgeConfig, getTimezone)
     const nlohmann::json state {{"config", {{"timezone", timezone}}}};
     auto handler = std::make_shared<MockHttpHandler>();
     HueCommandAPI commands(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
-    auto baseCache = std::make_shared<APICache>("", commands, std::chrono::steady_clock::duration::max());
+    auto baseCache = std::make_shared<APICache>("", commands, std::chrono::steady_clock::duration::max(), nullptr);
     EXPECT_CALL(
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .WillOnce(Return(state));

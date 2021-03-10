@@ -75,18 +75,6 @@ protected:
         EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), 80))
             .Times(AtLeast(1))
             .WillRepeatedly(Return(hue_bridge_state));
-        EXPECT_CALL(
-            *handler, GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), 80))
-            .Times(AtLeast(1))
-            .WillRepeatedly(Return(hue_bridge_state["lights"]["1"]));
-        EXPECT_CALL(
-            *handler, GETJson("/api/" + getBridgeUsername() + "/lights/2", nlohmann::json::object(), getBridgeIp(), 80))
-            .Times(AtLeast(1))
-            .WillRepeatedly(Return(hue_bridge_state["lights"]["2"]));
-        EXPECT_CALL(
-            *handler, GETJson("/api/" + getBridgeUsername() + "/lights/3", nlohmann::json::object(), getBridgeIp(), 80))
-            .Times(AtLeast(1))
-            .WillRepeatedly(Return(hue_bridge_state["lights"]["3"]));
     }
     ~HueLightTest() {};
 };

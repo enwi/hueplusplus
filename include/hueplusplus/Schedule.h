@@ -38,7 +38,8 @@ public:
     //! \param id Schedule ID
     //! \param commands HueCommandAPI for requests
     //! \param refreshDuration Time between refreshing the cached state
-    Schedule(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration);
+    //! \param currentState The current state, may be null.
+    Schedule(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration, const nlohmann::json& currentState);
 
     //! \brief Refreshes internal cached state
     //! \throws std::system_error when system or socket operations fail

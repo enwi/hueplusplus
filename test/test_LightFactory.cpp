@@ -44,30 +44,15 @@ TEST(LightFactory, createLight_noGamut)
             {"name", "Hue ambiance lamp 1"}, {"modelid", "LTW001"}, {"manufacturername", "Philips"},
             {"uniqueid", "00:00:00:00:00:00:00:00-00"}, {"swversion", "5.50.1.19085"}};
 
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(lightState));
-
     Light test_light_1 = factory.createLight(lightState, 1);
     EXPECT_EQ(test_light_1.getColorType(), ColorType::TEMPERATURE);
 
     lightState["type"] = "Dimmable light";
 
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(lightState));
-
     test_light_1 = factory.createLight(lightState, 1);
     EXPECT_EQ(test_light_1.getColorType(), ColorType::NONE);
 
     lightState["type"] = "On/Off light";
-
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(lightState));
 
     test_light_1 = factory.createLight(lightState, 1);
     EXPECT_EQ(test_light_1.getColorType(), ColorType::NONE);
@@ -92,40 +77,20 @@ TEST(LightFactory, createLight_gamutCapabilities)
             {"uniqueid", "00:00:00:00:00:00:00:00-00"}, {"swversion", "5.50.1.19085"},
             {"capabilities", {{"control", {{"colorgamuttype", "A"}}}}} };
 
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(lightState));
-
     Light test_light_1 = factory.createLight(lightState, 1);
     EXPECT_EQ(test_light_1.getColorType(), ColorType::GAMUT_A);
 
     lightState["capabilities"]["control"]["colorgamuttype"] = "B";
-
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(lightState));
 
     test_light_1 = factory.createLight(lightState, 1);
     EXPECT_EQ(test_light_1.getColorType(), ColorType::GAMUT_B);
 
     lightState["capabilities"]["control"]["colorgamuttype"] = "C";
 
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(lightState));
-
     test_light_1 = factory.createLight(lightState, 1);
     EXPECT_EQ(test_light_1.getColorType(), ColorType::GAMUT_C);
 
     lightState["capabilities"]["control"]["colorgamuttype"] = "Other";
-
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(lightState));
 
     test_light_1 = factory.createLight(lightState, 1);
     EXPECT_EQ(test_light_1.getColorType(), ColorType::UNDEFINED);
@@ -133,28 +98,16 @@ TEST(LightFactory, createLight_gamutCapabilities)
     // With color temperature
     lightState["type"] = "Extended color light";
     lightState["capabilities"]["control"]["colorgamuttype"] = "A";
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(lightState));
 
     test_light_1 = factory.createLight(lightState, 1);
     EXPECT_EQ(test_light_1.getColorType(), ColorType::GAMUT_A_TEMPERATURE);
 
     lightState["capabilities"]["control"]["colorgamuttype"] = "B";
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(lightState));
 
     test_light_1 = factory.createLight(lightState, 1);
     EXPECT_EQ(test_light_1.getColorType(), ColorType::GAMUT_B_TEMPERATURE);
 
     lightState["capabilities"]["control"]["colorgamuttype"] = "C";
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(lightState));
 
     test_light_1 = factory.createLight(lightState, 1);
     EXPECT_EQ(test_light_1.getColorType(), ColorType::GAMUT_C_TEMPERATURE);
@@ -179,29 +132,14 @@ TEST(LightFactory, createLight_gamutModelid)
             {"name", "Hue ambiance lamp 1"}, {"modelid", gamutAModel}, {"manufacturername", "Philips"},
             {"uniqueid", "00:00:00:00:00:00:00:00-00"}, {"swversion", "5.50.1.19085"}};
 
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(lightState));
-
     Light test_light_1 = factory.createLight(lightState, 1);
     EXPECT_EQ(test_light_1.getColorType(), ColorType::GAMUT_A);
 
     lightState["modelid"] = gamutBModel;
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(lightState));
-
     test_light_1 = factory.createLight(lightState, 1);
     EXPECT_EQ(test_light_1.getColorType(), ColorType::GAMUT_B);
 
     lightState["modelid"] = gamutCModel;
-
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(lightState));
 
     test_light_1 = factory.createLight(lightState, 1);
     EXPECT_EQ(test_light_1.getColorType(), ColorType::GAMUT_C);
@@ -210,29 +148,15 @@ TEST(LightFactory, createLight_gamutModelid)
     lightState["type"] = "Extended color light";
     lightState["modelid"] = gamutAModel;
 
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(lightState));
-
     test_light_1 = factory.createLight(lightState, 1);
     EXPECT_EQ(test_light_1.getColorType(), ColorType::GAMUT_A_TEMPERATURE);
 
     lightState["modelid"] = gamutBModel;
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(lightState));
 
     test_light_1 = factory.createLight(lightState, 1);
     EXPECT_EQ(test_light_1.getColorType(), ColorType::GAMUT_B_TEMPERATURE);
 
     lightState["modelid"] = gamutCModel;
-
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(lightState));
 
     test_light_1 = factory.createLight(lightState, 1);
     EXPECT_EQ(test_light_1.getColorType(), ColorType::GAMUT_C_TEMPERATURE);
