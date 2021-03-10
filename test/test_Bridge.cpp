@@ -265,12 +265,7 @@ TEST(Bridge, getLight)
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .Times(1)
         .WillOnce(Return(hue_bridge_state));
-
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(hue_bridge_state["lights"]["1"]));
-
+    
     // Refresh cache
     test_bridge = Bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
@@ -304,11 +299,6 @@ TEST(Bridge, removeLight)
         .WillOnce(Return(hue_bridge_state));
 
     Bridge test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
-
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(1)
-        .WillRepeatedly(Return(hue_bridge_state["lights"]["1"]));
 
     nlohmann::json return_answer;
     return_answer = nlohmann::json::array();
@@ -347,17 +337,12 @@ TEST(Bridge, getAllLights)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(hue_bridge_state));
 
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(hue_bridge_state["lights"]["1"]));
-
     Bridge test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
-    std::vector<std::reference_wrapper<Light>> test_lights = test_bridge.lights().getAll();
+    std::vector<Light> test_lights = test_bridge.lights().getAll();
     ASSERT_EQ(1, test_lights.size());
-    EXPECT_EQ(test_lights[0].get().getName(), "Hue ambiance lamp 1");
-    EXPECT_EQ(test_lights[0].get().getColorType(), ColorType::TEMPERATURE);
+    EXPECT_EQ(test_lights[0].getName(), "Hue ambiance lamp 1");
+    EXPECT_EQ(test_lights[0].getColorType(), ColorType::TEMPERATURE);
 }
 
 TEST(Bridge, lightExists)
@@ -411,10 +396,6 @@ TEST(Bridge, getGroup)
         .Times(1)
         .WillOnce(Return(hue_bridge_state));
 
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/groups/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(hue_bridge_state["groups"]["1"]));
 
     // Refresh cache
     test_bridge = Bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
@@ -447,11 +428,6 @@ TEST(Bridge, removeGroup)
         .WillOnce(Return(hue_bridge_state));
 
     Bridge test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
-
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/groups/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(1)
-        .WillRepeatedly(Return(hue_bridge_state["groups"]["1"]));
 
     nlohmann::json return_answer;
     return_answer = nlohmann::json::array();
@@ -513,17 +489,12 @@ TEST(Bridge, getAllGroups)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(hue_bridge_state));
 
-    EXPECT_CALL(*handler,
-        GETJson("/api/" + getBridgeUsername() + "/groups/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(hue_bridge_state["groups"]["1"]));
-
     Bridge test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
-    std::vector<std::reference_wrapper<Group>> test_groups = test_bridge.groups().getAll();
+    std::vector<Group> test_groups = test_bridge.groups().getAll();
     ASSERT_EQ(1, test_groups.size());
-    EXPECT_EQ(test_groups[0].get().getName(), "Group 1");
-    EXPECT_EQ(test_groups[0].get().getType(), "LightGroup");
+    EXPECT_EQ(test_groups[0].getName(), "Group 1");
+    EXPECT_EQ(test_groups[0].getType(), "LightGroup");
 }
 
 TEST(Bridge, createGroup)

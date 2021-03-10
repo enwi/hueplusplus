@@ -34,8 +34,8 @@ class TestDevice : public BaseDevice
 {
 public:
     TestDevice(int id, const HueCommandAPI& commands, const std::string& path,
-        std::chrono::steady_clock::duration refreshDuration)
-        : BaseDevice(id, commands, path, refreshDuration)
+        std::chrono::steady_clock::duration refreshDuration, const nlohmann::json& currentState)
+        : BaseDevice(id, commands, path, refreshDuration, currentState)
     { }
 };
 
@@ -61,7 +61,7 @@ protected:
         EXPECT_CALL(*handler,
             GETJson("/api/" + getBridgeUsername() + path + std::to_string(id), _, getBridgeIp(), getBridgePort()))
             .WillOnce(Return(state));
-        return TestDevice(id, commands, path, std::chrono::steady_clock::duration::max());
+        return TestDevice(id, commands, path, std::chrono::steady_clock::duration::max(), nullptr);
     }
 };
 

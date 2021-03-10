@@ -130,10 +130,10 @@ Condition Condition::parse(const nlohmann::json& json)
     return Condition(address, op, value);
 }
 
-Rule::Rule(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration)
-    : id(id), state("/rules/" + std::to_string(id), commands, refreshDuration)
+Rule::Rule(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration, const nlohmann::json& currentState)
+    : id(id), state("/rules/" + std::to_string(id), commands, refreshDuration, currentState)
 { 
-    state.refresh();
+    refresh();
 }
 
 void Rule::refresh(bool force)

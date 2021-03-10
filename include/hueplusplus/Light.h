@@ -554,7 +554,6 @@ public:
     ///@}
 
 protected:
-
     //! \brief Protected ctor that is used by \ref Bridge class.
     //!
     //! \param id Integer that specifies the id of this light
@@ -562,7 +561,6 @@ protected:
     //!
     //! leaves strategies unset
     Light(int id, const HueCommandAPI& commands);
-
 
     Light(int id, const std::shared_ptr<APICache>& baseCache);
 
@@ -576,14 +574,15 @@ protected:
     //! \param colorHueStrategy Strategy for color hue/saturation. May be nullptr.
     //! \param refreshDuration Time between refreshing the cached state.
     //! Can be 0 to always refresh, or steady_clock::duration::max() to never refresh.
+    //! \param currentState The current light state, may be null.
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
     Light(int id, const HueCommandAPI& commands, std::shared_ptr<const BrightnessStrategy> brightnessStrategy,
         std::shared_ptr<const ColorTemperatureStrategy> colorTempStrategy,
-        std::shared_ptr<const ColorHueStrategy> colorHueStrategy,
-        std::chrono::steady_clock::duration refreshDuration = std::chrono::seconds(10));
+        std::shared_ptr<const ColorHueStrategy> colorHueStrategy, std::chrono::steady_clock::duration refreshDuration,
+        const nlohmann::json& currentState);
 
     //! \brief Protected function that sets the brightness strategy.
     //!

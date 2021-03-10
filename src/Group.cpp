@@ -8,10 +8,11 @@ Group::Group(int id, const std::shared_ptr<APICache>& baseCache)
     : id(id), state(baseCache, std::to_string(id), baseCache->getRefreshDuration())
 { }
 
-Group::Group(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration)
-    : id(id), state("/groups/" + std::to_string(id), commands, refreshDuration)
+Group::Group(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration, const nlohmann::json& currentState)
+    : id(id), state("/groups/" + std::to_string(id), commands, refreshDuration, currentState)
 {
-    state.refresh();
+    // Initialize value if not null
+    state.getValue();
 }
 
 void Group::refresh(bool force)

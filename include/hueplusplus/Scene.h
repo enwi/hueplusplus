@@ -127,7 +127,8 @@ public:
     //! \param id Scene id
     //! \param commands HueCommandAPI for requests
     //! \param refreshDuration Time between refreshing the cached state
-    Scene(const std::string& id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration);
+    //! \param currentState The current state, may be null.
+    Scene(const std::string& id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration, const nlohmann::json& currentState);
 
     //! \brief Refreshes internal cached state
     //! \param force \c true forces a refresh, regardless of how long the last refresh was ago.

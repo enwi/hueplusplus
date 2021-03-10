@@ -39,7 +39,7 @@ namespace hueplusplus
 //! \tparam IdT Type of the resource id. int or std::string
 //!
 //! The resources are assumed to be in an object with ids as keys.
-//! The Resource class needs a constructor that accepts \c id, HueCommandAPI and \c refreshDuration;
+//! The Resource class needs a constructor that accepts \c id, HueCommandAPI, \c refreshDuration and \c state;
 //! otherwise a factory function needs to be provided that takes \c id and the JSON state.
 template <typename Resource, typename IdT>
 class ResourceList
@@ -78,7 +78,7 @@ public:
         std::chrono::steady_clock::duration refreshDuration,
         const std::function<Resource(IdType, const nlohmann::json&, const std::shared_ptr<APICache>&)>& factory
         = nullptr)
-        : stateCache(std::make_shared<APICache>(path, commands, refreshDuration)),
+        : stateCache(std::make_shared<APICache>(path, commands, refreshDuration, nullptr)),
           factory(factory),
           path(path + '/'),
           sharedState(false)
@@ -98,18 +98,14 @@ public:
     //! \throws HueException when response contains no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    std::vector<std::reference_wrapper<Resource>> getAll()
+    std::vector<Resource> getAll()
     {
-        nlohmann::json state = stateCache->getValue();
+        nlohmann::json& state = stateCache->getValue();
+        std::vector<Resource> result;
+        result.reserve(state.size());
         for (auto it = state.begin(); it != state.end(); ++it)
         {
-            get(maybeStoi(it.key()));
-        }
-        std::vector<std::reference_wrapper<Resource>> result;
-        result.reserve(state.size());
-        for (auto& entry : resources)
-        {
-            result.emplace_back(entry.second);
+            result.emplace_back(construct(maybeStoi(it.key()), it.value()));
         }
         return result;
     }
@@ -121,21 +117,15 @@ public:
     //! \throws HueException when id does not exist
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    Resource& get(const IdType& id)
+    Resource get(const IdType& id)
     {
-        auto pos = resources.find(id);
-        if (pos != resources.end())
-        {
-            pos->second.refresh(true);
-            return pos->second;
-        }
         const nlohmann::json& state = stateCache->getValue();
         std::string key = maybeToString(id);
         if (!state.count(key))
         {
             throw HueException(FileInfo {__FILE__, __LINE__, __func__}, "Resource id is not valid");
         }
-        return resources.emplace(id, construct(id, state[key])).first->second;
+        return construct(id, state[key]);
     }
 
     //! \brief Checks whether resource with id exists
@@ -145,30 +135,14 @@ public:
     //! \throws HueException when response contains no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    bool exists(const IdType& id)
-    {
-        auto pos = resources.find(id);
-        if (pos != resources.end())
-        {
-            return true;
-        }
-        return stateCache->getValue().count(maybeToString(id)) != 0;
-    }
+    bool exists(const IdType& id) { return stateCache->getValue().count(maybeToString(id)) != 0; }
 
     //! \brief Checks whether resource with id exists
     //! \param id Identifier of the resource to check
     //! \returns true when the resource with given id exists
     //! \note This will not update the cache
     //! \throws HueException when the cache is empty
-    bool exists(const IdType& id) const
-    {
-        auto pos = resources.find(id);
-        if (pos != resources.end())
-        {
-            return true;
-        }
-        return stateCache->getValue().count(maybeToString(id)) != 0;
-    }
+    bool exists(const IdType& id) const { return stateCache->getValue().count(maybeToString(id)) != 0; }
 
     //! \brief Removes the resource
     //! \param id Identifier of the resource to remove
@@ -185,11 +159,6 @@ public:
         nlohmann::json result = stateCache->getCommandAPI().DELETERequest(
             requestPath, nlohmann::json::object(), FileInfo {__FILE__, __LINE__, __func__});
         bool success = utils::safeGetMember(result, 0, "success") == requestPath + " deleted";
-        auto it = resources.find(id);
-        if (success && it != resources.end())
-        {
-            resources.erase(it);
-        }
         return success;
     }
 
@@ -205,7 +174,7 @@ protected:
     Resource construct(const IdType& id, const nlohmann::json& state)
     {
         return construct(
-            id, state, std::is_constructible<Resource, IdType, HueCommandAPI, std::chrono::steady_clock::duration> {});
+            id, state, std::is_constructible<Resource, IdType, HueCommandAPI, std::chrono::steady_clock::duration, const nlohmann::json&> {});
     }
 
     //! \brief Protected defaulted move constructor
@@ -214,7 +183,7 @@ protected:
     ResourceList& operator=(ResourceList&&) = default;
 
 private:
-    // Resource is constructable
+    // Resource is constructible
     Resource construct(const IdType& id, const nlohmann::json& state, std::true_type)
     {
         if (factory)
@@ -229,11 +198,11 @@ private:
             }
             else
             {
-                return Resource(id, stateCache->getCommandAPI(), stateCache->getRefreshDuration());
+                return Resource(id, stateCache->getCommandAPI(), stateCache->getRefreshDuration(), state);
             }
         }
     }
-    // Resource is not constructable
+    // Resource is not constructible
     Resource construct(const IdType& id, const nlohmann::json& state, std::false_type)
     {
         if (!factory)
@@ -254,7 +223,6 @@ protected:
     std::shared_ptr<APICache> stateCache;
     std::function<Resource(IdType, const nlohmann::json&, const std::shared_ptr<APICache>&)> factory;
     std::string path;
-    std::map<IdType, Resource> resources;
     bool sharedState;
 };
 
@@ -361,21 +329,15 @@ public:
     using Base::Base;
     //! \brief Get group, specially handles group 0
     //! \see ResourceList::get
-    Resource& get(const int& id)
+    Resource get(const int& id)
     {
-        auto pos = this->resources.find(id);
-        if (pos != this->resources.end())
-        {
-            pos->second.refresh();
-            return pos->second;
-        }
         const nlohmann::json& state = this->stateCache->getValue();
         std::string key = this->maybeToString(id);
         if (!state.count(key) && id != 0)
         {
             throw HueException(FileInfo {__FILE__, __LINE__, __func__}, "Resource id is not valid");
         }
-        return this->resources.emplace(id, this->construct(id, state[key])).first->second;
+        return this->construct(id, id == 0 ? nlohmann::json{ nullptr } : state[key]);
     }
     //! \brief Get group, specially handles group 0
     //! \see ResourceList::exists

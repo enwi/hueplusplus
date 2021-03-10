@@ -53,7 +53,7 @@ protected:
             GETJson(
                 "/api/" + getBridgeUsername() + "/sensors/" + std::to_string(id), _, getBridgeIp(), getBridgePort()))
             .WillOnce(Return(state));
-        return Sensor(id, commands, std::chrono::steady_clock::duration::max());
+        return Sensor(id, commands, std::chrono::steady_clock::duration::max(), nullptr);
     }
 };
 

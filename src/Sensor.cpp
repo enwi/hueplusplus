@@ -235,8 +235,8 @@ Sensor::Sensor(int id, const std::shared_ptr<APICache>& baseCache)
 { }
 
 
-Sensor::Sensor(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration)
-    : BaseDevice(id, commands, "/sensors/", refreshDuration)
+Sensor::Sensor(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration, const nlohmann::json& currentState)
+    : BaseDevice(id, commands, "/sensors/", refreshDuration, currentState)
 { }
 
 CreateSensor::CreateSensor(const std::string& name, const std::string& modelid, const std::string& swversion,

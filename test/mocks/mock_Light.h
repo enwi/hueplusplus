@@ -38,7 +38,7 @@ class MockLight : public hueplusplus::Light
 public:
     MockLight(std::shared_ptr<const hueplusplus::IHttpHandler> handler)
         : Light(1, hueplusplus::HueCommandAPI(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler), nullptr,
-              nullptr, nullptr, std::chrono::steady_clock::duration::max())
+              nullptr, nullptr, std::chrono::steady_clock::duration::max(), nullptr)
     {
         // Set refresh duration to max, so random refreshes do not hinder the test setups
     }

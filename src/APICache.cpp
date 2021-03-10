@@ -32,11 +32,16 @@ APICache::APICache(
       commands(baseCache->commands),
       refreshDuration(refresh),
       lastRefresh(baseCache->lastRefresh)
-{}
+{ }
 
-APICache::APICache(const std::string& path, const HueCommandAPI& commands, std::chrono::steady_clock::duration refresh)
-    : path(path), commands(commands), refreshDuration(refresh), lastRefresh(std::chrono::steady_clock::duration::zero())
-{}
+APICache::APICache(const std::string& path, const HueCommandAPI& commands, std::chrono::steady_clock::duration refresh,
+    const nlohmann::json& initial)
+    : path(path),
+      commands(commands),
+      refreshDuration(refresh),
+      lastRefresh(initial.is_null() ? std::chrono::steady_clock::time_point() : std::chrono::steady_clock::now()),
+      value(initial)
+{ }
 
 void APICache::refresh()
 {

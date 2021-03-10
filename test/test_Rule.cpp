@@ -99,7 +99,7 @@ protected:
     Rule getRule(int id = 1)
     {
         expectGetState(id);
-        return Rule(id, commands, std::chrono::steady_clock::duration::max());
+        return Rule(id, commands, std::chrono::steady_clock::duration::max(), nullptr);
     }
 };
 

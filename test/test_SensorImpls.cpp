@@ -68,7 +68,7 @@ protected:
     {
         EXPECT_CALL(*handler, GETJson("/api/" + getBridgeUsername() + "/sensors/1", _, getBridgeIp(), getBridgePort()))
             .WillOnce(Return(state));
-        return T(Sensor(1, commands, std::chrono::steady_clock::duration::max()));
+        return T(Sensor(1, commands, std::chrono::steady_clock::duration::max(), nullptr));
     }
 };
 
