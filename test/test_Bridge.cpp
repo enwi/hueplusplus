@@ -265,7 +265,7 @@ TEST(Bridge, getLight)
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .Times(1)
         .WillOnce(Return(hue_bridge_state));
-    
+
     // Refresh cache
     test_bridge = Bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
 
@@ -279,6 +279,45 @@ TEST(Bridge, getLight)
     test_light_1 = test_bridge.lights().get(1);
     EXPECT_EQ(test_light_1.getName(), "Hue ambiance lamp 1");
     EXPECT_EQ(test_light_1.getColorType(), ColorType::TEMPERATURE);
+}
+
+TEST(Bridge, SharedState)
+{
+    using namespace ::testing;
+    std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
+
+    nlohmann::json hue_bridge_state {{"lights",
+        {{"1",
+            {{"state",
+                 {{"on", true}, {"bri", 254}, {"ct", 366}, {"alert", "none"}, {"colormode", "ct"},
+                     {"reachable", true}}},
+                {"swupdate", {{"state", "noupdates"}, {"lastinstall", nullptr}}}, {"type", "Color temperature light"},
+                {"name", "Hue ambiance lamp 1"}, {"modelid", "LTW001"}, {"manufacturername", "Philips"},
+                {"uniqueid", "00:00:00:00:00:00:00:00-00"}, {"swversion", "5.50.1.19085"}}}}}};
+
+    EXPECT_CALL(
+        *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+        .Times(1)
+        .WillOnce(Return(hue_bridge_state));
+    Bridge test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler, std::chrono::seconds(10), true);
+
+    // Test when correct data is sent
+    Light test_light_1 = test_bridge.lights().get(1);
+
+    Light test_light_copy = test_bridge.lights().get(1);
+    const std::string newName = "New light name";
+    EXPECT_CALL(*handler, PUTJson("/api/" + getBridgeUsername() + "/lights/1/name", _, getBridgeIp(), getBridgePort()))
+        .WillOnce(Return(nlohmann::json({{"success", {{{"/lights/1/name", newName}}}}})));
+    test_light_1.setName(newName);
+    hue_bridge_state["lights"]["1"]["name"] = newName;
+
+    EXPECT_CALL(*handler,
+        GETJson("/api/" + getBridgeUsername() + "/lights/1", nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+        .Times(1)
+        .WillOnce(Return(hue_bridge_state["lights"]["1"]));
+    test_light_1.refresh(true);
+
+    EXPECT_EQ(newName, test_light_copy.getName());
 }
 
 TEST(Bridge, removeLight)
@@ -395,7 +434,6 @@ TEST(Bridge, getGroup)
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .Times(1)
         .WillOnce(Return(hue_bridge_state));
-
 
     // Refresh cache
     test_bridge = Bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);

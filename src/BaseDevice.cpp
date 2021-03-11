@@ -97,7 +97,7 @@ BaseDevice::BaseDevice(int id, const std::shared_ptr<APICache>& baseCache)
 
 BaseDevice::BaseDevice(
     int id, const HueCommandAPI& commands, const std::string& path, std::chrono::steady_clock::duration refreshDuration, const nlohmann::json& currentState)
-    : id(id), path(path), state(path + std::to_string(id), commands, refreshDuration, currentState)
+    : id(id), state(path + std::to_string(id), commands, refreshDuration, currentState)
 {
     // Initialize value if not null
     state.getValue();
@@ -105,7 +105,7 @@ BaseDevice::BaseDevice(
 
 nlohmann::json BaseDevice::sendPutRequest(const std::string& subPath, const nlohmann::json& request, FileInfo fileInfo)
 {
-    return state.getCommandAPI().PUTRequest(path + std::to_string(id) + subPath, request, std::move(fileInfo));
+    return state.getCommandAPI().PUTRequest(state.getRequestPath() + subPath, request, std::move(fileInfo));
 }
 
 void BaseDevice::refresh(bool force)
