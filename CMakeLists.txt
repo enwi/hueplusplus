@@ -69,7 +69,7 @@ if (1 AND APPLE)
 	set(CMAKE_MACOSX_RPATH 1)
 endif()
 
-add_subdirectory("lib/mbedtls")
+add_subdirectory("lib/mbedtls" EXCLUDE_FROM_ALL)
 
 add_subdirectory(src)
 
