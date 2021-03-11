@@ -70,7 +70,7 @@ hueplusplus::Light light1 = bridge.lights().get(1);
 If you don't know the id of a specific light or want to get an overview over all lights that are controlled by your bridge, 
 you can get a vector containing them by calling getAll(). If no lights are found the vector will be empty.
 ```C++
-std::vector<std::reference_wrapper<hueplusplus::Light>> lights = bridge.lights().getAll();
+std::vector<hueplusplus::Light> lights = bridge.lights().getAll();
 ```
 If you now want to control a light, call a specific function of it.
 ```C++
