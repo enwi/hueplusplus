@@ -25,49 +25,61 @@
 #include "Bridge.h"
 #include "Group.h"
 
-#include "mbedtls/ssl.h"
-#include "mbedtls/net_sockets.h"
-#include "mbedtls/entropy.h"
-#include "mbedtls/ctr_drbg.h"
-#include "mbedtls/error.h"
-#include "mbedtls/certs.h"
-#include "mbedtls/debug.h"
-#include "mbedtls/timing.h"
-
-#define HUE_ENTERTAINMENT_HEADER_SIZE 16
-#define HUE_ENTERTAINMENT_LIGHT_SIZE 9
-
 namespace hueplusplus
 {
+struct TLSContext;
+
 //! \brief Class for Hue Entertainment Mode
 //!
 //! Provides methods to initialize and control Entertainment groups.
 class EntertainmentMode
 {
 public:
-    EntertainmentMode(Bridge& bridge, Group& group);
+    //! @brief Constructor
+    //!
+    //! @param b Bridge reference
+    //! @param g Group to control in entertainment mode reference
+    EntertainmentMode(Bridge& b, Group& g);
 
+    //! @brief Destroy the Entertainment Mode object
+    ~EntertainmentMode();
+
+    //! @brief Connect and start streaming
+    //!
+    //! @return true If conected and ready to receive commands
+    //! @return false If an error occured
     bool Connect();
+
+    //! @brief Disconnect and stop streaming
+    //!
+    //! @return true If disconnected successfully
+    //! @return false If an error occurred
     bool Disconnect();
-    
+
+    //! @brief Set the color of the given light in RGB format
+    //!
+    //! @param light_index Light index inside the group
+    //! @param red Red color value (0-255)
+    //! @param green Green color value (0-255)
+    //! @param blue Blue color value (0-255)
+    //! @return true If light_index was valid
+    //! @return false If light_index was invalid
     bool SetColorRGB(uint8_t light_index, uint8_t red, uint8_t green, uint8_t blue);
 
-    void Update();
+    //! @brief Update all set colors by @ref SetColorRGB
+    //!
+    //! @return true If all color values for all lights have ben written/sent
+    //! @return false If there was an error while writing
+    bool Update();
 
 protected:
-    Bridge& bridge;
-    Group& group;
+    Bridge* bridge; //!< Associated bridge
+    Group* group; //!< Associated group
 
     std::vector<uint8_t> entertainment_msg; //!< buffer containing the entertainment mode packet data
     uint8_t entertainment_num_lights; //!< number of lights in entertainment mode group
 
-    mbedtls_ssl_context ssl;
-    mbedtls_net_context server_fd;
-    mbedtls_entropy_context entropy;
-    mbedtls_ctr_drbg_context ctr_drbg;
-    mbedtls_ssl_config conf;
-    mbedtls_x509_crt cacert;
-    mbedtls_timing_delay_context timer;
+    std::unique_ptr<TLSContext> tls_context; //!< tls context
 };
 } // namespace hueplusplus
 
