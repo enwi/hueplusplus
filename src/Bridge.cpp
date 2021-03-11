@@ -250,6 +250,11 @@ std::string Bridge::requestUsername()
 
 bool Bridge::StartStreaming(std::string group_identifier)
 {
+    if (clientkey.empty())
+    {
+        throw HueException(CURRENT_FILE_INFO, "Cannot stream without client key!");
+    }
+
     nlohmann::json request;
 
     request["stream"]["active"] = true;
@@ -260,20 +265,10 @@ bool Bridge::StartStreaming(std::string group_identifier)
 
     answer = http_handler->PUTJson(uri, request, ip, port);
 
-    if(answer[0].contains("success"))
-    {
-        std::string key = "/groups/" + group_identifier + "/stream/active";
+    std::string key = "/groups/" + group_identifier + "/stream/active";
+    nlohmann::json success = utils::safeGetMember(answer, 0, "success", key);
 
-        if(answer[0]["success"].contains(key))
-        {
-            if(answer[0]["success"][key] == true)
-            {
-                return true;
-            }
-        }
-    }
-
-    return false;
+    return success == true;
 }
 
 bool Bridge::StopStreaming(std::string group_identifier)
@@ -288,13 +283,13 @@ bool Bridge::StopStreaming(std::string group_identifier)
 
     answer = http_handler->PUTJson(uri, request, ip, port);
 
-    if(answer[0].contains("success"))
+    if (answer[0].contains("success"))
     {
         std::string key = "/groups/" + group_identifier + "/stream/active";
 
-        if(answer[0]["success"].contains(key))
+        if (answer[0]["success"].contains(key))
         {
-            if(answer[0]["success"][key] == false)
+            if (answer[0]["success"][key] == false)
             {
                 return true;
             }

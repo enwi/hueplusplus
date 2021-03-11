@@ -25,14 +25,13 @@
 #include <set>
 
 #include "hueplusplus/HueExceptionMacro.h"
-#include "hueplusplus/StateTransaction.h"
 #include "hueplusplus/Utils.h"
 
 namespace hueplusplus
 {
 StateTransaction::StateTransaction(const HueCommandAPI& commands, const std::string& path, nlohmann::json* currentState)
     : commands(commands), path(path), state(currentState), request(nlohmann::json::object())
-{}
+{ }
 
 bool StateTransaction::commit(bool trimRequest)
 {
@@ -41,8 +40,8 @@ bool StateTransaction::commit(bool trimRequest)
     if (!request.count("on"))
     {
         if (!stateJson.value("on", false)
-            && (request.value("bri", 0) != 0 || request.count("effect") || request.count("hue")
-                || request.count("sat") || request.count("xy") || request.count("ct")))
+            && (request.value("bri", 0) != 0 || request.count("effect") || request.count("hue") || request.count("sat")
+                || request.count("xy") || request.count("ct")))
         {
             // Turn on if it was turned off
             request["on"] = true;
