@@ -1,5 +1,5 @@
 /**
-    \file LightsOff.cpp
+    \file UsernameConfig.cpp
     Copyright Notice\n
     Copyright (C) 2021  Jan Rogall		- developer\n
 
@@ -18,10 +18,13 @@
     You should have received a copy of the GNU Lesser General Public License
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 
-    \brief This example turns off all lights for 20 seconds, then turns them on again.
+    \brief This example reads the username and mac address from a config file.
 **/
 
-#include <thread>
+#include <algorithm>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
 
 #include <hueplusplus/Bridge.h>
 
@@ -39,12 +42,43 @@ using SystemHttpHandler = hueplusplus::LinHttpHandler;
 
 namespace hue = hueplusplus;
 
-// Configure existing connections here, or leave empty for new connection
-const std::string macAddress = "";
-const std::string username = "";
+//! \brief Reads a json config file.
+//! \param filename Path to the config file
+//! \returns Parsed json or an empty object if not successful.
+nlohmann::json readConfigFile(const std::string& filename)
+{
+    std::ifstream stream(filename);
+    try
+    {
+        nlohmann::json result = nlohmann::json::object();
+        if (stream)
+        {
+            stream >> result;
+        }
+        return result;
+    }
+    catch (const nlohmann::json::exception&)
+    {
+        // Ignore parse errors
+        return nlohmann::json::object();
+    }
+}
 
-//! \brief Connects to a bridge and returns it.
-hue::Bridge connectToBridge()
+//! \brief Saves a json file.
+//! \param filename Path to the config file
+//! \param config Json value to save
+void saveConfigFile(const std::string& filename, const nlohmann::json& config)
+{
+    std::ofstream stream(filename);
+    stream << std::setw(4) << config;
+}
+
+//! \brief Connects to a bridge and returns it
+//! \param username Already existing username, can be left empty.
+//! \param macAddress MAC address of the bridge, can be left empty.
+//! \throws std::runtime_error When the bridge was not found.
+//! \returns A connected bridge.
+hue::Bridge connectToBridge(const std::string& username, const std::string& macAddress)
 {
     hue::BridgeFinder finder(std::make_shared<SystemHttpHandler>());
 
@@ -79,52 +113,30 @@ hue::Bridge connectToBridge()
     return finder.getBridge(*it);
 }
 
-//! \brief Turns off the lights on the bridge for 20 seconds.
+//! Connects to a bridge. The steps are:
+//! - read "config.json" for an existing config
+//! - connect to the bridge
+//! - save the username to the config file for the next run
 //! 
-//! Only turns the lights back on that were on before.
-void lightsOff(hue::Bridge& hue)
-{
-    std::vector<hue::Light> lights = hue.lights().getAll();
-
-    // Save current on state of the lights
-    std::map<int, bool> onMap;
-    for (hue::Light& l : lights)
-    {
-        onMap.emplace(l.getId(), l.isOn());
-        l.off();
-    }
-
-    // This would be preferrable, but does not work because it also resets the brightness of all lights
-    // Group 0 contains all lights, turn all off with a transition of 1 second
-    // hue.groups().get(0).setOn(false, 10);
-    // -------------------------------------
-
-    std::cout << "Turned off all lights\n";
-
-    std::this_thread::sleep_for(std::chrono::seconds(20));
-
-    // Restore the original state of the lights
-    for (hue::Light& l : lights)
-    {
-        if (onMap[l.getId()])
-        {
-            l.on();
-        }
-    }
-
-    std::cout << "Turned lights back on\n";
-}
-
+//! Also prints out the IP and username.
 int main(int argc, char** argv)
 {
 
+    const std::string filename = "config.json";
     try
     {
-        hue::Bridge hue = connectToBridge();
+
+        nlohmann::json config = readConfigFile(filename);
+        const std::string username = config.value("username", "");
+        const std::string macAddress = config.value("mac", "");
+        hue::Bridge hue = connectToBridge(username, macAddress);
+
+        // Store updated information into file
+        config["username"] = hue.getUsername();
+        config["mac"] = hue.config().getMACAddress();
+        saveConfigFile(filename, config);
 
         std::cout << "Connected to bridge. IP: " << hue.getBridgeIP() << ", username: " << hue.getUsername() << '\n';
-
-        lightsOff(hue);
     }
     catch (...)
     { }
