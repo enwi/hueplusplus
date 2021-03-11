@@ -44,7 +44,7 @@ public:
     //! decimal notation like "192.168.2.1" \param port Optional integer that
     //! specifies the port to which the request is sent to. Default is 80 \return
     //! String containing the response of the host
-    virtual std::string send(const std::string& msg, const std::string& adr, int port = 80) const;
+    virtual std::string send(const std::string& msg, const std::string& adr, int port = 80) const override;
 
     //! \brief Function that sends a multicast request with the specified message.
     //!

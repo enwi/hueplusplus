@@ -101,6 +101,7 @@ public:
 
     //! \brief Function that adds a client key to the clientkeys map
     //!
+    //! The client key is only needed for entertainment mode, otherwise it is optional.
     //! \param mac MAC address of Hue bridge
     //! \param clientkey Client key that is used to control the Hue bridge in entertainment mode
     void AddClientKey(const std::string& mac, const std::string& clientkey);

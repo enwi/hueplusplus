@@ -69,6 +69,8 @@ if (1 AND APPLE)
 	set(CMAKE_MACOSX_RPATH 1)
 endif()
 
+add_subdirectory("lib/mbedtls")
+
 add_subdirectory(src)
 
 # if the user decided to use tests add the subdirectory

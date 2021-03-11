@@ -7,6 +7,7 @@ set(hueplusplus_SOURCES
     BridgeConfig.cpp
     CLIPSensors.cpp
     ColorUnits.cpp
+    EntertainmentMode.cpp
     ExtendedColorHueStrategy.cpp
     ExtendedColorTemperatureStrategy.cpp
     Group.cpp
@@ -58,12 +59,14 @@ set(hueplusplus_SOURCES ${_srcList} PARENT_SCOPE)
 
 # hueplusplus shared library
 add_library(hueplusplusshared SHARED ${hueplusplus_SOURCES})
+target_link_libraries(hueplusplusshared PRIVATE mbedtls)
 target_compile_features(hueplusplusshared PUBLIC cxx_std_14)
 target_include_directories(hueplusplusshared PUBLIC $<BUILD_INTERFACE:${hueplusplus_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
 install(TARGETS hueplusplusshared DESTINATION lib)
 
 # hueplusplus static library
 add_library(hueplusplusstatic STATIC ${hueplusplus_SOURCES})
+target_link_libraries(hueplusplusstatic PRIVATE mbedtls)
 target_compile_features(hueplusplusstatic PUBLIC cxx_std_14)
 install(TARGETS hueplusplusstatic DESTINATION lib)
 target_include_directories(hueplusplusstatic PUBLIC $<BUILD_INTERFACE:${hueplusplus_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)

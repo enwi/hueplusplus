@@ -31,6 +31,7 @@
 # build directory
 /build*
 /out
+/bin
 
 # Generated documentation
 /doc/html
@@ -43,7 +44,6 @@
 
 # Icon must end with two \r
 Icon
-
 
 # Thumbnails
 ._*
