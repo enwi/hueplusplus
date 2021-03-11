@@ -240,18 +240,18 @@ TEST_F(RuleTest, setActions)
 TEST(CreateRule, setName)
 {
     const std::string name = "New rule";
-    const nlohmann::json request = {{"conditions", {}}, {"actions", {}}, {"name", name}};
+    const nlohmann::json request = {{"conditions", nullptr}, {"actions", nullptr}, {"name", name}};
     EXPECT_EQ(request, CreateRule({}, {}).setName(name).getRequest());
 }
 
 TEST(CreateRule, setStatus)
 {
     {
-        const nlohmann::json request = {{"conditions", {}}, {"actions", {}}, {"status", "enabled"}};
+        const nlohmann::json request = {{"conditions", nullptr}, {"actions", nullptr}, {"status", "enabled"}};
         EXPECT_EQ(request, CreateRule({}, {}).setStatus(true).getRequest());
     }
     {
-        const nlohmann::json request = {{"conditions", {}}, {"actions", {}}, {"status", "disabled"}};
+        const nlohmann::json request = {{"conditions", nullptr}, {"actions", nullptr}, {"status", "disabled"}};
         EXPECT_EQ(request, CreateRule({}, {}).setStatus(false).getRequest());
     }
 }
