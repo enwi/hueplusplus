@@ -205,7 +205,7 @@ void Sensor::setStateAttribute(const std::string& key, const nlohmann::json& val
 
 std::string Sensor::getStateAddress(const std::string& key) const
 {
-    return path + "/state/" + key;
+    return state.getRequestPath() + "/state/" + key;
 }
 
 nlohmann::json Sensor::getConfig() const

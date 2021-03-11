@@ -145,7 +145,6 @@ protected:
 
 protected:
     int id; //!< holds the id of the device
-    std::string path; //!< holds the path of the device
     APICache state; //!< holds the current state of the device
 };
 } // namespace hueplusplus
