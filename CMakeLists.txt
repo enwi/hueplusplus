@@ -33,6 +33,19 @@ if(CLANG_TIDY_EXE)
 	endif()
 endif()
 
+# update submodules
+find_package(Git QUIET)
+if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
+	option(GIT_SUBMODULE "Check submodules during build" ON)
+	if(GIT_SUBMODULE)
+		message(STATUS "Submodule update")
+		execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+			RESULT_VARIABLE GIT_SUBMOD_RESULT)
+		if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+			message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+		endif()
+	endif()
+endif()
 
 # Set default build type if none was specified
 set(default_build_type "Release")
@@ -69,7 +82,15 @@ if (1 AND APPLE)
 	set(CMAKE_MACOSX_RPATH 1)
 endif()
 
+set(USE_STATIC_MBEDTLS_LIBRARY ON)
+set(USE_SHARED_MBEDTLS_LIBRARY OFF)
 add_subdirectory("lib/mbedtls" EXCLUDE_FROM_ALL)
+
+# Compile the mbedtls library as a static with position independent code,
+# because we need it for both a shared and static library
+set_property(TARGET mbedtls PROPERTY POSITION_INDEPENDENT_CODE ON)
+set_property(TARGET mbedcrypto PROPERTY POSITION_INDEPENDENT_CODE ON)
+set_property(TARGET mbedx509 PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 add_subdirectory(src)
 
