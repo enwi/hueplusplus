@@ -72,7 +72,7 @@ TEST(Alert, alertToString)
     EXPECT_EQ("lselect", alertToString(Alert::lselect));
 }
 
-TEST_F(SensorTest, On)
+TEST_F(SensorTest, on)
 {
     EXPECT_FALSE(getSensor().hasOn());
     state["config"]["on"] = true;

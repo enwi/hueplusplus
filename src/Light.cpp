@@ -20,24 +20,23 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include "hueplusplus/Light.h"
-
 #include <cmath>
 #include <iostream>
 #include <thread>
 
 #include "hueplusplus/HueExceptionMacro.h"
+#include "hueplusplus/Light.h"
 #include "hueplusplus/Utils.h"
 #include "json/json.hpp"
 
 namespace hueplusplus
 {
-bool Light::On(uint8_t transition)
+bool Light::on(uint8_t transition)
 {
     return transaction().setOn(true).setTransition(transition).commit();
 }
 
-bool Light::Off(uint8_t transition)
+bool Light::off(uint8_t transition)
 {
     return transaction().setOn(false).setTransition(transition).commit();
 }
@@ -91,12 +90,12 @@ ColorGamut Light::getColorGamut() const
     }
 }
 
-unsigned int Light::KelvinToMired(unsigned int kelvin) const
+unsigned int Light::kelvinToMired(unsigned int kelvin) const
 {
     return int(0.5f + (1000000 / kelvin));
 }
 
-unsigned int Light::MiredToKelvin(unsigned int mired) const
+unsigned int Light::miredToKelvin(unsigned int mired) const
 {
     return int(0.5f + (1000000 / mired));
 }

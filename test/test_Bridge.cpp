@@ -62,10 +62,10 @@ protected:
     ~BridgeFinderTest() {};
 };
 
-TEST_F(BridgeFinderTest, FindBridges)
+TEST_F(BridgeFinderTest, findBridges)
 {
     BridgeFinder finder(handler);
-    std::vector<BridgeFinder::BridgeIdentification> bridges = finder.FindBridges();
+    std::vector<BridgeFinder::BridgeIdentification> bridges = finder.findBridges();
 
     BridgeFinder::BridgeIdentification bridge_to_comp;
     bridge_to_comp.ip = getBridgeIp();
@@ -81,11 +81,11 @@ TEST_F(BridgeFinderTest, FindBridges)
     EXPECT_CALL(*handler, GETString("/description.xml", "application/xml", "", getBridgeIp(), getBridgePort()))
         .Times(1)
         .WillOnce(::testing::Return("invalid stuff"));
-    bridges = finder.FindBridges();
+    bridges = finder.findBridges();
     EXPECT_TRUE(bridges.empty());
 }
 
-TEST_F(BridgeFinderTest, GetBridge)
+TEST_F(BridgeFinderTest, getBridge)
 {
     using namespace ::testing;
     nlohmann::json request {{"devicetype", "HuePlusPlus#User"}, {"generateclientkey", true}};
@@ -98,9 +98,9 @@ TEST_F(BridgeFinderTest, GetBridge)
         .WillRepeatedly(Return(errorResponse));
 
     BridgeFinder finder(handler);
-    std::vector<BridgeFinder::BridgeIdentification> bridges = finder.FindBridges();
+    std::vector<BridgeFinder::BridgeIdentification> bridges = finder.findBridges();
 
-    ASSERT_THROW(finder.GetBridge(bridges[0]), HueException);
+    ASSERT_THROW(finder.getBridge(bridges[0]), HueException);
 
     nlohmann::json successResponse = {{{"success", {{"username", getBridgeUsername()}}}}};
 
@@ -109,9 +109,9 @@ TEST_F(BridgeFinderTest, GetBridge)
         .WillOnce(Return(successResponse));
 
     finder = BridgeFinder(handler);
-    bridges = finder.FindBridges();
+    bridges = finder.findBridges();
 
-    Bridge test_bridge = finder.GetBridge(bridges[0]);
+    Bridge test_bridge = finder.getBridge(bridges[0]);
 
     EXPECT_EQ(test_bridge.getBridgeIP(), getBridgeIp()) << "Bridge IP not matching";
     EXPECT_EQ(test_bridge.getBridgePort(), getBridgePort()) << "Bridge Port not matching";
@@ -120,27 +120,27 @@ TEST_F(BridgeFinderTest, GetBridge)
     Mock::VerifyAndClearExpectations(handler.get());
 }
 
-TEST_F(BridgeFinderTest, AddUsername)
+TEST_F(BridgeFinderTest, addUsername)
 {
     BridgeFinder finder(handler);
-    std::vector<BridgeFinder::BridgeIdentification> bridges = finder.FindBridges();
+    std::vector<BridgeFinder::BridgeIdentification> bridges = finder.findBridges();
 
-    finder.AddUsername(bridges[0].mac, getBridgeUsername());
-    Bridge test_bridge = finder.GetBridge(bridges[0]);
+    finder.addUsername(bridges[0].mac, getBridgeUsername());
+    Bridge test_bridge = finder.getBridge(bridges[0]);
 
     EXPECT_EQ(test_bridge.getBridgeIP(), getBridgeIp()) << "Bridge IP not matching";
     EXPECT_EQ(test_bridge.getBridgePort(), getBridgePort()) << "Bridge Port not matching";
     EXPECT_EQ(test_bridge.getUsername(), getBridgeUsername()) << "Bridge username not matching";
 }
 
-TEST_F(BridgeFinderTest, GetAllUsernames)
+TEST_F(BridgeFinderTest, getAllUsernames)
 {
     BridgeFinder finder(handler);
-    std::vector<BridgeFinder::BridgeIdentification> bridges = finder.FindBridges();
+    std::vector<BridgeFinder::BridgeIdentification> bridges = finder.findBridges();
 
-    finder.AddUsername(bridges[0].mac, getBridgeUsername());
+    finder.addUsername(bridges[0].mac, getBridgeUsername());
 
-    std::map<std::string, std::string> users = finder.GetAllUsernames();
+    std::map<std::string, std::string> users = finder.getAllUsernames();
     EXPECT_EQ(users[getBridgeMac()], getBridgeUsername()) << "Username of MAC:" << getBridgeMac() << "not matching";
 }
 
@@ -299,7 +299,8 @@ TEST(Bridge, SharedState)
         *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
         .Times(1)
         .WillOnce(Return(hue_bridge_state));
-    Bridge test_bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler, std::chrono::seconds(10), true);
+    Bridge test_bridge(
+        getBridgeIp(), getBridgePort(), getBridgeUsername(), handler, "", std::chrono::seconds(10), true);
 
     // Test when correct data is sent
     Light test_light_1 = test_bridge.lights().get(1);

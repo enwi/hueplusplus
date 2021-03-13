@@ -79,8 +79,8 @@ public:
     //! through every color on the current hue and saturation settings. Notice
     //! that none of the setter functions check whether this feature is enabled
     //! and the colorloop can only be disabled with this function or by simply
-    //! calling Off()/OffNoRefresh() and then On()/OnNoRefresh(), so you could
-    //! alternatively call Off() and then use any of the setter functions. \param
+    //! calling off() and then on(), so you could
+    //! alternatively call off() and then use any of the setter functions. \param
     //! on Boolean to turn this feature on or off, true/1 for on and false/0 for
     //! off \param light A reference of the light
     virtual bool setColorLoop(bool on, Light& light) const = 0;
