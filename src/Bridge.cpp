@@ -75,15 +75,16 @@ std::vector<BridgeFinder::BridgeIdentification> BridgeFinder::FindBridges() cons
     return foundBridges;
 }
 
-Bridge BridgeFinder::GetBridge(const BridgeIdentification& identification)
+Bridge BridgeFinder::GetBridge(const BridgeIdentification& identification, bool sharedState)
 {
     std::string normalizedMac = NormalizeMac(identification.mac);
     auto pos = usernames.find(normalizedMac);
     if (pos != usernames.end())
     {
-        return Bridge(identification.ip, identification.port, pos->second, http_handler);
+        return Bridge(
+            identification.ip, identification.port, pos->second, http_handler, std::chrono::seconds(10), sharedState);
     }
-    Bridge bridge(identification.ip, identification.port, "", http_handler);
+    Bridge bridge(identification.ip, identification.port, "", http_handler, std::chrono::seconds(10), sharedState);
     bridge.requestUsername();
     if (bridge.getUsername().empty())
     {
@@ -307,7 +308,7 @@ void Bridge::setHttpHandler(std::shared_ptr<const IHttpHandler> handler)
 {
     http_handler = handler;
     stateCache = std::make_shared<APICache>("", HueCommandAPI(ip, port, username, handler), refreshDuration, nullptr);
-    lightList = LightList(stateCache, "lights", refreshDuration,sharedState,
+    lightList = LightList(stateCache, "lights", refreshDuration, sharedState,
         [factory = LightFactory(stateCache->getCommandAPI(), refreshDuration)](int id, const nlohmann::json& state,
             const std::shared_ptr<APICache>& baseCache) mutable { return factory.createLight(state, id, baseCache); });
     groupList = GroupList(stateCache, "groups", refreshDuration, sharedState);
