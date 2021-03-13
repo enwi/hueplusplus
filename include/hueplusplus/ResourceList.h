@@ -46,9 +46,6 @@ template <typename Resource, typename IdT>
 class ResourceList
 {
 public:
-    struct SharedStateTag
-    { };
-
     using ResourceType = Resource;
     using IdType = IdT;
     static_assert(std::is_integral<IdType>::value || std::is_same<std::string, IdType>::value,
@@ -95,6 +92,7 @@ public:
     void refresh() { stateCache->refresh(); }
 
     //! \brief Sets custom refresh interval for this list and all resources created.
+    //! \param refreshDuration The new minimum duration between refreshes. May be 0 or \ref c_refreshNever.
     void setRefreshDuration(std::chrono::steady_clock::duration refreshDuration)
     {
         stateCache->setRefreshDuration(refreshDuration);

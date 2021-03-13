@@ -120,9 +120,13 @@ public:
     virtual void refresh(bool force = false);
 
     //! \brief Sets custom refresh interval for this device.
+    //! \param refreshDuration The new minimum duration between refreshes. May be 0 or \ref c_refreshNever.
     virtual void setRefreshDuration(std::chrono::steady_clock::duration refreshDuration);
 
 protected:
+    //! \brief Protected ctor that is used by subclasses, construct with shared cache.
+    //! \param id Integer that specifies the id of this device
+    //! \param baseCache Cache of the ResourceList containing this device (must not be null).
     BaseDevice(int id, const std::shared_ptr<APICache>& baseCache);
     //! \brief Protected ctor that is used by subclasses.
     //!

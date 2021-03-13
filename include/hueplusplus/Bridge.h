@@ -164,6 +164,7 @@ public:
     void refresh();
 
     //! \brief Sets refresh interval for the whole bridge state.
+    //! \param refreshDuration The new minimum duration between refreshes. May be 0 or \ref c_refreshNever.
     void setRefreshDuration(std::chrono::steady_clock::duration refreshDuration);
 
     //! \brief Function to get the ip address of the hue bridge

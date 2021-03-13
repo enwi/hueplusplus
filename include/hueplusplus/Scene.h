@@ -140,6 +140,7 @@ public:
     void refresh(bool force = false);
 
     //! \brief Sets custom refresh interval for this group.
+    //! \param refreshDuration The new minimum duration between refreshes. May be 0 or \ref c_refreshNever.
     void setRefreshDuration(std::chrono::steady_clock::duration refreshDuration);
 
     //! \brief Get scene identifier
