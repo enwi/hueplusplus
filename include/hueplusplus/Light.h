@@ -554,7 +554,7 @@ public:
     ///@}
 
 protected:
-    //! \brief Protected ctor that is used by \ref Bridge class.
+    //! \brief Protected ctor that is used by \ref LightFactory.
     //!
     //! \param id Integer that specifies the id of this light
     //! \param commands HueCommandAPI for communication with the bridge
@@ -562,9 +562,15 @@ protected:
     //! leaves strategies unset
     Light(int id, const HueCommandAPI& commands);
 
+    //! \brief Protected ctor that is used by \ref LightFactory.
+    //!
+    //! \param id Integer that specifies the id of this light
+    //! \param baseCache Cache of the light list (must not be null).
+    //!
+    //! leaves strategies unset
     Light(int id, const std::shared_ptr<APICache>& baseCache);
 
-    //! \brief Protected ctor that is used by \ref Bridge class, also sets
+    //! \brief Protected ctor that is used by \ref LightFactory, also sets
     //! strategies.
     //!
     //! \param id Integer that specifies the id of this light
