@@ -168,6 +168,11 @@ void Scene::refresh(bool force)
     }
 }
 
+void Scene::setRefreshDuration(std::chrono::steady_clock::duration refreshDuration)
+{
+    state.setRefreshDuration(refreshDuration);
+}
+
 std::string Scene::getId() const
 {
     return id;

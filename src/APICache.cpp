@@ -25,6 +25,7 @@
 
 namespace hueplusplus
 {
+
 APICache::APICache(
     std::shared_ptr<APICache> baseCache, const std::string& subEntry, std::chrono::steady_clock::duration refresh)
     : base(baseCache),
@@ -111,6 +112,11 @@ const nlohmann::json& APICache::getValue() const
         }
         return value;
     }
+}
+
+void APICache::setRefreshDuration(std::chrono::steady_clock::duration refreshDuration)
+{
+    this->refreshDuration = refreshDuration;
 }
 
 std::chrono::steady_clock::duration APICache::getRefreshDuration() const

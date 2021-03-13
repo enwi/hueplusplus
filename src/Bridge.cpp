@@ -166,6 +166,12 @@ void Bridge::refresh()
     stateCache->refresh();
 }
 
+void Bridge::setRefreshDuration(std::chrono::steady_clock::duration refreshDuration)
+{
+    stateCache->setRefreshDuration(refreshDuration);
+}
+
+
 std::string Bridge::getBridgeIP() const
 {
     return ip;

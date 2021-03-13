@@ -163,6 +163,9 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     void refresh();
 
+    //! \brief Sets refresh interval for the whole bridge state.
+    void setRefreshDuration(std::chrono::steady_clock::duration refreshDuration);
+
     //! \brief Function to get the ip address of the hue bridge
     //!
     //! \return string containing ip

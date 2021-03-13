@@ -48,6 +48,9 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     void refresh();
 
+    //! \brief Sets custom refresh interval for this schedule.
+    void setRefreshDuration(std::chrono::steady_clock::duration refreshDuration);
+
     //! \brief Get schedule identifier
     int getId() const;
 
