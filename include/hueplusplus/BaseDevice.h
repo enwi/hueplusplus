@@ -119,6 +119,9 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     virtual void refresh(bool force = false);
 
+    //! \brief Sets custom refresh interval for this device.
+    virtual void setRefreshDuration(std::chrono::steady_clock::duration refreshDuration);
+
 protected:
     BaseDevice(int id, const std::shared_ptr<APICache>& baseCache);
     //! \brief Protected ctor that is used by subclasses.

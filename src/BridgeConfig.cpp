@@ -39,6 +39,12 @@ void BridgeConfig::refresh(bool force)
         cache.getValue();
     }
 }
+
+void BridgeConfig::setRefreshDuration(std::chrono::steady_clock::duration refreshDuration)
+{
+    cache.setRefreshDuration(refreshDuration);
+}
+
 std::vector<WhitelistedUser> BridgeConfig::getWhitelistedUsers() const
 {
     const nlohmann::json& whitelist = cache.getValue().at("whitelist");

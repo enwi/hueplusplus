@@ -35,6 +35,12 @@ void Schedule::refresh()
     state.refresh();
 }
 
+void Schedule::setRefreshDuration(std::chrono::steady_clock::duration refreshDuration)
+{
+    state.setRefreshDuration(refreshDuration);
+}
+
+
 int Schedule::getId() const
 {
     return id;

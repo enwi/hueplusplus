@@ -139,6 +139,9 @@ public:
     //! \throws nlohmann::json::parse_error when response could not be parsed
     void refresh(bool force = false);
 
+    //! \brief Sets custom refresh interval for this group.
+    void setRefreshDuration(std::chrono::steady_clock::duration refreshDuration);
+
     //! \brief Get scene identifier
     std::string getId() const;
     //! \brief Get scene name

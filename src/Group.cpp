@@ -27,6 +27,12 @@ void Group::refresh(bool force)
     }
 }
 
+void Group::setRefreshDuration(std::chrono::steady_clock::duration refreshDuration)
+{
+    state.setRefreshDuration(refreshDuration);
+}
+
+
 int Group::getId() const
 {
     return id;

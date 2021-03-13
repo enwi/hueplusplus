@@ -40,7 +40,8 @@ namespace hueplusplus
 //!
 //! The resources are assumed to be in an object with ids as keys.
 //! The Resource class needs a constructor that accepts \c id, HueCommandAPI, \c refreshDuration and \c state;
-//! otherwise a factory function needs to be provided that takes \c id and the JSON state.
+//! otherwise a factory function needs to be provided that takes \c id, \c state 
+//! and a base cache that is null when shared state is disabled.
 template <typename Resource, typename IdT>
 class ResourceList
 {
@@ -57,6 +58,7 @@ public:
     //! \param baseCache Base cache which holds the parent state, not nullptr
     //! \param cacheEntry Entry name of the list state in the base cache
     //! \param refreshDuration Interval between refreshing the cache
+    //! \param sharedState Whether created resources should share the same base cache.
     //! \param factory Optional factory function to create Resources.
     //! Necessary if Resource is not constructible as described above.
     ResourceList(std::shared_ptr<APICache> baseCache, const std::string& cacheEntry,
@@ -91,6 +93,12 @@ public:
 
     //! \brief Refreshes internal state now
     void refresh() { stateCache->refresh(); }
+
+    //! \brief Sets custom refresh interval for this list and all resources created.
+    void setRefreshDuration(std::chrono::steady_clock::duration refreshDuration)
+    {
+        stateCache->setRefreshDuration(refreshDuration);
+    }
 
     //! \brief Get all resources that exist
     //! \returns A vector of references to every Resource
@@ -173,8 +181,9 @@ protected:
     //! \throws HueException when factory is nullptr and Resource cannot be constructed as specified above.
     Resource construct(const IdType& id, const nlohmann::json& state)
     {
-        return construct(
-            id, state, std::is_constructible<Resource, IdType, HueCommandAPI, std::chrono::steady_clock::duration, const nlohmann::json&> {});
+        return construct(id, state,
+            std::is_constructible<Resource, IdType, HueCommandAPI, std::chrono::steady_clock::duration,
+                const nlohmann::json&> {});
     }
 
     //! \brief Protected defaulted move constructor
@@ -337,7 +346,7 @@ public:
         {
             throw HueException(FileInfo {__FILE__, __LINE__, __func__}, "Resource id is not valid");
         }
-        return this->construct(id, id == 0 ? nlohmann::json{ nullptr } : state[key]);
+        return this->construct(id, id == 0 ? nlohmann::json {nullptr} : state[key]);
     }
     //! \brief Get group, specially handles group 0
     //! \see ResourceList::exists
