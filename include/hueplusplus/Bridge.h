@@ -85,12 +85,13 @@ public:
     //! \brief Gets a Hue bridge based on its identification
     //!
     //! \param identification \ref BridgeIdentification that specifies a bridge
+    //! \param sharedState Uses a single, shared cache for all objects on the bridge.
     //! \return \ref Bridge class object
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body or username could not be requested
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    Bridge GetBridge(const BridgeIdentification& identification);
+    Bridge GetBridge(const BridgeIdentification& identification, bool sharedState = false);
 
     //! \brief Function that adds a username to the usernames map
     //!
