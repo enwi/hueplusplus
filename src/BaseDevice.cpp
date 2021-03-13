@@ -120,4 +120,9 @@ void BaseDevice::refresh(bool force)
     }
 }
 
+void BaseDevice::setRefreshDuration(std::chrono::steady_clock::duration refreshDuration)
+{
+    state.setRefreshDuration(refreshDuration);
+}
+
 } // namespace hueplusplus

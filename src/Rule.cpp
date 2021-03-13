@@ -148,6 +148,11 @@ void Rule::refresh(bool force)
     }
 }
 
+void Rule::setRefreshDuration(std::chrono::steady_clock::duration refreshDuration)
+{
+    state.setRefreshDuration(refreshDuration);
+}
+
 int Rule::getId() const
 {
     return id;

@@ -30,6 +30,9 @@
 
 namespace hueplusplus
 {
+//! \brief Maximum duration, used to indicate that the cache should never be refreshed automatically.
+constexpr std::chrono::steady_clock::duration c_refreshNever = std::chrono::steady_clock::duration::max();
+
 //! \brief Caches API GET requests and refreshes regularly.
 class APICache
 {
@@ -49,7 +52,8 @@ public:
     //! \param commands HueCommandAPI for making API requests.
     //! \param refresh Interval between cache refreshing. May be 0 to always refresh.
     //! \param initial Initial value, may be null. If present, assumes the value is up to date.
-    APICache(const std::string& path, const HueCommandAPI& commands, std::chrono::steady_clock::duration refresh, const nlohmann::json& initial);
+    APICache(const std::string& path, const HueCommandAPI& commands, std::chrono::steady_clock::duration refresh,
+        const nlohmann::json& initial);
 
     //! \brief Refresh cache now.
     //! \throws std::system_error when system or socket operations fail
@@ -69,6 +73,15 @@ public:
     //! \brief Get cached value, does not refresh.
     //! \throws HueException when no previous request was cached
     const nlohmann::json& getValue() const;
+
+    //! \brief Set duration after which the cache is refreshed.
+    //! \param refreshDuration Interval between cache refreshing.
+    //! May be 0 to always refresh, or \ref c_refreshNever to never refresh.
+    //!
+    //! If the new refresh duration is exceeded, does not refresh immediately.
+    //! Instead, the next non-const getValue() call will refresh the value.
+    //! This is to reduce the number of unneccessary requests.
+    void setRefreshDuration(std::chrono::steady_clock::duration refreshDuration);
 
     //! \brief Get duration between refreshes.
     std::chrono::steady_clock::duration getRefreshDuration() const;
