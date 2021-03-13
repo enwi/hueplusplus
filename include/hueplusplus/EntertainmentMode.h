@@ -2,6 +2,7 @@
     \file EntertainmentMode.h
     Copyright Notice\n
     Copyright (C) 2020  Adam Honse		- developer\n
+    Copyright (C) 2021  Moritz Wirger		- developer\n
 
     This file is part of hueplusplus.
 
@@ -35,42 +36,42 @@ struct TLSContext;
 class EntertainmentMode
 {
 public:
-    //! @brief Constructor
+    //! \brief Constructor
     //!
-    //! @param b Bridge reference
-    //! @param g Group to control in entertainment mode reference
+    //! \param b Bridge reference
+    //! \param g Group to control in entertainment mode reference
     EntertainmentMode(Bridge& b, Group& g);
 
-    //! @brief Destroy the Entertainment Mode object
+    //! \brief Destroy the Entertainment Mode object
     ~EntertainmentMode();
 
-    //! @brief Connect and start streaming
+    //! \brief Connect and start streaming
     //!
-    //! @return true If conected and ready to receive commands
-    //! @return false If an error occured
-    bool Connect();
+    //! \return true If conected and ready to receive commands
+    //! \return false If an error occured
+    bool connect();
 
-    //! @brief Disconnect and stop streaming
+    //! \brief Disconnect and stop streaming
     //!
-    //! @return true If disconnected successfully
-    //! @return false If an error occurred
-    bool Disconnect();
+    //! \return true If disconnected successfully
+    //! \return false If an error occurred
+    bool disconnect();
 
-    //! @brief Set the color of the given light in RGB format
+    //! \brief Set the color of the given light in RGB format
     //!
-    //! @param light_index Light index inside the group
-    //! @param red Red color value (0-255)
-    //! @param green Green color value (0-255)
-    //! @param blue Blue color value (0-255)
-    //! @return true If light_index was valid
-    //! @return false If light_index was invalid
-    bool SetColorRGB(uint8_t light_index, uint8_t red, uint8_t green, uint8_t blue);
+    //! \param light_index Light index inside the group
+    //! \param red Red color value (0-255)
+    //! \param green Green color value (0-255)
+    //! \param blue Blue color value (0-255)
+    //! \return true If light_index was valid
+    //! \return false If light_index was invalid
+    bool setColorRGB(uint8_t light_index, uint8_t red, uint8_t green, uint8_t blue);
 
-    //! @brief Update all set colors by @ref SetColorRGB
+    //! \brief Update all set colors by \ref setColorRGB
     //!
-    //! @return true If all color values for all lights have ben written/sent
-    //! @return false If there was an error while writing
-    bool Update();
+    //! \return true If all color values for all lights have ben written/sent
+    //! \return false If there was an error while writing
+    bool update();
 
 protected:
     Bridge* bridge; //!< Associated bridge

@@ -30,7 +30,7 @@
 using namespace hueplusplus;
 using namespace testing;
 
-TEST(LightState, On)
+TEST(LightState, on)
 {
     EXPECT_FALSE(LightState(nlohmann::json::object()).isOn());
     EXPECT_TRUE(LightState(nlohmann::json {{"on", true}}).isOn());
@@ -141,7 +141,7 @@ public:
                   {{"3", {{"on", false}, {"bri", 100}, {"xy", {0.3, 0.2}}}},
                       {"4", {{"on", true}, {"bri", 200}, {"xy", {0.3, 0.2}}, {"effect", "colorloop"}}},
                       {"5", {{"on", true}, {"bri", 100}, {"xy", {0.3, 0.2}}}}}}})
-    {}
+    { }
 
     void expectGetState(const std::string& id)
     {

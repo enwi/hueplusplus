@@ -26,12 +26,12 @@ A simple and easy to use library for Philips Hue Lights
 To start searching for a Hue Bridge you will need to choose an IHttpHandler and create one. The options are a "WinHttpHandler" (for windows) or a "LinHttpHandler" (for linux).
 Then create a BridgeFinder object with the handler.
 The handler is needed, because it tells the finder which functions to use to communicate with a bridge or your local network.
-After that you can call FindBridges(), which will return a vector containing the ip and mac address of all found Bridges.
+After that you can call findBridges(), which will return a vector containing the ip and mac address of all found Bridges.
 ```C++
 // For windows use std::make_shared<hueplusplus::WinHttpHandler>();
 handler = std::make_shared<hueplusplus::LinHttpHandler>();
 hueplusplus::BridgeFinder finder(handler);
-std::vector<hueplusplus::BridgeFinder::BridgeIdentification> bridges = finder.FindBridges();
+std::vector<hueplusplus::BridgeFinder::BridgeIdentification> bridges = finder.findBridges();
 if (bridges.empty())
 {
 	std::cerr << "No bridges found\n";
@@ -42,15 +42,15 @@ if (bridges.empty())
 
 ### Authenticate Bridges
 If you have found the Bridge you were looking for, you can then move on with the authentication process.
-To get a new username from the Bridge (for now) you simply call GetBridge(bridges[\<index\>]),
+To get a new username from the Bridge (for now) you simply call getBridge(bridges[\<index\>]),
 where index is your preferred Bridge from the part [Searching for Bridges](#searchingBridges).
 ```C++
-hueplusplus::Bridge bridge = finder.GetBridge(bridges[0]);
+hueplusplus::Bridge bridge = finder.getBridge(bridges[0]);
 ```
 If you on the other hand already have a username you can add your bridge like so
 ```C++
-finder.AddUsername(bridges[0].mac, "<username>");
-hueplusplus::Bridge bridge = finder.GetBridge(bridges[0]);
+finder.addUsername(bridges[0].mac, "<username>");
+hueplusplus::Bridge bridge = finder.getBridge(bridges[0]);
 ```
 If you do not want to use the BridgeFinder or you already know the ip and username of your bridge you have the option to create your own Bridge object.
 Here you will need to provide the ip address, the port number, a username and an HttpHandler
@@ -74,12 +74,12 @@ std::vector<hueplusplus::Light> lights = bridge.lights().getAll();
 ```
 If you now want to control a light, call a specific function of it.
 ```C++
-light1.On();
+light1.on();
 light1.setBrightness(120);
 light1.alertHueSaturation(25500, 255);
 light1.setColorLoop(true);
 light1.setColorRGB(255, 128, 0);
-lights[1].Off();
+lights[1].off();
 lights.at(1).setColorHue(4562);
 ```
 But keep in mind that some light types do not have all functions available. So you might call a

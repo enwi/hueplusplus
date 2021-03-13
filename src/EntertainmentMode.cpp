@@ -2,6 +2,7 @@
     \file EntertainmentMode.cpp
     Copyright Notice\n
     Copyright (C) 2020  Adam Honse		- developer\n
+    Copyright (C) 2021  Moritz Wirger		- developer\n
 
     This file is part of hueplusplus.
 
@@ -45,7 +46,7 @@ struct TLSContext
     mbedtls_timing_delay_context timer;
 };
 
-std::vector<char> HexToBytes(const std::string& hex)
+std::vector<char> hexToBytes(const std::string& hex)
 {
     std::vector<char> bytes;
 
@@ -65,7 +66,7 @@ EntertainmentMode::EntertainmentMode(Bridge& b, Group& g)
     /*-------------------------------------------------*\
     | Signal the bridge to start streaming              |
     \*-------------------------------------------------*/
-    bridge->StartStreaming(std::to_string(group->getId()));
+    bridge->startStreaming(std::to_string(group->getId()));
 
     /*-------------------------------------------------*\
     | Get the number of lights from the group           |
@@ -139,13 +140,13 @@ EntertainmentMode::~EntertainmentMode()
     mbedtls_net_free(&tls_context->server_fd);
 }
 
-bool EntertainmentMode::Connect()
+bool EntertainmentMode::connect()
 {
     /*-------------------------------------------------*\
     | Signal the bridge to start streaming              |
     | If successful, connect to the UDP port            |
     \*-------------------------------------------------*/
-    if (bridge->StartStreaming(std::to_string(group->getId())))
+    if (bridge->startStreaming(std::to_string(group->getId())))
     {
         /*-------------------------------------------------*\
         | Connect to the Hue bridge UDP server              |
@@ -159,7 +160,7 @@ bool EntertainmentMode::Connect()
         if (ret != 0)
         {
             mbedtls_ssl_close_notify(&tls_context->ssl);
-            bridge->StopStreaming(std::to_string(group->getId()));
+            bridge->stopStreaming(std::to_string(group->getId()));
             return false;
         }
 
@@ -175,7 +176,7 @@ bool EntertainmentMode::Connect()
         if (ret != 0)
         {
             mbedtls_ssl_close_notify(&tls_context->ssl);
-            bridge->StopStreaming(std::to_string(group->getId()));
+            bridge->stopStreaming(std::to_string(group->getId()));
             return false;
         }
 
@@ -186,7 +187,7 @@ bool EntertainmentMode::Connect()
         /*-------------------------------------------------*\
         | Convert client key to binary array                |
         \*-------------------------------------------------*/
-        std::vector<char> psk_binary = HexToBytes(bridge->getClientKey());
+        std::vector<char> psk_binary = hexToBytes(bridge->getClientKey());
 
         /*-------------------------------------------------*\
         | Configure SSL pre-shared key and identity         |
@@ -202,7 +203,7 @@ bool EntertainmentMode::Connect()
         if (ret != 0)
         {
             mbedtls_ssl_close_notify(&tls_context->ssl);
-            bridge->StopStreaming(std::to_string(group->getId()));
+            bridge->stopStreaming(std::to_string(group->getId()));
             return false;
         }
 
@@ -217,7 +218,7 @@ bool EntertainmentMode::Connect()
         if (ret != 0)
         {
             mbedtls_ssl_close_notify(&tls_context->ssl);
-            bridge->StopStreaming(std::to_string(group->getId()));
+            bridge->stopStreaming(std::to_string(group->getId()));
             return false;
         }
 
@@ -229,7 +230,7 @@ bool EntertainmentMode::Connect()
         if (ret != 0)
         {
             mbedtls_ssl_close_notify(&tls_context->ssl);
-            bridge->StopStreaming(std::to_string(group->getId()));
+            bridge->stopStreaming(std::to_string(group->getId()));
             return false;
         }
 
@@ -252,7 +253,7 @@ bool EntertainmentMode::Connect()
         if (ret != 0)
         {
             mbedtls_ssl_close_notify(&tls_context->ssl);
-            bridge->StopStreaming(std::to_string(group->getId()));
+            bridge->stopStreaming(std::to_string(group->getId()));
             return false;
         }
 
@@ -264,13 +265,13 @@ bool EntertainmentMode::Connect()
     }
 }
 
-bool EntertainmentMode::Disconnect()
+bool EntertainmentMode::disconnect()
 {
     mbedtls_ssl_close_notify(&tls_context->ssl);
-    return bridge->StopStreaming(std::to_string(group->getId()));
+    return bridge->stopStreaming(std::to_string(group->getId()));
 }
 
-bool EntertainmentMode::SetColorRGB(uint8_t light_index, uint8_t red, uint8_t green, uint8_t blue)
+bool EntertainmentMode::setColorRGB(uint8_t light_index, uint8_t red, uint8_t green, uint8_t blue)
 {
     if (light_index < entertainment_num_lights)
     {
@@ -291,7 +292,7 @@ bool EntertainmentMode::SetColorRGB(uint8_t light_index, uint8_t red, uint8_t gr
     }
 }
 
-bool EntertainmentMode::Update()
+bool EntertainmentMode::update()
 {
     int ret;
     unsigned int total = 0;

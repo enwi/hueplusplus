@@ -159,7 +159,7 @@ class CLIPGenericFlagTest : public SensorImplTest<CLIPGenericFlag>
 class CLIPGenericStatusTest : public SensorImplTest<CLIPGenericStatus>
 { };
 
-TYPED_TEST(SensorOnTest, On)
+TYPED_TEST(SensorOnTest, on)
 {
     this->state["config"]["on"] = false;
     EXPECT_FALSE(this->getSensor().isOn());

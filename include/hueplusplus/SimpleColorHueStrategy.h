@@ -68,7 +68,7 @@ public:
     //! of 100ms, 4 = 400ms and should be seen as the default \param light A
     //! reference of the light
     bool setColorXY(const XYBrightness& xy, uint8_t transition, Light& light) const override;
-    
+
     //! \brief Function for turning on/off the color loop feature of a light.
     //!
     //! Can be theoretically set for any light, but it only works for lights that
@@ -76,8 +76,8 @@ public:
     //! through every color on the current hue and saturation settings. Notice
     //! that none of the setter functions check whether this feature is enabled
     //! and the colorloop can only be disabled with this function or by simply
-    //! calling Off()/OffNoRefresh() and then On()/OnNoRefresh(), so you could
-    //! alternatively call Off() and then use any of the setter functions.
+    //! calling off() and then on(), so you could
+    //! alternatively call off() and then use any of the setter functions.
     //! \param on Boolean to turn this feature on or off, true/1 for on and
     //! false/0 for off \param light A reference of the light
     bool setColorLoop(bool on, Light& light) const override;

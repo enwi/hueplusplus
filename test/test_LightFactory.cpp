@@ -20,8 +20,9 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include <gtest/gtest.h>
 #include <hueplusplus/HueDeviceTypes.h>
+
+#include <gtest/gtest.h>
 
 #include "testhelper.h"
 
@@ -70,12 +71,12 @@ TEST(LightFactory, createLight_gamutCapabilities)
         std::chrono::steady_clock::duration::max());
 
     nlohmann::json lightState
-        = { {"state",
+        = {{"state",
                {{"on", true}, {"bri", 254}, {"ct", 366}, {"alert", "none"}, {"colormode", "ct"}, {"reachable", true}}},
             {"swupdate", {{"state", "noupdates"}, {"lastinstall", nullptr}}}, {"type", "Color light"},
             {"name", "Hue ambiance lamp 1"}, {"modelid", "LTW001"}, {"manufacturername", "Philips"},
             {"uniqueid", "00:00:00:00:00:00:00:00-00"}, {"swversion", "5.50.1.19085"},
-            {"capabilities", {{"control", {{"colorgamuttype", "A"}}}}} };
+            {"capabilities", {{"control", {{"colorgamuttype", "A"}}}}}};
 
     Light test_light_1 = factory.createLight(lightState, 1);
     EXPECT_EQ(test_light_1.getColorType(), ColorType::GAMUT_A);
