@@ -80,7 +80,7 @@ public:
     //! \return vector containing ip and mac of all found bridges
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
-    std::vector<BridgeIdentification> FindBridges() const;
+    std::vector<BridgeIdentification> findBridges() const;
 
     //! \brief Gets a Hue bridge based on its identification
     //!
@@ -91,31 +91,31 @@ public:
     //! \throws HueException when response contained no body or username could not be requested
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    Bridge GetBridge(const BridgeIdentification& identification, bool sharedState = false);
+    Bridge getBridge(const BridgeIdentification& identification, bool sharedState = false);
 
     //! \brief Function that adds a username to the usernames map
     //!
     //! \param mac MAC address of Hue bridge
     //! \param username Username that is used to control the Hue bridge
-    void AddUsername(const std::string& mac, const std::string& username);
+    void addUsername(const std::string& mac, const std::string& username);
 
     //! \brief Function that adds a client key to the clientkeys map
     //!
     //! The client key is only needed for entertainment mode, otherwise it is optional.
     //! \param mac MAC address of Hue bridge
     //! \param clientkey Client key that is used to control the Hue bridge in entertainment mode
-    void AddClientKey(const std::string& mac, const std::string& clientkey);
+    void addClientKey(const std::string& mac, const std::string& clientkey);
 
     //! \brief Function that returns a map of mac addresses and usernames.
     //!
-    //! Note these should be saved at the end and re-loaded with \ref AddUsername
+    //! Note these should be saved at the end and re-loaded with \ref addUsername
     //! next time, so only one username is generated per bridge. \returns A map
     //! mapping mac address to username for every bridge
-    const std::map<std::string, std::string>& GetAllUsernames() const;
+    const std::map<std::string, std::string>& getAllUsernames() const;
 
     //! \brief Normalizes mac address to plain hex number.
     //! \returns \p input without separators and whitespace, in lower case.
-    static std::string NormalizeMac(std::string input);
+    static std::string normalizeMac(std::string input);
 
 private:
     //! \brief Parses mac address from description.xml
@@ -123,12 +123,12 @@ private:
     //! \param description Content of description.xml file as returned by GET request.
     //! \returns Content of xml element \c serialNumber if description matches a Hue bridge, otherwise an empty
     //! string.
-    static std::string ParseDescription(const std::string& description);
+    static std::string parseDescription(const std::string& description);
 
     std::map<std::string, std::string> usernames; //!< Maps all macs to usernames added by \ref
-                                                  //!< BridgeFinder::AddUsername
+                                                  //!< BridgeFinder::addUsername
     std::map<std::string, std::string> clientkeys; //!< Maps all macs to clientkeys added by \ref
-                                                   //!< BridgeFinder::AddClientKey
+                                                   //!< BridgeFinder::addClientKey
     std::shared_ptr<const IHttpHandler> http_handler;
 };
 
@@ -184,12 +184,12 @@ public:
     //! \brief Function to set stream mode to active for entertainment mode
     //!
     //! \return bool - whether stream request was successful
-    bool StartStreaming(std::string group_identifier);
+    bool startStreaming(std::string group_identifier);
 
     //! \brief Function to set stream mode to active for entertainment mode
     //!
     //! \return bool - whether stream request was successful
-    bool StopStreaming(std::string group_identifier);
+    bool stopStreaming(std::string group_identifier);
 
     //! \brief Function to get the port of the hue bridge
     //!

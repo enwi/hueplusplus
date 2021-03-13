@@ -95,7 +95,7 @@ public:
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual bool On(uint8_t transition = 4);
+    virtual bool on(uint8_t transition = 4);
 
     //! \brief Function that turns the light off.
     //!
@@ -105,7 +105,7 @@ public:
     //! \throws HueException when response contained no body
     //! \throws HueAPIResponseException when response contains an error
     //! \throws nlohmann::json::parse_error when response could not be parsed
-    virtual bool Off(uint8_t transition = 4);
+    virtual bool off(uint8_t transition = 4);
 
     //! \brief Function to check whether a light is on or off
     //!
@@ -145,13 +145,13 @@ public:
     //!
     //! \param kelvin Unsigned integer value in Kelvin
     //! \return Unsigned integer value in Mired
-    unsigned int KelvinToMired(unsigned int kelvin) const;
+    unsigned int kelvinToMired(unsigned int kelvin) const;
 
     //! \brief Const function that converts Mired to Kelvin.
     //!
     //! \param mired Unsigned integer value in Mired
     //! \return Unsigned integer value in Kelvin
-    unsigned int MiredToKelvin(unsigned int mired) const;
+    unsigned int miredToKelvin(unsigned int mired) const;
 
     //! \brief Function that sets the brightness of this light.
     //!
@@ -524,8 +524,8 @@ public:
     //! colors on current hue and saturation levels. Notice that none of the
     //! setter functions check whether this feature is enabled and the colorloop
     //! can only be disabled with this function or by simply calling
-    //! Off()/OffNoRefresh() and then On()/OnNoRefresh(), so you could
-    //! alternatively call Off() and then use any of the setter functions.
+    //! off() and then on(), so you could
+    //! alternatively call off() and then use any of the setter functions.
     //! \param on bool that enables this feature when true and disables it when false
     //! \return Bool that is true on success
     //! \throws std::system_error when system or socket operations fail

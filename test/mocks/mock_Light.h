@@ -38,16 +38,16 @@ class MockLight : public hueplusplus::Light
 public:
     MockLight(std::shared_ptr<const hueplusplus::IHttpHandler> handler)
         : Light(1, hueplusplus::HueCommandAPI(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler), nullptr,
-              nullptr, nullptr, std::chrono::steady_clock::duration::max(), nullptr)
+            nullptr, nullptr, std::chrono::steady_clock::duration::max(), nullptr)
     {
         // Set refresh duration to max, so random refreshes do not hinder the test setups
     }
 
     nlohmann::json& getState() { return state.getValue(); }
 
-    MOCK_METHOD1(On, bool(uint8_t transition));
+    MOCK_METHOD1(on, bool(uint8_t transition));
 
-    MOCK_METHOD1(Off, bool(uint8_t transition));
+    MOCK_METHOD1(off, bool(uint8_t transition));
 
     MOCK_METHOD0(isOn, bool());
 
@@ -124,7 +124,7 @@ public:
     MOCK_METHOD1(setColorLoop, bool(bool on));
 
     MOCK_METHOD3(sendPutRequest,
-        nlohmann::json(const std::string& subPath, const nlohmann::json& request,hueplusplus::FileInfo fileInfo));
+        nlohmann::json(const std::string& subPath, const nlohmann::json& request, hueplusplus::FileInfo fileInfo));
 };
 
 #endif

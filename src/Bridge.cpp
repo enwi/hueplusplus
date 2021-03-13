@@ -39,7 +39,7 @@ namespace hueplusplus
 {
 BridgeFinder::BridgeFinder(std::shared_ptr<const IHttpHandler> handler) : http_handler(std::move(handler)) { }
 
-std::vector<BridgeFinder::BridgeIdentification> BridgeFinder::FindBridges() const
+std::vector<BridgeFinder::BridgeIdentification> BridgeFinder::findBridges() const
 {
     UPnP uplug;
     std::vector<std::pair<std::string, std::string>> foundDevices = uplug.getDevices(http_handler);
@@ -58,10 +58,10 @@ std::vector<BridgeFinder::BridgeIdentification> BridgeFinder::FindBridges() cons
             {
                 std::string desc
                     = http_handler->GETString("/description.xml", "application/xml", "", bridge.ip, bridge.port);
-                std::string mac = ParseDescription(desc);
+                std::string mac = parseDescription(desc);
                 if (!mac.empty())
                 {
-                    bridge.mac = NormalizeMac(mac);
+                    bridge.mac = normalizeMac(mac);
                     foundBridges.push_back(std::move(bridge));
                 }
             }
@@ -74,9 +74,9 @@ std::vector<BridgeFinder::BridgeIdentification> BridgeFinder::FindBridges() cons
     return foundBridges;
 }
 
-Bridge BridgeFinder::GetBridge(const BridgeIdentification& identification, bool sharedState)
+Bridge BridgeFinder::getBridge(const BridgeIdentification& identification, bool sharedState)
 {
-    std::string normalizedMac = NormalizeMac(identification.mac);
+    std::string normalizedMac = normalizeMac(identification.mac);
     auto pos = usernames.find(normalizedMac);
     auto key = clientkeys.find(normalizedMac);
     if (pos != usernames.end())
@@ -92,35 +92,35 @@ Bridge BridgeFinder::GetBridge(const BridgeIdentification& identification, bool 
                 std::chrono::seconds(10), sharedState);
         }
     }
-    Bridge bridge(identification.ip, identification.port, "", http_handler, std::chrono::seconds(10), sharedState);
+    Bridge bridge(identification.ip, identification.port, "", http_handler, "", std::chrono::seconds(10), sharedState);
     bridge.requestUsername();
     if (bridge.getUsername().empty())
     {
         std::cerr << "Failed to request username for ip " << identification.ip << std::endl;
         throw HueException(CURRENT_FILE_INFO, "Failed to request username!");
     }
-    AddUsername(normalizedMac, bridge.getUsername());
-    AddClientKey(normalizedMac, bridge.getClientKey());
+    addUsername(normalizedMac, bridge.getUsername());
+    addClientKey(normalizedMac, bridge.getClientKey());
 
     return bridge;
 }
 
-void BridgeFinder::AddUsername(const std::string& mac, const std::string& username)
+void BridgeFinder::addUsername(const std::string& mac, const std::string& username)
 {
-    usernames[NormalizeMac(mac)] = username;
+    usernames[normalizeMac(mac)] = username;
 }
 
-void BridgeFinder::AddClientKey(const std::string& mac, const std::string& clientkey)
+void BridgeFinder::addClientKey(const std::string& mac, const std::string& clientkey)
 {
-    clientkeys[NormalizeMac(mac)] = clientkey;
+    clientkeys[normalizeMac(mac)] = clientkey;
 }
 
-const std::map<std::string, std::string>& BridgeFinder::GetAllUsernames() const
+const std::map<std::string, std::string>& BridgeFinder::getAllUsernames() const
 {
     return usernames;
 }
 
-std::string BridgeFinder::NormalizeMac(std::string input)
+std::string BridgeFinder::normalizeMac(std::string input)
 {
     // Remove any non alphanumeric characters (e.g. ':' and whitespace)
     input.erase(std::remove_if(input.begin(), input.end(), [](char c) { return !std::isalnum(c, std::locale()); }),
@@ -130,7 +130,7 @@ std::string BridgeFinder::NormalizeMac(std::string input)
     return input;
 }
 
-std::string BridgeFinder::ParseDescription(const std::string& description)
+std::string BridgeFinder::parseDescription(const std::string& description)
 {
     const char* model = "<modelName>Philips hue bridge";
     const char* serialBegin = "<serialNumber>";
@@ -248,7 +248,7 @@ std::string Bridge::requestUsername()
     return username;
 }
 
-bool Bridge::StartStreaming(std::string group_identifier)
+bool Bridge::startStreaming(std::string group_identifier)
 {
     if (clientkey.empty())
     {
@@ -271,7 +271,7 @@ bool Bridge::StartStreaming(std::string group_identifier)
     return success == true;
 }
 
-bool Bridge::StopStreaming(std::string group_identifier)
+bool Bridge::stopStreaming(std::string group_identifier)
 {
     nlohmann::json request;
 

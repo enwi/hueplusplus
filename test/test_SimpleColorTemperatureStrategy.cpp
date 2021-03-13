@@ -102,7 +102,7 @@ TEST(SimpleColorTemperatureStrategy, alertTemperature)
         light.getState()["state"]["on"] = false;
         EXPECT_EQ(false, SimpleColorTemperatureStrategy().alertTemperature(400, light));
     }
-    // On
+    // on
     {
         const nlohmann::json state = {{"colormode", "ct"}, {"on", true}, {"ct", 200}};
         light.getState()["state"] = state;
@@ -123,7 +123,7 @@ TEST(SimpleColorTemperatureStrategy, alertTemperature)
         EXPECT_TRUE(SimpleColorTemperatureStrategy().alertTemperature(400, light));
         Mock::VerifyAndClearExpectations(handler.get());
     }
-    // Off
+    // off
     {
         const nlohmann::json state = {{"colormode", "ct"}, {"on", false}, {"ct", 200}};
         light.getState()["state"] = state;
@@ -134,7 +134,6 @@ TEST(SimpleColorTemperatureStrategy, alertTemperature)
         reverseTransaction.expectSuccessfulPut(handler, Exactly(1));
         EXPECT_TRUE(SimpleColorTemperatureStrategy().alertTemperature(400, light));
         Mock::VerifyAndClearExpectations(handler.get());
-
     }
 }
 
