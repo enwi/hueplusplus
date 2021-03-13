@@ -41,6 +41,9 @@ namespace hueplusplus
 class Group
 {
 public:
+    //! \brief Creates group with shared cache
+    //! \param id Group id in the bridge
+    //! \param baseCache Cache of the group list.
     Group(int id, const std::shared_ptr<APICache>& baseCache);
     //! \brief Creates group with id
     //! \param id Group id in the bridge
@@ -59,6 +62,7 @@ public:
     void refresh(bool force = false);
 
     //! \brief Sets custom refresh interval for this group.
+    //! \param refreshDuration The new minimum duration between refreshes. May be 0 or \ref c_refreshNever.
     void setRefreshDuration(std::chrono::steady_clock::duration refreshDuration);
 
     //! \name General information

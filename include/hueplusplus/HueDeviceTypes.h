@@ -41,6 +41,7 @@ public:
     //! \brief Create a Light with the correct type from the JSON state.
     //! \param lightState Light JSON as returned from the bridge (not only the "state" part of it).
     //! \param id Light id.
+    //! \param baseCache Optional shared cache for the light.
     //! \returns Light with matching id, strategies and \ref ColorType.
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when light type is unknown

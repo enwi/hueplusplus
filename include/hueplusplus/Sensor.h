@@ -59,6 +59,9 @@ Alert alertFromString(const std::string& s);
 class Sensor : public BaseDevice
 {
 public:
+    //! \brief Construct Sensor with shared cache
+    //! \param id Integer that specifies the id of this sensor
+    //! \param baseCache Cache of the SensorList.
     Sensor(int id, const std::shared_ptr<APICache>& baseCache);
 
     //! \brief Construct Sensor.
