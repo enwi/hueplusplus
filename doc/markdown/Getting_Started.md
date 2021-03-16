@@ -38,6 +38,7 @@ Here you will need to provide the ip address, the port number, a username and an
 auto handler = std::make_shared<hueplusplus::LinHttpHandler>();
 hueplusplus::Bridge bridge("192.168.2.102", 80, "<username>", handler);
 ```
+At this point you may want to decide whether to use a [shared state](@ref shared-state) cache model or keep the default settings.
 
 ### Controlling lights
 
