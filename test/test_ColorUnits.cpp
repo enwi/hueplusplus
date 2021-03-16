@@ -188,3 +188,23 @@ TEST(RGB, fromXY)
     EXPECT_LE(maxDiffB, 64);
 
 }
+
+TEST(ColorUnits, kelvinToMired)
+{
+    EXPECT_EQ(10000, kelvinToMired(100));
+    EXPECT_EQ(500, kelvinToMired(2000));
+    EXPECT_EQ(303, kelvinToMired(3300));
+    EXPECT_EQ(250, kelvinToMired(4000));
+    EXPECT_EQ(200, kelvinToMired(5000));
+    EXPECT_EQ(167, kelvinToMired(6000));
+}
+
+TEST(ColorUnits, miredToKelvin)
+{
+    EXPECT_EQ(100, miredToKelvin(10000));
+    EXPECT_EQ(2000, miredToKelvin(500));
+    EXPECT_EQ(3300, miredToKelvin(303));
+    EXPECT_EQ(4000, miredToKelvin(250));
+    EXPECT_EQ(5000, miredToKelvin(200));
+    EXPECT_EQ(6024, miredToKelvin(166)); // 6000 kelvin should be 166 mired, but is rounded
+}

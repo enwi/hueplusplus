@@ -7,8 +7,8 @@ env:
     - DEPS_DIR=${TRAVIS_BUILD_DIR}/deps
     # compiler settings
     - COMPILER_NAME=gcc
-    - CXX=g++-5
-    - CC=gcc-5
+    - CXX=g++-9
+    - CC=gcc-9
     # Misc
     - RUN_TESTS=true
     - COVERAGE=false
@@ -23,10 +23,10 @@ matrix:
       addons:
        apt:
          packages:
-           - gcc-5
-           - g++-5
            # Misc
            - python-yaml
+           - gcc-5.5
+           - g++-5.5
            - doxygen
            - graphviz
          sources: &sources

@@ -197,4 +197,14 @@ RGB RGB::fromXY(const XYBrightness& xy, const ColorGamut& gamut)
     }
 }
 
+unsigned int kelvinToMired(unsigned int kelvin)
+{
+    return int(std::round(1000000.f / kelvin));
+}
+
+unsigned int miredToKelvin(unsigned int mired)
+{
+    return int(std::round(1000000.f / mired));
+}
+
 } // namespace hueplusplus

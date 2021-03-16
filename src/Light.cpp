@@ -92,16 +92,6 @@ ColorGamut Light::getColorGamut() const
     }
 }
 
-unsigned int Light::kelvinToMired(unsigned int kelvin) const
-{
-    return int(0.5f + (1000000 / kelvin));
-}
-
-unsigned int Light::miredToKelvin(unsigned int mired) const
-{
-    return int(0.5f + (1000000 / mired));
-}
-
 bool Light::alert()
 {
     return transaction().alert().commit();
