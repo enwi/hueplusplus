@@ -108,11 +108,39 @@ TEST(RGB, toXY)
         EXPECT_FLOAT_EQ(xy.brightness, 1.f);
     }
     {
-        const RGB black{ 0,0,0 };
+        const RGB black {0, 0, 0};
         XYBrightness xy = black.toXY(gamut::maxGamut);
         EXPECT_FLOAT_EQ(xy.xy.x, 0.32272673f);
         EXPECT_FLOAT_EQ(xy.xy.y, 0.32902291f);
         EXPECT_FLOAT_EQ(xy.brightness, 0.0f);
+    }
+}
+
+TEST(RGB, toHueSaturation)
+{
+    {
+        const RGB red {255, 0, 0};
+        HueSaturation hs = red.toHueSaturation();
+        EXPECT_EQ(0, hs.hue);
+        EXPECT_EQ(254, hs.saturation);
+    }
+    {
+        const RGB darkGreen{64, 128, 128 };
+        HueSaturation hs = darkGreen.toHueSaturation();
+        EXPECT_EQ(38250, hs.hue);
+        EXPECT_EQ(127, hs.saturation);
+    }
+    {
+        const RGB white {255, 255, 255};
+        HueSaturation hs = white.toHueSaturation();
+        EXPECT_EQ(0, hs.hue);
+        EXPECT_EQ(0, hs.saturation);
+    }
+    {
+        const RGB black {0, 0, 0};
+        HueSaturation hs = black.toHueSaturation();
+        EXPECT_EQ(0, hs.hue);
+        EXPECT_EQ(0, hs.saturation);
     }
 }
 
@@ -130,7 +158,7 @@ TEST(RGB, fromXY)
         EXPECT_FLOAT_EQ(xyRed.brightness, reversed.brightness);
     }
     {
-        const XYBrightness xyWhite{ {0.32272673f, 0.32902291f}, 1.f };
+        const XYBrightness xyWhite {{0.32272673f, 0.32902291f}, 1.f};
         const RGB white = RGB::fromXY(xyWhite);
         EXPECT_EQ(255, white.r);
         EXPECT_EQ(255, white.g);
@@ -143,7 +171,7 @@ TEST(RGB, fromXY)
     {
         const XYBrightness xyRed {{0.70060623f, 0.299301f}, 1.f};
         const RGB red = RGB::fromXY(xyRed, gamut::gamutB);
-        const RGB red2 = RGB::fromXY({ gamut::gamutB.corrected(xyRed.xy), xyRed.brightness });
+        const RGB red2 = RGB::fromXY({gamut::gamutB.corrected(xyRed.xy), xyRed.brightness});
         EXPECT_EQ(red2.r, red.r);
         EXPECT_EQ(red2.g, red.g);
         EXPECT_EQ(red2.b, red.b);
@@ -186,7 +214,6 @@ TEST(RGB, fromXY)
     EXPECT_LE(maxDiffR, 81);
     EXPECT_LE(maxDiffG, 81);
     EXPECT_LE(maxDiffB, 64);
-
 }
 
 TEST(ColorUnits, kelvinToMired)

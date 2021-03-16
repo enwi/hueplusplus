@@ -142,17 +142,55 @@ XYBrightness RGB::toXY(const ColorGamut& gamut) const
     return xy;
 }
 
+HueSaturation RGB::toHueSaturation() const
+{
+    const uint8_t cmax = std::max(r, std::max(g, b));
+    const uint8_t cmin = std::min(r, std::min(g, b));
+    const float diff = cmax - cmin;
+
+    int h = -1;
+    int s = -1;
+
+    if (cmax == cmin)
+    {
+        h = 0;
+    }
+    else if (cmax == r)
+    {
+        h = (int)(9307 * ((g - b) / diff) + 65535) % 65535;
+    }
+    else if (cmax == g)
+    {
+        h = (int)(12750 * ((b - r) / diff) + 25500) % 65535;
+    }
+    else if (cmax == b)
+    {
+        h = (int)(10710 * ((r - g) / diff) + 46920) % 65535;
+    }
+
+    if (cmax == 0)
+    {
+        s = 0;
+    }
+    else
+    {
+        s = std::round((diff / cmax) * 254);
+    }
+
+    return {h, s};
+}
+
 RGB RGB::fromXY(const XYBrightness& xy)
 {
     if (xy.brightness < 1e-4)
     {
-        return RGB{ 0,0,0 };
+        return RGB {0, 0, 0};
     }
     const float z = 1.f - xy.xy.x - xy.xy.y;
     // use a fixed luminosity and rescale the resulting rgb values using brightness
     // randomly sampled conversions shown a minimum difference between original values
     // and values after rgb -> xy -> rgb conversion for Y = 0.3
-    // (r-r')^2, (g-g')^2, (b-b')^2: 
+    // (r-r')^2, (g-g')^2, (b-b')^2:
     // 4.48214,  4.72039,  3.12141
     // Max. Difference:
     // 9,        9,        8

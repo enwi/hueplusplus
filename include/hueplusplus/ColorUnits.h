@@ -126,6 +126,12 @@ struct RGB
     //!
     //! Performs gamma correction so the light color matches the screen color better.
     XYBrightness toXY(const ColorGamut& gamut) const;
+
+    //! \brief Convert to HueSaturation
+    //!
+    //! To get the correct color, set brightness to max(r,g,b).
+    HueSaturation toHueSaturation() const;
+
     //! \brief Create from XYBrightness
     //!
     //! Performs gamma correction so the light color matches the screen color better.
@@ -143,9 +149,9 @@ struct RGB
 };
 
 //! \brief Const function that converts Kelvin to Mired.
-    //!
-    //! \param kelvin Unsigned integer value in Kelvin
-    //! \return Unsigned integer value in Mired
+//!
+//! \param kelvin Unsigned integer value in Kelvin
+//! \return Unsigned integer value in Mired
 unsigned int kelvinToMired(unsigned int kelvin);
 
 //! \brief Const function that converts Mired to Kelvin.
