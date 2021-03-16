@@ -143,18 +143,6 @@ public:
     //! when not
     virtual bool hasColorControl() const { return colorHueStrategy != nullptr; };
 
-    //! \brief Const function that converts Kelvin to Mired.
-    //!
-    //! \param kelvin Unsigned integer value in Kelvin
-    //! \return Unsigned integer value in Mired
-    unsigned int kelvinToMired(unsigned int kelvin) const;
-
-    //! \brief Const function that converts Mired to Kelvin.
-    //!
-    //! \param mired Unsigned integer value in Mired
-    //! \return Unsigned integer value in Kelvin
-    unsigned int miredToKelvin(unsigned int mired) const;
-
     //! \brief Function that sets the brightness of this light.
     //!
     //! \note The brightness will only be set if the light has a reference to a

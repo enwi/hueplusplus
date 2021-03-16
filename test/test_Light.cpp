@@ -362,41 +362,6 @@ TEST_F(HueLightTest, getColorType)
     EXPECT_EQ(ColorType::GAMUT_C_TEMPERATURE, test_light_3.getColorType());
 }
 
-TEST_F(HueLightTest, kelvinToMired)
-{
-    const Light ctest_light_1 = test_bridge.lights().get(1);
-    const Light ctest_light_2 = test_bridge.lights().get(2);
-    const Light ctest_light_3 = test_bridge.lights().get(3);
-    Light test_light_1 = test_bridge.lights().get(1);
-    Light test_light_2 = test_bridge.lights().get(2);
-    Light test_light_3 = test_bridge.lights().get(3);
-
-    EXPECT_EQ(10000, ctest_light_1.kelvinToMired(100));
-    EXPECT_EQ(500, ctest_light_2.kelvinToMired(2000));
-    EXPECT_EQ(303, ctest_light_3.kelvinToMired(3300));
-    EXPECT_EQ(250, test_light_1.kelvinToMired(4000));
-    EXPECT_EQ(200, test_light_2.kelvinToMired(5000));
-    EXPECT_EQ(166, test_light_3.kelvinToMired(6000));
-}
-
-TEST_F(HueLightTest, miredToKelvin)
-{
-    const Light ctest_light_1 = test_bridge.lights().get(1);
-    const Light ctest_light_2 = test_bridge.lights().get(2);
-    const Light ctest_light_3 = test_bridge.lights().get(3);
-    Light test_light_1 = test_bridge.lights().get(1);
-    Light test_light_2 = test_bridge.lights().get(2);
-    Light test_light_3 = test_bridge.lights().get(3);
-
-    EXPECT_EQ(100, ctest_light_1.miredToKelvin(10000));
-    EXPECT_EQ(2000, ctest_light_2.miredToKelvin(500));
-    EXPECT_EQ(3300, ctest_light_3.miredToKelvin(303));
-    EXPECT_EQ(4000, test_light_1.miredToKelvin(250));
-    EXPECT_EQ(5000, test_light_2.miredToKelvin(200));
-    EXPECT_EQ(6024, test_light_3.miredToKelvin(166)); // 6000 kelvin should be 166 mired, but keep in
-                                                      // mind flops are not exact
-}
-
 TEST_F(HueLightTest, hasBrightnessControl)
 {
     const Light ctest_light_1 = test_bridge.lights().get(1);

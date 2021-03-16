@@ -141,6 +141,18 @@ struct RGB
     //! This is because the color luminosity is not saved.
     static RGB fromXY(const XYBrightness& xy, const ColorGamut& gamut);
 };
+
+//! \brief Const function that converts Kelvin to Mired.
+    //!
+    //! \param kelvin Unsigned integer value in Kelvin
+    //! \return Unsigned integer value in Mired
+unsigned int kelvinToMired(unsigned int kelvin);
+
+//! \brief Const function that converts Mired to Kelvin.
+//!
+//! \param mired Unsigned integer value in Mired
+//! \return Unsigned integer value in Kelvin
+unsigned int miredToKelvin(unsigned int mired);
 } // namespace hueplusplus
 
 #endif
