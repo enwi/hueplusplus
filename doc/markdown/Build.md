@@ -1,5 +1,7 @@
 # Build and install {#build}
 
+[TOC]
+
 # Basic installation {#basic-install}
 
 ## Clone from github {#clone}
@@ -74,11 +76,11 @@ make coveragetest
 ```
 
 ## Building examples {#build-examples}
-There are some small example programs using this library in the examples folder. To build them,
-set `hueplusplus_SAMPLES=ON`. The target `hueplusplus_examples` builds all examples into build/examples.
+There are some small [example programs](@ref examples) using this library in the examples folder. To build them,
+set `hueplusplus_EXAMPLES=ON`. The target `hueplusplus_examples` builds all examples into build/examples.
 ```{.sh}
 mkdir build
 cd build
-cmake .. -Dhueplusplus_SAMPLES=ON
+cmake .. -Dhueplusplus_EXAMPLES=ON
 make hueplusplus_examples
 ```

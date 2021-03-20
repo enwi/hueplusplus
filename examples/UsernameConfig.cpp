@@ -18,7 +18,8 @@
     You should have received a copy of the GNU Lesser General Public License
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 
-    \brief This example reads the username and mac address from a config file.
+    \example{lineno} UsernameConfig.cpp
+    This example reads the username and mac address from a config file.
 **/
 
 #include <algorithm>
@@ -42,9 +43,9 @@ using SystemHttpHandler = hueplusplus::LinHttpHandler;
 
 namespace hue = hueplusplus;
 
-//! \brief Reads a json config file.
-//! \param filename Path to the config file
-//! \returns Parsed json or an empty object if not successful.
+// Reads a json config file.
+// filename: Path to the config file
+// returns parsed json or an empty object if not successful.
 nlohmann::json readConfigFile(const std::string& filename)
 {
     std::ifstream stream(filename);
@@ -64,20 +65,20 @@ nlohmann::json readConfigFile(const std::string& filename)
     }
 }
 
-//! \brief Saves a json file.
-//! \param filename Path to the config file
-//! \param config Json value to save
+// Saves a json file.
+// filename: Path to the config file
+// config: Json value to save
 void saveConfigFile(const std::string& filename, const nlohmann::json& config)
 {
     std::ofstream stream(filename);
     stream << std::setw(4) << config;
 }
 
-//! \brief Connects to a bridge and returns it
-//! \param username Already existing username, can be left empty.
-//! \param macAddress MAC address of the bridge, can be left empty.
-//! \throws std::runtime_error When the bridge was not found.
-//! \returns A connected bridge.
+// Connects to a bridge and returns it
+// username: Already existing username, can be left empty.
+// macAddress: MAC address of the bridge, can be left empty.
+// throws std::runtime_error when the bridge was not found.
+// returns a connected bridge.
 hue::Bridge connectToBridge(const std::string& username, const std::string& macAddress)
 {
     hue::BridgeFinder finder(std::make_shared<SystemHttpHandler>());
@@ -113,12 +114,12 @@ hue::Bridge connectToBridge(const std::string& username, const std::string& macA
     return finder.getBridge(*it);
 }
 
-//! Connects to a bridge. The steps are:
-//! - read "config.json" for an existing config
-//! - connect to the bridge
-//! - save the username to the config file for the next run
-//! 
-//! Also prints out the IP and username.
+// Connects to a bridge. The steps are:
+// - read "config.json" for an existing config
+// - connect to the bridge
+// - save the username to the config file for the next run
+// 
+// Also prints out the IP and username.
 int main(int argc, char** argv)
 {
 
