@@ -24,7 +24,11 @@
 
 namespace hueplusplus
 {
-Schedule::Schedule(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration, const nlohmann::json& currentState)
+Schedule::Schedule(int id, const std::shared_ptr<APICache>& baseCache)
+    : id(id), state(baseCache, std::to_string(id), baseCache->getRefreshDuration())
+{ }
+Schedule::Schedule(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration,
+    const nlohmann::json& currentState)
     : id(id), state("/schedules/" + std::to_string(id), commands, refreshDuration, currentState)
 {
     state.refresh();
@@ -39,7 +43,6 @@ void Schedule::setRefreshDuration(std::chrono::steady_clock::duration refreshDur
 {
     state.setRefreshDuration(refreshDuration);
 }
-
 
 int Schedule::getId() const
 {

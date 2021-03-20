@@ -42,6 +42,10 @@ namespace hueplusplus
 class Rule
 {
 public:
+    //! \brief Creates rule with shared cache
+    //! \param id Rule id in the bridge
+    //! \param baseCache Cache of the rule list.
+    Rule(int id, const std::shared_ptr<APICache>& baseCache);
     //! \brief Creates rule with id
     //! \param id Rule id in the bridge
     //! \param commands HueCommandAPI for requests
