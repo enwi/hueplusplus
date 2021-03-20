@@ -557,3 +557,69 @@ TEST(Bridge, createGroup)
         .WillOnce(Return(response));
     EXPECT_EQ(0, test_bridge.groups().create(create));
 }
+
+#define IGNORE_EXCEPTIONS(statement)                                                                                   \
+    try                                                                                                                \
+    {                                                                                                                  \
+        statement;                                                                                                     \
+    }                                                                                                                  \
+    catch (...)                                                                                                        \
+    { }
+
+TEST(Bridge, instantiateResourceLists)
+{
+    // Instantiate all methods on the resource lists, so that compile errors become visible
+    using namespace ::testing;
+    nlohmann::json bridgeState {{"lights", nlohmann::json::object()}, {"groups", nlohmann::json::object()},
+        {"schedules", nlohmann::json::object()}, {"scenes", nlohmann::json::object()},
+        {"sensors", nlohmann::json::object()}, {"rules", nlohmann::json::object()}};
+    std::shared_ptr<MockHttpHandler> handler = std::make_shared<MockHttpHandler>();
+    EXPECT_CALL(*handler, GETJson(_, _, getBridgeIp(), getBridgePort())).Times(AnyNumber());
+    EXPECT_CALL(*handler, POSTJson(_, _, getBridgeIp(), getBridgePort())).Times(AnyNumber());
+    EXPECT_CALL(*handler, DELETEJson(_, _, getBridgeIp(), getBridgePort())).Times(AnyNumber());
+    EXPECT_CALL(
+        *handler, GETJson("/api/" + getBridgeUsername(), nlohmann::json::object(), getBridgeIp(), getBridgePort()))
+        .Times(AtLeast(1))
+        .WillRepeatedly(Return(bridgeState));
+
+    Bridge bridge(getBridgeIp(), getBridgePort(), getBridgeUsername(), handler);
+
+    IGNORE_EXCEPTIONS(bridge.lights().getAll());
+    IGNORE_EXCEPTIONS(bridge.lights().get(1));
+    IGNORE_EXCEPTIONS(bridge.lights().exists(1));
+    IGNORE_EXCEPTIONS(bridge.lights().search());
+    IGNORE_EXCEPTIONS(bridge.lights().getNewDevices());
+    IGNORE_EXCEPTIONS(bridge.lights().remove(1));
+
+    IGNORE_EXCEPTIONS(bridge.groups().getAll());
+    IGNORE_EXCEPTIONS(bridge.groups().get(1));
+    IGNORE_EXCEPTIONS(bridge.groups().exists(1));
+    IGNORE_EXCEPTIONS(bridge.groups().create(CreateGroup::Entertainment({}, "")));
+    IGNORE_EXCEPTIONS(bridge.groups().remove(1));
+
+    IGNORE_EXCEPTIONS(bridge.schedules().getAll());
+    IGNORE_EXCEPTIONS(bridge.schedules().get(1));
+    IGNORE_EXCEPTIONS(bridge.schedules().exists(1));
+    IGNORE_EXCEPTIONS(bridge.schedules().create(CreateSchedule()));
+    IGNORE_EXCEPTIONS(bridge.schedules().remove(1));
+
+    IGNORE_EXCEPTIONS(bridge.scenes().getAll());
+    IGNORE_EXCEPTIONS(bridge.scenes().get("1"));
+    IGNORE_EXCEPTIONS(bridge.scenes().exists("1"));
+    IGNORE_EXCEPTIONS(bridge.scenes().create(CreateScene()));
+    IGNORE_EXCEPTIONS(bridge.scenes().remove("1"));
+
+    IGNORE_EXCEPTIONS(bridge.sensors().getAll());
+    IGNORE_EXCEPTIONS(bridge.sensors().get(1));
+    IGNORE_EXCEPTIONS(bridge.sensors().exists(1));
+    IGNORE_EXCEPTIONS(bridge.sensors().create(CreateSensor("", "", "", "", "", "")));
+    IGNORE_EXCEPTIONS(bridge.sensors().search());
+    IGNORE_EXCEPTIONS(bridge.sensors().getNewDevices());
+    IGNORE_EXCEPTIONS(bridge.sensors().remove(1));
+
+    IGNORE_EXCEPTIONS(bridge.rules().getAll());
+    IGNORE_EXCEPTIONS(bridge.rules().get(1));
+    IGNORE_EXCEPTIONS(bridge.rules().exists(1));
+    IGNORE_EXCEPTIONS(bridge.rules().create(CreateRule({}, {})));
+    IGNORE_EXCEPTIONS(bridge.rules().remove(1));
+}

@@ -150,7 +150,12 @@ LightState LightStateBuilder::create()
     return LightState(state);
 }
 
-Scene::Scene(const std::string& id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration, const nlohmann::json& currentState)
+Scene::Scene(const std::string& id, const std::shared_ptr<APICache>& baseCache)
+    : id(id), state(baseCache, id, baseCache->getRefreshDuration())
+{ }
+
+Scene::Scene(const std::string& id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration,
+    const nlohmann::json& currentState)
     : id(id), state("/scenes/" + id, commands, refreshDuration, currentState)
 {
     refresh();

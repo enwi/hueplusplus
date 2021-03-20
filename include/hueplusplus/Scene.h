@@ -123,6 +123,10 @@ public:
     };
 
 public:
+    //! \brief Creates scene with shared cache
+    //! \param id Scene id in the bridge
+    //! \param baseCache Cache of the scene list.
+    Scene(const std::string& id, const std::shared_ptr<APICache>& baseCache);
     //! \brief Construct existing Scene
     //! \param id Scene id
     //! \param commands HueCommandAPI for requests
