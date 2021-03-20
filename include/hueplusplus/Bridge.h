@@ -174,6 +174,9 @@ public:
 
     //! \brief Sets refresh interval for the whole bridge state.
     //! \param refreshDuration The new minimum duration between refreshes. May be 0 or \ref c_refreshNever.
+    //! 
+    //! Also sets refresh duration on all resource lists on the bridge, but not on already existing lights.
+    //! The resource lists (such as lights()) can have their own durations, but those must be set after calling this function.
     void setRefreshDuration(std::chrono::steady_clock::duration refreshDuration);
 
     //! \brief Function to get the ip address of the hue bridge
