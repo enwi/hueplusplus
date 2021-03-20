@@ -1,9 +1,11 @@
 # Shared state cache {#shared-state}
 
+[TOC]
+
 ## What shared state means
 There are two ways in which the API state (internally JSON) can be handled:
 1. Every resource instance holds its own cache of the state (default).
-2. All instances share the cache for the entire bridge.
+2. All instances share the cache of the entire bridge.
 
 ### Advantages of shared state
 * Different resources are always consistent on the library level.
@@ -23,12 +25,8 @@ Because of these considerations, shared state is disabled by default.
 Shared state can be configured when the bridge is first constructed, either in [getBridge()](@ref hueplusplus::BridgeFinder::getBridge)
 or in the [constructor](@ref hueplusplus::Bridge::Bridge). Set `sharedState` to `true` to keep all resources
 connected to the bridge cache.
-```{.cpp}
-hueplusplus::Bridge bridge = finder.getBridge(bridges[0], true);
-```
-```{.cpp}
-hueplusplus::Bridge bridge("192.168.2.102", 80, "<username>", handler, std::chrono::seconds(10), true);
-```
+\snippet Snippets.cpp shared-bridge-1
+\snippet Snippets.cpp shared-bridge-2
 
 ## Shared state and refreshing
 When shared cache is used, refreshes use a hierarchichal structure to determine how much should be requested from the bridge.
@@ -38,13 +36,7 @@ Otherwise, only the lowest necessary level is requested from the bridge to be mo
 
 ### Example:
 
-```{.cpp}
-bridge.setRefreshDuration(std::chrono::minutes(1));
-bridge.lights().setRefreshDuration(std::chrono::seconds(30));
-hueplusplus::Light light = bridge.lights().get(1);
-// ... wait some time
-bool on = light.isOn();
-```
+\snippet Snippets.cpp refresh-example
 [isOn()](@ref hueplusplus::Light::isOn) is a non-const method (in this case). That means it will refresh the
 state if it is outdated. The default refresh time is inherited from `bridge.lights()`, so it is 30 seconds.
 After 30 seconds, the state of `light` *and* `bridge.lights()` is outdated. Therefore, the entire list of lights is

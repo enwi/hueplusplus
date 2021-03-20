@@ -49,11 +49,12 @@ install:
 
 script:
     ############################################################################
-    # Build main and tests
+    # Build main, tests and examples
     ############################################################################
      - mkdir -p build
      - cd build
-     - cmake .. -Dhueplusplus_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+     - cmake .. -Dhueplusplus_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -Dhueplusplus_EXAMPLES=ON
+     - make hueplusplus_examples hueplusplus_snippets
      - make coveragetest
      - cd ..
      - doxygen Doxyfile

@@ -1,6 +1,8 @@
 # Documentation for the hueplusplus library
 A simple and easy to use library for Philips Hue Lights.
 
+[TOC]
+
 ## Features
 * find bridges with SSDP or set an ip manually
 * all common light functions (brightness, color, temperature)
@@ -17,85 +19,57 @@ A simple and easy to use library for Philips Hue Lights.
 * Espressif ESP32 SDK & Arduino
 
 ## How to use
-- [Getting Started](@ref getting-started)
+[Getting started](@ref getting-started)
 ### Searching for Bridges
 To start searching for a Hue Bridge you will need to choose an IHttpHandler and create one. The options are a [WinHttpHandler](@ref hueplusplus::WinHttpHandler) (for windows) or a [LinHttpHandler](@ref hueplusplus::LinHttpHandler) (for linux or linux-like).
 
 Then create a [BridgeFinder](@ref hueplusplus::BridgeFinder) object with the handler.
 The handler is needed, because it tells the finder which functions to use to communicate with a bridge or your local network.
 After that you can call [findBridges()](@ref hueplusplus::BridgeFinder::findBridges), which will return a vector containing the ip and mac address of all found Bridges.
-```{.cpp}
-// For windows use std::make_shared<hueplusplus::WinHttpHandler>();
-handler = std::make_shared<hueplusplus::LinHttpHandler>();
-hueplusplus::BridgeFinder finder(handler);
-std::vector<hueplusplus::BridgeFinder::BridgeIdentification> bridges = finder.findBridges();
-if (bridges.empty())
-{
-	std::cerr << "No bridges found\n";
-	return;
-}
+\snippet Snippets.cpp search-bridge
 
-```
+At this point you may want to decide whether to use a [shared state](@ref shared-state) cache model or keep the default settings.
 
 ### Authenticate Bridges
 If you have found the Bridge you were looking for, you can then move on with the authentication process.
 To get a new username from the Bridge (for now) you simply call [getBridge(bridges[\<index\>])](@ref hueplusplus::BridgeFinder::getBridge),
 where index is your preferred Bridge from the part [Searching for Bridges](#searchingBridges). This requires the user to press the link button.
-```{.cpp}
-hueplusplus::Bridge bridge = finder.getBridge(bridges[0]);
-```
+\snippet Snippets.cpp get-bridge-1
+
 If you on the other hand already have a username you can add your bridge like so
-```{.cpp}
-finder.addUsername(bridges[0].mac, "<username>");
-hueplusplus::Bridge bridge = finder.getBridge(bridges[0]);
-```
+\snippet Snippets.cpp get-bridge-2
+
 If you do not want to use the BridgeFinder or you already know the ip and username of your bridge you have the option to create your own Bridge object.
 Here you will need to provide the ip address, the port number, a username and an HttpHandler
-```{.cpp}
-// For windows use std::make_shared<hueplusplus::WinHttpHandler>();
-handler = std::make_shared<hueplusplus::LinHttpHandler>();
-hueplusplus::Bridge bridge("192.168.2.102", 80, "<username>", handler);
-```
+\snippet Snippets.cpp get-bridge-3
+
 
 ### Controlling lights
 If you have your Bridge all set up, you can now control its lights.
 For that create a new Light object and call [lights().get(\<id\>)](@ref hueplusplus::ResourceList::get) on your bridge object to get a reference to a specific light, where id
 is the id of the light set internally by the Hue Bridge.
-```{.cpp}
-hueplusplus::Light light1 = bridge.lights().get(1);
-```
+\snippet Snippets.cpp light-1
+
 If you don't know the id of a specific light or want to get an overview over all lights that are controlled by your bridge, 
 you can get a vector containing them by calling [getAll()](@ref hueplusplus::ResourceList::getAll) on your bridge object. If no lights are found the vector will be empty.
-```{.cpp}
-std::vector<hueplusplus::Light> lights = bridge.lights().getAll();
-```
+\snippet Snippets.cpp light-2
+
 If you now want to control a light, call a specific function of it.
-```{.cpp}
-light1.on();
-light1.setBrightness(120);
-light1.alertHueSaturation(25500, 255);
-light1.setColorLoop(true);
-light1.setColorRGB(255, 128, 0);
-lights[1].off();
-lights.at(1).setColorHue(4562);
-```
+\snippet Snippets.cpp light-3
+
 But keep in mind that some light types do not have all functions available. So you might call a
 specific function, but nothing will happen. For that you might want to check what type
 of a light you are controlling. For that you can call the function [getColorType()](@ref hueplusplus::Light::getColorType()), which will return
 a ColorType.
-```{.cpp}
-hueplusplus::ColorType type1 = light1.getColorType();
-```
+\snippet Snippets.cpp light-4
+
 There's also a new way to check whether specific functions of a light are available:
-```{.cpp}
-light1.hasBrightnessControl();
-light1.hasTemperatureControl();
-light1.hasColorControl();
-```
+\snippet Snippets.cpp light-5
+
 These will either return true(light has specified function) or false(light lacks specified function).
 
 ## Build and install
-- [Build and install guide](@ref build)
+[Build and install guide](@ref build)
 
 ### Basic installation
 If you want to build the library you can use cmake (at least version 3.8). First create a build folder and then execute cmake.
@@ -155,3 +129,11 @@ If you also want to execute coverage tests you will need to install gcov and lco
 ```bash
 make coveragetest
 ```
+
+
+## Other pages
+- [Getting started](@ref getting-started)
+- [Build and install](@ref build)
+- [Shared state cache](@ref shared-state)
+- [Transactions](@ref transactions)
+- [Sensors](@ref sensors)

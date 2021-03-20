@@ -18,7 +18,8 @@
     You should have received a copy of the GNU Lesser General Public License
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 
-    \brief This example connects to a bridge with hardcoded mac and username.
+    \example{lineno} BridgeSetup.cpp
+    This example connects to a bridge with hardcoded mac and username.
 **/
 
 
@@ -45,7 +46,7 @@ namespace hue = hueplusplus;
 const std::string macAddress = "";
 const std::string username = "";
 
-//! \brief Connects to a bridge and returns it.
+// Connects to a bridge and returns it.
 hue::Bridge connectToBridge()
 {
     hue::BridgeFinder finder(std::make_shared<SystemHttpHandler>());
