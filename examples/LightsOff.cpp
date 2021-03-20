@@ -18,7 +18,8 @@
     You should have received a copy of the GNU Lesser General Public License
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 
-    \brief This example turns off all lights for 20 seconds, then turns them on again.
+    \example{lineno} LightsOff.cpp
+    This example turns off all lights for 20 seconds, then turns them on again.
 **/
 
 #include <thread>
@@ -43,7 +44,7 @@ namespace hue = hueplusplus;
 const std::string macAddress = "";
 const std::string username = "";
 
-//! \brief Connects to a bridge and returns it.
+// Connects to a bridge and returns it.
 hue::Bridge connectToBridge()
 {
     hue::BridgeFinder finder(std::make_shared<SystemHttpHandler>());
@@ -79,9 +80,8 @@ hue::Bridge connectToBridge()
     return finder.getBridge(*it);
 }
 
-//! \brief Turns off the lights on the bridge for 20 seconds.
-//! 
-//! Only turns the lights back on that were on before.
+// Turns off the lights on the bridge for 20 seconds. 
+// Only turns the lights back on that were on before.
 void lightsOff(hue::Bridge& hue)
 {
     std::vector<hue::Light> lights = hue.lights().getAll();
