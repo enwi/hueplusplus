@@ -20,6 +20,8 @@
     along with hueplusplus.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
+#include "hueplusplus/Bridge.h"
+
 #include <algorithm>
 #include <cctype>
 #include <chrono>
@@ -29,7 +31,6 @@
 #include <stdexcept>
 #include <thread>
 
-#include "hueplusplus/Bridge.h"
 #include "hueplusplus/HueExceptionMacro.h"
 #include "hueplusplus/LibConfig.h"
 #include "hueplusplus/UPnP.h"
@@ -185,6 +186,13 @@ void Bridge::refresh()
 void Bridge::setRefreshDuration(std::chrono::steady_clock::duration refreshDuration)
 {
     stateCache->setRefreshDuration(refreshDuration);
+    lightList.setRefreshDuration(refreshDuration);
+    groupList.setRefreshDuration(refreshDuration);
+    scheduleList.setRefreshDuration(refreshDuration);
+    sceneList.setRefreshDuration(refreshDuration);
+    sensorList.setRefreshDuration(refreshDuration);
+    ruleList.setRefreshDuration(refreshDuration);
+    bridgeConfig.setRefreshDuration(refreshDuration);
 }
 
 std::string Bridge::getBridgeIP() const
