@@ -122,7 +122,7 @@ Condition Condition::parse(const nlohmann::json& json)
     {
         op = Operator::notIn;
     }
-    else if(opStr != "eq")
+    else if (opStr != "eq")
     {
         throw HueException(CURRENT_FILE_INFO, "Unknown condition operator: " + opStr);
     }
@@ -130,9 +130,13 @@ Condition Condition::parse(const nlohmann::json& json)
     return Condition(address, op, value);
 }
 
-Rule::Rule(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration, const nlohmann::json& currentState)
+Rule::Rule(int id, const std::shared_ptr<APICache>& baseCache)
+    : id(id), state(baseCache, std::to_string(id), baseCache->getRefreshDuration())
+{ }
+Rule::Rule(int id, const HueCommandAPI& commands, std::chrono::steady_clock::duration refreshDuration,
+    const nlohmann::json& currentState)
     : id(id), state("/rules/" + std::to_string(id), commands, refreshDuration, currentState)
-{ 
+{
     refresh();
 }
 

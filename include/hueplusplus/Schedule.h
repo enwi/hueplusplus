@@ -34,6 +34,10 @@ namespace hueplusplus
 class Schedule
 {
 public:
+    //! \brief Creates schedule with shared cache
+    //! \param id Schedule id in the bridge
+    //! \param baseCache Cache of the schedule list.
+    Schedule(int id, const std::shared_ptr<APICache>& baseCache);
     //! \brief Construct Schedule that exists in the bridge
     //! \param id Schedule ID
     //! \param commands HueCommandAPI for requests
