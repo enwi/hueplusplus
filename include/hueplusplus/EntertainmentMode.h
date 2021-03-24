@@ -40,6 +40,9 @@ public:
     //!
     //! \param b Bridge reference
     //! \param g Group to control in entertainment mode reference
+    //! 
+    //! \note References are held to both \c b and \c g. 
+    //! They must stay valid until EntertainmentMode ist destroyed.
     EntertainmentMode(Bridge& b, Group& g);
 
     //! \brief Destroy the Entertainment Mode object
