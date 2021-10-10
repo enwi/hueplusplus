@@ -1,0 +1,9 @@
+<map id="include/hueplusplus/LibConfig.h" name="include/hueplusplus/LibConfig.h">
+<area shape="rect" id="node2" href="$_bridge_8cpp.html" title="src/Bridge.cpp" alt="" coords="5,102,120,129"/>
+<area shape="rect" id="node3" href="$_extended_color_hue_strategy_8cpp.html" title="src/ExtendedColorHueStrategy.cpp" alt="" coords="145,102,391,129"/>
+<area shape="rect" id="node4" href="$_extended_color_temperature_strategy_8cpp.html" title="src/ExtendedColorTemperature\lStrategy.cpp" alt="" coords="415,95,638,136"/>
+<area shape="rect" id="node5" href="$_hue_command_a_p_i_8cpp.html" title="src/HueCommandAPI.cpp" alt="" coords="663,102,849,129"/>
+<area shape="rect" id="node6" href="$_simple_color_hue_strategy_8cpp.html" title="src/SimpleColorHueStrategy.cpp" alt="" coords="874,102,1105,129"/>
+<area shape="rect" id="node7" href="$_simple_color_temperature_strategy_8cpp.html" title="src/SimpleColorTemperature\lStrategy.cpp" alt="" coords="1129,95,1335,136"/>
+<area shape="rect" id="node8" href="$_u_pn_p_8cpp.html" title="src/UPnP.cpp" alt="" coords="1360,102,1464,129"/>
+</map>

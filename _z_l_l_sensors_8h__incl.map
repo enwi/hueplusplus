@@ -1,0 +1,10 @@
+<map id="include/hueplusplus/ZLLSensors.h" name="include/hueplusplus/ZLLSensors.h">
+<area shape="rect" id="node2" href="$_sensor_8h.html" title="Sensor.h" alt="" coords="487,95,564,121"/>
+<area shape="rect" id="node4" href="$_base_device_8h.html" title="BaseDevice.h" alt="" coords="423,169,534,196"/>
+<area shape="rect" id="node8" href="$_hue_command_a_p_i_8h.html" title="HueCommandAPI.h" alt="" coords="311,319,459,345"/>
+<area shape="rect" id="node17" href="$_condition_8h.html" title="Condition.h" alt="" coords="704,319,800,345"/>
+<area shape="rect" id="node18" href="$_time_pattern_8h.html" title="TimePattern.h" alt="" coords="515,393,629,420"/>
+<area shape="rect" id="node5" href="$_a_p_i_cache_8h.html" title="APICache.h" alt="" coords="427,244,522,271"/>
+<area shape="rect" id="node11" href="$_hue_exception_8h.html" title="HueException.h" alt="" coords="705,393,829,420"/>
+<area shape="rect" id="node14" href="$_i_http_handler_8h.html" title="IHttpHandler.h" alt="" coords="195,393,311,420"/>
+</map>

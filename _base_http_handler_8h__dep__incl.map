@@ -1,0 +1,11 @@
+<map id="include/hueplusplus/BaseHttpHandler.h" name="include/hueplusplus/BaseHttpHandler.h">
+<area shape="rect" id="node2" href="$_lin_http_handler_8h.html" title="include/hueplusplus\l/LinHttpHandler.h" alt="" coords="529,95,680,136"/>
+<area shape="rect" id="node8" href="$_win_http_handler_8h.html" title="include/hueplusplus\l/WinHttpHandler.h" alt="" coords="891,95,1041,136"/>
+<area shape="rect" id="node10" href="$_base_http_handler_8cpp.html" title="src/BaseHttpHandler.cpp" alt="" coords="1065,102,1248,129"/>
+<area shape="rect" id="node3" href="$_lin_http_handler_8cpp.html" title="src/LinHttpHandler.cpp" alt="" coords="5,184,175,211"/>
+<area shape="rect" id="node4" href="$_bridge_setup_8cpp.html" title="examples/BridgeSetup.cpp" alt="" coords="199,184,395,211"/>
+<area shape="rect" id="node5" href="$_lights_off_8cpp.html" title="examples/LightsOff.cpp" alt="" coords="419,184,593,211"/>
+<area shape="rect" id="node6" href="$_snippets_8cpp.html" title="Contains code snippets used in the documentation, performs no useful functions. " alt="" coords="618,184,791,211"/>
+<area shape="rect" id="node7" href="$_username_config_8cpp.html" title="examples/UsernameConfig.cpp" alt="" coords="816,184,1041,211"/>
+<area shape="rect" id="node9" href="$_win_http_handler_8cpp.html" title="src/WinHttpHandler.cpp" alt="" coords="1065,184,1240,211"/>
+</map>

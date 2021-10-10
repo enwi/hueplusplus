@@ -1,0 +1,7 @@
+<map id="hueplusplus::time::TimePattern" name="hueplusplus::time::TimePattern">
+<area shape="rect" id="node2" href="$classhueplusplus_1_1time_1_1_time_interval.html" title="Time interval repeated daily to weekly. " alt="" coords="205,5,351,47"/>
+<area shape="rect" id="node3" href="$classhueplusplus_1_1time_1_1_recurring_time.html" title="Time repeated weekly to daily, with possible random variation. " alt="" coords="205,71,351,112"/>
+<area shape="rect" id="node4" href="$classhueplusplus_1_1time_1_1_absolute_varied_time.html" title="hueplusplus::time::\lAbsoluteVariedTime" alt="" coords="201,136,355,177"/>
+<area shape="rect" id="node5" href="$classhueplusplus_1_1time_1_1_absolute_time.html" title="One&#45;time, absolute time point. " alt="" coords="5,136,152,177"/>
+<area shape="rect" id="node6" href="$classhueplusplus_1_1time_1_1_timer.html" title="Timer that is started and triggers after specified delay. " alt="" coords="205,201,351,243"/>
+</map>

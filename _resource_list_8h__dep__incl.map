@@ -1,0 +1,11 @@
+<map id="include/hueplusplus/ResourceList.h" name="include/hueplusplus/ResourceList.h">
+<area shape="rect" id="node2" href="$_bridge_8h.html" title="include/hueplusplus\l/Bridge.h" alt="" coords="479,184,630,225"/>
+<area shape="rect" id="node10" href="$_sensor_list_8h.html" title="include/hueplusplus\l/SensorList.h" alt="" coords="537,95,687,136"/>
+<area shape="rect" id="node3" href="$_entertainment_mode_8h.html" title="include/hueplusplus\l/EntertainmentMode.h" alt="" coords="22,273,189,315"/>
+<area shape="rect" id="node5" href="$_bridge_8cpp.html" title="src/Bridge.cpp" alt="" coords="213,281,328,307"/>
+<area shape="rect" id="node6" href="$_bridge_setup_8cpp.html" title="examples/BridgeSetup.cpp" alt="" coords="353,281,549,307"/>
+<area shape="rect" id="node7" href="$_lights_off_8cpp.html" title="examples/LightsOff.cpp" alt="" coords="573,281,747,307"/>
+<area shape="rect" id="node8" href="$_snippets_8cpp.html" title="Contains code snippets used in the documentation, performs no useful functions. " alt="" coords="772,281,945,307"/>
+<area shape="rect" id="node9" href="$_username_config_8cpp.html" title="examples/UsernameConfig.cpp" alt="" coords="970,281,1195,307"/>
+<area shape="rect" id="node4" href="$_entertainment_mode_8cpp.html" title="src/EntertainmentMode.cpp" alt="" coords="5,363,205,389"/>
+</map>

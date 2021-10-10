@@ -1,0 +1,5 @@
+<map id="hueplusplus::sensors::CLIPOpenClose" name="hueplusplus::sensors::CLIPOpenClose">
+<area shape="rect" id="node2" href="$classhueplusplus_1_1sensors_1_1_base_c_l_i_p.html" title="Common methods for CLIP sensors. " alt="" coords="19,171,177,212"/>
+<area shape="rect" id="node3" href="$classhueplusplus_1_1_base_device.html" title="Base class for physical devices connected to the bridge (sensor or light). " alt="" coords="5,95,191,121"/>
+<area shape="rect" id="node4" href="$classhueplusplus_1_1_a_p_i_cache.html" title="Caches API GET requests and refreshes regularly. " alt="" coords="13,5,183,32"/>
+</map>

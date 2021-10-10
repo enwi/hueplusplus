@@ -1,0 +1,9 @@
+<map id="include/hueplusplus/Rule.h" name="include/hueplusplus/Rule.h">
+<area shape="rect" id="node3" href="$_a_p_i_cache_8h.html" title="APICache.h" alt="" coords="484,95,579,121"/>
+<area shape="rect" id="node5" href="$_hue_command_a_p_i_8h.html" title="HueCommandAPI.h" alt="" coords="372,169,520,196"/>
+<area shape="rect" id="node15" href="$_action_8h.html" title="Action.h" alt="" coords="815,95,890,121"/>
+<area shape="rect" id="node16" href="$_condition_8h.html" title="Condition.h" alt="" coords="654,169,750,196"/>
+<area shape="rect" id="node17" href="$_time_pattern_8h.html" title="TimePattern.h" alt="" coords="599,244,712,271"/>
+<area shape="rect" id="node8" href="$_hue_exception_8h.html" title="HueException.h" alt="" coords="736,244,860,271"/>
+<area shape="rect" id="node11" href="$_i_http_handler_8h.html" title="IHttpHandler.h" alt="" coords="127,244,243,271"/>
+</map>

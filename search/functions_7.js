@@ -1,0 +1,23 @@
+var searchData=
+[
+  ['hasalert',['hasAlert',['../classhueplusplus_1_1_sensor.html#a55c517a4ec88dae5f1e13aed2635ca95',1,'hueplusplus::Sensor']]],
+  ['hasbatterystate',['hasBatteryState',['../classhueplusplus_1_1sensors_1_1_base_c_l_i_p.html#a01ee7a7fbf16866e777f48911eaf5072',1,'hueplusplus::sensors::BaseCLIP::hasBatteryState()'],['../classhueplusplus_1_1_sensor.html#aaa563dc71f6e2606d63917a77dd46d62',1,'hueplusplus::Sensor::hasBatteryState()'],['../classhueplusplus_1_1sensors_1_1_daylight_sensor.html#ad67205e1ca2a1042d81e79333f6c75e4',1,'hueplusplus::sensors::DaylightSensor::hasBatteryState()'],['../classhueplusplus_1_1sensors_1_1_z_l_l_switch.html#a5aabef4adcb2d7b4a840d3b00fd90b54',1,'hueplusplus::sensors::ZLLSwitch::hasBatteryState()'],['../classhueplusplus_1_1sensors_1_1_z_l_l_presence.html#af0a4b3ee541538a6c6a956e0ecc79540',1,'hueplusplus::sensors::ZLLPresence::hasBatteryState()'],['../classhueplusplus_1_1sensors_1_1_z_l_l_temperature.html#a116499ddeff20500f967c7e6948bf542',1,'hueplusplus::sensors::ZLLTemperature::hasBatteryState()'],['../classhueplusplus_1_1sensors_1_1_z_l_l_light_level.html#aca9063b4193a76f2679baf7709e68f16',1,'hueplusplus::sensors::ZLLLightLevel::hasBatteryState()']]],
+  ['hasbrightness',['hasBrightness',['../classhueplusplus_1_1_light_state.html#a4d393f656aa84c821149c5f34a04a1ee',1,'hueplusplus::LightState']]],
+  ['hasbrightnesscontrol',['hasBrightnessControl',['../classhueplusplus_1_1_light.html#af680548b576b57a713018a353d8c8a88',1,'hueplusplus::Light']]],
+  ['hascolorcontrol',['hasColorControl',['../classhueplusplus_1_1_light.html#a661e357c5648ff574634a12b40680a6f',1,'hueplusplus::Light']]],
+  ['hasct',['hasCt',['../classhueplusplus_1_1_light_state.html#a89cc187307fe7bb55211ac4fdfeba966',1,'hueplusplus::LightState']]],
+  ['haseffect',['hasEffect',['../classhueplusplus_1_1_light_state.html#a299ef9228cdda59b3098cf8049553836',1,'hueplusplus::LightState']]],
+  ['hashuesat',['hasHueSat',['../classhueplusplus_1_1_light_state.html#a2e3304728808c1a392e2ddae59b76273',1,'hueplusplus::LightState']]],
+  ['haslastscantime',['hasLastScanTime',['../classhueplusplus_1_1_new_device_list.html#a6af4c9b27eadcf0aec9cc4e7cac0f137',1,'hueplusplus::NewDeviceList']]],
+  ['hasledindication',['hasLEDIndication',['../classhueplusplus_1_1_sensor.html#abf5e1844561ea1c98238dba3ff7d8387',1,'hueplusplus::Sensor']]],
+  ['hason',['hasOn',['../classhueplusplus_1_1_sensor.html#a5853efc3712fe6c9e398c5a5b77c4f25',1,'hueplusplus::Sensor']]],
+  ['hasreachable',['hasReachable',['../classhueplusplus_1_1_sensor.html#ae91fa1d7f27331837eab26db67848513',1,'hueplusplus::Sensor']]],
+  ['hastemperaturecontrol',['hasTemperatureControl',['../classhueplusplus_1_1_light.html#a4b013d5e1cff6bdc02f273d57fc0db22',1,'hueplusplus::Light']]],
+  ['hasurl',['hasURL',['../classhueplusplus_1_1sensors_1_1_base_c_l_i_p.html#a101a22da4d3e85744ba7b63f6f2941b7',1,'hueplusplus::sensors::BaseCLIP::hasURL()'],['../classhueplusplus_1_1_sensor.html#ac67547e74857fd66bd90b6f6712498db',1,'hueplusplus::Sensor::hasURL()']]],
+  ['hasusertest',['hasUserTest',['../classhueplusplus_1_1_sensor.html#abd9f4d2afc472766c7631b3f278dee7f',1,'hueplusplus::Sensor']]],
+  ['hasxy',['hasXY',['../classhueplusplus_1_1_light_state.html#ae00464d846068a66457ae1fd5c89ad2f',1,'hueplusplus::LightState']]],
+  ['hextobytes',['hexToBytes',['../namespacehueplusplus.html#afc2d402720a601f6e3ee9a8244566cd9',1,'hueplusplus']]],
+  ['hueapiresponseexception',['HueAPIResponseException',['../classhueplusplus_1_1_hue_a_p_i_response_exception.html#a67c014cbd5145f10eecc9ac789e219a7',1,'hueplusplus::HueAPIResponseException']]],
+  ['huecommandapi',['HueCommandAPI',['../classhueplusplus_1_1_hue_command_a_p_i.html#ad6cd1f84660055f622cf730a251fa0ec',1,'hueplusplus::HueCommandAPI::HueCommandAPI(const std::string &amp;ip, int port, const std::string &amp;username, std::shared_ptr&lt; const IHttpHandler &gt; httpHandler)'],['../classhueplusplus_1_1_hue_command_a_p_i.html#adaba8c59285428233804b9ba0b7334ac',1,'hueplusplus::HueCommandAPI::HueCommandAPI(const HueCommandAPI &amp;)=default'],['../classhueplusplus_1_1_hue_command_a_p_i.html#ae6eb2b94cf04dd04ca7623fe864e85b1',1,'hueplusplus::HueCommandAPI::HueCommandAPI(HueCommandAPI &amp;&amp;)=default']]],
+  ['hueexception',['HueException',['../classhueplusplus_1_1_hue_exception.html#ab5560b225c1f36625477c2bffb8a9f1a',1,'hueplusplus::HueException::HueException(FileInfo fileInfo, const std::string &amp;message)'],['../classhueplusplus_1_1_hue_exception.html#a73370d57f033b42c41b5ba55b5db0148',1,'hueplusplus::HueException::HueException(const char *exceptionName, FileInfo fileInfo, const std::string &amp;message)']]]
+];

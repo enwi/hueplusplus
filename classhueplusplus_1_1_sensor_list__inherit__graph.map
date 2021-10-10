@@ -1,0 +1,5 @@
+<map id="hueplusplus::SensorList" name="hueplusplus::SensorList">
+<area shape="rect" id="node2" href="$classhueplusplus_1_1_createable_resource_list.html" title="hueplusplus::CreateableResource\lList\&lt; SearchableResourceList\l\&lt; Sensor \&gt;, CreateSensor \&gt;" alt="" coords="531,5,769,61"/>
+<area shape="rect" id="node3" href="$classhueplusplus_1_1_searchable_resource_list.html" title="hueplusplus::SearchableResource\lList\&lt; Sensor \&gt;" alt="" coords="244,13,483,54"/>
+<area shape="rect" id="node4" href="$classhueplusplus_1_1_resource_list.html" title="hueplusplus::ResourceList\l\&lt; Sensor, int \&gt;" alt="" coords="5,13,196,54"/>
+</map>

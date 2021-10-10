@@ -1,0 +1,32 @@
+<map id="examples/Snippets.cpp" name="examples/Snippets.cpp">
+<area shape="rect" id="node2" href="$_bridge_8h.html" title="hueplusplus/Bridge.h" alt="" coords="1886,80,2045,107"/>
+<area shape="rect" id="node43" href="$_c_l_i_p_sensors_8h.html" title="hueplusplus/CLIPSensors.h" alt="" coords="1015,80,1209,107"/>
+<area shape="rect" id="node44" href="$_z_l_l_sensors_8h.html" title="hueplusplus/ZLLSensors.h" alt="" coords="1386,80,1577,107"/>
+<area shape="rect" id="node45" href="$_lin_http_handler_8h.html" title="hueplusplus/LinHttpHandler.h" alt="" coords="2528,379,2741,405"/>
+<area shape="rect" id="node8" href="$_a_p_i_cache_8h.html" title="APICache.h" alt="" coords="670,379,765,405"/>
+<area shape="rect" id="node10" href="$_hue_command_a_p_i_8h.html" title="HueCommandAPI.h" alt="" coords="809,453,957,480"/>
+<area shape="rect" id="node16" href="$_i_http_handler_8h.html" title="IHttpHandler.h" alt="" coords="2165,528,2281,555"/>
+<area shape="rect" id="node18" href="$_bridge_config_8h.html" title="BridgeConfig.h" alt="" coords="45,304,163,331"/>
+<area shape="rect" id="node21" href="$_brightness_strategy_8h.html" title="BrightnessStrategy.h" alt="" coords="2646,304,2802,331"/>
+<area shape="rect" id="node23" href="$_color_hue_strategy_8h.html" title="ColorHueStrategy.h" alt="" coords="2867,379,3013,405"/>
+<area shape="rect" id="node25" href="$_color_temperature_strategy_8h.html" title="ColorTemperatureStrategy.h" alt="" coords="3109,304,3312,331"/>
+<area shape="rect" id="node27" href="$_group_8h.html" title="Group.h" alt="" coords="1107,304,1181,331"/>
+<area shape="rect" id="node30" href="$_hue_device_types_8h.html" title="HueDeviceTypes.h" alt="" coords="2029,155,2171,181"/>
+<area shape="rect" id="node31" href="$_light_8h.html" title="Light.h" alt="" coords="2067,229,2133,256"/>
+<area shape="rect" id="node33" href="$_resource_list_8h.html" title="ResourceList.h" alt="" coords="1663,304,1779,331"/>
+<area shape="rect" id="node36" href="$_utils_8h.html" title="Utils.h" alt="" coords="2187,379,2251,405"/>
+<area shape="rect" id="node37" href="$_rule_8h.html" title="Rule.h" alt="" coords="449,304,511,331"/>
+<area shape="rect" id="node39" href="$_scene_8h.html" title="Scene.h" alt="" coords="1903,304,1977,331"/>
+<area shape="rect" id="node40" href="$_schedule_8h.html" title="Schedule.h" alt="" coords="591,304,684,331"/>
+<area shape="rect" id="node41" href="$_sensor_8h.html" title="Sensor.h" alt="" coords="789,229,867,256"/>
+<area shape="rect" id="node42" href="$_sensor_list_8h.html" title="SensorList.h" alt="" coords="980,155,1081,181"/>
+<area shape="rect" id="node13" href="$_hue_exception_8h.html" title="HueException.h" alt="" coords="1407,528,1531,555"/>
+<area shape="rect" id="node19" href="$_time_pattern_8h.html" title="TimePattern.h" alt="" coords="191,453,305,480"/>
+<area shape="rect" id="node24" href="$_color_units_8h.html" title="ColorUnits.h" alt="" coords="2395,453,2498,480"/>
+<area shape="rect" id="node28" href="$_action_8h.html" title="Action.h" alt="" coords="1111,453,1185,480"/>
+<area shape="rect" id="node29" href="$_state_transaction_8h.html" title="StateTransaction.h" alt="" coords="1195,379,1338,405"/>
+<area shape="rect" id="node32" href="$_base_device_8h.html" title="BaseDevice.h" alt="" coords="2001,304,2111,331"/>
+<area shape="rect" id="node35" href="$_new_device_list_8h.html" title="NewDeviceList.h" alt="" coords="1515,379,1645,405"/>
+<area shape="rect" id="node38" href="$_condition_8h.html" title="Condition.h" alt="" coords="195,379,291,405"/>
+<area shape="rect" id="node46" href="$_base_http_handler_8h.html" title="BaseHttpHandler.h" alt="" coords="2624,453,2768,480"/>
+</map>

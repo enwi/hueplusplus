@@ -1,0 +1,27 @@
+var searchData=
+[
+  ['b',['b',['../structhueplusplus_1_1_r_g_b.html#a7f0452178ad85616ff065cf56915b6f4',1,'hueplusplus::RGB']]],
+  ['baseclip',['BaseCLIP',['../classhueplusplus_1_1sensors_1_1_base_c_l_i_p.html',1,'hueplusplus::sensors::BaseCLIP'],['../classhueplusplus_1_1sensors_1_1_base_c_l_i_p.html#a3c40f4b4e9c742f876e51968651eb810',1,'hueplusplus::sensors::BaseCLIP::BaseCLIP()']]],
+  ['basedevice',['BaseDevice',['../classhueplusplus_1_1_base_device.html',1,'hueplusplus::BaseDevice'],['../classhueplusplus_1_1_base_device.html#a48bf88e758fd7191c599a46751755c97',1,'hueplusplus::BaseDevice::BaseDevice(int id, const std::shared_ptr&lt; APICache &gt; &amp;baseCache)'],['../classhueplusplus_1_1_base_device.html#aaa90386c0cea99464dee6bedb2c68254',1,'hueplusplus::BaseDevice::BaseDevice(int id, const HueCommandAPI &amp;commands, const std::string &amp;path, std::chrono::steady_clock::duration refreshDuration, const nlohmann::json &amp;currentState)']]],
+  ['basedevice_2ecpp',['BaseDevice.cpp',['../_base_device_8cpp.html',1,'']]],
+  ['basedevice_2eh',['BaseDevice.h',['../_base_device_8h.html',1,'']]],
+  ['basehttphandler',['BaseHttpHandler',['../classhueplusplus_1_1_base_http_handler.html',1,'hueplusplus']]],
+  ['basehttphandler_2ecpp',['BaseHttpHandler.cpp',['../_base_http_handler_8cpp.html',1,'']]],
+  ['basehttphandler_2eh',['BaseHttpHandler.h',['../_base_http_handler_8h.html',1,'']]],
+  ['bluecorner',['blueCorner',['../structhueplusplus_1_1_color_gamut.html#a9300f0d4b86be5dfae499f4e4d61c9a8',1,'hueplusplus::ColorGamut']]],
+  ['bridge',['Bridge',['../classhueplusplus_1_1_bridge.html',1,'hueplusplus::Bridge'],['../classhueplusplus_1_1_entertainment_mode.html#a3be4ee9ee045fc791e2606c78fbfd3e6',1,'hueplusplus::EntertainmentMode::bridge()'],['../classhueplusplus_1_1_bridge.html#a5fa0378ab3552a82d611fba6701bcad6',1,'hueplusplus::Bridge::Bridge()']]],
+  ['bridge_2ecpp',['Bridge.cpp',['../_bridge_8cpp.html',1,'']]],
+  ['bridge_2eh',['Bridge.h',['../_bridge_8h.html',1,'']]],
+  ['bridgeconfig',['BridgeConfig',['../classhueplusplus_1_1_bridge_config.html',1,'hueplusplus::BridgeConfig'],['../classhueplusplus_1_1_bridge_config.html#a9ea231a17f231f44230f1d99a91be9cd',1,'hueplusplus::BridgeConfig::BridgeConfig(std::shared_ptr&lt; APICache &gt; baseCache, std::chrono::steady_clock::duration refreshDuration)'],['../classhueplusplus_1_1_bridge_config.html#aba7cc6034b4c95f8e2df4e19c53a8dac',1,'hueplusplus::BridgeConfig::BridgeConfig(const BridgeConfig &amp;)=default'],['../classhueplusplus_1_1_bridge_config.html#a0ef3ef7f8f2c0bbd53e713c005466b21',1,'hueplusplus::BridgeConfig::BridgeConfig(BridgeConfig &amp;&amp;)=default']]],
+  ['bridgeconfig_2ecpp',['BridgeConfig.cpp',['../_bridge_config_8cpp.html',1,'']]],
+  ['bridgeconfig_2eh',['BridgeConfig.h',['../_bridge_config_8h.html',1,'']]],
+  ['bridgefinder',['BridgeFinder',['../classhueplusplus_1_1_bridge_finder.html',1,'hueplusplus::BridgeFinder'],['../classhueplusplus_1_1_bridge.html#a1ffb423a79da8deb2ef13bb2c89b6d78',1,'hueplusplus::Bridge::BridgeFinder()'],['../classhueplusplus_1_1_bridge_finder.html#a84d4cd53894f7a1e9bde97998e59f274',1,'hueplusplus::BridgeFinder::BridgeFinder()']]],
+  ['bridgeidentification',['BridgeIdentification',['../structhueplusplus_1_1_bridge_finder_1_1_bridge_identification.html',1,'hueplusplus::BridgeFinder']]],
+  ['bridgerequestdelay',['bridgeRequestDelay',['../classhueplusplus_1_1_config.html#a736688630986956a1e97e62218403ab3',1,'hueplusplus::Config']]],
+  ['bridgesetup_2ecpp',['BridgeSetup.cpp',['../_bridge_setup_8cpp.html',1,'']]],
+  ['brightness',['brightness',['../structhueplusplus_1_1_x_y_brightness.html#a028af75d7418fdccd22d0027f83298cf',1,'hueplusplus::XYBrightness']]],
+  ['brightnessstrategy',['BrightnessStrategy',['../classhueplusplus_1_1_brightness_strategy.html',1,'hueplusplus::BrightnessStrategy'],['../classhueplusplus_1_1_light.html#af9948baaf52a9ce2ed0f145368492873',1,'hueplusplus::Light::brightnessStrategy()']]],
+  ['brightnessstrategy_2eh',['BrightnessStrategy.h',['../_brightness_strategy_8h.html',1,'']]],
+  ['build_20and_20install',['Build and install',['../build.html',1,'']]],
+  ['build_2emd',['Build.md',['../_build_8md.html',1,'']]]
+];

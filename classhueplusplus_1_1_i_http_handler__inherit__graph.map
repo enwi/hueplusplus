@@ -1,0 +1,5 @@
+<map id="hueplusplus::IHttpHandler" name="hueplusplus::IHttpHandler">
+<area shape="rect" id="node2" href="$classhueplusplus_1_1_base_http_handler.html" title="Base class for classes that handle http requests and multicast requests. " alt="" coords="115,80,334,107"/>
+<area shape="rect" id="node3" href="$classhueplusplus_1_1_lin_http_handler.html" title="Class to handle http requests and multicast requests on linux systems. " alt="" coords="5,155,212,181"/>
+<area shape="rect" id="node4" href="$classhueplusplus_1_1_win_http_handler.html" title="Class to handle http requests and multicast requests on windows systems. " alt="" coords="236,155,448,181"/>
+</map>

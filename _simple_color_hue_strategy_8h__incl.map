@@ -1,0 +1,14 @@
+<map id="include/hueplusplus/SimpleColorHueStrategy.h" name="include/hueplusplus/SimpleColorHueStrategy.h">
+<area shape="rect" id="node2" href="$_color_hue_strategy_8h.html" title="ColorHueStrategy.h" alt="" coords="1228,244,1375,271"/>
+<area shape="rect" id="node6" href="$_light_8h.html" title="Light.h" alt="" coords="763,95,829,121"/>
+<area shape="rect" id="node5" href="$_color_units_8h.html" title="ColorUnits.h" alt="" coords="969,319,1071,345"/>
+<area shape="rect" id="node7" href="$_a_p_i_cache_8h.html" title="APICache.h" alt="" coords="531,244,626,271"/>
+<area shape="rect" id="node10" href="$_hue_command_a_p_i_8h.html" title="HueCommandAPI.h" alt="" coords="395,319,543,345"/>
+<area shape="rect" id="node19" href="$_base_device_8h.html" title="BaseDevice.h" alt="" coords="673,169,783,196"/>
+<area shape="rect" id="node20" href="$_brightness_strategy_8h.html" title="BrightnessStrategy.h" alt="" coords="881,169,1037,196"/>
+<area shape="rect" id="node21" href="$_color_temperature_strategy_8h.html" title="ColorTemperatureStrategy.h" alt="" coords="1061,169,1264,196"/>
+<area shape="rect" id="node23" href="$_state_transaction_8h.html" title="StateTransaction.h" alt="" coords="277,244,419,271"/>
+<area shape="rect" id="node13" href="$_hue_exception_8h.html" title="HueException.h" alt="" coords="145,393,269,420"/>
+<area shape="rect" id="node16" href="$_i_http_handler_8h.html" title="IHttpHandler.h" alt="" coords="625,393,741,420"/>
+<area shape="rect" id="node24" href="$_action_8h.html" title="Action.h" alt="" coords="144,319,219,345"/>
+</map>

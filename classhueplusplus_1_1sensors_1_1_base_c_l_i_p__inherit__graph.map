@@ -1,0 +1,11 @@
+<map id="hueplusplus::sensors::BaseCLIP" name="hueplusplus::sensors::BaseCLIP">
+<area shape="rect" id="node3" href="$classhueplusplus_1_1sensors_1_1_c_l_i_p_generic_flag.html" title="CLIP sensor for a generic 3rd party sensor. " alt="" coords="445,5,604,47"/>
+<area shape="rect" id="node4" href="$classhueplusplus_1_1sensors_1_1_c_l_i_p_generic_status.html" title="CLIP sensor for a generic 3rd party status. " alt="" coords="445,71,604,112"/>
+<area shape="rect" id="node5" href="$classhueplusplus_1_1sensors_1_1_c_l_i_p_humidity.html" title="CLIP sensor for humidity. " alt="" coords="445,136,604,177"/>
+<area shape="rect" id="node6" href="$classhueplusplus_1_1sensors_1_1_c_l_i_p_light_level.html" title="CLIP sensor for light level. " alt="" coords="445,201,604,243"/>
+<area shape="rect" id="node7" href="$classhueplusplus_1_1sensors_1_1_c_l_i_p_open_close.html" title="CLIP sensor detecting whether a contact is open or closed. " alt="" coords="445,267,604,308"/>
+<area shape="rect" id="node8" href="$classhueplusplus_1_1sensors_1_1_c_l_i_p_presence.html" title="CLIP sensor to detect presence. " alt="" coords="445,332,604,373"/>
+<area shape="rect" id="node9" href="$classhueplusplus_1_1sensors_1_1_c_l_i_p_switch.html" title="CLIP sensor for button presses. " alt="" coords="445,397,604,439"/>
+<area shape="rect" id="node10" href="$classhueplusplus_1_1sensors_1_1_c_l_i_p_temperature.html" title="CLIP sensor for temperature. " alt="" coords="445,463,604,504"/>
+<area shape="rect" id="node2" href="$classhueplusplus_1_1_base_device.html" title="Base class for physical devices connected to the bridge (sensor or light). " alt="" coords="5,242,191,269"/>
+</map>

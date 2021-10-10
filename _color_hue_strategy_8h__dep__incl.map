@@ -1,0 +1,24 @@
+<map id="include/hueplusplus/ColorHueStrategy.h" name="include/hueplusplus/ColorHueStrategy.h">
+<area shape="rect" id="node2" href="$_bridge_8h.html" title="include/hueplusplus\l/Bridge.h" alt="" coords="1487,273,1637,315"/>
+<area shape="rect" id="node10" href="$_light_8h.html" title="include/hueplusplus\l/Light.h" alt="" coords="821,95,972,136"/>
+<area shape="rect" id="node15" href="$_simple_color_hue_strategy_8h.html" title="include/hueplusplus\l/SimpleColorHueStrategy.h" alt="" coords="268,184,464,225"/>
+<area shape="rect" id="node3" href="$_entertainment_mode_8h.html" title="include/hueplusplus\l/EntertainmentMode.h" alt="" coords="1699,363,1865,404"/>
+<area shape="rect" id="node5" href="$_bridge_8cpp.html" title="src/Bridge.cpp" alt="" coords="1890,370,2005,397"/>
+<area shape="rect" id="node6" href="$_bridge_setup_8cpp.html" title="examples/BridgeSetup.cpp" alt="" coords="2029,370,2225,397"/>
+<area shape="rect" id="node7" href="$_lights_off_8cpp.html" title="examples/LightsOff.cpp" alt="" coords="1052,370,1227,397"/>
+<area shape="rect" id="node8" href="$_snippets_8cpp.html" title="Contains code snippets used in the documentation, performs no useful functions. " alt="" coords="1251,370,1425,397"/>
+<area shape="rect" id="node9" href="$_username_config_8cpp.html" title="examples/UsernameConfig.cpp" alt="" coords="1449,370,1675,397"/>
+<area shape="rect" id="node4" href="$_entertainment_mode_8cpp.html" title="src/EntertainmentMode.cpp" alt="" coords="1682,452,1882,479"/>
+<area shape="rect" id="node11" href="$_hue_device_types_8h.html" title="include/hueplusplus\l/HueDeviceTypes.h" alt="" coords="1323,184,1473,225"/>
+<area shape="rect" id="node13" href="$_extended_color_hue_strategy_8h.html" title="include/hueplusplus\l/ExtendedColorHueStrategy.h" alt="" coords="260,273,472,315"/>
+<area shape="rect" id="node17" href="$_extended_color_temperature_strategy_8h.html" title="include/hueplusplus\l/ExtendedColorTemperatureStrategy.h" alt="" coords="1143,273,1411,315"/>
+<area shape="rect" id="node19" href="$_simple_color_temperature_strategy_8h.html" title="include/hueplusplus\l/SimpleColorTemperatureStrategy.h" alt="" coords="897,184,1149,225"/>
+<area shape="rect" id="node21" href="$_simple_brightness_strategy_8h.html" title="include/hueplusplus\l/SimpleBrightnessStrategy.h" alt="" coords="667,184,873,225"/>
+<area shape="rect" id="node23" href="$_light_8cpp.html" title="src/Light.cpp" alt="" coords="539,191,643,218"/>
+<area shape="rect" id="node12" href="$_hue_device_types_8cpp.html" title="src/HueDeviceTypes.cpp" alt="" coords="557,370,737,397"/>
+<area shape="rect" id="node14" href="$_extended_color_hue_strategy_8cpp.html" title="src/ExtendedColorHueStrategy.cpp" alt="" coords="243,370,489,397"/>
+<area shape="rect" id="node16" href="$_simple_color_hue_strategy_8cpp.html" title="src/SimpleColorHueStrategy.cpp" alt="" coords="5,281,236,307"/>
+<area shape="rect" id="node18" href="$_extended_color_temperature_strategy_8cpp.html" title="src/ExtendedColorTemperature\lStrategy.cpp" alt="" coords="805,363,1028,404"/>
+<area shape="rect" id="node20" href="$_simple_color_temperature_strategy_8cpp.html" title="src/SimpleColorTemperature\lStrategy.cpp" alt="" coords="912,273,1119,315"/>
+<area shape="rect" id="node22" href="$_simple_brightness_strategy_8cpp.html" title="src/SimpleBrightnessStrategy.cpp" alt="" coords="597,281,836,307"/>
+</map>
