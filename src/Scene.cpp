@@ -369,7 +369,7 @@ CreateScene& CreateScene::setLightIds(const std::vector<int>& ids)
 
 CreateScene& CreateScene::setRecycle(bool recycle)
 {
-    request["recycle"] = true;
+    request["recycle"] = recycle;
     return *this;
 }
 
