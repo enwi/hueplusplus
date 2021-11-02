@@ -130,14 +130,14 @@ std::string durationTo_hh_mm_ss(std::chrono::system_clock::duration duration)
     {
         throw HueException(CURRENT_FILE_INFO, "Duration parameter longer than 1 day");
     }
-    int numH = static_cast<int>(duration_cast<hours>(duration).count());
+    unsigned int numH = static_cast<unsigned int>(duration_cast<hours>(duration).count());
     duration -= hours(numH);
-    int numM = static_cast<int>(duration_cast<minutes>(duration).count());
+    unsigned int numM = static_cast<unsigned int>(duration_cast<minutes>(duration).count());
     duration -= minutes(numM);
-    int numS = static_cast<int>(duration_cast<seconds>(duration).count());
+    unsigned int numS = static_cast<unsigned int>(duration_cast<seconds>(duration).count());
 
     char result[9];
-    std::sprintf(result, "%02d:%02d:%02d", numH, numM, numS);
+    std::snprintf(result, 9, "%02u:%02u:%02u", numH, numM, numS);
     return std::string(result);
 }
 

@@ -125,7 +125,7 @@ TEST(RGB, toHueSaturation)
         EXPECT_EQ(254, hs.saturation);
     }
     {
-        const RGB darkGreen{64, 128, 128 };
+        const RGB darkGreen {64, 128, 128};
         HueSaturation hs = darkGreen.toHueSaturation();
         EXPECT_EQ(38250, hs.hue);
         EXPECT_EQ(127, hs.saturation);
@@ -192,7 +192,8 @@ TEST(RGB, fromXY)
     int maxDiffB = 0;
     for (int i = 0; i < N; ++i)
     {
-        const RGB rgb {dist(rng), dist(rng), dist(rng)};
+        const RGB rgb {
+            static_cast<uint8_t>(dist(rng)), static_cast<uint8_t>(dist(rng)), static_cast<uint8_t>(dist(rng))};
         const XYBrightness xy = rgb.toXY();
         const RGB back = RGB::fromXY(xy);
         int diffR = (rgb.r - back.r) * (rgb.r - back.r);
