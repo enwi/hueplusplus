@@ -29,6 +29,8 @@
 #include "mbedtls/ssl.h"
 #include "mbedtls/timing.h"
 
+#include "hueplusplus/HueExceptionMacro.h"
+
 namespace hueplusplus
 {
 constexpr uint8_t HUE_ENTERTAINMENT_HEADER_SIZE = 16;
@@ -120,7 +122,16 @@ EntertainmentMode::EntertainmentMode(Bridge& b, Group& g)
     /*-------------------------------------------------*\
     | Seed the Deterministic Random Bit Generator (RNG) |
     \*-------------------------------------------------*/
-    int ret = mbedtls_ctr_drbg_seed(&tls_context->ctr_drbg, mbedtls_entropy_func, &tls_context->entropy, NULL, 0);
+    if (mbedtls_ctr_drbg_seed(&tls_context->ctr_drbg, mbedtls_entropy_func, &tls_context->entropy, NULL, 0) != 0)
+    {
+        mbedtls_entropy_free(&tls_context->entropy);
+        mbedtls_ctr_drbg_free(&tls_context->ctr_drbg);
+        mbedtls_x509_crt_free(&tls_context->cacert);
+        mbedtls_ssl_config_free(&tls_context->conf);
+        mbedtls_ssl_free(&tls_context->ssl);
+        mbedtls_net_free(&tls_context->server_fd);
+        throw HueException(CURRENT_FILE_INFO, "Failed to seed mbedtls RNG");
+    }
 }
 
 EntertainmentMode::~EntertainmentMode()

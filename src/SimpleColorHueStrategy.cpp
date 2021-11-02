@@ -55,7 +55,7 @@ bool SimpleColorHueStrategy::setColorXY(const XYBrightness& xy, uint8_t transiti
 
 bool SimpleColorHueStrategy::setColorLoop(bool on, Light& light) const
 {
-    return light.transaction().setColorLoop(true).commit();
+    return light.transaction().setColorLoop(on).commit();
 }
 
 bool SimpleColorHueStrategy::alertHueSaturation(const HueSaturation& hueSat, Light& light) const
