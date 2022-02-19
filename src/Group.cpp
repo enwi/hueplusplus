@@ -267,10 +267,7 @@ nlohmann::json CreateGroup::getRequest() const
     {
         result["name"] = name;
     }
-    if (!roomType.empty())
-    {
-        result["class"] = roomType;
-    }
+    result["class"] = roomType.empty() ? "Other" : roomType;
     return result;
 }
 
