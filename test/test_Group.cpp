@@ -268,32 +268,34 @@ TEST_F(GroupTest, createSceneAction)
 
 TEST(CreateGroup, LightGroup)
 {
-    EXPECT_EQ(nlohmann::json({{"lights", {"1"}}, {"type", "LightGroup"}, {"name", "Name"}}),
+    EXPECT_EQ(nlohmann::json({{"lights", {"1"}}, {"type", "LightGroup"}, {"name", "Name"}, {"class", "Other"}}),
         CreateGroup::LightGroup({1}, "Name").getRequest());
-    EXPECT_EQ(
-        nlohmann::json({{"lights", {"2", "4"}}, {"type", "LightGroup"}}), CreateGroup::LightGroup({2, 4}).getRequest());
+    EXPECT_EQ(nlohmann::json({{"lights", {"2", "4"}}, {"type", "LightGroup"}, {"class", "Other"}}),
+        CreateGroup::LightGroup({2, 4}).getRequest());
 }
 
 TEST(CreateGroup, Entertainment)
 {
-    EXPECT_EQ(nlohmann::json({{"lights", {"1"}}, {"type", "Entertainment"}, {"name", "Name"}}),
+    EXPECT_EQ(nlohmann::json({{"lights", {"1"}}, {"type", "Entertainment"}, {"name", "Name"}, {"class", "Other"}}),
         CreateGroup::Entertainment({1}, "Name").getRequest());
-    EXPECT_EQ(nlohmann::json({{"lights", {"2", "4"}}, {"type", "Entertainment"}}),
+    EXPECT_EQ(nlohmann::json({{"lights", {"2", "4"}}, {"type", "Entertainment"}, {"class", "Other"}}),
         CreateGroup::Entertainment({2, 4}).getRequest());
 }
 
 TEST(CreateGroup, Zone)
 {
-    EXPECT_EQ(nlohmann::json({{"lights", {"1"}}, {"type", "Zone"}, {"name", "Name"}}),
+    EXPECT_EQ(nlohmann::json({{"lights", {"1"}}, {"type", "Zone"}, {"name", "Name"}, {"class", "Other"}}),
         CreateGroup::Zone({1}, "Name").getRequest());
-    EXPECT_EQ(nlohmann::json({{"lights", {"2", "4"}}, {"type", "Zone"}}), CreateGroup::Zone({2, 4}).getRequest());
+    EXPECT_EQ(nlohmann::json({{"lights", {"2", "4"}}, {"type", "Zone"}, {"class", "Other"}}),
+        CreateGroup::Zone({2, 4}).getRequest());
 }
 
 TEST(CreateGroup, Room)
 {
-    EXPECT_EQ(nlohmann::json({{"lights", {"1"}}, {"type", "Room"}, {"name", "Name"}, {"class", "Bedroom"}}),
+    EXPECT_EQ(nlohmann::json({{"lights", {"1"}}, {"type", "Room"}, {"name", "Name"}, {"class", "Bedroom"}, {"class", "Other"}}),
         CreateGroup::Room({1}, "Name", "Bedroom").getRequest());
-    EXPECT_EQ(nlohmann::json({{"lights", {"1"}}, {"type", "Room"}, {"name", "Name"}}),
+    EXPECT_EQ(nlohmann::json({{"lights", {"1"}}, {"type", "Room"}, {"name", "Name"}, {"class", "Other"}}),
         CreateGroup::Room({1}, "Name").getRequest());
-    EXPECT_EQ(nlohmann::json({{"lights", {"2", "4"}}, {"type", "Room"}}), CreateGroup::Room({2, 4}).getRequest());
+    EXPECT_EQ(nlohmann::json({{"lights", {"2", "4"}}, {"type", "Room"}, {"class", "Other"}}),
+        CreateGroup::Room({2, 4}).getRequest());
 }
