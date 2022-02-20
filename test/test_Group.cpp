@@ -292,7 +292,7 @@ TEST(CreateGroup, Zone)
 
 TEST(CreateGroup, Room)
 {
-    EXPECT_EQ(nlohmann::json({{"lights", {"1"}}, {"type", "Room"}, {"name", "Name"}, {"class", "Bedroom"}, {"class", "Other"}}),
+    EXPECT_EQ(nlohmann::json({{"lights", {"1"}}, {"type", "Room"}, {"name", "Name"}, {"class", "Bedroom"}}),
         CreateGroup::Room({1}, "Name", "Bedroom").getRequest());
     EXPECT_EQ(nlohmann::json({{"lights", {"1"}}, {"type", "Room"}, {"name", "Name"}, {"class", "Other"}}),
         CreateGroup::Room({1}, "Name").getRequest());
