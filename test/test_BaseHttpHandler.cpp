@@ -29,7 +29,7 @@
 #include "testhelper.h"
 
 #include "hueplusplus/HueException.h"
-#include "json/json.hpp"
+#include <nlohmann/json.hpp>
 #include "mocks/mock_BaseHttpHandler.h"
 
 using namespace hueplusplus;

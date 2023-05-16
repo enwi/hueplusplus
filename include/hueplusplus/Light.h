@@ -33,7 +33,7 @@
 #include "HueCommandAPI.h"
 #include "StateTransaction.h"
 
-#include "json/json.hpp"
+#include <nlohmann/json.hpp>
 
 namespace hueplusplus
 {

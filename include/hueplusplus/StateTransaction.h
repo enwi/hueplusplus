@@ -29,7 +29,7 @@
 #include "ColorUnits.h"
 #include "HueCommandAPI.h"
 
-#include "json/json.hpp"
+#include <nlohmann/json.hpp>
 
 namespace hueplusplus
 {

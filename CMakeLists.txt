@@ -27,10 +27,11 @@ option(hueplusplus_NO_EXTERNAL_LIBRARIES "Do not try to use external libraries" 
 
 # Try to find installed packages
 if(NOT hueplusplus_NO_EXTERNAL_LIBRARIES)
-	find_package(mbedtls)
+	find_package(MbedTLS)
+	find_package(nlohmann_json)
 endif()
 
-set(NEED_SUBMODULES NOT ${mbedtls_FOUND})
+set(NEED_SUBMODULES NOT (${mbedtls_FOUND} AND ${nlohmann_json_FOUND}))
 
 option(CLANG_TIDY_FIX "Perform fixes for Clang-Tidy" OFF)
 find_program(CLANG_TIDY_EXE NAMES "clang-tidy" DOC "Path to clang-tidy executable")
@@ -102,8 +103,19 @@ if(NOT mbedtls_FOUND)
 	set_property(TARGET mbedtls PROPERTY POSITION_INDEPENDENT_CODE ON)
 	set_property(TARGET mbedcrypto PROPERTY POSITION_INDEPENDENT_CODE ON)
 	set_property(TARGET mbedx509 PROPERTY POSITION_INDEPENDENT_CODE ON)
+
+	# Aliases for compatibility with find_package
+	add_library(MbedTLS::mbedtls ALIAS mbedtls)
+	add_library(MbedTLS::mbedcrypto ALIAS mbedcrypto)
+	add_library(MbedTLS::mbedx509 ALIAS mbedx509)
 endif()
 
+if(NOT nlohmann_json_FOUND)
+	# Use embedded json
+	# disable tests for json
+	set(JSON_BuildTests OFF CACHE INTERNAL "")
+	add_subdirectory("lib/json" EXCLUDE_FROM_ALL)
+endif()
 
 add_subdirectory(src)
 

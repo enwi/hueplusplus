@@ -18,7 +18,7 @@ When you want to update the library for a new version, use pull with rebase.
 ```
 
 ## Build with CMake {#build-cmake}
-To build the library, you need to use [CMake](https://cmake.org) version 3.8 or higher.
+To build the library, you need to use [CMake](https://cmake.org) version 3.10 or higher.
 It is easiest to create a separate build directory where the build files are stored.
 ```{.sh}
 ~/hueplusplus $ mkdir build
@@ -84,3 +84,7 @@ cd build
 cmake .. -Dhueplusplus_EXAMPLES=ON
 make hueplusplus_examples
 ```
+
+## External libraries
+Hueplusplus requires a few external libraries  (e.g. Mbed TLS and GTest), which are included automatically. If these are pre-installed on your system, those versions will be used by default. This can potentially cause issues if your installed versions are incompatible.
+In this case, set `hueplusplus_NO_EXTERNAL_LIBRARIES=ON` to force using the embedded versions instead of the installed libraries.
