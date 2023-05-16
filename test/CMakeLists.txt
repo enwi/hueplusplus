@@ -1,32 +1,39 @@
-# Download and unpack googletest at configure time
-configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
-execute_process(COMMAND ${CMAKE_COMMAND} -G ${CMAKE_GENERATOR} .
-    RESULT_VARIABLE result
-    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/googletest-download"
-)
-if(result)
-    message(FATAL_ERROR "CMake step for googletest failed: ${result}")
-endif()
-execute_process(COMMAND "${CMAKE_COMMAND}" --build .
-    RESULT_VARIABLE result
-    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/googletest-download"
-)
-if(result)
-    message(FATAL_ERROR "Build step for googletest failed: ${result}")
+if(NOT hueplusplus_NO_EXTERNAL_LIBRARIES)
+    find_package(GTest)
+    find_package(GMock)
 endif()
 
-# Prevent overriding the parent project's compiler/linker
-# settings on Windows
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+if(NOT GTest_FOUND OR NOT GMock_FOUND)
+    # Download and unpack googletest at configure time
+    configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
+    execute_process(COMMAND ${CMAKE_COMMAND} -G ${CMAKE_GENERATOR} .
+        RESULT_VARIABLE result
+        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/googletest-download"
+    )
+    if(result)
+        message(FATAL_ERROR "CMake step for googletest failed: ${result}")
+    endif()
+    execute_process(COMMAND "${CMAKE_COMMAND}" --build .
+        RESULT_VARIABLE result
+        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/googletest-download"
+    )
+    if(result)
+        message(FATAL_ERROR "Build step for googletest failed: ${result}")
+    endif()
 
-# Add googletest directly to our build. This defines
-# the gtest and gtest_main targets.
-add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src EXCLUDE_FROM_ALL
-                 ${CMAKE_CURRENT_BINARY_DIR}/googletest-build EXCLUDE_FROM_ALL
-)
+    # Prevent overriding the parent project's compiler/linker
+    # settings on Windows
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
-target_compile_features(gmock PUBLIC cxx_std_14)
-target_compile_features(gtest PUBLIC cxx_std_14)
+    # Add googletest directly to our build. This defines
+    # the gtest and gtest_main targets.
+    add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src EXCLUDE_FROM_ALL
+                     ${CMAKE_CURRENT_BINARY_DIR}/googletest-build EXCLUDE_FROM_ALL
+    )
+    target_compile_features(gmock PUBLIC cxx_std_14)
+    target_compile_features(gtest PUBLIC cxx_std_14)
+endif()
+
 
 # define all test sources
 set(TEST_SOURCES
