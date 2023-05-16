@@ -23,6 +23,14 @@ endif()
 # options to set
 option(hueplusplus_TESTS "Build tests" OFF)
 option(hueplusplus_EXAMPLES "Build examples" OFF)
+option(hueplusplus_NO_EXTERNAL_LIBRARIES "Do not try to use external libraries" OFF)
+
+# Try to find installed packages
+if(NOT hueplusplus_NO_EXTERNAL_LIBRARIES)
+	find_package(mbedtls)
+endif()
+
+set(NEED_SUBMODULES NOT ${mbedtls_FOUND})
 
 option(CLANG_TIDY_FIX "Perform fixes for Clang-Tidy" OFF)
 find_program(CLANG_TIDY_EXE NAMES "clang-tidy" DOC "Path to clang-tidy executable")
@@ -38,7 +46,7 @@ endif()
 find_package(Git QUIET)
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
 	option(GIT_SUBMODULE "Check submodules during build" ON)
-	if(GIT_SUBMODULE)
+	if(GIT_SUBMODULE AND NEED_SUBMODULES)
 		message(STATUS "Submodule update")
 		execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 			RESULT_VARIABLE GIT_SUBMOD_RESULT)
@@ -83,15 +91,19 @@ if (1 AND APPLE)
 	set(CMAKE_MACOSX_RPATH 1)
 endif()
 
-set(USE_STATIC_MBEDTLS_LIBRARY ON)
-set(USE_SHARED_MBEDTLS_LIBRARY OFF)
-add_subdirectory("lib/mbedtls" EXCLUDE_FROM_ALL)
+if(NOT mbedtls_FOUND)
+	# Build mbedtls if not installed
+	set(USE_STATIC_MBEDTLS_LIBRARY ON)
+	set(USE_SHARED_MBEDTLS_LIBRARY OFF)
+	add_subdirectory("lib/mbedtls" EXCLUDE_FROM_ALL)
 
-# Compile the mbedtls library as a static with position independent code,
-# because we need it for both a shared and static library
-set_property(TARGET mbedtls PROPERTY POSITION_INDEPENDENT_CODE ON)
-set_property(TARGET mbedcrypto PROPERTY POSITION_INDEPENDENT_CODE ON)
-set_property(TARGET mbedx509 PROPERTY POSITION_INDEPENDENT_CODE ON)
+	# Compile the mbedtls library as a static with position independent code,
+	# because we need it for both a shared and static library
+	set_property(TARGET mbedtls PROPERTY POSITION_INDEPENDENT_CODE ON)
+	set_property(TARGET mbedcrypto PROPERTY POSITION_INDEPENDENT_CODE ON)
+	set_property(TARGET mbedx509 PROPERTY POSITION_INDEPENDENT_CODE ON)
+endif()
+
 
 add_subdirectory(src)
 
