@@ -26,7 +26,7 @@
 #include <exception>
 #include <string>
 
-#include "json/json.hpp"
+#include <nlohmann/json.hpp>
 
 namespace hueplusplus
 {

@@ -30,7 +30,7 @@
 
 #include "../testhelper.h"
 #include "hueplusplus/Light.h"
-#include "json/json.hpp"
+#include <nlohmann/json.hpp>
 
 //! Mock Class
 class MockLight : public hueplusplus::Light

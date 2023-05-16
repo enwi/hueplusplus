@@ -26,7 +26,7 @@
 #include <string>
 #include <vector>
 
-#include <json/json.hpp>
+#include <nlohmann/json.hpp>
 
 #include "APICache.h"
 #include "ColorUnits.h"

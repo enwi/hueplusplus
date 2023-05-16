@@ -28,7 +28,7 @@
 
 #include "hueplusplus/LibConfig.h"
 #include "hueplusplus/UPnP.h"
-#include "json/json.hpp"
+#include <nlohmann/json.hpp>
 #include "mocks/mock_HttpHandler.h"
 
 using namespace hueplusplus;

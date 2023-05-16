@@ -27,7 +27,7 @@
 
 #include "hueplusplus/HueExceptionMacro.h"
 #include "hueplusplus/Utils.h"
-#include "json/json.hpp"
+#include <nlohmann/json.hpp>
 
 namespace hueplusplus
 {
