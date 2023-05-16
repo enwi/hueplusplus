@@ -29,7 +29,7 @@
 #include <gmock/gmock.h>
 
 #include "hueplusplus/BaseHttpHandler.h"
-#include "json/json.hpp"
+#include <nlohmann/json.hpp>
 
 //! Mock Class
 class MockBaseHttpHandler : public hueplusplus::BaseHttpHandler

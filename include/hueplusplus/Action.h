@@ -22,7 +22,7 @@
 #ifndef INCLUDE_HUEPLUSPLUS_ACTION_H
 #define INCLUDE_HUEPLUSPLUS_ACTION_H
 
-#include "json/json.hpp"
+#include <nlohmann/json.hpp>
 
 namespace hueplusplus
 {

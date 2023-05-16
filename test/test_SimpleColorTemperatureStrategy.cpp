@@ -31,7 +31,7 @@
 #include "testhelper.h"
 
 #include "hueplusplus/SimpleColorTemperatureStrategy.h"
-#include "json/json.hpp"
+#include <nlohmann/json.hpp>
 #include "mocks/mock_HttpHandler.h"
 #include "mocks/mock_Light.h"
 

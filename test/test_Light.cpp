@@ -27,7 +27,7 @@
 
 #include "hueplusplus/Bridge.h"
 #include "hueplusplus/Light.h"
-#include "json/json.hpp"
+#include <nlohmann/json.hpp>
 #include "mocks/mock_HttpHandler.h"
 
 using namespace hueplusplus;
