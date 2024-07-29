@@ -30,7 +30,9 @@
 #include <stdio.h>
 #include <ws2tcpip.h>
 
+#ifdef _MSC_VER
 #pragma comment(lib, "Ws2_32.lib")
+#endif
 
 namespace hueplusplus
 {

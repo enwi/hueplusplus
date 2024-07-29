@@ -25,7 +25,7 @@
 #include <hueplusplus/CLIPSensors.h>
 #include <hueplusplus/ZLLSensors.h>
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 #include <hueplusplus/WinHttpHandler.h>
 
 namespace hueplusplus

@@ -29,7 +29,7 @@
 
 #include <hueplusplus/Bridge.h>
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 #include <hueplusplus/WinHttpHandler.h>
 
 using SystemHttpHandler = hueplusplus::WinHttpHandler;
