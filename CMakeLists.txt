@@ -1,10 +1,4 @@
-cmake_minimum_required(VERSION 3.10.2)
-
-if(${CMAKE_VERSION} VERSION_LESS 3.11)
-	cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
-else()
-	cmake_policy(VERSION 3.11)
-endif()
+cmake_minimum_required(VERSION 3.10.2...3.28)
 
 # Add cmake dir to module path, so Find*.cmake can be found
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
@@ -27,11 +21,12 @@ option(hueplusplus_NO_EXTERNAL_LIBRARIES "Do not try to use external libraries" 
 
 # Try to find installed packages
 if(NOT hueplusplus_NO_EXTERNAL_LIBRARIES)
-	find_package(MbedTLS)
-	find_package(nlohmann_json)
+    # Suppress warnings if libraries are not found, they will be built from submodules
+	find_package(MbedTLS QUIET)
+	find_package(nlohmann_json QUIET)
 endif()
 
-set(NEED_SUBMODULES NOT (${mbedtls_FOUND} AND ${nlohmann_json_FOUND}))
+set(NEED_SUBMODULES NOT (${MbedTLS_FOUND} AND ${nlohmann_json_FOUND}))
 
 option(CLANG_TIDY_FIX "Perform fixes for Clang-Tidy" OFF)
 find_program(CLANG_TIDY_EXE NAMES "clang-tidy" DOC "Path to clang-tidy executable")
@@ -92,8 +87,9 @@ if (1 AND APPLE)
 	set(CMAKE_MACOSX_RPATH 1)
 endif()
 
-if(NOT mbedtls_FOUND)
+if(NOT MbedTLS_FOUND)
 	# Build mbedtls if not installed
+	message(STATUS "MbedTLS was not found, the submodule is used.")
 	set(USE_STATIC_MBEDTLS_LIBRARY ON)
 	set(USE_SHARED_MBEDTLS_LIBRARY OFF)
 	add_subdirectory("lib/mbedtls" EXCLUDE_FROM_ALL)
@@ -112,6 +108,7 @@ endif()
 
 if(NOT nlohmann_json_FOUND)
 	# Use embedded json
+	message(STATUS "nlohmann_json was not found, the submodule is used.")
 	# disable tests for json
 	set(JSON_BuildTests OFF CACHE INTERNAL "")
 	add_subdirectory("lib/json" EXCLUDE_FROM_ALL)
