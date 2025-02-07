@@ -100,10 +100,12 @@ if(NOT MbedTLS_FOUND)
 	set_property(TARGET mbedcrypto PROPERTY POSITION_INDEPENDENT_CODE ON)
 	set_property(TARGET mbedx509 PROPERTY POSITION_INDEPENDENT_CODE ON)
 
-	# Aliases for compatibility with find_package
-	add_library(MbedTLS::mbedtls ALIAS mbedtls)
-	add_library(MbedTLS::mbedcrypto ALIAS mbedcrypto)
-	add_library(MbedTLS::mbedx509 ALIAS mbedx509)
+	if(CMAKE_VERSION VERSION_LESS 3.18)
+		# Aliases for compatibility with find_package, newer cmake versions add these already
+		add_library(MbedTLS::mbedtls ALIAS mbedtls)
+		add_library(MbedTLS::mbedcrypto ALIAS mbedcrypto)
+		add_library(MbedTLS::mbedx509 ALIAS mbedx509)
+	endif()
 endif()
 
 if(NOT nlohmann_json_FOUND)
