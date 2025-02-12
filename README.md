@@ -1,10 +1,10 @@
 # hueplusplus
 A simple and easy to use library for Philips Hue Lights
 
-| Branch | Travis CI | Codecov | LGTM
+| Branch | CI | Codecov | LGTM
 |:-|:-|:-|:-|
-| [Master](https://github.com/enwi/hueplusplus/tree/master) | [![Build Status](https://travis-ci.com/enwi/hueplusplus.svg?branch=master)](https://travis-ci.com/enwi/hueplusplus) | [![codecov](https://codecov.io/gh/enwi/hueplusplus/branch/master/graph/badge.svg)](https://codecov.io/gh/enwi/hueplusplus) | [![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/enwi/hueplusplus.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/enwi/hueplusplus/context:cpp) |
-| [Development](https://github.com/enwi/hueplusplus/tree/development) | [![Build Status](https://travis-ci.com/enwi/hueplusplus.svg?branch=development)](https://travis-ci.com/enwi/hueplusplus) | [![codecov](https://codecov.io/gh/enwi/hueplusplus/branch/development/graph/badge.svg)](https://codecov.io/gh/enwi/hueplusplus) | |
+| [Master](https://github.com/enwi/hueplusplus/tree/master) | [![CI](https://github.com/enwi/hueplusplus/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/enwi/hueplusplus/actions/workflows/build.yml)| [![codecov](https://codecov.io/gh/enwi/hueplusplus/branch/master/graph/badge.svg)](https://codecov.io/gh/enwi/hueplusplus) | [![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/enwi/hueplusplus.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/enwi/hueplusplus/context:cpp) |
+| [Development](https://github.com/enwi/hueplusplus/tree/development) | [![CI](https://github.com/enwi/hueplusplus/actions/workflows/build.yml/badge.svg?branch=development)](https://github.com/enwi/hueplusplus/actions/workflows/build.yml) | [![codecov](https://codecov.io/gh/enwi/hueplusplus/branch/development/graph/badge.svg)](https://codecov.io/gh/enwi/hueplusplus) | |
 
 ## Features
 * find bridges with SSDP or set an ip manually
