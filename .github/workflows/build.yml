@@ -27,15 +27,15 @@ jobs:
       - name: Set up dependencies
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y python3-yaml doxygen graphviz
+          sudo apt-get install -y gcc g++ lcov doxygen graphviz python3-yaml
 
-      - name: Install CodeCov and LCOV
-        run: |
-          sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-7 90
-          wget http://ftp.de.debian.org/debian/pool/main/l/lcov/lcov_1.13.orig.tar.gz
-          tar xf lcov_1.13.orig.tar.gz
-          make -C lcov-1.13 "PREFIX=${HOME}/.local" install
-          echo "${HOME}/.local/bin" >> $GITHUB_PATH
+    #   - name: Install CodeCov and LCOV
+    #     run: |
+    #       sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-7 90
+    #       wget http://ftp.de.debian.org/debian/pool/main/l/lcov/lcov_1.13.orig.tar.gz
+    #       tar xf lcov_1.13.orig.tar.gz
+    #       make -C lcov-1.13 "PREFIX=${HOME}/.local" install
+    #       echo "${HOME}/.local/bin" >> $GITHUB_PATH
 
       - name: Show tool versions
         run: |
@@ -45,6 +45,7 @@ jobs:
           $CXX -v
           cmake --version
           lcov --version
+          gcov --version
 
       - name: Build project
         run: |
