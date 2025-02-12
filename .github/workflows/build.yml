@@ -18,6 +18,7 @@ jobs:
       CC: gcc
       RUN_TESTS: true
       COVERAGE: false
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       # PATH: ${{ github.workspace }}/deps/cmake/bin:${{ env.PATH }}
 
     steps:
@@ -66,5 +67,5 @@ jobs:
         if: github.ref == 'refs/heads/master'
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GH_REPO_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./doc/html
