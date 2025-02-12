@@ -103,7 +103,7 @@ if(LCOV_PATH AND GCOV_PATH)
     set_property(TARGET testcov_HuePlusPlus PROPERTY CXX_EXTENSIONS OFF)
 
     target_link_libraries(testcov_HuePlusPlus PRIVATE mbedtls)
-    target_link_libraries(testcov_HuePlusPlus PUBLIC gtest gmock)
+    target_link_libraries(testcov_HuePlusPlus PUBLIC nlohmann_json::nlohmann_json gtest gmock)
     target_include_directories(testcov_HuePlusPlus PUBLIC ${GTest_INCLUDE_DIRS})
     # this will be already done by APPEND_COVERAGE_COMPILER_FLAGS()
     #set_target_properties(
