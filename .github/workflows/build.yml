@@ -27,7 +27,7 @@ jobs:
       - name: Set up dependencies
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y python-yaml doxygen graphviz
+          sudo apt-get install -y python3-yaml doxygen graphviz
 
       - name: Install CodeCov and LCOV
         run: |
