@@ -1,3 +1,16 @@
 <map id="include/hueplusplus/NewDeviceList.h" name="include/hueplusplus/NewDeviceList.h">
-<area shape="rect" id="node4" href="$_time_pattern_8h.html" title="TimePattern.h" alt="" coords="131,95,245,121"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="65,5,215,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,93,56,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="115,48,59,87,56,83,112,43"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="68,167,127,192"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="137,47,123,94,106,154,101,153,117,93,132,45"/>
+<area shape="rect" id="Node000004" href="$_time_pattern_8h.html" title=" " alt="" coords="131,93,245,119"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="154,44,176,80,171,83,149,47"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="269,93,416,119"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="190,43,301,86,299,91,188,48"/>
+<area shape="poly" id="edge5_Node000004_Node000003" title=" " alt="" coords="175,121,125,160,121,156,172,117"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="152,167,219,192"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="190,119,189,153,184,153,185,119"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="243,167,314,192"/>
+<area shape="poly" id="edge6_Node000004_Node000006" title=" " alt="" coords="204,117,255,156,251,160,201,121"/>
 </map>

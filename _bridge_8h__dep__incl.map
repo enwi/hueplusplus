@@ -1,9 +1,17 @@
 <map id="include/hueplusplus/Bridge.h" name="include/hueplusplus/Bridge.h">
-<area shape="rect" id="node2" href="$_entertainment_mode_8h.html" title="include/hueplusplus\l/EntertainmentMode.h" alt="" coords="22,95,189,136"/>
-<area shape="rect" id="node4" href="$_bridge_8cpp.html" title="src/Bridge.cpp" alt="" coords="213,102,328,129"/>
-<area shape="rect" id="node5" href="$_bridge_setup_8cpp.html" title="examples/BridgeSetup.cpp" alt="" coords="353,102,549,129"/>
-<area shape="rect" id="node6" href="$_lights_off_8cpp.html" title="examples/LightsOff.cpp" alt="" coords="573,102,747,129"/>
-<area shape="rect" id="node7" href="$_snippets_8cpp.html" title="Contains code snippets used in the documentation, performs no useful functions. " alt="" coords="772,102,945,129"/>
-<area shape="rect" id="node8" href="$_username_config_8cpp.html" title="examples/UsernameConfig.cpp" alt="" coords="970,102,1195,129"/>
-<area shape="rect" id="node3" href="$_entertainment_mode_8cpp.html" title="src/EntertainmentMode.cpp" alt="" coords="5,184,205,211"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="548,5,699,45"/>
+<area shape="rect" id="Node000002" href="$_bridge_setup_8cpp.html" title=" " alt="" coords="5,101,201,126"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="535,44,214,96,171,103,170,98,214,91,534,38"/>
+<area shape="rect" id="Node000003" href="$_lights_off_8cpp.html" title=" " alt="" coords="225,101,400,126"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="543,52,355,103,353,98,541,46"/>
+<area shape="rect" id="Node000004" href="$_snippets_8cpp.html" title="Contains code snippets used in the documentation, performs no useful functions." alt="" coords="425,101,598,126"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="589,56,528,102,525,98,586,52"/>
+<area shape="rect" id="Node000005" href="$_username_config_8cpp.html" title=" " alt="" coords="623,101,848,126"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="661,52,721,98,718,102,657,56"/>
+<area shape="rect" id="Node000006" href="$_entertainment_mode_8h.html" title=" " alt="" coords="872,93,1039,133"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="710,46,883,91,882,96,709,51"/>
+<area shape="rect" id="Node000008" href="$_bridge_8cpp.html" title=" " alt="" coords="1063,101,1178,126"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="713,35,871,58,1052,91,1082,98,1081,103,1051,96,870,63,712,40"/>
+<area shape="rect" id="Node000007" href="$_entertainment_mode_8cpp.html" title=" " alt="" coords="855,181,1056,207"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="958,147,958,181,953,181,953,147"/>
 </map>

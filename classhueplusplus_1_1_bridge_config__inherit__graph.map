@@ -1,2 +1,5 @@
 <map id="hueplusplus::BridgeConfig" name="hueplusplus::BridgeConfig">
+<area shape="rect" id="Node000001" title="General bridge configuration properties." alt="" coords="19,5,210,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,224,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="117,44,117,79,112,79,112,44"/>
 </map>

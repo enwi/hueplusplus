@@ -1,3 +1,5 @@
 <map id="hueplusplus::SearchableResourceList&lt; Resource &gt;" name="hueplusplus::SearchableResourceList&lt; Resource &gt;">
-<area shape="rect" id="node2" href="$classhueplusplus_1_1_resource_list.html" title="hueplusplus::ResourceList\l\&lt; Resource, int \&gt;" alt="" coords="29,5,220,47"/>
+<area shape="rect" id="Node000001" title="Handles a ResourceList of physical devices which can be searched for." alt="" coords="5,93,245,133"/>
+<area shape="rect" id="Node000002" href="$classhueplusplus_1_1_resource_list.html" title=" " alt="" coords="30,5,221,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="128,59,128,93,123,93,123,59"/>
 </map>

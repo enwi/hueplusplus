@@ -1,5 +1,9 @@
 <map id="hueplusplus::EntertainmentMode" name="hueplusplus::EntertainmentMode">
-<area shape="rect" id="node2" href="$classhueplusplus_1_1_bridge.html" title="Bridge class for a bridge. " alt="" coords="11,95,161,121"/>
-<area shape="rect" id="node3" href="$classhueplusplus_1_1_group.html" title="Class for Groups of lights. " alt="" coords="186,95,333,121"/>
-<area shape="rect" id="node4" href="$classhueplusplus_1_1_a_p_i_cache.html" title="Caches API GET requests and refreshes regularly. " alt="" coords="175,5,344,32"/>
+<area shape="rect" id="Node000001" title="Class for Hue Entertainment Mode." alt="" coords="5,181,243,207"/>
+<area shape="rect" id="Node000002" href="$classhueplusplus_1_1_bridge.html" title="Bridge class for a bridge." alt="" coords="11,93,162,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="100,130,121,180,116,182,95,132"/>
+<area shape="rect" id="Node000003" href="$classhueplusplus_1_1_group.html" title="Class for Groups of lights." alt="" coords="187,93,333,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="232,128,144,183,141,179,229,124"/>
+<area shape="rect" id="Node000004" href="$classhueplusplus_1_1_a_p_i_cache.html" title="Caches API GET requests and refreshes regularly." alt="" coords="175,5,345,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="263,45,263,93,257,93,257,45"/>
 </map>

@@ -1,4 +1,7 @@
 <map id="hueplusplus::sensors::DaylightSensor" name="hueplusplus::sensors::DaylightSensor">
-<area shape="rect" id="node2" href="$classhueplusplus_1_1_base_device.html" title="Base class for physical devices connected to the bridge (sensor or light). " alt="" coords="5,95,191,121"/>
-<area shape="rect" id="node3" href="$classhueplusplus_1_1_a_p_i_cache.html" title="Caches API GET requests and refreshes regularly. " alt="" coords="13,5,183,32"/>
+<area shape="rect" id="Node000001" title="Daylight sensor to detect sunrise and sunset." alt="" coords="19,168,177,208"/>
+<area shape="rect" id="Node000002" href="$classhueplusplus_1_1_base_device.html" title="Base class for physical devices connected to the bridge (sensor or light)." alt="" coords="5,93,191,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,132,101,168,95,168,95,132"/>
+<area shape="rect" id="Node000003" href="$classhueplusplus_1_1_a_p_i_cache.html" title="Caches API GET requests and refreshes regularly." alt="" coords="13,5,183,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="101,45,101,93,95,93,95,45"/>
 </map>

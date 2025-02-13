@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['documentation_20for_20the_20hueplusplus_20library',['Documentation for the hueplusplus library',['../index.html',1,'']]]
+  ['build_20and_20install_0',['Build and install',['../build.html',1,'']]]
 ];

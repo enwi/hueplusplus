@@ -1,3 +1,9 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classhueplusplus_1_1_new_device_list.html" title="List of new devices found during the last scan. " alt="" coords="5,5,211,32"/>
+<area shape="rect" id="Node000000" href="$classhueplusplus_1_1_resource_list.html" title="Handles a list of a certain API resource." alt="" coords="5,13,196,53"/>
+<area shape="rect" id="Node000001" href="$classhueplusplus_1_1_searchable_resource_list.html" title=" " alt="" coords="244,13,484,53"/>
+<area shape="poly" id="edge27_Node000000_Node000001" title=" " alt="" coords="210,30,244,30,244,35,210,35"/>
+<area shape="rect" id="Node000002" href="$classhueplusplus_1_1_createable_resource_list.html" title=" " alt="" coords="532,5,771,60"/>
+<area shape="poly" id="edge28_Node000001_Node000002" title=" " alt="" coords="498,30,532,30,532,35,498,35"/>
+<area shape="rect" id="Node000003" href="$classhueplusplus_1_1_sensor_list.html" title="Handles a list of Sensors with type specific getters." alt="" coords="819,20,993,45"/>
+<area shape="poly" id="edge29_Node000002_Node000003" title=" " alt="" coords="784,30,818,30,818,35,784,35"/>
 </map>

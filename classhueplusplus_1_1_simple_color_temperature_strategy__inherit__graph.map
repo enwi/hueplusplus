@@ -1,4 +1,7 @@
 <map id="hueplusplus::SimpleColorTemperatureStrategy" name="hueplusplus::SimpleColorTemperatureStrategy">
-<area shape="rect" id="node3" href="$classhueplusplus_1_1_extended_color_temperature_strategy.html" title="Class implementing the functions of ColorTemperatureStrategy. " alt="" coords="16,184,219,225"/>
-<area shape="rect" id="node2" href="$classhueplusplus_1_1_color_temperature_strategy.html" title="Virtual base class for all ColorTemperatureStrategies. " alt="" coords="5,5,229,47"/>
+<area shape="rect" id="Node000001" title="Class implementing the functions of ColorTemperatureStrategy." alt="" coords="24,93,211,133"/>
+<area shape="rect" id="Node000003" href="$classhueplusplus_1_1_extended_color_temperature_strategy.html" title="Class implementing the functions of ColorTemperatureStrategy." alt="" coords="16,181,219,221"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="120,147,120,181,115,181,115,147"/>
+<area shape="rect" id="Node000002" href="$classhueplusplus_1_1_color_temperature_strategy.html" title="Virtual base class for all ColorTemperatureStrategies." alt="" coords="5,5,229,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="120,59,120,93,115,93,115,59"/>
 </map>

@@ -1,3 +1,7 @@
 <map id="src/ModelPictures.cpp" name="src/ModelPictures.cpp">
-<area shape="rect" id="node2" href="$_model_pictures_8h.html" title="hueplusplus/ModelPictures.h" alt="" coords="5,80,212,107"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="27,5,191,31"/>
+<area shape="rect" id="Node000002" href="$_model_pictures_8h.html" title=" " alt="" coords="5,79,213,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="112,31,112,65,107,65,107,31"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="80,152,139,177"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="112,104,112,138,107,138,107,104"/>
 </map>

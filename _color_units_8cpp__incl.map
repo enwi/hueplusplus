@@ -1,3 +1,11 @@
 <map id="src/ColorUnits.cpp" name="src/ColorUnits.cpp">
-<area shape="rect" id="node4" href="$_color_units_8h.html" title="hueplusplus/ColorUnits.h" alt="" coords="203,80,387,107"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="77,5,217,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,91,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="132,33,77,73,74,68,129,29"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="115,79,178,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="149,31,149,65,144,65,144,31"/>
+<area shape="rect" id="Node000004" href="$_color_units_8h.html" title=" " alt="" coords="203,79,387,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="172,28,259,70,257,75,169,33"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="261,152,328,177"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="297,104,297,138,292,138,292,104"/>
 </map>

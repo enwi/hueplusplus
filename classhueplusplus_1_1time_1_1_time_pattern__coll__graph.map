@@ -1,7 +1,13 @@
 <map id="hueplusplus::time::TimePattern" name="hueplusplus::time::TimePattern">
-<area shape="rect" id="node2" href="$classhueplusplus_1_1time_1_1_time_interval.html" title="Time interval repeated daily to weekly. " alt="" coords="205,5,351,47"/>
-<area shape="rect" id="node3" href="$classhueplusplus_1_1time_1_1_recurring_time.html" title="Time repeated weekly to daily, with possible random variation. " alt="" coords="205,71,351,112"/>
-<area shape="rect" id="node4" href="$classhueplusplus_1_1time_1_1_absolute_varied_time.html" title="hueplusplus::time::\lAbsoluteVariedTime" alt="" coords="201,136,355,177"/>
-<area shape="rect" id="node5" href="$classhueplusplus_1_1time_1_1_absolute_time.html" title="One&#45;time, absolute time point. " alt="" coords="5,136,152,177"/>
-<area shape="rect" id="node6" href="$classhueplusplus_1_1time_1_1_timer.html" title="Timer that is started and triggers after specified delay. " alt="" coords="205,201,351,243"/>
+<area shape="rect" id="Node000001" title="Holds different time representations." alt="" coords="465,101,612,141"/>
+<area shape="rect" id="Node000002" href="$classhueplusplus_1_1time_1_1_absolute_varied_time.html" title=" " alt="" coords="201,5,355,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="354,47,442,79,492,99,490,104,440,84,352,52"/>
+<area shape="rect" id="Node000003" href="$classhueplusplus_1_1time_1_1_absolute_time.html" title="One&#45;time, absolute time point." alt="" coords="5,5,152,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="166,23,201,23,201,28,166,28"/>
+<area shape="rect" id="Node000004" href="$classhueplusplus_1_1time_1_1_recurring_time.html" title="Time repeated weekly to daily, with possible random variation." alt="" coords="205,69,351,109"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="365,97,465,110,465,115,365,103"/>
+<area shape="rect" id="Node000005" href="$classhueplusplus_1_1time_1_1_time_interval.html" title="Time interval repeated daily to weekly." alt="" coords="205,133,351,173"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="365,140,465,128,465,133,365,145"/>
+<area shape="rect" id="Node000006" href="$classhueplusplus_1_1time_1_1_timer.html" title="Timer that is started and triggers after specified delay." alt="" coords="205,197,351,237"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="350,190,440,158,488,139,490,144,442,162,352,195"/>
 </map>

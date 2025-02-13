@@ -1,3 +1,37 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classhueplusplus_1_1_bridge.html" title="Bridge class for a bridge. " alt="" coords="5,5,156,32"/>
+<area shape="rect" id="Node000000" href="$classhueplusplus_1_1_base_device.html" title="Base class for physical devices connected to the bridge (sensor or light)." alt="" coords="5,365,191,390"/>
+<area shape="rect" id="Node000001" href="$classhueplusplus_1_1_light.html" title="Class for Hue Light fixtures." alt="" coords="248,130,388,155"/>
+<area shape="poly" id="edge2_Node000000_Node000001" title=" " alt="" coords="107,350,126,310,154,260,191,208,237,165,258,153,260,158,240,169,195,212,159,262,131,312,112,353"/>
+<area shape="rect" id="Node000002" href="$classhueplusplus_1_1_sensor.html" title="Class for generic or unknown sensor types." alt="" coords="242,179,394,205"/>
+<area shape="poly" id="edge3_Node000000_Node000002" title=" " alt="" coords="112,351,162,284,197,247,237,215,263,202,265,207,240,220,201,251,166,287,116,355"/>
+<area shape="rect" id="Node000003" href="$classhueplusplus_1_1sensors_1_1_base_c_l_i_p.html" title="Common methods for CLIP sensors." alt="" coords="239,229,397,269"/>
+<area shape="poly" id="edge4_Node000000_Node000003" title=" " alt="" coords="124,354,176,317,237,279,262,267,265,272,240,284,178,322,127,359"/>
+<area shape="rect" id="Node000012" href="$classhueplusplus_1_1sensors_1_1_daylight_sensor.html" title="Daylight sensor to detect sunrise and sunset." alt="" coords="239,293,397,333"/>
+<area shape="poly" id="edge13_Node000000_Node000012" title=" " alt="" coords="155,358,248,331,249,336,156,363"/>
+<area shape="rect" id="Node000013" href="$classhueplusplus_1_1sensors_1_1_z_g_p_switch.html" title="ZigBee Green Power sensor for button presses." alt="" coords="239,357,397,397"/>
+<area shape="poly" id="edge14_Node000000_Node000013" title=" " alt="" coords="204,375,239,375,239,380,204,380"/>
+<area shape="rect" id="Node000014" href="$classhueplusplus_1_1sensors_1_1_z_l_l_light_level.html" title="ZigBee sensor detecting ambient light level." alt="" coords="239,421,397,461"/>
+<area shape="poly" id="edge15_Node000000_Node000014" title=" " alt="" coords="156,391,249,419,248,424,155,397"/>
+<area shape="rect" id="Node000015" href="$classhueplusplus_1_1sensors_1_1_z_l_l_presence.html" title="Sensor detecting presence in the vicinity." alt="" coords="239,485,397,525"/>
+<area shape="poly" id="edge16_Node000000_Node000015" title=" " alt="" coords="127,396,178,433,240,471,265,483,262,488,237,476,176,437,124,400"/>
+<area shape="rect" id="Node000016" href="$classhueplusplus_1_1sensors_1_1_z_l_l_switch.html" title="ZigBee sensor reporting button presses." alt="" coords="239,549,397,589"/>
+<area shape="poly" id="edge17_Node000000_Node000016" title=" " alt="" coords="117,400,168,466,202,503,240,535,260,547,257,552,237,540,198,507,163,470,113,403"/>
+<area shape="rect" id="Node000017" href="$classhueplusplus_1_1sensors_1_1_z_l_l_temperature.html" title="ZigBee temperature sensor." alt="" coords="239,613,397,653"/>
+<area shape="poly" id="edge18_Node000000_Node000017" title=" " alt="" coords="111,402,130,444,158,497,195,551,240,599,258,611,255,615,237,603,191,555,154,500,125,446,107,404"/>
+<area shape="rect" id="Node000004" href="$classhueplusplus_1_1sensors_1_1_c_l_i_p_generic_flag.html" title="CLIP sensor for a generic 3rd party sensor." alt="" coords="445,5,604,45"/>
+<area shape="poly" id="edge5_Node000003_Node000004" title=" " alt="" coords="390,219,395,214,409,194,416,175,419,136,421,97,429,76,443,56,458,43,461,48,447,59,433,79,426,98,424,137,421,176,414,197,399,218,394,223"/>
+<area shape="rect" id="Node000005" href="$classhueplusplus_1_1sensors_1_1_c_l_i_p_generic_status.html" title="CLIP sensor for a generic 3rd party status." alt="" coords="445,69,604,109"/>
+<area shape="poly" id="edge6_Node000003_Node000005" title=" " alt="" coords="389,220,395,214,412,191,419,168,426,144,443,119,460,107,464,112,447,123,430,146,424,169,417,193,399,218,392,224"/>
+<area shape="rect" id="Node000006" href="$classhueplusplus_1_1sensors_1_1_c_l_i_p_humidity.html" title="CLIP sensor for humidity." alt="" coords="445,133,604,173"/>
+<area shape="poly" id="edge7_Node000003_Node000006" title=" " alt="" coords="381,221,396,214,444,183,470,171,472,176,447,188,399,218,383,226"/>
+<area shape="rect" id="Node000007" href="$classhueplusplus_1_1sensors_1_1_c_l_i_p_light_level.html" title="CLIP sensor for light level." alt="" coords="445,197,604,237"/>
+<area shape="poly" id="edge8_Node000003_Node000007" title=" " alt="" coords="411,232,445,227,446,232,411,238"/>
+<area shape="rect" id="Node000008" href="$classhueplusplus_1_1sensors_1_1_c_l_i_p_open_close.html" title="CLIP sensor detecting whether a contact is open or closed." alt="" coords="445,261,604,301"/>
+<area shape="poly" id="edge9_Node000003_Node000008" title=" " alt="" coords="411,261,446,266,445,272,411,266"/>
+<area shape="rect" id="Node000009" href="$classhueplusplus_1_1sensors_1_1_c_l_i_p_presence.html" title="CLIP sensor to detect presence." alt="" coords="445,325,604,365"/>
+<area shape="poly" id="edge10_Node000003_Node000009" title=" " alt="" coords="386,273,399,279,447,311,471,323,469,328,444,316,396,284,384,277"/>
+<area shape="rect" id="Node000010" href="$classhueplusplus_1_1sensors_1_1_c_l_i_p_switch.html" title="CLIP sensor for button presses." alt="" coords="445,389,604,429"/>
+<area shape="poly" id="edge11_Node000003_Node000010" title=" " alt="" coords="394,275,399,280,417,304,424,329,430,352,447,375,464,387,460,391,443,379,426,354,419,330,412,307,395,283,390,279"/>
+<area shape="rect" id="Node000011" href="$classhueplusplus_1_1sensors_1_1_c_l_i_p_temperature.html" title="CLIP sensor for temperature." alt="" coords="445,453,604,493"/>
+<area shape="poly" id="edge12_Node000003_Node000011" title=" " alt="" coords="396,276,399,280,414,301,421,321,424,361,426,400,433,420,447,440,461,451,458,455,443,443,429,422,421,401,419,361,416,322,409,303,395,283,392,280"/>
 </map>

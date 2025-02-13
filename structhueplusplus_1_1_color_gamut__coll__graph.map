@@ -1,3 +1,5 @@
 <map id="hueplusplus::ColorGamut" name="hueplusplus::ColorGamut">
-<area shape="rect" id="node2" href="$structhueplusplus_1_1_x_y.html" title="Color in CIE x and y coordinates. " alt="" coords="36,5,161,32"/>
+<area shape="rect" id="Node000001" title="Triangle of representable colors in CIE." alt="" coords="5,123,192,148"/>
+<area shape="rect" id="Node000002" href="$structhueplusplus_1_1_x_y.html" title="Color in CIE x and y coordinates." alt="" coords="36,5,161,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,44,101,123,96,123,96,44"/>
 </map>

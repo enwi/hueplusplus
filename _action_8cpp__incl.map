@@ -1,5 +1,16 @@
 <map id="src/Action.cpp" name="src/Action.cpp">
-<area shape="rect" id="node2" href="$_action_8h.html" title="hueplusplus/Action.h" alt="" coords="5,169,163,196"/>
-<area shape="rect" id="node4" href="$_hue_exception_macro_8h.html" title="hueplusplus/HueException\lMacro.h" alt="" coords="144,80,339,121"/>
-<area shape="rect" id="node5" href="$_hue_exception_8h.html" title="HueException.h" alt="" coords="187,169,311,196"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="109,5,222,31"/>
+<area shape="rect" id="Node000002" href="$_action_8h.html" title=" " alt="" coords="5,167,163,192"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="161,32,134,80,98,155,93,153,130,77,156,30"/>
+<area shape="rect" id="Node000004" href="$_hue_exception_macro_8h.html" title=" " alt="" coords="144,79,339,119"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="178,29,216,67,212,71,175,33"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="23,240,169,265"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="89,192,94,226,89,227,83,193"/>
+<area shape="rect" id="Node000005" href="$_hue_exception_8h.html" title=" " alt="" coords="187,167,311,192"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="246,119,249,152,244,153,241,119"/>
+<area shape="poly" id="edge7_Node000005_Node000003" title=" " alt="" coords="226,194,134,237,132,232,224,190"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="199,240,286,265"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="251,193,248,227,242,226,246,192"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="311,240,369,265"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="266,190,316,229,313,233,262,194"/>
 </map>

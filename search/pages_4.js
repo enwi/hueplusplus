@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['transactions',['Transactions',['../transactions.html',1,'']]]
+  ['for_20the_20hueplusplus_20library_0',['Documentation for the hueplusplus library',['../index.html',1,'']]]
 ];

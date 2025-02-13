@@ -1,3 +1,5 @@
 <map id="hueplusplus::StateTransaction" name="hueplusplus::StateTransaction">
-<area shape="rect" id="node2" href="$classhueplusplus_1_1_hue_command_a_p_i.html" title="hueplusplus::HueCommandAPI" alt="" coords="5,5,228,32"/>
+<area shape="rect" id="Node000001" title="Transaction class which can be used for either light or group state." alt="" coords="9,93,225,119"/>
+<area shape="rect" id="Node000002" href="$classhueplusplus_1_1_hue_command_a_p_i.html" title=" " alt="" coords="5,5,228,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="119,45,119,93,114,93,114,45"/>
 </map>

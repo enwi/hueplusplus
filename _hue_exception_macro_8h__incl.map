@@ -1,3 +1,11 @@
 <map id="include/hueplusplus/HueExceptionMacro.h" name="include/hueplusplus/HueExceptionMacro.h">
-<area shape="rect" id="node2" href="$_hue_exception_8h.html" title="HueException.h" alt="" coords="84,95,208,121"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="62,5,230,45"/>
+<area shape="rect" id="Node000002" href="$_hue_exception_8h.html" title=" " alt="" coords="84,93,208,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="149,46,149,79,143,79,143,46"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,167,92,192"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="132,121,77,160,74,156,129,117"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="117,167,175,192"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="149,119,149,153,143,153,143,119"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="199,167,346,192"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="168,116,241,157,239,162,165,121"/>
 </map>

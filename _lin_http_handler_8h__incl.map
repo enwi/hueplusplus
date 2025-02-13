@@ -1,4 +1,27 @@
 <map id="include/hueplusplus/LinHttpHandler.h" name="include/hueplusplus/LinHttpHandler.h">
-<area shape="rect" id="node4" href="$_base_http_handler_8h.html" title="BaseHttpHandler.h" alt="" coords="193,95,337,121"/>
-<area shape="rect" id="node7" href="$_i_http_handler_8h.html" title="IHttpHandler.h" alt="" coords="207,169,323,196"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="99,5,250,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,240,64,265"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="165,47,51,229,47,227,161,44"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="89,240,151,265"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="173,46,129,227,123,226,168,45"/>
+<area shape="rect" id="Node000004" href="$_base_http_handler_8h.html" title=" " alt="" coords="201,93,345,119"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="200,43,249,82,246,87,197,48"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="472,240,619,265"/>
+<area shape="poly" id="edge16_Node000001_Node000009" title=" " alt="" coords="244,43,301,63,359,91,409,124,456,162,527,228,523,232,453,166,406,129,356,96,299,68,242,48"/>
+<area shape="poly" id="edge6_Node000004_Node000002" title=" " alt="" coords="255,121,173,169,66,235,63,230,171,164,252,116"/>
+<area shape="poly" id="edge7_Node000004_Node000003" title=" " alt="" coords="261,121,204,169,142,232,138,228,201,165,257,117"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="267,240,347,265"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="297,117,324,137,346,166,350,183,347,200,330,230,325,228,342,198,345,183,342,168,320,140,294,121"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="371,240,448,265"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="299,116,332,137,366,165,388,195,403,226,398,228,383,198,362,168,329,141,296,121"/>
+<area shape="rect" id="Node000007" href="$_i_http_handler_8h.html" title=" " alt="" coords="215,167,331,192"/>
+<area shape="poly" id="edge8_Node000004_Node000007" title=" " alt="" coords="276,119,276,153,271,153,271,119"/>
+<area shape="poly" id="edge15_Node000004_Node000009" title=" " alt="" coords="298,116,392,164,514,231,512,236,389,169,295,121"/>
+<area shape="poly" id="edge12_Node000007_Node000002" title=" " alt="" coords="236,195,78,241,77,236,234,189"/>
+<area shape="poly" id="edge13_Node000007_Node000003" title=" " alt="" coords="250,194,158,237,156,232,248,190"/>
+<area shape="poly" id="edge10_Node000007_Node000005" title=" " alt="" coords="281,191,298,227,293,229,276,193"/>
+<area shape="poly" id="edge11_Node000007_Node000006" title=" " alt="" coords="296,190,376,231,374,236,294,194"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="176,240,243,265"/>
+<area shape="poly" id="edge9_Node000007_Node000008" title=" " alt="" coords="265,194,231,232,227,228,261,191"/>
+<area shape="poly" id="edge14_Node000007_Node000009" title=" " alt="" coords="318,189,489,234,488,239,316,195"/>
 </map>

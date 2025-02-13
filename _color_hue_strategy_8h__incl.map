@@ -1,3 +1,10 @@
 <map id="include/hueplusplus/ColorHueStrategy.h" name="include/hueplusplus/ColorHueStrategy.h">
-<area shape="rect" id="node4" href="$_color_units_8h.html" title="ColorUnits.h" alt="" coords="144,95,247,121"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,156,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="66,167,133,192"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="60,47,47,63,35,80,29,99,32,118,48,140,68,157,65,161,44,143,28,120,24,99,30,78,42,59,56,44"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="42,93,119,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="83,46,83,79,78,79,78,46"/>
+<area shape="rect" id="Node000004" href="$_color_units_8h.html" title=" " alt="" coords="144,93,247,119"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="110,43,169,83,166,88,107,48"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="181,121,128,160,125,156,178,117"/>
 </map>

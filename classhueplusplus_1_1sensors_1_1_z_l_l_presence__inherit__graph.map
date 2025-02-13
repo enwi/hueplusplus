@@ -1,3 +1,5 @@
 <map id="hueplusplus::sensors::ZLLPresence" name="hueplusplus::sensors::ZLLPresence">
-<area shape="rect" id="node2" href="$classhueplusplus_1_1_base_device.html" title="Base class for physical devices connected to the bridge (sensor or light). " alt="" coords="5,5,191,32"/>
+<area shape="rect" id="Node000001" title="Sensor detecting presence in the vicinity." alt="" coords="19,79,177,119"/>
+<area shape="rect" id="Node000002" href="$classhueplusplus_1_1_base_device.html" title="Base class for physical devices connected to the bridge (sensor or light)." alt="" coords="5,5,191,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,44,101,79,95,79,95,44"/>
 </map>

@@ -1,11 +1,22 @@
 <map id="include/hueplusplus/Group.h" name="include/hueplusplus/Group.h">
-<area shape="rect" id="node2" href="$_bridge_8h.html" title="include/hueplusplus\l/Bridge.h" alt="" coords="375,95,526,136"/>
-<area shape="rect" id="node3" href="$_entertainment_mode_8h.html" title="include/hueplusplus\l/EntertainmentMode.h" alt="" coords="22,184,189,225"/>
-<area shape="rect" id="node10" href="$_group_8cpp.html" title="src/Group.cpp" alt="" coords="550,102,661,129"/>
-<area shape="rect" id="node5" href="$_bridge_8cpp.html" title="src/Bridge.cpp" alt="" coords="213,191,328,218"/>
-<area shape="rect" id="node6" href="$_bridge_setup_8cpp.html" title="examples/BridgeSetup.cpp" alt="" coords="353,191,549,218"/>
-<area shape="rect" id="node7" href="$_lights_off_8cpp.html" title="examples/LightsOff.cpp" alt="" coords="573,191,747,218"/>
-<area shape="rect" id="node8" href="$_snippets_8cpp.html" title="Contains code snippets used in the documentation, performs no useful functions. " alt="" coords="772,191,945,218"/>
-<area shape="rect" id="node9" href="$_username_config_8cpp.html" title="examples/UsernameConfig.cpp" alt="" coords="970,191,1195,218"/>
-<area shape="rect" id="node4" href="$_entertainment_mode_8cpp.html" title="src/EntertainmentMode.cpp" alt="" coords="5,273,205,300"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="896,5,1047,45"/>
+<area shape="rect" id="Node000002" href="$_bridge_8h.html" title=" " alt="" coords="660,93,811,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="908,53,788,96,786,91,906,48"/>
+<area shape="rect" id="Node000007" href="$_entertainment_mode_8h.html" title=" " alt="" coords="1012,181,1179,221"/>
+<area shape="poly" id="edge9_Node000001_Node000007" title=" " alt="" coords="976,59,983,96,999,132,1025,159,1055,179,1052,183,1021,163,994,135,978,97,970,60"/>
+<area shape="rect" id="Node000010" href="$_group_8cpp.html" title=" " alt="" coords="1009,101,1120,126"/>
+<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="1004,53,1054,98,1050,102,1000,57"/>
+<area shape="rect" id="Node000003" href="$_bridge_setup_8cpp.html" title=" " alt="" coords="5,189,201,214"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="647,128,448,152,213,184,168,191,167,186,212,179,447,147,646,122"/>
+<area shape="rect" id="Node000004" href="$_lights_off_8cpp.html" title=" " alt="" coords="225,189,400,214"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="647,135,370,191,369,186,646,130"/>
+<area shape="rect" id="Node000005" href="$_snippets_8cpp.html" title="Contains code snippets used in the documentation, performs no useful functions." alt="" coords="425,189,598,214"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="674,141,542,191,540,186,672,136"/>
+<area shape="rect" id="Node000006" href="$_username_config_8cpp.html" title=" " alt="" coords="623,189,848,214"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="738,147,738,188,733,188,733,147"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="824,133,1017,179,1016,184,823,138"/>
+<area shape="rect" id="Node000009" href="$_bridge_8cpp.html" title=" " alt="" coords="873,189,987,214"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="792,137,905,186,903,191,790,141"/>
+<area shape="rect" id="Node000008" href="$_entertainment_mode_8cpp.html" title=" " alt="" coords="995,269,1196,295"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="1098,235,1098,269,1093,269,1093,235"/>
 </map>

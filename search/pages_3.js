@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['sensors',['Sensors',['../sensors.html',1,'']]],
-  ['shared_20state_20cache',['Shared state cache',['../shared-state.html',1,'']]]
+  ['documentation_20for_20the_20hueplusplus_20library_0',['Documentation for the hueplusplus library',['../index.html',1,'']]]
 ];

@@ -1,0 +1,11 @@
+<map id="hueplusplus::ResourceList&lt; Resource, IdT &gt;" name="hueplusplus::ResourceList&lt; Resource, IdT &gt;">
+<area shape="rect" id="Node000001" title="Handles a list of a certain API resource." alt="" coords="5,13,196,53"/>
+<area shape="rect" id="Node000002" href="$classhueplusplus_1_1_searchable_resource_list.html" title=" " alt="" coords="244,13,484,53"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="210,30,244,30,244,35,210,35"/>
+<area shape="rect" id="Node000003" href="$classhueplusplus_1_1_createable_resource_list.html" title=" " alt="" coords="532,5,771,60"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="498,30,532,30,532,35,498,35"/>
+<area shape="rect" id="Node000004" href="$classhueplusplus_1_1_sensor_list.html" title="Handles a list of Sensors with type specific getters." alt="" coords="819,20,993,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="784,30,818,30,818,35,784,35"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="1041,5,1260,60"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="1007,30,1041,30,1041,35,1007,35"/>
+</map>

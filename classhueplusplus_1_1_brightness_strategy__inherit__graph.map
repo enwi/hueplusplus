@@ -1,3 +1,5 @@
 <map id="hueplusplus::BrightnessStrategy" name="hueplusplus::BrightnessStrategy">
-<area shape="rect" id="node2" href="$classhueplusplus_1_1_simple_brightness_strategy.html" title="Class implementing the functions of BrightnessStrategy. " alt="" coords="10,80,233,121"/>
+<area shape="rect" id="Node000001" title="Virtual base class for all BrightnessStrategies." alt="" coords="5,5,237,31"/>
+<area shape="rect" id="Node000002" href="$classhueplusplus_1_1_simple_brightness_strategy.html" title="Class implementing the functions of BrightnessStrategy." alt="" coords="10,79,233,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="124,44,124,79,119,79,119,44"/>
 </map>

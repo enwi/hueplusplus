@@ -1,3 +1,7 @@
 <map id="hueplusplus::HueException" name="hueplusplus::HueException">
-<area shape="rect" id="node3" href="$classhueplusplus_1_1_hue_a_p_i_response_exception.html" title="Exception caused by a Hue API &quot;error&quot; response with additional information. " alt="" coords="5,155,223,196"/>
+<area shape="rect" id="Node000001" title="Exception class with file information. Base class of all custom exception classes." alt="" coords="15,79,214,104"/>
+<area shape="rect" id="Node000003" href="$classhueplusplus_1_1_hue_a_p_i_response_exception.html" title="Exception caused by a Hue API &quot;error&quot; response with additional information." alt="" coords="5,152,224,192"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="117,118,117,152,112,152,112,118"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="57,5,172,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="117,44,117,79,112,79,112,44"/>
 </map>

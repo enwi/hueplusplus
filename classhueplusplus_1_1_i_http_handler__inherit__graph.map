@@ -1,5 +1,9 @@
 <map id="hueplusplus::IHttpHandler" name="hueplusplus::IHttpHandler">
-<area shape="rect" id="node2" href="$classhueplusplus_1_1_base_http_handler.html" title="Base class for classes that handle http requests and multicast requests. " alt="" coords="115,80,334,107"/>
-<area shape="rect" id="node3" href="$classhueplusplus_1_1_lin_http_handler.html" title="Class to handle http requests and multicast requests on linux systems. " alt="" coords="5,155,212,181"/>
-<area shape="rect" id="node4" href="$classhueplusplus_1_1_win_http_handler.html" title="Class to handle http requests and multicast requests on windows systems. " alt="" coords="236,155,448,181"/>
+<area shape="rect" id="Node000001" title="Abstract class for classes that handle http requests and multicast requests." alt="" coords="129,5,320,31"/>
+<area shape="rect" id="Node000002" href="$classhueplusplus_1_1_base_http_handler.html" title="Base class for classes that handle http requests and multicast requests." alt="" coords="115,79,334,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="227,44,227,79,222,79,222,44"/>
+<area shape="rect" id="Node000003" href="$classhueplusplus_1_1_lin_http_handler.html" title="Class to handle http requests and multicast requests on linux systems." alt="" coords="5,152,212,177"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="196,113,129,154,126,149,193,109"/>
+<area shape="rect" id="Node000004" href="$classhueplusplus_1_1_win_http_handler.html" title="Class to handle http requests and multicast requests on windows systems." alt="" coords="236,152,448,177"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="257,109,324,149,321,154,254,113"/>
 </map>

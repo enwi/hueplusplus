@@ -1,3 +1,9 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classhueplusplus_1_1_resource_list.html" title="Handles a list of a certain API resource. " alt="" coords="5,5,196,47"/>
+<area shape="rect" id="Node000000" href="$classhueplusplus_1_1_resource_list.html" title=" " alt="" coords="5,49,196,89"/>
+<area shape="rect" id="Node000001" href="$classhueplusplus_1_1_createable_resource_list.html" title=" " alt="" coords="245,5,483,60"/>
+<area shape="poly" id="edge30_Node000000_Node000001" title=" " alt="" coords="209,51,244,46,245,52,210,56"/>
+<area shape="rect" id="Node000003" href="$classhueplusplus_1_1_searchable_resource_list.html" title="Handles a ResourceList of physical devices which can be searched for." alt="" coords="244,85,484,125"/>
+<area shape="poly" id="edge32_Node000000_Node000003" title=" " alt="" coords="210,81,244,86,243,91,209,86"/>
+<area shape="rect" id="Node000002" href="$classhueplusplus_1_1_group_resource_list.html" title="Handles a group list with the special group 0." alt="" coords="532,13,748,53"/>
+<area shape="poly" id="edge31_Node000001_Node000002" title=" " alt="" coords="497,30,532,30,532,35,497,35"/>
 </map>
