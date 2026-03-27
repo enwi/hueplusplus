@@ -67,7 +67,7 @@ TEST(ExtendedColorTemperatureStrategy, alertTemperature)
         TestTransaction reverseTransaction = light.transaction().setColorTemperature(200).setTransition(1);
 
         light.getState()["state"] = state;
-        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(Invoke(setCTLambda));
+        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(setCTLambda);
         EXPECT_CALL(light, alert()).WillOnce(Return(true));
         reverseTransaction.expectSuccessfulPut(handler, Exactly(1));
         EXPECT_TRUE(ExtendedColorTemperatureStrategy().alertTemperature(400, light));
@@ -85,12 +85,12 @@ TEST(ExtendedColorTemperatureStrategy, alertTemperature)
         EXPECT_FALSE(ExtendedColorTemperatureStrategy().alertTemperature(400, light));
 
         InSequence s;
-        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(Invoke(setCTLambda));
+        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(setCTLambda);
         EXPECT_CALL(light, alert()).WillOnce(Return(false));
         EXPECT_FALSE(ExtendedColorTemperatureStrategy().alertTemperature(400, light));
 
         light.getState()["state"] = state;
-        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(Invoke(setCTLambda));
+        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(setCTLambda);
         EXPECT_CALL(light, alert()).WillOnce(Return(true));
         reverseTransaction.expectSuccessfulPut(handler, Exactly(1));
         EXPECT_TRUE(ExtendedColorTemperatureStrategy().alertTemperature(400, light));
@@ -108,12 +108,12 @@ TEST(ExtendedColorTemperatureStrategy, alertTemperature)
         EXPECT_FALSE(ExtendedColorTemperatureStrategy().alertTemperature(400, light));
 
         InSequence s;
-        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(Invoke(setCTLambda));
+        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(setCTLambda);
         EXPECT_CALL(light, alert()).WillOnce(Return(false));
         EXPECT_FALSE(ExtendedColorTemperatureStrategy().alertTemperature(400, light));
 
         light.getState()["state"] = state;
-        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(Invoke(setCTLambda));
+        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(setCTLambda);
         EXPECT_CALL(light, alert()).WillOnce(Return(true));
         reverseTransaction.expectSuccessfulPut(handler, Exactly(1));
         EXPECT_TRUE(ExtendedColorTemperatureStrategy().alertTemperature(400, light));

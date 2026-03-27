@@ -112,12 +112,12 @@ TEST(SimpleColorTemperatureStrategy, alertTemperature)
         EXPECT_FALSE(SimpleColorTemperatureStrategy().alertTemperature(400, light));
 
         InSequence s;
-        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(Invoke(setCTLambda));
+        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(setCTLambda);
         EXPECT_CALL(light, alert()).WillOnce(Return(false));
         EXPECT_FALSE(SimpleColorTemperatureStrategy().alertTemperature(400, light));
 
         light.getState()["state"] = state;
-        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(Invoke(setCTLambda));
+        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(setCTLambda);
         EXPECT_CALL(light, alert()).WillOnce(Return(true));
         reverseTransaction.expectSuccessfulPut(handler, Exactly(1));
         EXPECT_TRUE(SimpleColorTemperatureStrategy().alertTemperature(400, light));
@@ -129,7 +129,7 @@ TEST(SimpleColorTemperatureStrategy, alertTemperature)
         light.getState()["state"] = state;
         TestTransaction reverseTransaction = light.transaction().setColorTemperature(200).setOn(false).setTransition(1);
 
-        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(Invoke(setCTLambda));
+        EXPECT_CALL(light, setColorTemperature(400, 1)).WillOnce(setCTLambda);
         EXPECT_CALL(light, alert()).WillOnce(Return(true));
         reverseTransaction.expectSuccessfulPut(handler, Exactly(1));
         EXPECT_TRUE(SimpleColorTemperatureStrategy().alertTemperature(400, light));

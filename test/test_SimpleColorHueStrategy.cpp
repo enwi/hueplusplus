@@ -246,7 +246,7 @@ TEST(SimpleColorHueStrategy, alertHueSaturation)
         // Alert call fails
         {
             InSequence s;
-            EXPECT_CALL(light, setColorHueSaturation(hueSat, 1)).WillOnce(Invoke(setColorLambda));
+            EXPECT_CALL(light, setColorHueSaturation(hueSat, 1)).WillOnce(setColorLambda);
             EXPECT_CALL(light, alert()).WillOnce(Return(false));
             EXPECT_FALSE(SimpleColorHueStrategy().alertHueSaturation(hueSat, light));
         }
@@ -254,7 +254,7 @@ TEST(SimpleColorHueStrategy, alertHueSaturation)
         // Reverse transaction fails
         {
             InSequence s;
-            EXPECT_CALL(light, setColorHueSaturation(hueSat, 1)).WillOnce(Invoke(setColorLambda));
+            EXPECT_CALL(light, setColorHueSaturation(hueSat, 1)).WillOnce(setColorLambda);
             EXPECT_CALL(light, alert()).WillOnce(Return(true));
             reverseTransaction.expectPut(handler).WillOnce(Return(nlohmann::json::object()));
             EXPECT_FALSE(SimpleColorHueStrategy().alertHueSaturation(hueSat, light));
@@ -264,7 +264,7 @@ TEST(SimpleColorHueStrategy, alertHueSaturation)
         // Successful
         {
             InSequence s;
-            EXPECT_CALL(light, setColorHueSaturation(hueSat, 1)).WillOnce(Invoke(setColorLambda));
+            EXPECT_CALL(light, setColorHueSaturation(hueSat, 1)).WillOnce(setColorLambda);
             EXPECT_CALL(light, alert()).WillOnce(Return(true));
             reverseTransaction.expectSuccessfulPut(handler, Exactly(1));
             EXPECT_TRUE(SimpleColorHueStrategy().alertHueSaturation(hueSat, light));
@@ -279,7 +279,7 @@ TEST(SimpleColorHueStrategy, alertHueSaturation)
         light.getState()["state"] = state;
         TestTransaction reverseTransaction = light.transaction().setColorHue(300).setOn(false).setTransition(1);
         InSequence s;
-        EXPECT_CALL(light, setColorHueSaturation(hueSat, 1)).WillOnce(Invoke(setColorLambda));
+        EXPECT_CALL(light, setColorHueSaturation(hueSat, 1)).WillOnce(setColorLambda);
         EXPECT_CALL(light, alert()).WillOnce(Return(true));
         reverseTransaction.expectSuccessfulPut(handler, Exactly(1));
         EXPECT_TRUE(SimpleColorHueStrategy().alertHueSaturation(hueSat, light));
@@ -296,13 +296,13 @@ TEST(SimpleColorHueStrategy, alertHueSaturation)
         TestTransaction reverseTransaction = light.transaction().setColor(XY {0.1f, 0.1f}).setTransition(1);
 
         InSequence s;
-        EXPECT_CALL(light, setColorHueSaturation(hueSat, 1)).WillOnce(Invoke(setColorLambda));
+        EXPECT_CALL(light, setColorHueSaturation(hueSat, 1)).WillOnce(setColorLambda);
         EXPECT_CALL(light, alert()).WillOnce(Return(false));
         EXPECT_FALSE(SimpleColorHueStrategy().alertHueSaturation(hueSat, light));
         light.getState()["state"] = state;
         Mock::VerifyAndClearExpectations(handler.get());
 
-        EXPECT_CALL(light, setColorHueSaturation(hueSat, 1)).WillOnce(Invoke(setColorLambda));
+        EXPECT_CALL(light, setColorHueSaturation(hueSat, 1)).WillOnce(setColorLambda);
         EXPECT_CALL(light, alert()).WillOnce(Return(true));
         reverseTransaction.expectSuccessfulPut(handler, Exactly(1));
         EXPECT_TRUE(SimpleColorHueStrategy().alertHueSaturation(hueSat, light));
@@ -319,7 +319,7 @@ TEST(SimpleColorHueStrategy, alertHueSaturation)
 
         TestTransaction reverseTransaction = light.transaction().setColor(XY {0.f, 1.f}).setOn(false).setTransition(1);
         InSequence s;
-        EXPECT_CALL(light, setColorHueSaturation(hueSat, 1)).WillOnce(Invoke(setColorLambda));
+        EXPECT_CALL(light, setColorHueSaturation(hueSat, 1)).WillOnce(setColorLambda);
         EXPECT_CALL(light, alert()).WillOnce(Return(true));
         reverseTransaction.expectSuccessfulPut(handler, Exactly(1));
         EXPECT_TRUE(SimpleColorHueStrategy().alertHueSaturation(hueSat, light));
@@ -370,7 +370,7 @@ TEST(SimpleColorHueStrategy, alertXY)
         // Alert call fails
         {
             InSequence s;
-            EXPECT_CALL(light, setColorXY(xy, 1)).WillOnce(Invoke(setColorLambda));
+            EXPECT_CALL(light, setColorXY(xy, 1)).WillOnce(setColorLambda);
             EXPECT_CALL(light, alert()).WillOnce(Return(false));
             EXPECT_FALSE(SimpleColorHueStrategy().alertXY(xy, light));
         }
@@ -378,7 +378,7 @@ TEST(SimpleColorHueStrategy, alertXY)
         // Reverse transaction fails
         {
             InSequence s;
-            EXPECT_CALL(light, setColorXY(xy, 1)).WillOnce(Invoke(setColorLambda));
+            EXPECT_CALL(light, setColorXY(xy, 1)).WillOnce(setColorLambda);
             EXPECT_CALL(light, alert()).WillOnce(Return(true));
             reverseTransaction.expectPut(handler).WillOnce(Return(nlohmann::json::object()));
             EXPECT_FALSE(SimpleColorHueStrategy().alertXY(xy, light));
@@ -388,7 +388,7 @@ TEST(SimpleColorHueStrategy, alertXY)
         // Successful
         {
             InSequence s;
-            EXPECT_CALL(light, setColorXY(xy, 1)).WillOnce(Invoke(setColorLambda));
+            EXPECT_CALL(light, setColorXY(xy, 1)).WillOnce(setColorLambda);
             EXPECT_CALL(light, alert()).WillOnce(Return(true));
             reverseTransaction.expectSuccessfulPut(handler, Exactly(1));
             EXPECT_TRUE(SimpleColorHueStrategy().alertXY(xy, light));
@@ -403,7 +403,7 @@ TEST(SimpleColorHueStrategy, alertXY)
         TestTransaction reverseTransaction
             = light.transaction().setColor(HueSaturation {200, 100}).setOn(false).setTransition(1);
         InSequence s;
-        EXPECT_CALL(light, setColorXY(xy, 1)).WillOnce(Invoke(setColorLambda));
+        EXPECT_CALL(light, setColorXY(xy, 1)).WillOnce(setColorLambda);
         EXPECT_CALL(light, alert()).WillOnce(Return(true));
         reverseTransaction.expectSuccessfulPut(handler, Exactly(1));
         EXPECT_TRUE(SimpleColorHueStrategy().alertXY(xy, light));
@@ -416,13 +416,13 @@ TEST(SimpleColorHueStrategy, alertXY)
         light.getState()["state"] = state;
         EXPECT_CALL(Const(light), getColorXY()).Times(AnyNumber()).WillRepeatedly(Return(xy));
         // No reverse transaction sent, because color already matches
-        EXPECT_CALL(light, setColorXY(xy, 1)).WillOnce(Invoke(setColorLambda));
+        EXPECT_CALL(light, setColorXY(xy, 1)).WillOnce(setColorLambda);
         EXPECT_CALL(light, alert()).WillOnce(Return(false));
         EXPECT_FALSE(SimpleColorHueStrategy().alertXY(xy, light));
         light.getState()["state"] = state;
         Mock::VerifyAndClearExpectations(handler.get());
 
-        EXPECT_CALL(light, setColorXY(xy, 1)).WillOnce(Invoke(setColorLambda));
+        EXPECT_CALL(light, setColorXY(xy, 1)).WillOnce(setColorLambda);
         EXPECT_CALL(light, alert()).WillOnce(Return(true));
         EXPECT_TRUE(SimpleColorHueStrategy().alertXY(xy, light));
         Mock::VerifyAndClearExpectations(handler.get());
@@ -439,7 +439,7 @@ TEST(SimpleColorHueStrategy, alertXY)
         // Brightness unchanged, so not requested
         TestTransaction reverseTransaction = light.transaction().setColor(XY {0.f, 1.f}).setOn(false).setTransition(1);
         InSequence s;
-        EXPECT_CALL(light, setColorXY(xy, 1)).WillOnce(Invoke(setColorLambda));
+        EXPECT_CALL(light, setColorXY(xy, 1)).WillOnce(setColorLambda);
         EXPECT_CALL(light, alert()).WillOnce(Return(true));
         reverseTransaction.expectSuccessfulPut(handler, Exactly(1));
         EXPECT_TRUE(SimpleColorHueStrategy().alertXY(xy, light));

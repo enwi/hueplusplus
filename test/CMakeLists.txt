@@ -94,7 +94,8 @@ find_program( LCOV_PATH lcov )
 mark_as_advanced(GCOV_PATH)
 mark_as_advanced(LCOV_PATH)
 
-if(LCOV_PATH AND GCOV_PATH)
+# Broken with current versions
+if(LCOV_PATH AND GCOV_PATH AND 0)
     # GCov
     include(CodeCoverage.cmake)
     add_executable(testcov_HuePlusPlus ${TEST_SOURCES} ${hueplusplus_SOURCES})
