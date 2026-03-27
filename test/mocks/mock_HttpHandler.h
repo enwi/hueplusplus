@@ -35,6 +35,8 @@
 class MockHttpHandler : public hueplusplus::IHttpHandler
 {
 public:
+    MOCK_CONST_METHOD3(connectBridge, void(const std::string& adr, int port, const std::string& bridgeId));
+
     MOCK_CONST_METHOD3(send, std::string(const std::string& msg, const std::string& adr, int port));
 
     MOCK_CONST_METHOD3(sendGetHTTPBody, std::string(const std::string& msg, const std::string& adr, int port));

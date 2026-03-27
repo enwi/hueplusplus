@@ -26,28 +26,19 @@
 
 #include <hueplusplus/Bridge.h>
 
-#ifdef _MSC_VER
-#include <hueplusplus/WinHttpHandler.h>
-
-using SystemHttpHandler = hueplusplus::WinHttpHandler;
-
-#else
-#include <hueplusplus/LinHttpHandler.h>
-
-using SystemHttpHandler = hueplusplus::LinHttpHandler;
-
-#endif
+#include <hueplusplus/HttplibHttpHandler.h>
+#include <hueplusplus/MDnsWrapper.h>
 
 namespace hue = hueplusplus;
 
-// Configure existing connections here, or leave empty for new connection
+// Configure existing connections here, or leave empty to register a new one
 const std::string macAddress = "";
 const std::string username = "";
 
 // Connects to a bridge and returns it.
 hue::Bridge connectToBridge()
 {
-    hue::BridgeFinder finder(std::make_shared<SystemHttpHandler>());
+    hue::BridgeFinder finder(std::make_shared<hue::HttplibHttpHandler>(), std::make_shared<hue::MDnsWrapper>());
 
     std::vector<hue::BridgeFinder::BridgeIdentification> bridges = finder.findBridges();
 
@@ -80,7 +71,7 @@ hue::Bridge connectToBridge()
     return finder.getBridge(*it);
 }
 
-// Turns off the lights on the bridge for 20 seconds. 
+// Turns off the lights on the bridge for 20 seconds.
 // Only turns the lights back on that were on before.
 void lightsOff(hue::Bridge& hue)
 {
@@ -125,6 +116,10 @@ int main(int argc, char** argv)
         std::cout << "Connected to bridge. IP: " << hue.getBridgeIP() << ", username: " << hue.getUsername() << '\n';
 
         lightsOff(hue);
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "Error: " << e.what() << "\n";
     }
     catch (...)
     { }

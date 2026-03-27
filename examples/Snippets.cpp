@@ -23,30 +23,17 @@
 
 #include <hueplusplus/Bridge.h>
 #include <hueplusplus/CLIPSensors.h>
+#include <hueplusplus/HttplibHttpHandler.h>
+#include <hueplusplus/MDnsWrapper.h>
 #include <hueplusplus/ZLLSensors.h>
-
-#ifdef _MSC_VER
-#include <hueplusplus/WinHttpHandler.h>
-
-namespace hueplusplus
-{
-// Dirty hack to make the snippets compile under windows. Dont do this,
-// instead use your own alias which is set to either type like in BridgeSetup.cpp!
-using LinHttpHandler = WinHttpHandler;
-} // namespace hueplusplus
-
-#else
-#include <hueplusplus/LinHttpHandler.h>
-
-#endif
 
 void snippet1()
 {
     // Main page
     //! [search-bridge]
     // For windows use std::make_shared<hueplusplus::WinHttpHandler>();
-    auto handler = std::make_shared<hueplusplus::LinHttpHandler>();
-    hueplusplus::BridgeFinder finder(handler);
+    auto handler = std::make_shared<hueplusplus::HttplibHttpHandler>();
+    hueplusplus::BridgeFinder finder(handler, std::make_shared<hueplusplus::MDnsWrapper>());
     std::vector<hueplusplus::BridgeFinder::BridgeIdentification> bridges = finder.findBridges();
     if (bridges.empty())
     {
@@ -151,9 +138,8 @@ void snippet2()
 {
     // Main page
     //! [get-bridge-3]
-    // For windows use std::make_shared<hueplusplus::WinHttpHandler>();
-    auto handler = std::make_shared<hueplusplus::LinHttpHandler>();
-    hueplusplus::Bridge bridge("192.168.2.102", 80, "<username>", handler);
+    auto handler = std::make_shared<hueplusplus::HttplibHttpHandler>();
+    hueplusplus::Bridge bridge("192.168.2.102", 80, "<bridgeId>", "<username>", handler);
     //! [get-bridge-3]
 
     // Sensors
@@ -170,8 +156,8 @@ void snippet2()
 void snippet3()
 {
     // Shared state
-    auto handler = std::make_shared<hueplusplus::LinHttpHandler>();
-    hueplusplus::BridgeFinder finder(handler);
+    auto handler = std::make_shared<hueplusplus::HttplibHttpHandler>();
+    hueplusplus::BridgeFinder finder(handler, std::make_shared<hueplusplus::MDnsWrapper>());
     std::vector<hueplusplus::BridgeFinder::BridgeIdentification> bridges = finder.findBridges();
     //! [shared-bridge-1]
     hueplusplus::Bridge bridge = finder.getBridge(bridges[0], true);
@@ -187,9 +173,9 @@ void snippet3()
 void snippet4()
 {
     // Shared state
-    auto handler = std::make_shared<hueplusplus::LinHttpHandler>();
+    auto handler = std::make_shared<hueplusplus::HttplibHttpHandler>();
     //! [shared-bridge-2]
-    hueplusplus::Bridge bridge("192.168.2.102", 80, "<username>", handler, "", std::chrono::seconds(10), true);
+    hueplusplus::Bridge bridge("192.168.2.102", 80, "<bridgeId>", "<username>", handler, "", std::chrono::seconds(10), true);
     //! [shared-bridge-2]
 }
 

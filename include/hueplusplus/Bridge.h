@@ -29,6 +29,8 @@
 #include <utility>
 #include <vector>
 
+#include <nlohmann/json.hpp>
+
 #include "APICache.h"
 #include "BridgeConfig.h"
 #include "BrightnessStrategy.h"
@@ -38,6 +40,7 @@
 #include "HueCommandAPI.h"
 #include "HueDeviceTypes.h"
 #include "IHttpHandler.h"
+#include "IMDns.h"
 #include "Light.h"
 #include "ResourceList.h"
 #include "Rule.h"
@@ -46,8 +49,6 @@
 #include "Sensor.h"
 #include "SensorList.h"
 #include "Utils.h"
-
-#include <nlohmann/json.hpp>
 
 //! \brief Namespace for the hueplusplus library
 namespace hueplusplus
@@ -69,10 +70,17 @@ public:
     };
 
 public:
-    //! \brief Constructor of BridgeFinder class
+    //! \brief Constructor of BridgeFinder class using UPnP (outdated)
     //!
     //! \param handler HttpHandler of type \ref IHttpHandler for communication with the bridge
+    //! \deprecated Use the mDNS discovery with \ref BridgeFinder(std::shared_ptr<const IHttpHandler> handler, std::shared_ptr<IMDns> mdns) instead.
     BridgeFinder(std::shared_ptr<const IHttpHandler> handler);
+
+    //! \brief Constructor of BridgeFiner class using mDNS (recommended)
+    //!
+    //! \param handler HttpHandler of type \ref IHttpHandler for communication with the bridge, should support HTTPS
+    //! \param mdns Interface for mDNS discovery
+    BridgeFinder(std::shared_ptr<const IHttpHandler> handler, std::shared_ptr<IMDns> mdns);
 
     //! \brief Finds all bridges in the network and returns them.
     //!
@@ -130,6 +138,7 @@ private:
     std::map<std::string, std::string> clientkeys; //!< Maps all macs to clientkeys added by \ref
                                                    //!< BridgeFinder::addClientKey
     std::shared_ptr<const IHttpHandler> http_handler;
+    std::shared_ptr<IMDns> mdns;
 };
 
 //! \brief Bridge class for a bridge.
@@ -147,7 +156,7 @@ public:
     using RuleList = CreateableResourceList<ResourceList<Rule, int>, CreateRule>;
 
 public:
-    //! \brief Constructor of Bridge class
+    //! \brief Constructor of Bridge class (HTTP only)
     //!
     //! \param ip IP address in dotted decimal notation like "192.168.2.1"
     //! \param port Port of the hue bridge
@@ -157,9 +166,25 @@ public:
     //! \param clientkey Optional client key for streaming
     //! \param refreshDuration Time between refreshing the cached state.
     //! \param sharedState Uses a single, shared cache for all objects on the bridge.
+    //! \deprecated Use the constructor that also specified `bridgeId`
     Bridge(const std::string& ip, const int port, const std::string& username,
-        std::shared_ptr<const IHttpHandler> handler, const std::string& clientkey = "",
-        std::chrono::steady_clock::duration refreshDuration = std::chrono::seconds(10), bool sharedState = false);
+           std::shared_ptr<const IHttpHandler> handler, const std::string& clientkey = "",
+           std::chrono::steady_clock::duration refreshDuration = std::chrono::seconds(10), bool sharedState = false);
+
+    //! \brief Constructor of Bridge class (supports HTTPS)
+    //!
+    //! \param ip IP address in dotted decimal notation like "192.168.2.1"
+    //! \param port Port of the hue bridge
+    //! \param bridgeId Bridge ID of the hue bridge
+    //! \param username String that specifies the username that is used to control
+    //! the bridge. Can be left empty and acquired in \ref requestUsername.
+    //! \param handler HttpHandler for communication with the bridge
+    //! \param clientkey Optional client key for streaming
+    //! \param refreshDuration Time between refreshing the cached state.
+    //! \param sharedState Uses a single, shared cache for all objects on the bridge.
+    Bridge(const std::string& ip, const int port, const std::string& bridgeId, const std::string& username,
+           std::shared_ptr<const IHttpHandler> handler, const std::string& clientkey = "",
+           std::chrono::steady_clock::duration refreshDuration = std::chrono::seconds(10), bool sharedState = false);
 
     //! \brief Refreshes the bridge state.
     //!
@@ -174,9 +199,10 @@ public:
 
     //! \brief Sets refresh interval for the whole bridge state.
     //! \param refreshDuration The new minimum duration between refreshes. May be 0 or \ref c_refreshNever.
-    //! 
+    //!
     //! Also sets refresh duration on all resource lists on the bridge, but not on already existing lights.
-    //! The resource lists (such as lights()) can have their own durations, but those must be set after calling this function.
+    //! The resource lists (such as lights()) can have their own durations, but those must be set after calling this
+    //! function.
     void setRefreshDuration(std::chrono::steady_clock::duration refreshDuration);
 
     //! \brief Function to get the ip address of the hue bridge
@@ -288,6 +314,7 @@ private:
                     //!< like "192.168.2.1"
     std::string username; //!< Username that is ussed to access the hue bridge
     std::string clientkey; //!< Client key that is used for entertainment mode
+    std::string bridgeId; //!< Bridge ID used for verifying HTTPS
     int port;
 
     std::shared_ptr<const IHttpHandler> http_handler; //!< A IHttpHandler that is used to communicate with the

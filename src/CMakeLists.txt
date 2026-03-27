@@ -11,10 +11,12 @@ set(hueplusplus_SOURCES
     ExtendedColorHueStrategy.cpp
     ExtendedColorTemperatureStrategy.cpp
     Group.cpp
+    HttplibHttpHandler.cpp
     HueCommandAPI.cpp
     HueDeviceTypes.cpp
     HueException.cpp
     Light.cpp
+    MDnsWrapper.cpp
     ModelPictures.cpp
     NewDeviceList.cpp
     Rule.cpp
@@ -62,7 +64,7 @@ include(GNUInstallDirs)
 
 # hueplusplus shared library
 add_library(hueplusplusshared SHARED ${hueplusplus_SOURCES})
-target_link_libraries(hueplusplusshared PRIVATE MbedTLS::mbedtls)
+target_link_libraries(hueplusplusshared PRIVATE MbedTLS::mbedtls mdns::mdns httplib::httplib)
 target_link_libraries(hueplusplusshared PUBLIC nlohmann_json::nlohmann_json)
 target_compile_features(hueplusplusshared PUBLIC cxx_std_14)
 target_include_directories(hueplusplusshared PUBLIC $<BUILD_INTERFACE:${hueplusplus_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
@@ -70,7 +72,7 @@ target_include_directories(hueplusplusshared PUBLIC $<BUILD_INTERFACE:${hueplusp
 
 # hueplusplus static library
 add_library(hueplusplusstatic STATIC ${hueplusplus_SOURCES})
-target_link_libraries(hueplusplusstatic PRIVATE MbedTLS::mbedtls)
+target_link_libraries(hueplusplusstatic PRIVATE MbedTLS::mbedtls mdns::mdns httplib::httplib)
 target_link_libraries(hueplusplusstatic PUBLIC nlohmann_json::nlohmann_json)
 target_compile_features(hueplusplusstatic PUBLIC cxx_std_14)
 if(NOT WIN32)

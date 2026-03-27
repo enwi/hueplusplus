@@ -28,18 +28,8 @@
 #include <iostream>
 
 #include <hueplusplus/Bridge.h>
-
-#ifdef _MSC_VER
-#include <hueplusplus/WinHttpHandler.h>
-
-using SystemHttpHandler = hueplusplus::WinHttpHandler;
-
-#else
-#include <hueplusplus/LinHttpHandler.h>
-
-using SystemHttpHandler = hueplusplus::LinHttpHandler;
-
-#endif
+#include <hueplusplus/HttplibHttpHandler.h>
+#include <hueplusplus/MDnsWrapper.h>
 
 namespace hue = hueplusplus;
 
@@ -81,7 +71,7 @@ void saveConfigFile(const std::string& filename, const nlohmann::json& config)
 // returns a connected bridge.
 hue::Bridge connectToBridge(const std::string& username, const std::string& macAddress)
 {
-    hue::BridgeFinder finder(std::make_shared<SystemHttpHandler>());
+    hue::BridgeFinder finder(std::make_shared<hue::HttplibHttpHandler>(), std::make_shared<hue::MDnsWrapper>());
 
     std::vector<hue::BridgeFinder::BridgeIdentification> bridges = finder.findBridges();
 
@@ -104,8 +94,8 @@ hue::Bridge connectToBridge(const std::string& username, const std::string& macA
     {
         finder.addUsername(macAddress, username);
     }
-    auto it = std::find_if(
-        bridges.begin(), bridges.end(), [&](const auto& identification) { return identification.mac == macAddress; });
+    auto it = std::find_if(bridges.begin(), bridges.end(),
+                           [&](const auto& identification) { return identification.mac == macAddress; });
     if (it == bridges.end())
     {
         std::cout << "Given bridge not found\n";
@@ -118,7 +108,7 @@ hue::Bridge connectToBridge(const std::string& username, const std::string& macA
 // - read "config.json" for an existing config
 // - connect to the bridge
 // - save the username to the config file for the next run
-// 
+//
 // Also prints out the IP and username.
 int main(int argc, char** argv)
 {

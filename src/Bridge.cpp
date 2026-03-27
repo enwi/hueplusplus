@@ -33,6 +33,7 @@
 
 #include "hueplusplus/HueExceptionMacro.h"
 #include "hueplusplus/LibConfig.h"
+#include "hueplusplus/MDnsWrapper.h"
 #include "hueplusplus/UPnP.h"
 #include "hueplusplus/Utils.h"
 
@@ -40,39 +41,62 @@ namespace hueplusplus
 {
 BridgeFinder::BridgeFinder(std::shared_ptr<const IHttpHandler> handler) : http_handler(std::move(handler)) { }
 
+BridgeFinder::BridgeFinder(std::shared_ptr<const IHttpHandler> handler, std::shared_ptr<IMDns> mdns)
+    : http_handler(std::move(handler)), mdns(std::move(mdns))
+{ }
+
 std::vector<BridgeFinder::BridgeIdentification> BridgeFinder::findBridges() const
 {
-    UPnP uplug;
-    std::vector<std::pair<std::string, std::string>> foundDevices = uplug.getDevices(http_handler);
-
-    std::vector<BridgeIdentification> foundBridges;
-    for (const std::pair<std::string, std::string>& p : foundDevices)
+    if (mdns)
     {
-        size_t found = p.second.find("IpBridge");
-        if (found != std::string::npos)
+        auto devices = mdns->getDevices("_hue._tcp.local");
+
+        std::vector<BridgeFinder::BridgeIdentification> bridges;
+        for (const auto& serviceInfo : devices)
         {
-            BridgeIdentification bridge;
-            size_t start = p.first.find("//") + 2;
-            size_t length = p.first.find(":", start) - start;
-            bridge.ip = p.first.substr(start, length);
-            try
+            auto bridgeIdIt = serviceInfo.textRecords.find("bridgeid");
+            if (bridgeIdIt != serviceInfo.textRecords.end())
             {
-                std::string desc
-                    = http_handler->GETString("/description.xml", "application/xml", "", bridge.ip, bridge.port);
-                std::string mac = parseDescription(desc);
-                if (!mac.empty())
-                {
-                    bridge.mac = normalizeMac(mac);
-                    foundBridges.push_back(std::move(bridge));
-                }
-            }
-            catch (const HueException&)
-            {
-                // No body found in response, skip this device
+                bridges.push_back(BridgeFinder::BridgeIdentification {serviceInfo.aRecords.front(), serviceInfo.port,
+                                                                      bridgeIdIt->second});
             }
         }
+        return bridges;
     }
-    return foundBridges;
+    else
+    {
+        UPnP uplug;
+        std::vector<std::pair<std::string, std::string>> foundDevices = uplug.getDevices(http_handler);
+
+        std::vector<BridgeIdentification> foundBridges;
+        for (const std::pair<std::string, std::string>& p : foundDevices)
+        {
+            size_t found = p.second.find("IpBridge");
+            if (found != std::string::npos)
+            {
+                BridgeIdentification bridge;
+                size_t start = p.first.find("//") + 2;
+                size_t length = p.first.find(":", start) - start;
+                bridge.ip = p.first.substr(start, length);
+                try
+                {
+                    std::string desc
+                        = http_handler->GETString("/description.xml", "application/xml", "", bridge.ip, bridge.port);
+                    std::string mac = parseDescription(desc);
+                    if (!mac.empty())
+                    {
+                        bridge.mac = normalizeMac(mac);
+                        foundBridges.push_back(std::move(bridge));
+                    }
+                }
+                catch (const HueException&)
+                {
+                    // No body found in response, skip this device
+                }
+            }
+        }
+        return foundBridges;
+    }
 }
 
 Bridge BridgeFinder::getBridge(const BridgeIdentification& identification, bool sharedState)
@@ -84,16 +108,16 @@ Bridge BridgeFinder::getBridge(const BridgeIdentification& identification, bool 
     {
         if (key != clientkeys.end())
         {
-            return Bridge(identification.ip, identification.port, pos->second, http_handler, key->second,
-                std::chrono::seconds(10), sharedState);
+            return Bridge(identification.ip, identification.port, identification.mac, pos->second, http_handler,
+                          key->second, std::chrono::seconds(10), sharedState);
         }
         else
         {
-            return Bridge(identification.ip, identification.port, pos->second, http_handler, "",
-                std::chrono::seconds(10), sharedState);
+            return Bridge(identification.ip, identification.port, identification.mac, pos->second, http_handler, "",
+                          std::chrono::seconds(10), sharedState);
         }
     }
-    Bridge bridge(identification.ip, identification.port, "", http_handler, "", std::chrono::seconds(10), sharedState);
+    Bridge bridge(identification.ip, identification.port, identification.mac, "", http_handler, "", std::chrono::seconds(10), sharedState);
     bridge.requestUsername();
     if (bridge.getUsername().empty())
     {
@@ -125,7 +149,7 @@ std::string BridgeFinder::normalizeMac(std::string input)
 {
     // Remove any non alphanumeric characters (e.g. ':' and whitespace)
     input.erase(std::remove_if(input.begin(), input.end(), [](char c) { return !std::isalnum(c, std::locale()); }),
-        input.end());
+                input.end());
     // Convert to lower case
     std::transform(input.begin(), input.end(), input.begin(), [](char c) { return std::tolower(c, std::locale()); });
     return input;
@@ -154,21 +178,28 @@ std::string BridgeFinder::parseDescription(const std::string& description)
 }
 
 Bridge::Bridge(const std::string& ip, const int port, const std::string& username,
-    std::shared_ptr<const IHttpHandler> handler, const std::string& clientkey,
-    std::chrono::steady_clock::duration refreshDuration, bool sharedState)
+               std::shared_ptr<const IHttpHandler> handler, const std::string& clientkey,
+               std::chrono::steady_clock::duration refreshDuration, bool sharedState)
+    : Bridge(ip, port, {}, username, std::move(handler), clientkey, refreshDuration, sharedState)
+{ }
+
+Bridge::Bridge(const std::string& ip, const int port, const std::string& bridgeId, const std::string& username,
+               std::shared_ptr<const IHttpHandler> handler, const std::string& clientkey,
+               std::chrono::steady_clock::duration refreshDuration, bool sharedState)
     : ip(ip),
       username(username),
       clientkey(clientkey),
+      bridgeId(bridgeId),
       port(port),
       http_handler(std::move(handler)),
       refreshDuration(refreshDuration),
-      stateCache(std::make_shared<APICache>(
-          "", HueCommandAPI(ip, port, username, http_handler), std::chrono::steady_clock::duration::max(), nullptr)),
+      stateCache(std::make_shared<APICache>("", HueCommandAPI(ip, port, username, http_handler),
+                                            std::chrono::steady_clock::duration::max(), nullptr)),
       lightList(stateCache, "lights", refreshDuration, sharedState,
-          [factory = LightFactory(stateCache->getCommandAPI(), refreshDuration)](
-              int id, const nlohmann::json& state, const std::shared_ptr<APICache>& baseCache) mutable {
-              return factory.createLight(state, id, baseCache);
-          }),
+                [factory = LightFactory(stateCache->getCommandAPI(), refreshDuration)](
+                    int id, const nlohmann::json& state, const std::shared_ptr<APICache>& baseCache) mutable {
+                    return factory.createLight(state, id, baseCache);
+                }),
       groupList(stateCache, "groups", refreshDuration, sharedState),
       scheduleList(stateCache, "schedules", refreshDuration, sharedState),
       sceneList(stateCache, "scenes", refreshDuration, sharedState),
@@ -176,7 +207,9 @@ Bridge::Bridge(const std::string& ip, const int port, const std::string& usernam
       ruleList(stateCache, "rules", refreshDuration, sharedState),
       bridgeConfig(stateCache, refreshDuration),
       sharedState(sharedState)
-{ }
+{
+    http_handler->connectBridge(ip, port, bridgeId);
+}
 
 void Bridge::refresh()
 {
@@ -400,10 +433,13 @@ const Bridge::RuleList& Bridge::rules() const
 void Bridge::setHttpHandler(std::shared_ptr<const IHttpHandler> handler)
 {
     http_handler = handler;
+    http_handler->connectBridge(ip, port, bridgeId);
     stateCache = std::make_shared<APICache>("", HueCommandAPI(ip, port, username, handler), refreshDuration, nullptr);
     lightList = LightList(stateCache, "lights", refreshDuration, sharedState,
-        [factory = LightFactory(stateCache->getCommandAPI(), refreshDuration)](int id, const nlohmann::json& state,
-            const std::shared_ptr<APICache>& baseCache) mutable { return factory.createLight(state, id, baseCache); });
+                          [factory = LightFactory(stateCache->getCommandAPI(), refreshDuration)](
+                              int id, const nlohmann::json& state, const std::shared_ptr<APICache>& baseCache) mutable {
+                              return factory.createLight(state, id, baseCache);
+                          });
     groupList = GroupList(stateCache, "groups", refreshDuration, sharedState);
     scheduleList = ScheduleList(stateCache, "schedules", refreshDuration, sharedState);
     sceneList = SceneList(stateCache, "scenes", refreshDuration, sharedState);

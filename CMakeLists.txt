@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10.2...3.28)
 # Add cmake dir to module path, so Find*.cmake can be found
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
-project(hueplusplus VERSION 1.2.0 LANGUAGES CXX)
+project(hueplusplus VERSION 1.3.0 LANGUAGES C CXX)
 
 # check whether hueplusplus is compiled directly or included as a subdirectory
 if(NOT DEFINED hueplusplus_master_project)
@@ -115,6 +115,19 @@ if(NOT nlohmann_json_FOUND)
 	set(JSON_BuildTests OFF CACHE INTERNAL "")
 	add_subdirectory("lib/json" EXCLUDE_FROM_ALL)
 endif()
+
+include(FetchContent)
+FetchContent_Declare(
+    mdns
+    GIT_REPOSITORY https://github.com/mjansson/mdns.git
+    GIT_TAG a569c4759bd47e0f2a7bfc4d4c19620445782806
+)
+FetchContent_Declare(
+    httplib
+    GIT_REPOSITORY https://github.com/yhirose/cpp-httplib.git
+    GIT_TAG a77284a634bb0532ea197f50777fa3e830095dfd
+)
+FetchContent_MakeAvailable(mdns httplib)
 
 add_subdirectory(src)
 

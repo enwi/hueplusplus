@@ -41,6 +41,15 @@ public:
     //! \brief Virtual dtor
     virtual ~BaseHttpHandler() = default;
 
+    //! \brief Initialize connection to the specified bridge
+    //!
+    //! This is required to setup the SSL name verification and also to open a keepalive connection.
+    //! For now, only one connection can be active at a time.
+    //! \param adr Ip or hostname of the bridge
+    //! \param port Port number of the service on the bridge, also used to detect https (port 443)
+    //! \param bridgeId Bridge id of the specified bridge
+    void connectBridge(const std::string& adr, int port, const std::string& bridgeId) const override;
+
     //! \brief Send a message to a specified host and return the body of the response.
     //!
     //! \param msg The message that should sent to the specified address

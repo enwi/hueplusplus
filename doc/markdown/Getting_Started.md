@@ -19,7 +19,7 @@ If you on the other hand already have a username you can add your bridge like so
 \snippet Snippets.cpp get-bridge-2
 
 If you do not want to use the BridgeFinder or you already know the ip and username of your bridge you have the option to create your own Hue object.
-Here you will need to provide the ip address, the port number, a username and an HttpHandler
+Here you will need to provide the ip address, the port number, the bridge ID, a username and an HttpHandler
 \snippet Snippets.cpp get-bridge-3
 
 At this point you may want to decide whether to use a [shared state](@ref shared-state) cache model or keep the default settings.

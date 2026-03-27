@@ -26,6 +26,12 @@
 
 namespace hueplusplus
 {
+
+void BaseHttpHandler::connectBridge(const std::string& adr, int port, const std::string& bridgeId) const
+{
+    // Nothing to do for this handler
+}
+
 std::string BaseHttpHandler::sendGetHTTPBody(const std::string& msg, const std::string& adr, int port) const
 {
     std::string response = send(msg, adr, port);

@@ -22,23 +22,12 @@
     This example connects to a bridge with hardcoded mac and username.
 **/
 
-
 #include <algorithm>
 #include <iostream>
 
 #include <hueplusplus/Bridge.h>
-
-#ifdef _MSC_VER
-#include <hueplusplus/WinHttpHandler.h>
-
-using SystemHttpHandler = hueplusplus::WinHttpHandler;
-
-#else
-#include <hueplusplus/LinHttpHandler.h>
-
-using SystemHttpHandler = hueplusplus::LinHttpHandler;
-
-#endif
+#include <hueplusplus/HttplibHttpHandler.h>
+#include <hueplusplus/MDnsWrapper.h>
 
 namespace hue = hueplusplus;
 
@@ -49,7 +38,7 @@ const std::string username = "";
 // Connects to a bridge and returns it.
 hue::Bridge connectToBridge()
 {
-    hue::BridgeFinder finder(std::make_shared<SystemHttpHandler>());
+    hue::BridgeFinder finder(std::make_shared<hue::HttplibHttpHandler>(), std::make_shared<hue::MDnsWrapper>());
 
     std::vector<hue::BridgeFinder::BridgeIdentification> bridges = finder.findBridges();
 
@@ -72,8 +61,8 @@ hue::Bridge connectToBridge()
     {
         finder.addUsername(macAddress, username);
     }
-    auto it = std::find_if(
-        bridges.begin(), bridges.end(), [&](const auto& identification) { return identification.mac == macAddress; });
+    auto it = std::find_if(bridges.begin(), bridges.end(),
+                           [&](const auto& identification) { return identification.mac == macAddress; });
     if (it == bridges.end())
     {
         std::cout << "Given bridge not found\n";
@@ -90,6 +79,10 @@ int main(int argc, char** argv)
         hue::Bridge hue = connectToBridge();
 
         std::cout << "Connected to bridge. IP: " << hue.getBridgeIP() << ", username: " << hue.getUsername() << '\n';
+    }
+    catch(const std::exception& e )
+    {
+        std::cerr << "Error: " << e.what() << "\n";
     }
     catch (...)
     { }

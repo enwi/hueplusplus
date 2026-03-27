@@ -40,6 +40,15 @@ public:
     //! \brief Virtual dtor
     virtual ~IHttpHandler() = default;
 
+    //! \brief Initialize connection to the specified bridge
+    //!
+    //! This is required to setup the SSL name verification and also to open a keepalive connection.
+    //! For now, only one connection can be active at a time.
+    //! \param adr Ip or hostname of the bridge
+    //! \param port Port number of the service on the bridge, also used to detect https (port 443)
+    //! \param bridgeId Bridge id of the specified bridge
+    virtual void connectBridge(const std::string& adr, int port, const std::string& bridgeId) const = 0;
+
     //! \brief Send a message to a specified host and return the response.
     //!
     //! \param msg The message that should be sent to the specified address
@@ -70,8 +79,9 @@ public:
     //!
     //! \return vector of strings containing each received answer
     //! \throws std::system_error when system or socket operations fail
-    virtual std::vector<std::string> sendMulticast(const std::string& msg, const std::string& adr = "239.255.255.250",
-        int port = 1900, std::chrono::steady_clock::duration timeout = std::chrono::seconds(5)) const = 0;
+    virtual std::vector<std::string>
+    sendMulticast(const std::string& msg, const std::string& adr = "239.255.255.250", int port = 1900,
+                  std::chrono::steady_clock::duration timeout = std::chrono::seconds(5)) const = 0;
 
     //! \brief Send a HTTP request with the given method to the specified host and return the body of the response.
     //!
@@ -85,7 +95,8 @@ public:
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     virtual std::string sendHTTPRequest(const std::string& method, const std::string& uri,
-        const std::string& contentType, const std::string& body, const std::string& adr, int port = 80) const = 0;
+                                        const std::string& contentType, const std::string& body, const std::string& adr,
+                                        int port = 80) const = 0;
 
     //! \brief Send a HTTP GET request to the specified host and return the body of the response.
     //!
@@ -99,7 +110,7 @@ public:
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     virtual std::string GETString(const std::string& uri, const std::string& contentType, const std::string& body,
-        const std::string& adr, int port = 80) const = 0;
+                                  const std::string& adr, int port = 80) const = 0;
 
     //! \brief Send a HTTP POST request to the specified host and return the body of the response.
     //!
@@ -113,7 +124,7 @@ public:
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     virtual std::string POSTString(const std::string& uri, const std::string& contentType, const std::string& body,
-        const std::string& adr, int port = 80) const = 0;
+                                   const std::string& adr, int port = 80) const = 0;
 
     //! \brief Send a HTTP PUT request to the specified host and return the body of the response.
     //!
@@ -127,7 +138,7 @@ public:
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     virtual std::string PUTString(const std::string& uri, const std::string& contentType, const std::string& body,
-        const std::string& adr, int port = 80) const = 0;
+                                  const std::string& adr, int port = 80) const = 0;
 
     //! \brief Send a HTTP DELETE request to the specified host and return the body of the response.
     //!
@@ -141,7 +152,7 @@ public:
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     virtual std::string DELETEString(const std::string& uri, const std::string& contentType, const std::string& body,
-        const std::string& adr, int port = 80) const = 0;
+                                     const std::string& adr, int port = 80) const = 0;
 
     //! \brief Send a HTTP GET request to the specified host and return the body of the response parsed as JSON.
     //!
@@ -153,8 +164,8 @@ public:
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws nlohmann::json::parse_error when the body could not be parsed
-    virtual nlohmann::json GETJson(
-        const std::string& uri, const nlohmann::json& body, const std::string& adr, int port = 80) const = 0;
+    virtual nlohmann::json GETJson(const std::string& uri, const nlohmann::json& body, const std::string& adr,
+                                   int port = 80) const = 0;
 
     //! \brief Send a HTTP POST request to the specified host and return the body of the response parsed as JSON.
     //!
@@ -166,8 +177,8 @@ public:
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws nlohmann::json::parse_error when the body could not be parsed
-    virtual nlohmann::json POSTJson(
-        const std::string& uri, const nlohmann::json& body, const std::string& adr, int port = 80) const = 0;
+    virtual nlohmann::json POSTJson(const std::string& uri, const nlohmann::json& body, const std::string& adr,
+                                    int port = 80) const = 0;
 
     //! \brief Send a HTTP PUT request to the specified host and return the body of the response parsed as JSON.
     //!
@@ -179,8 +190,8 @@ public:
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws nlohmann::json::parse_error when the body could not be parsed
-    virtual nlohmann::json PUTJson(
-        const std::string& uri, const nlohmann::json& body, const std::string& adr, int port = 80) const = 0;
+    virtual nlohmann::json PUTJson(const std::string& uri, const nlohmann::json& body, const std::string& adr,
+                                   int port = 80) const = 0;
 
     //! \brief Send a HTTP DELETE request to the specified host and return the body of the response parsed as JSON.
     //!
@@ -192,8 +203,8 @@ public:
     //! \throws std::system_error when system or socket operations fail
     //! \throws HueException when response contained no body
     //! \throws nlohmann::json::parse_error when the body could not be parsed
-    virtual nlohmann::json DELETEJson(
-        const std::string& uri, const nlohmann::json& body, const std::string& adr, int port = 80) const = 0;
+    virtual nlohmann::json DELETEJson(const std::string& uri, const nlohmann::json& body, const std::string& adr,
+                                      int port = 80) const = 0;
 };
 } // namespace hueplusplus
 
