@@ -21,13 +21,17 @@
 **/
 
 #include "hueplusplus/EntertainmentMode.h"
-#include "mbedtls/ctr_drbg.h"
+
 #include "mbedtls/debug.h"
 #include "mbedtls/entropy.h"
 #include "mbedtls/error.h"
 #include "mbedtls/net_sockets.h"
 #include "mbedtls/ssl.h"
 #include "mbedtls/timing.h"
+// Missing in this header
+extern "C" {
+#include "mbedtls/psa_util.h"
+}
 
 #include "hueplusplus/HueExceptionMacro.h"
 
@@ -40,8 +44,6 @@ struct TLSContext
 {
     mbedtls_ssl_context ssl;
     mbedtls_net_context server_fd;
-    mbedtls_entropy_context entropy;
-    mbedtls_ctr_drbg_context ctr_drbg;
     mbedtls_ssl_config conf;
     mbedtls_x509_crt cacert;
     mbedtls_timing_delay_context timer;
@@ -64,6 +66,11 @@ std::vector<char> hexToBytes(const std::string& hex)
 EntertainmentMode::EntertainmentMode(Bridge& b, Group& g)
     : bridge(&b), group(&g), tls_context(std::make_unique<TLSContext>(TLSContext {}))
 {
+    if (psa_crypto_init() != PSA_SUCCESS)
+    {
+        throw HueException(CURRENT_FILE_INFO, "Failed to init mbedtls TF-PSA-Crypto");
+    }
+
     /*-------------------------------------------------*\
     | Signal the bridge to start streaming              |
     \*-------------------------------------------------*/
@@ -116,32 +123,15 @@ EntertainmentMode::EntertainmentMode(Bridge& b, Group& g)
     mbedtls_ssl_init(&tls_context->ssl);
     mbedtls_ssl_config_init(&tls_context->conf);
     mbedtls_x509_crt_init(&tls_context->cacert);
-    mbedtls_ctr_drbg_init(&tls_context->ctr_drbg);
-    mbedtls_entropy_init(&tls_context->entropy);
-
-    /*-------------------------------------------------*\
-    | Seed the Deterministic Random Bit Generator (RNG) |
-    \*-------------------------------------------------*/
-    if (mbedtls_ctr_drbg_seed(&tls_context->ctr_drbg, mbedtls_entropy_func, &tls_context->entropy, NULL, 0) != 0)
-    {
-        mbedtls_entropy_free(&tls_context->entropy);
-        mbedtls_ctr_drbg_free(&tls_context->ctr_drbg);
-        mbedtls_x509_crt_free(&tls_context->cacert);
-        mbedtls_ssl_config_free(&tls_context->conf);
-        mbedtls_ssl_free(&tls_context->ssl);
-        mbedtls_net_free(&tls_context->server_fd);
-        throw HueException(CURRENT_FILE_INFO, "Failed to seed mbedtls RNG");
-    }
 }
 
 EntertainmentMode::~EntertainmentMode()
 {
-    mbedtls_entropy_free(&tls_context->entropy);
-    mbedtls_ctr_drbg_free(&tls_context->ctr_drbg);
     mbedtls_x509_crt_free(&tls_context->cacert);
     mbedtls_ssl_config_free(&tls_context->conf);
     mbedtls_ssl_free(&tls_context->ssl);
     mbedtls_net_free(&tls_context->server_fd);
+    mbedtls_psa_crypto_free();
 }
 
 bool EntertainmentMode::connect()
@@ -186,7 +176,10 @@ bool EntertainmentMode::connect()
 
         mbedtls_ssl_conf_authmode(&tls_context->conf, MBEDTLS_SSL_VERIFY_OPTIONAL);
         mbedtls_ssl_conf_ca_chain(&tls_context->conf, &tls_context->cacert, NULL);
-        mbedtls_ssl_conf_rng(&tls_context->conf, mbedtls_ctr_drbg_random, &tls_context->ctr_drbg);
+        #if MBEDTLS_VERSION_MAJOR < 4
+            // RNG function was removed in version 4 and is no longer needed
+            mbedtls_ssl_conf_rng(&tls_context->conf, mbedtls_psa_get_random, MBEDTLS_PSA_RANDOM_STATE);
+        #endif
 
         /*-------------------------------------------------*\
         | Convert client key to binary array                |
