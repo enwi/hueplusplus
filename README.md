@@ -23,19 +23,18 @@ A simple and easy to use library for Philips Hue Lights
 
 ## How to use
 ### <a name="searchingBridges"></a>Searching for Bridges
-To start searching for a Hue Bridge you will need to choose an IHttpHandler and create one. The options are a "WinHttpHandler" (for windows) or a "LinHttpHandler" (for linux).
+To start searching for a Hue Bridge you will need to choose an IHttpHandler and create one. HttplibHttpHandler is recommended because it is cross-platform and supports HTTPS.
 Then create a BridgeFinder object with the handler.
-The handler is needed, because it tells the finder which functions to use to communicate with a bridge or your local network.
+The handler is needed, because it tells the finder which functions to use to communicate with a bridge or your local network. Also supply a [MDnsWrapper](@ref hueplusplus::MDnsWrapper) to use MDns for discovery instead of the deprecated UPnP protocol.
 After that you can call findBridges(), which will return a vector containing the ip and mac address of all found Bridges.
 ```C++
-// For windows use std::make_shared<hueplusplus::WinHttpHandler>();
-handler = std::make_shared<hueplusplus::LinHttpHandler>();
-hueplusplus::BridgeFinder finder(handler);
+auto handler = std::make_shared<hueplusplus::HttplibHttpHandler>();
+hueplusplus::BridgeFinder finder(handler, std::make_shared<hueplusplus::MDnsWrapper>());
 std::vector<hueplusplus::BridgeFinder::BridgeIdentification> bridges = finder.findBridges();
 if (bridges.empty())
 {
-	std::cerr << "No bridges found\n";
-	return;
+    std::cerr << "No bridges found\n";
+    return;
 }
 
 ```
@@ -52,12 +51,11 @@ If you on the other hand already have a username you can add your bridge like so
 finder.addUsername(bridges[0].mac, "<username>");
 hueplusplus::Bridge bridge = finder.getBridge(bridges[0]);
 ```
-If you do not want to use the BridgeFinder or you already know the ip and username of your bridge you have the option to create your own Bridge object.
-Here you will need to provide the ip address, the port number, a username and an HttpHandler
+If you do not want to use the BridgeFinder and you already know the ip and username of your bridge you have the option to create your own Bridge object.
+Here you will need to provide the ip address, bridge id, port number, a username and an HttpHandler. Specify port 443 to use HTTPS or 80 for HTTP.
 ```C++
-// For windows use std::make_shared<hueplusplus::WinHttpHandler>();
-handler = std::make_shared<hueplusplus::LinHttpHandler>();
-hueplusplus::Bridge bridge("192.168.2.102", 80, "<username>", handler);
+handler = std::make_shared<hueplusplus::HttplibHttpHandler>();
+hueplusplus::Bridge bridge("192.168.2.102", 80, "<bridgeid>", "<username>", handler);
 ```
 
 ### Controlling lights

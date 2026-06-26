@@ -20,11 +20,11 @@ A simple and easy to use library for Philips Hue Lights.
 
 ## How to use
 [Getting started](@ref getting-started)
-### Searching for Bridges
-To start searching for a Hue Bridge you will need to choose an IHttpHandler and create one. The options are a [WinHttpHandler](@ref hueplusplus::WinHttpHandler) (for windows) or a [LinHttpHandler](@ref hueplusplus::LinHttpHandler) (for linux or linux-like).
+### Searching for Bridges {#searchingBridges}
+To start searching for a Hue Bridge you will need to choose an IHttpHandler and create one. [HttplibHttpHandler](@ref hueplusplus::HttplibHttpHandler) is recommended because it is cross-platform and supports HTTPS.
 
 Then create a [BridgeFinder](@ref hueplusplus::BridgeFinder) object with the handler.
-The handler is needed, because it tells the finder which functions to use to communicate with a bridge or your local network.
+The handler is needed, because it tells the finder which functions to use to communicate with a bridge or your local network. Also supply a [MDnsWrapper](@ref hueplusplus::MDnsWrapper) to use MDns for discovery instead of the deprecated UPnP protocol.
 After that you can call [findBridges()](@ref hueplusplus::BridgeFinder::findBridges), which will return a vector containing the ip and mac address of all found Bridges.
 \snippet Snippets.cpp search-bridge
 
@@ -40,7 +40,7 @@ If you on the other hand already have a username you can add your bridge like so
 \snippet Snippets.cpp get-bridge-2
 
 If you do not want to use the BridgeFinder or you already know the ip and username of your bridge you have the option to create your own Bridge object.
-Here you will need to provide the ip address, the port number, a username and an HttpHandler
+Here you will need to provide the ip address, bridge id, port number, a username and an HttpHandler. Specify port 443 to use HTTPS or 80 for HTTP.
 \snippet Snippets.cpp get-bridge-3
 
 

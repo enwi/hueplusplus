@@ -31,7 +31,6 @@ void snippet1()
 {
     // Main page
     //! [search-bridge]
-    // For windows use std::make_shared<hueplusplus::WinHttpHandler>();
     auto handler = std::make_shared<hueplusplus::HttplibHttpHandler>();
     hueplusplus::BridgeFinder finder(handler, std::make_shared<hueplusplus::MDnsWrapper>());
     std::vector<hueplusplus::BridgeFinder::BridgeIdentification> bridges = finder.findBridges();
