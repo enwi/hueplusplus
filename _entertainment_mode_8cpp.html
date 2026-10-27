@@ -82,13 +82,13 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="_entertainment_mode_8h_source.html">hueplusplus/EntertainmentMode.h</a>&quot;</code><br />
-<code>#include &quot;mbedtls/ctr_drbg.h&quot;</code><br />
 <code>#include &quot;mbedtls/debug.h&quot;</code><br />
 <code>#include &quot;mbedtls/entropy.h&quot;</code><br />
 <code>#include &quot;mbedtls/error.h&quot;</code><br />
 <code>#include &quot;mbedtls/net_sockets.h&quot;</code><br />
 <code>#include &quot;mbedtls/ssl.h&quot;</code><br />
 <code>#include &quot;mbedtls/timing.h&quot;</code><br />
+<code>#include &quot;mbedtls/psa_util.h&quot;</code><br />
 <code>#include &quot;<a class="el" href="_hue_exception_macro_8h_source.html">hueplusplus/HueExceptionMacro.h</a>&quot;</code><br />
 </div><div class="textblock"><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Include dependency graph for EntertainmentMode.cpp:</div>
@@ -97,25 +97,25 @@ $(function() {
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="_entertainment_mode_8cpp__incl.png" border="0" usemap="#asrc_2_entertainment_mode_8cpp" alt=""/></div>
 <map name="asrc_2_entertainment_mode_8cpp" id="asrc_2_entertainment_mode_8cpp">
-<area shape="rect" title=" " alt="" coords="3562,5,3763,31"/>
+<area shape="rect" title=" " alt="" coords="3549,5,3750,31"/>
 <area shape="rect" href="_entertainment_mode_8h.html" title=" " alt="" coords="2999,79,3196,119"/>
-<area shape="poly" title=" " alt="" coords="3572,33,3215,81,3211,82,3210,77,3214,76,3571,28"/>
-<area shape="rect" title=" " alt="" coords="3271,86,3415,111"/>
-<area shape="poly" title=" " alt="" coords="3617,33,3403,85,3402,80,3616,28"/>
-<area shape="rect" title=" " alt="" coords="3439,86,3569,111"/>
-<area shape="poly" title=" " alt="" coords="3641,33,3541,82,3538,78,3638,28"/>
-<area shape="rect" title=" " alt="" coords="3593,86,3732,111"/>
-<area shape="poly" title=" " alt="" coords="3665,31,3665,72,3660,72,3660,31"/>
-<area shape="rect" title=" " alt="" coords="3757,86,3878,111"/>
-<area shape="poly" title=" " alt="" coords="3687,28,3783,77,3781,82,3684,33"/>
-<area shape="rect" title=" " alt="" coords="3903,86,4071,111"/>
-<area shape="poly" title=" " alt="" coords="3710,28,3927,80,3926,85,3709,33"/>
-<area shape="rect" title=" " alt="" coords="4095,86,4204,111"/>
-<area shape="poly" title=" " alt="" coords="3764,27,3915,47,4083,76,4099,80,4098,85,4082,81,3914,52,3763,32"/>
-<area shape="rect" title=" " alt="" coords="4228,86,4361,111"/>
-<area shape="poly" title=" " alt="" coords="3764,24,3973,43,4095,58,4216,76,4239,80,4238,86,4216,81,4094,63,3972,48,3763,29"/>
+<area shape="poly" title=" " alt="" coords="3562,33,3215,81,3211,82,3210,77,3214,76,3561,28"/>
+<area shape="rect" title=" " alt="" coords="3271,86,3401,111"/>
+<area shape="poly" title=" " alt="" coords="3604,33,3395,85,3394,80,3603,28"/>
+<area shape="rect" title=" " alt="" coords="3425,86,3564,111"/>
+<area shape="poly" title=" " alt="" coords="3628,33,3531,82,3529,77,3625,28"/>
+<area shape="rect" title=" " alt="" coords="3589,86,3710,111"/>
+<area shape="poly" title=" " alt="" coords="3652,31,3652,72,3647,72,3647,31"/>
+<area shape="rect" title=" " alt="" coords="3735,86,3903,111"/>
+<area shape="poly" title=" " alt="" coords="3675,28,3783,78,3781,83,3673,33"/>
+<area shape="rect" title=" " alt="" coords="3927,86,4036,111"/>
+<area shape="poly" title=" " alt="" coords="3705,28,3915,76,3929,80,3928,85,3914,81,3704,33"/>
+<area shape="rect" title=" " alt="" coords="4060,86,4193,111"/>
+<area shape="poly" title=" " alt="" coords="3741,28,3886,48,4048,76,4069,80,4068,86,4048,81,3885,54,3740,33"/>
+<area shape="rect" title=" " alt="" coords="4218,86,4361,111"/>
+<area shape="poly" title=" " alt="" coords="3750,24,3961,44,4206,76,4230,80,4229,86,4205,81,3960,49,3750,29"/>
 <area shape="rect" href="_hue_exception_macro_8h.html" title=" " alt="" coords="3136,167,3331,207"/>
-<area shape="poly" title=" " alt="" coords="3562,24,3476,29,3387,40,3310,56,3281,67,3260,81,3248,96,3241,115,3235,153,3229,153,3235,113,3244,93,3257,77,3279,63,3309,51,3387,34,3476,24,3562,19"/>
+<area shape="poly" title=" " alt="" coords="3549,25,3466,30,3381,41,3308,57,3280,68,3260,81,3248,96,3241,115,3235,153,3229,153,3236,113,3244,93,3257,77,3278,63,3306,52,3380,35,3466,25,3548,19"/>
 <area shape="rect" href="_bridge_8h.html" title=" " alt="" coords="1561,174,1637,199"/>
 <area shape="poly" title=" " alt="" coords="2999,108,1651,185,1650,180,2998,103"/>
 <area shape="rect" href="_group_8h.html" title=" " alt="" coords="1982,401,2055,427"/>

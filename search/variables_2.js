@@ -27,6 +27,5 @@ var searchData=
   ['colortype_24',['colorType',['../classhueplusplus_1_1_light.html#a7f504e827b158c81e9ca3c57f158ae3b',1,'hueplusplus::Light']]],
   ['commands_25',['commands',['../classhueplusplus_1_1_state_transaction.html#a0d95abef6863f89bae7da4e27dcca952',1,'hueplusplus::StateTransaction']]],
   ['conf_26',['conf',['../structhueplusplus_1_1_t_l_s_context.html#abd44e1ca89eeafb306cfd494d8ed50b5',1,'hueplusplus::TLSContext']]],
-  ['created_27',['created',['../structhueplusplus_1_1_whitelisted_user.html#a215b666e60ec721bb5b8238623479edb',1,'hueplusplus::WhitelistedUser']]],
-  ['ctr_5fdrbg_28',['ctr_drbg',['../structhueplusplus_1_1_t_l_s_context.html#a2a11da610e1caf3d8967d92746ce5fed',1,'hueplusplus::TLSContext']]]
+  ['created_27',['created',['../structhueplusplus_1_1_whitelisted_user.html#a215b666e60ec721bb5b8238623479edb',1,'hueplusplus::WhitelistedUser']]]
 ];
